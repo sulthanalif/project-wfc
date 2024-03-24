@@ -1,8 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
+// use App\Http\Controllers\Auth\AuthController;
+// use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,14 +21,15 @@ Route::get('/', function (){
     return view('welcome');
 });
 
-Route::group(['middleware' => 'guest'], function (){
-    Route::get('/register', [AuthController::class, 'register'])->name('register');
-    Route::post('/register', [AuthController::class, 'registerPost'])->name('registerPost');
-    Route::get('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/login', [AuthController::class, 'loginPost'])->name('loginPost');
-});
 
-Route::group(['middleware' => 'auth'], function (){
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/admin', [DashboardController::class, 'index'])->name('dashboard');
-});
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/dashboard-admin', function (){
+    return '<h1>Dashboard Admin</h1>';
+})->name('dashboard-admin');
+Route::get('/dashboard-user', function (){
+    return '<h1>Dashboard User</h1>';
+})->name('dashboard-user');
