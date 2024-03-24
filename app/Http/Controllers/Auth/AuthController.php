@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+// use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,20 +23,20 @@ class AuthController extends Controller
         $rules = [
             'name' => 'required',
             'email' => 'required|email',
-            'password1' => 'required|password',
-            'password2' => 'required|password'
+            'password1' => 'required',
+            'password2' => 'required'
         ];
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return ResponseFormatter::error('', $validator->errors());
+            return back()->with('error', $validator->errors());
         }
 
 
 
         if ($request->password1 != $request->password2) {
-            return ResponseFormatter::error('', 'Password dan Konfirmasi Password Tidak Sama');
+            return back()->with('error', 'Password dan Konfirmasi Password Harus Sama!');
         }
 
         $user = new User();
@@ -82,5 +84,16 @@ class AuthController extends Controller
         }
 
 
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }
