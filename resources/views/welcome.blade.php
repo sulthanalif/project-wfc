@@ -588,10 +588,10 @@
 
                 <div class="col-md-2 ">
                     <div class="text-start">
-                        <h5 class="text-white fw-bold">Policies</h5>
+                        <h5 class="text-white fw-bold">Ketentuan</h5>
                         <ul class="footer-item list-unstyled footer-link mt-3">
-                            <li><a href="#">Security & Privacy</a></li>
-                            <li><a href="#">Term & Condition</a></li>
+                            <li><a href="#">Syarat & Kondisi</a></li>
+                            <li><a href="#">Kebijakan Privasi</a></li>
                         </ul>
                     </div>
                 </div>
