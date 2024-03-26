@@ -21,8 +21,9 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Buat role
         $superAdminRole = Role::create(['name' => 'super_admin', 'guard_name' => 'web']);
+        $financeAdminRole = Role::create(['name' => 'finance_admin', 'guard_name' => 'web']);
         $adminRole = Role::create(['name' => 'admin', 'guard_name' => 'web']);
-        $distributorRole = Role::create(['name' => 'distributor', 'guard_name' => 'web']);
+        $agentRole = Role::create(['name' => 'agent', 'guard_name' => 'web']);
 
         // Berikan semua permission ke super_admin
         $superAdminRole->givePermissionTo(Permission::all());
@@ -31,7 +32,11 @@ class RoleAndPermissionSeeder extends Seeder
         $adminRole->givePermissionTo('add_order');
         $adminRole->givePermissionTo('approve_order');
 
+        // Berikan permission yang sesuai ke admin
+        $financeAdminRole->givePermissionTo('add_order');
+        $financeAdminRole->givePermissionTo('approve_order');
+
         // Berikan permission yang sesuai ke distributor
-        $distributorRole->givePermissionTo('add_order');
+        $agentRole->givePermissionTo('add_order');
     }
 }

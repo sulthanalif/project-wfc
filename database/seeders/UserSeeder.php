@@ -23,6 +23,15 @@ class UserSeeder extends Seeder
 
         $superAdmin->assignRole('super_admin');
 
+        // Finance Admin User
+        $financeAdmin = User::create([
+            'name' => 'Finance Admin',
+            'email' => 'financeadmin@gmail.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        $financeAdmin->assignRole('finance_admin');
+
         // Admin User
         $admin = User::create([
             'name' => 'Admin',
@@ -32,13 +41,13 @@ class UserSeeder extends Seeder
 
         $admin->assignRole('admin');
 
-        // Distributor User
-        $distributor = User::create([
-            'name' => 'Distributor',
-            'email' => 'distributor@gmail.com',
+        // Agent User
+        $agent = User::create([
+            'name' => 'Agent',
+            'email' => 'agent@gmail.com',
             'password' => Hash::make('password'),
         ]);
 
-        $distributor->assignRole('distributor');
+        $agent->assignRole('agent');
     }
 }
