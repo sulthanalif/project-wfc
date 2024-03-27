@@ -28,8 +28,8 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard-admin', function (){
-    return '<h1>Dashboard Admin</h1>';
+    return view('cms.admin.index');
 })->name('dashboard-admin');
 Route::get('/dashboard-user', function (){
-    return '<h1>Dashboard User</h1>';
+    return view('cms.agen.index');
 })->name('dashboard-user');
