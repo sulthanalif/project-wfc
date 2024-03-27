@@ -12,7 +12,7 @@
                     class="w-8 h-8 text-white transform -rotate-90"></i> </a>
             <ul class="scrollable__content py-2">
                 <li>
-                    <a href="javascript:;.html" class="menu menu--active">
+                    <a href=#" class="menu menu--active">
                         <div class="menu__icon"> <i data-lucide="home"></i> </div>
                         <div class="menu__title"> Dashboard </div>
                     </a>
@@ -25,85 +25,49 @@
                     </a>
                     <ul class="">
                         <li>
-                            <a href="side-menu-light-categories.html" class="menu">
+                            <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Categories </div>
+                                <div class="menu__title"> Pengisian Paket </div>
                             </a>
                         </li>
                         <li>
-                            <a href="side-menu-light-add-product.html" class="menu">
+                            <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Add Product </div>
+                                <div class="menu__title"> Penjualan Paket </div>
                             </a>
                         </li>
                         <li>
-                            <a href="javascript:;" class="menu">
+                            <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Products <i data-lucide="chevron-down"
-                                        class="menu__sub-icon "></i> </div>
+                                <div class="menu__title"> Pendistribusian </div>
                             </a>
-                            <ul class="">
-                                <li>
-                                    <a href="side-menu-light-product-list.html" class="menu">
-                                        <div class="menu__icon"> <i data-lucide="zap"></i> </div>
-                                        <div class="menu__title">Product List</div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="side-menu-light-product-grid.html" class="menu">
-                                        <div class="menu__icon"> <i data-lucide="zap"></i> </div>
-                                        <div class="menu__title">Product Grid</div>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li>
                             <a href="javascript:;" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Transactions <i data-lucide="chevron-down"
+                                <div class="menu__title"> Setoran <i data-lucide="chevron-down"
                                         class="menu__sub-icon "></i> </div>
                             </a>
                             <ul class="">
                                 <li>
-                                    <a href="side-menu-light-transaction-list.html" class="menu">
+                                    <a href="#" class="menu">
                                         <div class="menu__icon"> <i data-lucide="zap"></i> </div>
-                                        <div class="menu__title">Transaction List</div>
+                                        <div class="menu__title">Total Cicilan</div>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="side-menu-light-transaction-detail.html" class="menu">
+                                    <a href="#" class="menu">
                                         <div class="menu__icon"> <i data-lucide="zap"></i> </div>
-                                        <div class="menu__title">Transaction Detail</div>
+                                        <div class="menu__title">Rincian Cicilan</div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="menu">
+                                        <div class="menu__icon"> <i data-lucide="zap"></i> </div>
+                                        <div class="menu__title">Rincian Perpaket</div>
                                     </a>
                                 </li>
                             </ul>
-                        </li>
-                        <li>
-                            <a href="javascript:;" class="menu">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Sellers <i data-lucide="chevron-down"
-                                        class="menu__sub-icon "></i> </div>
-                            </a>
-                            <ul class="">
-                                <li>
-                                    <a href="side-menu-light-seller-list.html" class="menu">
-                                        <div class="menu__icon"> <i data-lucide="zap"></i> </div>
-                                        <div class="menu__title">Seller List</div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="side-menu-light-seller-detail.html" class="menu">
-                                        <div class="menu__icon"> <i data-lucide="zap"></i> </div>
-                                        <div class="menu__title">Seller Detail</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="side-menu-light-reviews.html" class="menu">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Reviews </div>
-                            </a>
                         </li>
                     </ul>
                 </li>
@@ -122,21 +86,27 @@
                     </a>
                     <ul class="">
                         <li>
-                            <a href="side-menu-light-dashboard-overview-1.html" class="menu menu--active">
+                            <a href="#" class="menu menu--active">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Side Menu </div>
+                                <div class="menu__title"> Supplier </div>
                             </a>
                         </li>
                         <li>
-                            <a href="simple-menu-light-dashboard-overview-1.html" class="menu menu--active">
+                            <a href="#" class="menu menu--active">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Simple Menu </div>
+                                <div class="menu__title"> Barang </div>
                             </a>
                         </li>
                         <li>
-                            <a href="top-menu-light-dashboard-overview-1.html" class="menu menu--active">
+                            <a href="#" class="menu menu--active">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Top Menu </div>
+                                <div class="menu__title"> Paket </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="menu menu--active">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Users </div>
                             </a>
                         </li>
                     </ul>
