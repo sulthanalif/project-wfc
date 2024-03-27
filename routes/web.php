@@ -38,3 +38,13 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin', [DashboardController::class, 'index'])->name('dashboard-admin');
 });
+Route::get('/dashboard-admin', function (){
+    return view('cms.admin.index');
+})->name('dashboard-admin');
+Route::get('/dashboard-user', function (){
+    return view('cms.agen.index');
+})->name('dashboard-user');
+
+Route::get('temp', function (){
+    return view('cms.admin.users.index');
+})->name('users');
