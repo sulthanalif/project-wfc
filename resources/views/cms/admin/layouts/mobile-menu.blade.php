@@ -73,10 +73,30 @@
                 </li>
                 <li class="menu__devider my-6"></li>
                 <li>
-                    <a href="side-menu-light-post.html" class="menu">
+                    <a href="javascript:;" class="menu">
                         <div class="menu__icon"> <i data-lucide="file-text"></i> </div>
-                        <div class="menu__title"> Laporan </div>
+                        <div class="menu__title"> Laporan <i data-lucide="chevron-down" class="menu__sub-icon "></i></div>
                     </a>
+                    <ul class="">
+                        <li>
+                            <a href="#" class="menu menu--active">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Pembelian Barang </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="menu menu--active">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Data Barang </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="menu menu--active">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> QTY Paket </div>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="javascript:;" class="menu">
@@ -105,6 +125,12 @@
                         </li>
                         <li>
                             <a href="#" class="menu menu--active">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Sub Agen </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('users') }}" class="menu menu--active">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Users </div>
                             </a>

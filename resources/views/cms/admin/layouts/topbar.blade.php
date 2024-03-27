@@ -5,7 +5,7 @@ class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt
     <!-- BEGIN: Logo -->
     <a href="" class="logo -intro-x hidden md:flex xl:w-[180px] block">
         <img alt="Midone - HTML Admin Template" class="logo__image w-6" src="{{ asset('assets/cms/images/logo.svg') }}">
-        <span class="logo__text text-white text-lg ml-3"> Enigma </span>
+        <span class="logo__text text-white text-lg ml-3"> Smart WFC </span>
     </a>
     <!-- END: Logo -->
     <!-- BEGIN: Breadcrumb -->

@@ -33,3 +33,7 @@ Route::get('/dashboard-admin', function (){
 Route::get('/dashboard-user', function (){
     return view('cms.agen.index');
 })->name('dashboard-user');
+
+Route::get('temp', function (){
+    return view('cms.admin.users.index');
+})->name('users');
