@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -27,9 +28,13 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/dashboard-admin', function (){
-    return '<h1>Dashboard Admin</h1>';
-})->name('dashboard-admin');
-Route::get('/dashboard-user', function (){
-    return '<h1>Dashboard User</h1>';
-})->name('dashboard-user');
+// Route::get('/dashboard-admin', function (){
+//     return '<h1>Dashboard Admin</h1>';
+// })->name('dashboard-admin');
+// Route::get('/dashboard-user', function (){
+//     return '<h1>Dashboard User</h1>';
+// })->name('dashboard-user');
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin', [DashboardController::class, 'index'])->name('dashboard-admin');
+});

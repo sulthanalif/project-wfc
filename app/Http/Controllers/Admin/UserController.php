@@ -15,12 +15,22 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        $this->authorize('viewAny', User::class);
+       // Pastikan hanya super admin yang dapat mengakses halaman ini.
+       $this->authorize('viewAny', User::class);
 
-        $users = User::all();
+       // Query untuk mengambil data user.
+       $users = User::query();
 
-        return view('users.index', compact('users'));
+       // Terapkan filter berdasarkan request (q)
+       if ($request->has('q')) {
+        $users->where('name', 'like', '%'.$request->get('q').'%');
+    }
+
+       // Paginasi data dengan 10 data per halaman.
+       $users = $users->paginate(10);
+
+       // Tampilkan data ke view.
+       return view('users.index', compact('users'));
     }
 
     /**
@@ -55,6 +65,7 @@ class UserController extends Controller
         ]);
 
         $user = User::create($validatedData);
+        $user->assignRole($request->role);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
