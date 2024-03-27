@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class DashboardController extends Controller
+class DashboardAdminController extends Controller
 {
 
     // public function __construct()
@@ -15,6 +16,6 @@ class DashboardController extends Controller
 
     public function index()
     {
-        return 'Dashboard Admin';
+        return view('cms.admin.index');
     }
 }

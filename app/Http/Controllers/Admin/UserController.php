@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
        // Pastikan hanya super admin yang dapat mengakses halaman ini.
-       $this->authorize('viewAny', User::class);
+    //    $this->authorize('viewAny', User::class);
 
        // Query untuk mengambil data user.
        $users = User::query();
@@ -42,7 +42,7 @@ class UserController extends Controller
     public function create(Request $request)
     {
         // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        $this->authorize('create', User::class);
+        // $this->authorize('create', User::class);
 
         return view('users.create');
     }
@@ -56,7 +56,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        $this->authorize('create', User::class);
+        // $this->authorize('create', User::class);
 
         $validatedData = $request->validate([
             'name' => 'required|max:255',
@@ -95,7 +95,7 @@ class UserController extends Controller
     public function edit(Request $request, User $user)
     {
         // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        $this->authorize('update', $user);
+        // $this->authorize('update', $user);
 
         return view('users.edit', compact('user'));
     }
@@ -110,7 +110,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        $this->authorize('update', $user);
+        // $this->authorize('update', $user);
 
         $validatedData = $request->validate([
             'name' => 'required|max:255',
@@ -133,7 +133,7 @@ class UserController extends Controller
     public function destroy(Request $request, User $user)
     {
         // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        $this->authorize('delete', $user);
+        // $this->authorize('delete', $user);
 
         $user->delete();
 

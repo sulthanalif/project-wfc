@@ -130,7 +130,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('users') }}" class="menu menu--active">
+                            <a href="" class="menu menu--active">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Users </div>
                             </a>
