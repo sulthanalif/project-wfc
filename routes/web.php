@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Agent\DashboardController;
@@ -35,7 +35,7 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
     //user profile
-    Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
+    // Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
     Route::get('/{user}/profile', [UserProfileController::class, 'show'])->name('users.profile');
     Route::get('/{user}/profile/edit', [UserProfileController::class, 'edit'])->name('users.profile.edit');
     Route::put('/{user}/profile', [UserProfileController::class, 'update'])->name('users.profile.update');
