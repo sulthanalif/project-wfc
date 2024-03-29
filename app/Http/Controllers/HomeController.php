@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class HomeController extends Controller
 {
+    use AuthenticatesUsers;
     /**
      * Create a new controller instance.
      *
@@ -23,6 +27,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('cms.admin.index');
+        $user = Auth::user();
+        if ($user->roles = 'admin' || 'super_admin' || 'finance_admin'){
+            return redirect()->route('dashboard-admin');
+        } else {
+            return redirect()->route('dashboard-agent');
+        }
+
     }
 }
