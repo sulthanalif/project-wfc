@@ -3,19 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\UserProfile;
+use App\Models\AgentProfile;
 use Illuminate\Support\Facades\Request;
-use App\Http\Requests\StoreUserProfileRequest;
-use App\Http\Requests\UpdateUserProfileRequest;
+// use App\Http\Requests\StoreagentProfileRequest;
+// use App\Http\Requests\UpdateagentProfileRequest;
 
-class UserProfileController extends Controller
+class AgentProfileController extends Controller
 {
     /**
      * Display the specified resource.
      */
     public function show(Request $request, User $user)
     {
-        $profile = $user->userProfile;
+        $profile = $user->agentProfile;
 
         view('user.profile', compact('user', 'profile'));
     }
@@ -25,7 +25,7 @@ class UserProfileController extends Controller
      */
     public function edit(Request $request, User $user)
     {
-        $profile = $user->userProfile;
+        $profile = $user->agentProfile;
 
         view('user.profile', compact('user', 'profile'));
     }
@@ -35,7 +35,7 @@ class UserProfileController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $profile = $user->userProfile;
+        $profile = $user->agentProfile;
 
         $validateData = $request->validate([
             'address' => 'nullable|string'

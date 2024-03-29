@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_profiles', function (Blueprint $table) {
+        Schema::create('agent_profiles', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id')->constrained('users')->onDelete('cascade');
             $table->string('address')->nullable();
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_profiles');
+        Schema::dropIfExists('agent_profiles');
     }
 };
