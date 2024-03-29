@@ -79,8 +79,8 @@ class UserController extends Controller
      */
     public function show(Request $request, User $user)
     {
-        // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        $this->authorize('view', $user);
+        // // Pastikan hanya super admin yang dapat mengakses halaman ini.
+        // $this->authorize('view', $user);
 
         return view('users.show', compact('user'));
     }
