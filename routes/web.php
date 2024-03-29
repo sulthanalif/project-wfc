@@ -3,12 +3,12 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Admin\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
 // use App\Http\Controllers\AgentProfileController;
+use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Admin\DashboardAdminController;
-use App\Http\Controllers\AgentProfileController;
 
 // use App\Http\Controllers\Auth\AuthController;
 // use App\Http\Controllers\DashboardController;
@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth'], function () {
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
+        Route::resource('user', UserController::class);
     });
 
     //agent
