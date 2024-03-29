@@ -1,4 +1,4 @@
-@extends('cms.admin.layouts.app')
+@extends('cms.layouts.app')
 
 @section('content')
 <div class="intro-y flex items-center mt-8">

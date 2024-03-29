@@ -4,7 +4,7 @@ class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt
 <div class="h-full flex items-center">
     <!-- BEGIN: Logo -->
     <a href="" class="logo -intro-x hidden md:flex xl:w-[180px] block">
-        <img alt="Midone - HTML Admin Template" class="logo__image w-6" src="{{ asset('assets/cms/images/logo.svg') }}">
+        <img alt="Smart WFC" class="logo__image w-6" src="{{ asset('assets/cms/images/logo.svg') }}">
         <span class="logo__text text-white text-lg ml-3"> Smart WFC </span>
     </a>
     <!-- END: Logo -->
@@ -60,60 +60,6 @@ class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt
                             layout. The point of using Lorem </div>
                     </div>
                 </div>
-                <div class="cursor-pointer relative flex items-center mt-5">
-                    <div class="w-12 h-12 flex-none image-fit mr-1">
-                        <img alt="Midone - HTML Admin Template" class="rounded-full"
-                            src="dist/images/profile-2.jpg">
-                        <div
-                            class="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white">
-                        </div>
-                    </div>
-                    <div class="ml-2 overflow-hidden">
-                        <div class="flex items-center">
-                            <a href="javascript:;" class="font-medium truncate mr-5">Johnny Depp</a>
-                            <div class="text-xs text-slate-400 ml-auto whitespace-nowrap">01:10 PM</div>
-                        </div>
-                        <div class="w-full truncate text-slate-500 mt-0.5">Lorem Ipsum is simply dummy text of
-                            the printing and typesetting industry. Lorem Ipsum has been the industry&#039;s
-                            standard dummy text ever since the 1500</div>
-                    </div>
-                </div>
-                <div class="cursor-pointer relative flex items-center mt-5">
-                    <div class="w-12 h-12 flex-none image-fit mr-1">
-                        <img alt="Midone - HTML Admin Template" class="rounded-full"
-                            src="dist/images/profile-5.jpg">
-                        <div
-                            class="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white">
-                        </div>
-                    </div>
-                    <div class="ml-2 overflow-hidden">
-                        <div class="flex items-center">
-                            <a href="javascript:;" class="font-medium truncate mr-5">Russell Crowe</a>
-                            <div class="text-xs text-slate-400 ml-auto whitespace-nowrap">05:09 AM</div>
-                        </div>
-                        <div class="w-full truncate text-slate-500 mt-0.5">It is a long established fact that a
-                            reader will be distracted by the readable content of a page when looking at its
-                            layout. The point of using Lorem </div>
-                    </div>
-                </div>
-                <div class="cursor-pointer relative flex items-center mt-5">
-                    <div class="w-12 h-12 flex-none image-fit mr-1">
-                        <img alt="Midone - HTML Admin Template" class="rounded-full"
-                            src="dist/images/profile-9.jpg">
-                        <div
-                            class="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white">
-                        </div>
-                    </div>
-                    <div class="ml-2 overflow-hidden">
-                        <div class="flex items-center">
-                            <a href="javascript:;" class="font-medium truncate mr-5">Kevin Spacey</a>
-                            <div class="text-xs text-slate-400 ml-auto whitespace-nowrap">01:10 PM</div>
-                        </div>
-                        <div class="w-full truncate text-slate-500 mt-0.5">Lorem Ipsum is simply dummy text of
-                            the printing and typesetting industry. Lorem Ipsum has been the industry&#039;s
-                            standard dummy text ever since the 1500</div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -122,22 +68,24 @@ class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt
     <div class="intro-x dropdown w-8 h-8">
         <div class="dropdown-toggle w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in scale-110"
             role="button" aria-expanded="false" data-tw-toggle="dropdown">
-            <img alt="Midone - HTML Admin Template" src="dist/images/profile-6.jpg">
+            <img alt="Profile" src="{{ asset('assets/cms/images/profile.svg') }}">
         </div>
         <div class="dropdown-menu w-56">
             <ul
                 class="dropdown-content bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
                 <li class="p-2">
-                    <div class="font-medium">Al Pacino</div>
-                    <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">DevOps Engineer</div>
+                    <div class="font-medium">{{ auth()->user()->name }}</div>
+                    <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">{{ auth()->user()->email }}</div>
                 </li>
                 <li>
                     <hr class="dropdown-divider border-white/[0.08]">
                 </li>
+                @hasrole('agent')
                 <li>
-                    <a href="" class="dropdown-item hover:bg-white/5"> <i data-lucide="user"
+                    <a href="{{ route('users.profile')}}" class="dropdown-item hover:bg-white/5"> <i data-lucide="user"
                             class="w-4 h-4 mr-2"></i> Profile </a>
                 </li>
+                @endhasrole
                 <li>
                     <a href="" class="dropdown-item hover:bg-white/5"> <i data-lucide="lock"
                             class="w-4 h-4 mr-2"></i> Reset Password </a>

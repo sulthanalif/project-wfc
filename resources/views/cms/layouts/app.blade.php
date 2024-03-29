@@ -18,12 +18,12 @@
 <!-- END: Head -->
 
 <body class="py-5 md:py-0">
-    @include('cms.admin.layouts.mobile-menu')
+    @include('cms.layouts.mobile-menu')
     
-    @include('cms.admin.layouts.topbar')
+    @include('cms.layouts.topbar')
 
     <div class="flex overflow-hidden">
-        @include('cms.admin.layouts.sidebar')
+        @include('cms.layouts.sidebar')
         <!-- BEGIN: Content -->
         <div class="content">
             @yield('content')
