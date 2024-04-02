@@ -55,7 +55,7 @@ class AgentProfileController extends Controller
                 'email' => $agent->email,
             ];
 
-            return view('cms.profile.index', compact('profile'));
+            return view('cms.profile.edit', compact('profile'));
         }
 
         $profile = [
@@ -64,7 +64,7 @@ class AgentProfileController extends Controller
             'address' => $agent->agentProfile->address
         ];
 
-        return view('cms.profile.index', compact('profile'));
+        return view('cms.profile.edit', compact('profile'));
     }
 
     /**

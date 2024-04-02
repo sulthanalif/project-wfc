@@ -3,7 +3,7 @@
     @hasrole('super_admin|admin|finance_admin')
     <ul>
         <li>
-            <a href="#" class="side-menu side-menu--active">
+            <a href="{{ route('dashboard-admin') }}" class="side-menu {{ Route::is('dashboard-admin') ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-lucide="home"></i> </div>
                 <div class="side-menu__title">
                     Dashboard
@@ -142,7 +142,7 @@
     @hasrole('agent')
     <ul>
         <li>
-            <a href="javascript:;.html" class="side-menu side-menu--active">
+            <a href="{{ route('dashboard-agent') }}" class="side-menu {{ Route::is('dashboard-agent') ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-lucide="home"></i> </div>
                 <div class="side-menu__title">
                     Dashboard
