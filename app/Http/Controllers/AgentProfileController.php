@@ -17,7 +17,7 @@ class AgentProfileController extends Controller
     {
         $profile = $user->agentProfile;
 
-        view('user.profile', compact('user', 'profile'));
+        return view('cms.profile.index', compact('user', 'profile'));
     }
 
     /**
@@ -27,7 +27,7 @@ class AgentProfileController extends Controller
     {
         $profile = $user->agentProfile;
 
-        view('user.profile', compact('user', 'profile'));
+        return view('cms.profile.edit', compact('user', 'profile'));
     }
 
     /**
@@ -43,7 +43,7 @@ class AgentProfileController extends Controller
 
         $profile->update($validateData);
 
-        return redirect()->route('user.profile', $user);
+        return redirect()->route('cms.profile.index', $user);
     }
 
 

@@ -28,10 +28,15 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
-        if ($user->roles = 'admin' || 'super_admin' || 'finance_admin'){
-            return redirect()->route('dashboard-admin');
-        } else {
+        $userRole = $user->roles->first();
+        $roleName = $userRole->name;
+
+        // return dd($roleName);
+
+        if ($roleName === "agent") {
             return redirect()->route('dashboard-agent');
+        } else {
+            return redirect()->route('dashboard-admin');
         }
 
     }

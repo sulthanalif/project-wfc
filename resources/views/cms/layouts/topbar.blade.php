@@ -82,7 +82,7 @@ class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt
                 </li>
                 @hasrole('agent')
                 <li>
-                    <a href="{{ route('users.profile')}}" class="dropdown-item hover:bg-white/5"> <i data-lucide="user"
+                    <a href="{{ route('users.profile', ["id" => auth()->user()->id])}}" class="dropdown-item hover:bg-white/5"> <i data-lucide="user"
                             class="w-4 h-4 mr-2"></i> Profile </a>
                 </li>
                 @endhasrole

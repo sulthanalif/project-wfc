@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Admin\Controllers\UserController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 // use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\AgentProfileController;
@@ -38,9 +38,9 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function () {
     //user profile
     // Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
-    Route::get('/{user}/profile', [AgentProfileController::class, 'show'])->name('users.profile');
-    Route::get('/{user}/profile/edit', [AgentProfileController::class, 'edit'])->name('users.profile.edit');
-    Route::put('/{user}/profile', [AgentProfileController::class, 'update'])->name('users.profile.update');
+    Route::get('/{id}/profile', [AgentProfileController::class, 'show'])->name('users.profile');
+    Route::get('/{id}/profile/edit', [AgentProfileController::class, 'edit'])->name('users.profile.edit');
+    Route::put('/{id}/profile', [AgentProfileController::class, 'update'])->name('users.profile.update');
 
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin'], function () {
