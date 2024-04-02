@@ -18,13 +18,25 @@ class AgentProfileController extends Controller
     {
         $agent = Auth::user();
 
+        if (!$agent->agentProfile){
+
+            $profile = [
+                'name' => $agent->name,
+                'email' => $agent->email,
+            ];
+
+            return view('cms.profile.index', compact('profile'));
+        }
+
         $profile = [
             'name' => $agent->name,
             'email' => $agent->email,
             'address' => $agent->agentProfile->address
         ];
 
-        return view('cms.profile.index', $profile);
+        return view('cms.profile.index', compact('profile'));
+
+
 
 
     }
@@ -36,13 +48,23 @@ class AgentProfileController extends Controller
     {
         $agent = Auth::user();
 
+        if (!$agent->agentProfile){
+
+            $profile = [
+                'name' => $agent->name,
+                'email' => $agent->email,
+            ];
+
+            return view('cms.profile.index', compact('profile'));
+        }
+
         $profile = [
             'name' => $agent->name,
             'email' => $agent->email,
             'address' => $agent->agentProfile->address
         ];
 
-        return view('cms.profile.edit', $profile);
+        return view('cms.profile.index', compact('profile'));
     }
 
     /**

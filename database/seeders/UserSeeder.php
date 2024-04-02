@@ -51,9 +51,9 @@ class UserSeeder extends Seeder
 
         $agent->assignRole('agent');
 
-        AgentProfile::create([
-            'user_id' => $agent->id,
-            'address' => 'Jalan Kenangan'
-        ]);
+        // AgentProfile::create([
+        //     'user_id' => $agent->id,
+        //     'address' => 'Jalan Kenangan'
+        // ]);
     }
 }
