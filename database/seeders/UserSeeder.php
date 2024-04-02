@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AgentProfile;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -49,5 +50,10 @@ class UserSeeder extends Seeder
         ]);
 
         $agent->assignRole('agent');
+
+        AgentProfile::create([
+            'user_id' => $agent->id,
+            'address' => 'Jalan Kenangan'
+        ]);
     }
 }

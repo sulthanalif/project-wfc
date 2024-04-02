@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\AgentProfile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 // use App\Http\Requests\StoreagentProfileRequest;
 // use App\Http\Requests\UpdateagentProfileRequest;
@@ -13,11 +14,19 @@ class AgentProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, User $user)
+    public function show(Request $request)
     {
-        $profile = $user->agentProfile;
+        $agent = Auth::user();
 
-        return view('cms.profile.index', compact('user', 'profile'));
+        $profile = [
+            'name' => $agent->name,
+            'email' => $agent->email,
+            'address' => $agent->agentProfile->address
+        ];
+
+        return view('cms.profile.index', $profile);
+
+
     }
 
     /**
@@ -25,9 +34,15 @@ class AgentProfileController extends Controller
      */
     public function edit(Request $request, User $user)
     {
-        $profile = $user->agentProfile;
+        $agent = Auth::user();
 
-        return view('cms.profile.edit', compact('user', 'profile'));
+        $profile = [
+            'name' => $agent->name,
+            'email' => $agent->email,
+            'address' => $agent->agentProfile->address
+        ];
+
+        return view('cms.profile.edit', $profile);
     }
 
     /**
