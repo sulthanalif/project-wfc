@@ -1,4 +1,4 @@
-@extends('cms.layouts.app')
+@extends('cms.layouts.app', ['title' => 'Dashboard'])
 
 @section('content')
 <div class="grid grid-cols-12 gap-6">

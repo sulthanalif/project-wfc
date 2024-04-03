@@ -13,7 +13,7 @@
                     class="w-8 h-8 text-white transform -rotate-90"></i> </a>
             <ul class="scrollable__content py-2">
                 <li>
-                    <a href=#" class="menu menu--active">
+                    <a href="{{ route('dashboard-admin') }}" class="menu {{ Route::is('dashboard-admin') ? 'menu--active' : '' }}">
                         <div class="menu__icon"> <i data-lucide="home"></i> </div>
                         <div class="menu__title"> Dashboard </div>
                     </a>
@@ -148,7 +148,7 @@
                     class="w-8 h-8 text-white transform -rotate-90"></i> </a>
             <ul class="scrollable__content py-2">
                 <li>
-                    <a href="#" class="menu menu--active">
+                    <a href="{{ route('dashboard-agent') }}" class="menu {{ Route::is('dashboard-agent') ? 'menu--active' : '' }}">
                         <div class="menu__icon"> <i data-lucide="home"></i> </div>
                         <div class="menu__title"> Dashboard </div>
                     </a>

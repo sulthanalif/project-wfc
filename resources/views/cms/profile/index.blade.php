@@ -1,23 +1,25 @@
-@extends('cms.layouts.app')
+@extends('cms.layouts.app', ['title' => 'Detail Profil'])
 
 @section('content')
     <div class="intro-y flex items-center mt-8">
         <h2 class="text-lg font-medium mr-auto">
             Detail Profil
         </h2>
+        <a href="{{ route('users.profile.edit', ["id" => auth()->user()->id])}}" class="btn btn-primary"><i data-lucide="edit"
+            class="w-4 h-4 mr-2"></i> Ubah Profil</a>
     </div>
     <!-- BEGIN: Profile Info -->
     <div class="intro-y box px-5 pt-5 mt-5">
         <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
             <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 flex-none lg:w-32 lg:h-32 image-fit relative">
-                    <img alt="Profile" class="rounded-full" src="dist/images/profile-14.jpg">
+                    <img alt="Profile" class="rounded-full" src="{{ asset('assets/cms/images/profile.svg') }}">
                     <div
                         class="absolute mb-1 mr-1 flex items-center justify-center bottom-0 right-0 bg-primary rounded-full p-2">
                         <i class="w-4 h-4 text-white" data-lucide="camera"></i> </div>
                 </div>
                 <div class="ml-5">
-                    <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">Salwa</div>
+                    <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">{{ $profile['name'] }}</div>
                     <div class="text-slate-500">Backend Engineer</div>
                 </div>
             </div>
@@ -26,11 +28,11 @@
                 <div class="font-medium text-center lg:text-left lg:mt-3">Contact Details</div>
                 <div class="flex flex-col justify-center items-center lg:items-start mt-4">
                     <div class="truncate sm:whitespace-normal flex items-center"> <i data-lucide="mail"
-                            class="w-4 h-4 mr-2"></i> salwa@gmail.com </div>
-                    <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="instagram"
-                            class="w-4 h-4 mr-2"></i> Instagram Salwa </div>
-                    <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="twitter"
-                            class="w-4 h-4 mr-2"></i> Twitter Salwa </div>
+                            class="w-4 h-4 mr-2"></i> {{ $profile['email'] }} </div>
+                    <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="phone"
+                            class="w-4 h-4 mr-2"></i> +6285979592102 </div>
+                    <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="map-pin"
+                            class="w-4 h-4 mr-2"></i> {{ $profile['address'] }} </div>
                 </div>
             </div>
         </div>
