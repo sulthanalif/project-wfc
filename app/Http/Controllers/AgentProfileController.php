@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\AgentProfile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Validator;
+
 // use App\Http\Requests\StoreagentProfileRequest;
 // use App\Http\Requests\UpdateagentProfileRequest;
 
@@ -70,17 +72,27 @@ class AgentProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request)
     {
-        $profile = $user->agentProfile;
-
-        $validateData = $request->validate([
-            'address' => 'nullable|string'
+        $validasi = Validator::make($request->all(), [
+            'address' => 'required|string'
         ]);
 
-        $profile->update($validateData);
+        if($validasi->fails()){
+            return back()->with('error', $validasi->errors());
+        }
 
-        return redirect()->route('cms.profile.index', $user);
+        $agent = Auth::user();
+
+        $profile = AgentProfile::create([
+            'user_id' => $agent->id,
+            'address' => $request->input('address')
+        ]);
+
+        if(!$profile){
+            return back()->with('error', 'Profile Gagal Update');
+        }
+        return back()->with('success', 'Profile Berhasil Terupdate');
     }
 
 
