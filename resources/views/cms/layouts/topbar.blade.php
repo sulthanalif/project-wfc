@@ -80,8 +80,22 @@ class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt
             <ul
                 class="dropdown-content bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
                 <li class="p-2">
-                    <div class="font-medium">{{ auth()->user()->name }}</div>
+                    @if (auth()->user()->hasRole('super_admin'))
+                    <div class="font-medium">Super Admin</div>
                     <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">{{ auth()->user()->email }}</div>
+                    @endif
+                    @if (auth()->user()->hasRole('admin'))
+                    <div class="font-medium">Admin</div>
+                    <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">{{ auth()->user()->email }}</div>
+                    @endif
+                    @if (auth()->user()->hasRole('finance_admin'))
+                    <div class="font-medium">Admin Keuangan</div>
+                    <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">{{ auth()->user()->email }}</div>
+                    @endif
+                    @if (auth()->user()->hasRole('agent'))
+                    <div class="font-medium">{{ optional(auth()->user()->agentProfile)->name }}</div>
+                    <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">Agen</div>
+                    @endif
                 </li>
                 <li>
                     <hr class="dropdown-divider border-white/[0.08]">
@@ -91,14 +105,14 @@ class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt
                     <a href="{{ route('users.profile', ["id" => auth()->user()->id])}}" class="dropdown-item hover:bg-white/5"> <i data-lucide="user"
                             class="w-4 h-4 mr-2"></i> Profile </a>
                 </li>
+                <li>
+                    <hr class="dropdown-divider border-white/[0.08]">
+                </li>
                 @endhasrole
                 {{-- <li>
                     <a href="" class="dropdown-item hover:bg-white/5"> <i data-lucide="lock"
                             class="w-4 h-4 mr-2"></i> Reset Password </a>
                 </li> --}}
-                <li>
-                    <hr class="dropdown-divider border-white/[0.08]">
-                </li>
                 <li>
                     <a href="{{ route('logout') }}" class="dropdown-item hover:bg-white/5" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();"> <i data-lucide="toggle-right"

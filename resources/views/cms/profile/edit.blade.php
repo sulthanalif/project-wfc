@@ -14,27 +14,29 @@
                 <div id="form-validation" class="p-5">
                     <div class="preview">
                         <!-- BEGIN: Validation Form -->
-                        <form  method="POST" action="{{ route('users.profile.update', ["id" => auth()->user()->id]) }}">
+                        <form method="POST" action="{{ route('users.profile.update', ['id' => auth()->user()->id]) }}">
                             @method('PUT')
                             @csrf
                             {{-- <input type="hidden" name="id" id="id" value="{{ auth()->user()->id }}"> --}}
-                            {{-- <div class="input-form">
+                            <div class="input-form">
                                 <label for="name" class="form-label w-full flex flex-col sm:flex-row"> Nama Lengkap
                                 </label>
                                 <input id="name" type="text" name="name" class="form-control"
                                     placeholder="Isikan Nama Lengkap" minlength="2" required
-                                    value="{{ $profile['name'] }}">
+                                    value="{{ $agent->agentProfile->name }}">
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                            </div> --}}
+                            </div>
                             <div class="input-form mt-3">
-                                <label for="name" class="form-label w-full flex flex-col sm:flex-row"> Alamat
-                                    Lengkap</label>
-                                <textarea id="name" class="form-control" name="name" placeholder="Type your comments" minlength="10" required>{{ $agent->agentProfile->name}}</textarea>
-                                @error('name')
+                                <label for="no_hp" class="form-label w-full flex flex-col sm:flex-row"> Nomor Telepon
+                                </label>
+                                <input id="no_hp" type="number" name="no_hp" class="form-control"
+                                    placeholder="Isikan Nomor Telepon Aktif" maxlength="13" required
+                                    value="{{ $agent->agentProfile->no_hp }}">
+                                @error('no_hp')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -43,7 +45,7 @@
                             <div class="input-form mt-3">
                                 <label for="address" class="form-label w-full flex flex-col sm:flex-row"> Alamat
                                     Lengkap</label>
-                                <textarea id="address" class="form-control" name="address" placeholder="Type your comments" minlength="10" required>{{ $agent->agentProfile->address}}</textarea>
+                                <textarea id="address" class="form-control" name="address" placeholder="Type your comments" minlength="10" required>{{ $agent->agentProfile->address }}</textarea>
                                 @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

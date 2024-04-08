@@ -7,8 +7,11 @@
             {{ __('Reset Password') }}
         </h2>
         @if (session('status'))
-            <div class="alert alert-success" role="alert">
-                {{ session('status') }}
+            <div id="success-notification-content" class="toastify-content flex my-3">
+                <i class="text-success" data-lucide="check-circle"></i>
+                <div class="ml-4 mr-4">
+                    <div class="font-medium">{{ session('status') }}</div>
+                </div>
             </div>
         @endif
         <form method="POST" action="{{ route('password.email') }}">
@@ -25,7 +28,7 @@
             </div>
             <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
                 <button class="btn btn-primary py-3 px-4 w-full xl:mr-3 align-top"
-                    type="submit">{{ __('Send Password Reset Link') }}</button>
+                    type="submit">{{ __('Kirim Link Reset Password') }}</button>
             </div>
         </form>
     </div>
