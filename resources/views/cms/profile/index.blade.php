@@ -19,7 +19,7 @@
                         <i class="w-4 h-4 text-white" data-lucide="camera"></i> </div>
                 </div>
                 <div class="ml-5">
-                    <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">{{ $profile['name'] }}</div>
+                    <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">{{ $agent->agentProfile->name }}</div>
                     <div class="text-slate-500">Backend Engineer</div>
                 </div>
             </div>
@@ -28,11 +28,11 @@
                 <div class="font-medium text-center lg:text-left lg:mt-3">Contact Details</div>
                 <div class="flex flex-col justify-center items-center lg:items-start mt-4">
                     <div class="truncate sm:whitespace-normal flex items-center"> <i data-lucide="mail"
-                            class="w-4 h-4 mr-2"></i> {{ $profile['email'] }} </div>
+                            class="w-4 h-4 mr-2"></i> {{ $agent->email }} </div>
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="phone"
                             class="w-4 h-4 mr-2"></i> +6285979592102 </div>
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="map-pin"
-                            class="w-4 h-4 mr-2"></i> {{ $profile['address'] }} </div>
+                            class="w-4 h-4 mr-2"></i> {{ ($agent->agentProfile->address == NULL)? 'Harap isi alamat!' : $agent->agentProfile->address }} </div>
                 </div>
             </div>
         </div>

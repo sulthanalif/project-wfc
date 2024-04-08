@@ -31,9 +31,19 @@
                                 @enderror
                             </div> --}}
                             <div class="input-form mt-3">
+                                <label for="name" class="form-label w-full flex flex-col sm:flex-row"> Alamat
+                                    Lengkap</label>
+                                <textarea id="name" class="form-control" name="name" placeholder="Type your comments" minlength="10" required>{{ $agent->agentProfile->name}}</textarea>
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="input-form mt-3">
                                 <label for="address" class="form-label w-full flex flex-col sm:flex-row"> Alamat
                                     Lengkap</label>
-                                <textarea id="address" class="form-control" name="address" placeholder="Type your comments" minlength="10" required>{{ $profile['address']}}</textarea>
+                                <textarea id="address" class="form-control" name="address" placeholder="Type your comments" minlength="10" required>{{ $agent->agentProfile->address}}</textarea>
                                 @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

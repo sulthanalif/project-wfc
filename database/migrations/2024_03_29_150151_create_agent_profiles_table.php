@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('agent_profiles', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('name');
             $table->string('address')->nullable();
             $table->timestamps();
         });
