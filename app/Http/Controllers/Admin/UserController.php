@@ -113,8 +113,6 @@ class UserController extends Controller
      */
     public function edit(Request $request, User $user)
     {
-
-
         return view('users.edit', compact('user'));
     }
 
@@ -128,7 +126,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'max:225', 'string'],
+            'name' => ['nullable', 'max:225', 'string'],
             'email' => ['required', 'max:25', 'unique:users,email'],
             'password' => ['required'],
             'role' => ['required', 'string'],
@@ -149,11 +147,15 @@ class UserController extends Controller
 
                 ($request->role) ? $user->assignRole($request->role) : '';
 
-                $user->agentProfile->update([
-                    'name' => $request->name,
-                    'address' => ($request->address) ? $request->address : NULL,
-                    'phone_number' => ($request->phone_number) ? $request->phone_number : NULL
-                ]);
+                if($request->role !== "agent"){
+                    $user->email_verified_at = now();
+                } else {
+                    $user->agentProfile()->create([
+                        'name' => $request->name,
+                        'address' => $request->address,
+                        'phone_number' => $request->phone_number
+                    ]);
+                }
 
             });
             if (!$update) {
