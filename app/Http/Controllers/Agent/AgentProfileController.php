@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 // use App\Http\Requests\StoreagentProfileRequest;
 // use App\Http\Requests\UpdateagentProfileRequest;
@@ -50,12 +51,19 @@ class AgentProfileController extends Controller
 
         $agent = Auth::user();
 
-        $update = $agent->agentProfile->update(Request::all());
-
-        if(!$update) {
-            return back()->with('error', 'Data Tidak Berhasil Diubah!');
-        } else {
-            return view('cms.profile.index', compact('agent'))->with('success', 'Data Berhasil Diubah');
+        try {
+            DB::transaction(function () use ( $agent, &$update) {
+                $update = $agent->agentProfile->update(Request::all());
+            });
+            if(!$update) {
+                return back()->with('error', 'Data Tidak Berhasil Diubah!');
+            } else {
+                return view('cms.profile.index', compact('agent'))->with('success', 'Data Berhasil Diubah');
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ], 400);
         }
     }
 

@@ -1,4 +1,6 @@
-@extends('cms.layouts.app')
+@extends('cms.layouts.app', [
+    'title' => 'Tambah'
+])
 
 @section('content')
 <div class="intro-y flex items-center mt-8">
@@ -14,7 +16,8 @@
             <div id="form-validation" class="p-5">
                 <div class="preview">
                     <!-- BEGIN: Validation Form -->
-                    <form class="validate-form">
+                    <form class="validate-form" method="POST" action="{{ route('user.store') }}">
+                        @csrf
                         <div class="input-form">
                             <label for="validation-form-1" class="form-label w-full flex flex-col sm:flex-row"> Nama Lengkap </label>
                             <input id="validation-form-1" type="text" name="name" class="form-control" placeholder="Salwa" minlength="2" required>
@@ -27,13 +30,32 @@
                             <label for="validation-form-3" class="form-label w-full flex flex-col sm:flex-row"> Password </label>
                             <input id="validation-form-3" type="password" name="password" class="form-control" placeholder="secret" minlength="6" required>
                         </div>
+
+                        <div class="input-form mt-3">
+                            <label for="validation-form-6" class="form-label w-full flex flex-col sm:flex-row"> Role </label>
+                            <select class="form-select" id="validation-form-6" name="role">
+                                <option selected>Pilih...</option>
+                                <option value="super_admin">Super Admin</option>
+                                <option value="admin">Admin</option>
+                                <option value="finance_admin">Keuangan</option>
+                                <option value="agent">Agent</option>
+                              </select>
+                        </div>
+                        <div class="input-form mt-3">
+                            <label for="validation-form-3" class="form-label w-full flex flex-col sm:flex-row"> Alamat (Opsional) </label>
+                            <textarea id="address" class="form-control" name="address" placeholder="Type your comments" minlength="10" required></textarea>
+                        </div>
+                        <div class="input-form mt-3">
+                            <label for="validation-form-3" class="form-label w-full flex flex-col sm:flex-row"> Nomer HP (Opsional) </label>
+                            <input id="validation-form-3" type="number" name="phone_number" class="form-control" placeholder="Nomer HP" minlength="6" required>
+                        </div>
                         <button type="submit" class="btn btn-primary mt-5 mr-1">Simpan</button>
                         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary mt-5">Kembali</a>
                     </form>
                     <!-- END: Validation Form -->
                     <!-- BEGIN: Success Notification Content -->
                     <div id="success-notification-content" class="toastify-content hidden flex" >
-                        <i class="text-success" data-lucide="check-circle"></i> 
+                        <i class="text-success" data-lucide="check-circle"></i>
                         <div class="ml-4 mr-4">
                             <div class="font-medium">User berhasil ditambahkan!</div>
                             <div class="text-slate-500 mt-1"> Please check your e-mail for further info! </div>
@@ -42,7 +64,7 @@
                     <!-- END: Success Notification Content -->
                     <!-- BEGIN: Failed Notification Content -->
                     <div id="failed-notification-content" class="toastify-content hidden flex" >
-                        <i class="text-danger" data-lucide="x-circle"></i> 
+                        <i class="text-danger" data-lucide="x-circle"></i>
                         <div class="ml-4 mr-4">
                             <div class="font-medium">User gagal ditambahkan!</div>
                             <div class="text-slate-500 mt-1"> Please check the fileld form. </div>

@@ -45,15 +45,114 @@ class UserSeeder extends Seeder
         // Agent User
         $agent = User::create([
             // 'name' => 'Agent',
-            'email' => 'agent@gmail.com',
+            'email' => 'agent1@gmail.com',
             'password' => Hash::make('password'),
+            'email_verified_at' => now()
         ]);
 
         $agent->agentProfile()->create([
-            'name' => 'Agent'
+            'name' => 'Agent1'
         ]);
 
         $agent->assignRole('agent');
+
+        // Agent User
+        $agent2 = User::create([
+            // 'name' => 'Agent',
+            'email' => 'agent2@gmail.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now()
+        ]);
+
+        $agent2->agentProfile()->create([
+            'name' => 'Agent2'
+        ]);
+
+        $agent2->assignRole('agent');
+
+        // Agent User
+        $agent3 = User::create([
+            // 'name' => 'Agent',
+            'email' => 'agent3@gmail.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now()
+        ]);
+
+        $agent3->agentProfile()->create([
+            'name' => 'Agent3'
+        ]);
+
+        $agent3->assignRole('agent');
+
+        // Agent User
+        $agent4 = User::create([
+            // 'name' => 'Agent',
+            'email' => 'agent4@gmail.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now()
+        ]);
+
+        $agent4->agentProfile()->create([
+            'name' => 'Agent4'
+        ]);
+
+        $agent4->assignRole('agent');
+
+        // Agent User
+        $agent5 = User::create([
+            // 'name' => 'Agent',
+            'email' => 'agent5@gmail.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now()
+        ]);
+
+        $agent5->agentProfile()->create([
+            'name' => 'Agent5'
+        ]);
+
+        $agent5->assignRole('agent');
+
+        // Agent User
+        $agent6 = User::create([
+            // 'name' => 'Agent',
+            'email' => 'agent6@gmail.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now()
+        ]);
+
+        $agent6->agentProfile()->create([
+            'name' => 'Agent6'
+        ]);
+
+        $agent6->assignRole('agent');
+
+        // Agent User
+        $agent7 = User::create([
+            // 'name' => 'Agent',
+            'email' => 'agent7@gmail.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now()
+        ]);
+
+        $agent7->agentProfile()->create([
+            'name' => 'Agent7'
+        ]);
+
+        $agent7->assignRole('agent');
+
+        // Agent User
+        $agent8 = User::create([
+            // 'name' => 'Agent',
+            'email' => 'agent8@gmail.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now()
+        ]);
+
+        $agent8->agentProfile()->create([
+            'name' => 'Agent8'
+        ]);
+
+        $agent8->assignRole('agent');
 
         // AgentProfile::create([
         //     'user_id' => $agent->id,

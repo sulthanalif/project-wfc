@@ -1,19 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Katalog;
-use App\Http\Requests\StoreKatalogRequest;
-use App\Http\Requests\UpdateKatalogRequest;
+use App\Models\Catalog;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCatalogRequest;
+use App\Http\Requests\UpdateCatalogRequest;
 
-class KatalogController extends Controller
+class CatalogController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $catalog = Catalog::all();
+
+        return view('admin.catalog.index', compact('catalog'));
     }
 
     /**
@@ -27,7 +30,7 @@ class KatalogController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreKatalogRequest $request)
+    public function store(StoreCatalogRequest $request)
     {
         //
     }
@@ -35,7 +38,7 @@ class KatalogController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Katalog $katalog)
+    public function show(Catalog $catalog)
     {
         //
     }
@@ -43,7 +46,7 @@ class KatalogController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Katalog $katalog)
+    public function edit(Catalog $catalog)
     {
         //
     }
@@ -51,7 +54,7 @@ class KatalogController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateKatalogRequest $request, Katalog $katalog)
+    public function update(UpdateCatalogRequest $request, Catalog $catalog)
     {
         //
     }
@@ -59,7 +62,7 @@ class KatalogController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Katalog $katalog)
+    public function destroy(Catalog $catalog)
     {
         //
     }

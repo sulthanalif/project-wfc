@@ -16,6 +16,7 @@ return new class extends Migration
             $table->uuid('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('address')->nullable();
+            $table->string('phone_number')->nullable();
             $table->timestamps();
         });
     }

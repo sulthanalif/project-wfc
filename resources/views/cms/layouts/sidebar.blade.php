@@ -127,18 +127,20 @@
                         <div class="side-menu__title"> Sub Agen </div>
                     </a>
                 </li>
+                @hasrole('super_admin')
                 <li>
-                    <a href="" class="side-menu">
+                    <a href="{{ route('user.index') }}" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                         <div class="side-menu__title"> Users </div>
                     </a>
                 </li>
+                @endhasrole
             </ul>
         </li>
     </ul>
     @endhasrole
 
-    
+
     @hasrole('agent')
     <ul>
         <li>

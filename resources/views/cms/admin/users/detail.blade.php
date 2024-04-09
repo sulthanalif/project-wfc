@@ -1,4 +1,6 @@
-@extends('cms.layouts.app')
+@extends('cms.layouts.app', [
+    'title' => 'Detail'
+])
 
 @section('content')
     <div class="intro-y flex items-center mt-8">
@@ -17,7 +19,7 @@
                         <i class="w-4 h-4 text-white" data-lucide="camera"></i> </div>
                 </div>
                 <div class="ml-5">
-                    <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">Salwa</div>
+                    <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">{{ ($user->agentProfile) ? $user->agentProfile->name : $user->roles->first()->name }}</div>
                     <div class="text-slate-500">Backend Engineer</div>
                 </div>
             </div>
@@ -26,11 +28,14 @@
                 <div class="font-medium text-center lg:text-left lg:mt-3">Contact Details</div>
                 <div class="flex flex-col justify-center items-center lg:items-start mt-4">
                     <div class="truncate sm:whitespace-normal flex items-center"> <i data-lucide="mail"
-                            class="w-4 h-4 mr-2"></i> salwa@gmail.com </div>
+                            class="w-4 h-4 mr-2"></i> {{ $user->email }} </div>
+                    @if ($user->roles->first()->name == 'agent')
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="instagram"
-                            class="w-4 h-4 mr-2"></i> Instagram Salwa </div>
+                        class="w-4 h-4 mr-2"></i> {{ ($user->agentProfile->phone_number) ? $user->agentProfile->phone_number : 'Nomer HP Belum Diisi' }} </div>
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="twitter"
-                            class="w-4 h-4 mr-2"></i> Twitter Salwa </div>
+                        class="w-4 h-4 mr-2"></i> {{ ($user->agentProfile->address) ? $user->agentProfile->address : 'Alamat Belum Diisi' }} </div>
+                    @endif
+
                 </div>
             </div>
         </div>

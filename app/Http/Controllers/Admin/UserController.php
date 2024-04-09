@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -16,22 +19,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-       // Pastikan hanya super admin yang dapat mengakses halaman ini.
-    //    $this->authorize('viewAny', User::class);
-
-       // Query untuk mengambil data user.
-       $users = User::query();
-
-       // Terapkan filter berdasarkan request (q)
-       if ($request->has('q')) {
-        $users->where('name', 'like', '%'.$request->get('q').'%');
-    }
-
-       // Paginasi data dengan 10 data per halaman.
-       $users = $users->paginate(10);
-
+        $users = User::paginate(10);
        // Tampilkan data ke view.
-       return view('users.index', compact('users'));
+       return view('cms.admin.users.index', compact('users'));
     }
 
     /**
@@ -42,10 +32,8 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        // $this->authorize('create', User::class);
 
-        return view('users.create');
+        return view('cms.admin.users.tambah');
     }
 
     /**
@@ -56,19 +44,50 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        // $this->authorize('create', User::class);
-
-        $validatedData = $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'max:225', 'string'],
+            'email' => ['required', 'max:25', 'unique:users,email'],
+            'password' => ['required'],
+            'role' => ['required', 'string'],
+            'address' => ['string'],
+            'phone_number' => ['string'],
         ]);
 
-        $user = User::create($validatedData);
-        $user->assignRole($request->role);
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors());
+        }
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        try {
+            DB::transaction(function () use ($request, &$user) {
+                $user = User::create([
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                ]);
+
+                ($request->role) ? $user->assignRole($request->role) : 'Guest' ;
+                if($request->role !== "agent"){
+                    $user->email_verified_at = now();
+                }
+
+                $user->agentProfile()->create([
+                    'name' => $request->name,
+                    'address' => $request->address,
+                    'phone_number' => $request->phone_number
+                ]);
+
+            });
+            if (!$user) {
+                return back()->with('error', 'Data Tidak Berhasil Ditambah!');
+            } else {
+                return redirect()->route('user.index')->with('success', 'Data Berhasil Ditambah');
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ], 400);
+        }
+
+
     }
 
     /**
@@ -80,10 +99,8 @@ class UserController extends Controller
      */
     public function show(Request $request, User $user)
     {
-        // // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        // $this->authorize('view', $user);
 
-        return view('users.show', compact('user'));
+        return view('cms.admin.users.detail', compact('user'));
     }
 
     /**
@@ -95,8 +112,7 @@ class UserController extends Controller
      */
     public function edit(Request $request, User $user)
     {
-        // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        // $this->authorize('update', $user);
+
 
         return view('users.edit', compact('user'));
     }
@@ -110,18 +126,47 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        // $this->authorize('update', $user);
-
-        $validatedData = $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:8|confirmed',
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'max:225', 'string'],
+            'email' => ['required', 'max:25', 'unique:users,email'],
+            'password' => ['required'],
+            'role' => ['required', 'string'],
+            'address' => ['string'],
+            'phone_number' => ['string'],
         ]);
 
-        $user->update($validatedData);
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors());
+        }
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        try {
+            DB::transaction(function () use ($request, $user, &$update) {
+                $user->update([
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                ]);
+
+                ($request->role) ? $user->assignRole($request->role) : '';
+
+                $user->agentProfile->update([
+                    'name' => $request->name,
+                    'address' => ($request->address) ? $request->address : NULL,
+                    'phone_number' => ($request->phone_number) ? $request->phone_number : NULL
+                ]);
+
+            });
+            if (!$update) {
+                return back()->with('error', 'Data Tidak Berhasil Diubah!');
+            } else {
+                return redirect()->route('user.index')->with('success', 'Data Berhasil Diubah');
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ], 400);
+        }
+
+
     }
 
     /**
@@ -136,8 +181,12 @@ class UserController extends Controller
         // Pastikan hanya super admin yang dapat mengakses halaman ini.
         // $this->authorize('delete', $user);
 
-        $user->delete();
+        $delete = $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        if ($delete){
+            return redirect()->route('cms.admin.users.index')->with('success', 'User deleted successfully.');
+        } else {
+            return back()->with('error', 'Data Tidak Bisa Dihapus!');
+        }
     }
 }

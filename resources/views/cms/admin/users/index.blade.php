@@ -1,4 +1,6 @@
-@extends('cms.layouts.app')
+@extends('cms.layouts.app', [
+    'title' => 'Users'
+])
 
 @section('content')
 <h2 class="intro-y text-lg font-medium mt-10">
@@ -7,16 +9,17 @@
 <div class="grid grid-cols-12 gap-6 mt-5">
     <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
         {{-- <a href="{{ route('tambah-user') }}" class="btn btn-primary shadow-md mr-2">Tambah User</a> --}}
-        <a href="#" class="btn btn-primary shadow-md mr-2">Tambah User</a>
+        <a href="{{ route('user.create') }}" class="btn btn-primary shadow-md mr-2">Tambah User</a>
         <div class="hidden md:block mx-auto text-slate-500">Showing 1 to 10 of 150 entries</div>
         <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
             <div class="w-56 relative text-slate-500">
                 <input type="text" class="form-control w-56 box pr-10" placeholder="Search...">
-                <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i> 
+                <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
             </div>
         </div>
     </div>
     <!-- BEGIN: Users Layout -->
+    @foreach ($users as $user)
     <div class="intro-y col-span-12 md:col-span-4">
         <div class="box">
             <div class="flex flex-col lg:flex-row items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
@@ -24,7 +27,7 @@
                     <img alt="Profile" class="rounded-full" src="dist/images/profile-5.jpg">
                 </div>
                 <div class="lg:ml-2 lg:mr-auto text-center lg:text-left mt-3 lg:mt-0">
-                    <a href="" class="font-medium">Salwa</a> 
+                    <a href="" class="font-medium">{{ ($user->agentProfile) ? $user->agentProfile->name : $user->roles->first()->name }}</a>
                     <div class="text-slate-500 text-xs mt-0.5">Backend Engineer</div>
                 </div>
                 <div class="flex -ml-2 lg:ml-0 lg:justify-end mt-3 lg:mt-0">
@@ -34,58 +37,23 @@
                 </div>
             </div>
             <div class="flex flex-wrap lg:flex-nowrap items-center justify-left p-5">
-                <button class="btn btn-primary py-1 px-2 mr-2">Profile</button>
-                <button class="btn btn-danger py-1 px-2">Delete</button>
+                <a href="{{ route('user.show', [ 'user' => $user->id ]) }}" class="btn btn-primary py-1 px-2 mr-2">Profile</a>
+                <form method="delete" action="{{ route('user.destroy', [ 'user' => $user->id ]) }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger py-1 px-2">Delete</button>
+                </form>
             </div>
         </div>
     </div>
-    <div class="intro-y col-span-12 md:col-span-4">
-        <div class="box">
-            <div class="flex flex-col lg:flex-row items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-                <div class="w-24 h-24 lg:w-12 lg:h-12 image-fit lg:mr-1">
-                    <img alt="Profile" class="rounded-full" src="dist/images/profile-5.jpg">
-                </div>
-                <div class="lg:ml-2 lg:mr-auto text-center lg:text-left mt-3 lg:mt-0">
-                    <a href="" class="font-medium">Salwa</a> 
-                    <div class="text-slate-500 text-xs mt-0.5">Backend Engineer</div>
-                </div>
-                <div class="flex -ml-2 lg:ml-0 lg:justify-end mt-3 lg:mt-0">
-                    <a href="" class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip" title="Facebook"> <i class="w-3 h-3 fill-current" data-lucide="facebook"></i> </a>
-                    <a href="" class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip" title="Twitter"> <i class="w-3 h-3 fill-current" data-lucide="twitter"></i> </a>
-                    <a href="" class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip" title="Linked In"> <i class="w-3 h-3 fill-current" data-lucide="linkedin"></i> </a>
-                </div>
-            </div>
-            <div class="flex flex-wrap lg:flex-nowrap items-center justify-left p-5">
-                <button class="btn btn-primary py-1 px-2 mr-2">Profile</button>
-                <button class="btn btn-danger py-1 px-2">Delete</button>
-            </div>
-        </div>
-    </div>
-    <div class="intro-y col-span-12 md:col-span-4">
-        <div class="box">
-            <div class="flex flex-col lg:flex-row items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-                <div class="w-24 h-24 lg:w-12 lg:h-12 image-fit lg:mr-1">
-                    <img alt="Profile" class="rounded-full" src="dist/images/profile-5.jpg">
-                </div>
-                <div class="lg:ml-2 lg:mr-auto text-center lg:text-left mt-3 lg:mt-0">
-                    <a href="" class="font-medium">Salwa</a> 
-                    <div class="text-slate-500 text-xs mt-0.5">Backend Engineer</div>
-                </div>
-                <div class="flex -ml-2 lg:ml-0 lg:justify-end mt-3 lg:mt-0">
-                    <a href="" class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip" title="Facebook"> <i class="w-3 h-3 fill-current" data-lucide="facebook"></i> </a>
-                    <a href="" class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip" title="Twitter"> <i class="w-3 h-3 fill-current" data-lucide="twitter"></i> </a>
-                    <a href="" class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip" title="Linked In"> <i class="w-3 h-3 fill-current" data-lucide="linkedin"></i> </a>
-                </div>
-            </div>
-            <div class="flex flex-wrap lg:flex-nowrap items-center justify-left p-5">
-                <button class="btn btn-primary py-1 px-2 mr-2">Profile</button>
-                <button class="btn btn-danger py-1 px-2">Delete</button>
-            </div>
-        </div>
-    </div>
+    @endforeach
+
+
     <!-- END: Users Layout -->
     <!-- BEGIN: Pagination -->
     <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+    {{ $users->links() }}
+    </div>
+    {{-- <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
         <nav class="w-full sm:w-auto sm:mr-auto">
             <ul class="pagination">
                 <li class="page-item">
@@ -113,7 +81,7 @@
             <option>35</option>
             <option>50</option>
         </select>
-    </div>
+    </div> --}}
     <!-- END: Pagination -->
 </div>
 @endsection
