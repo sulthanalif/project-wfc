@@ -27,8 +27,8 @@
                             <img alt="Profile" class="rounded-full" src="{{ asset('assets/cms/images/profile.svg') }}">
                         </div>
                         <div class="lg:ml-2 lg:mr-auto text-center lg:text-left mt-3 lg:mt-0">
-                            <a href="{{ route('user.show', ['user' => $user->id]) }}"
-                                class="font-medium">{{ $user->agentProfile ? $user->agentProfile->name : $user->roles->first()->name }}</a>
+                            <a href="{{ route('user.show', $user) }}"
+                                class="font-medium">{{ $user->agentProfile ? $user->agentProfile->name : $user->email }}</a>
                             @if ($user->roles->first()->name == 'super_admin')
                                 <div class="text-slate-500 text-xs mt-0.5">Super Admin</div>
                             @elseif ($user->roles->first()->name == 'admin')
@@ -40,7 +40,7 @@
                             @endif
                         </div>
                         <div class="flex -ml-2 lg:ml-0 lg:justify-end mt-3 lg:mt-0">
-                            <a href="{{ route('user.show', ['user' => $user->id]) }}"
+                            <a href="{{ route('user.show', $user) }}"
                                 class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip"
                                 title="Detail"> <i class="w-3 h-3" data-lucide="user"></i> </a>
                             @if (in_array($user->roles->first()->name, ['super_admin', 'admin', 'finance_admin']))
@@ -62,11 +62,12 @@
                     <div class="flex flex-wrap lg:flex-nowrap items-center justify-left p-5">
                         <a href="#"
                             class="btn btn-warning py-1 px-2 mr-2">Aktif</a>
-                        <form method="post" action="{{ route('user.destroy', ['user' => $user->id]) }}">
-                            @method('delete')
-                            @csrf
-                            <button type="submit" class="btn btn-danger py-1 px-2">Hapus</button>
-                        </form>
+                            <form method="POST" action="{{ route('user.destroy', $user) }}" onsubmit="return confirm('apakah anda yakin?')">
+                                @csrf
+                                @method('delete')
+                                <input type="hidden" name="page" value="{{ $users->currentPage() }}">
+                                <button type="submit" class="btn btn-danger py-1 px-2">Hapus</button>
+                            </form>
                     </div>
                 </div>
             </div>
@@ -96,7 +97,7 @@
                     </li>
                     </ul>
             </nav>
-        
+
             <select class="w-20 form-select box mt-3 sm:mt-0" wire:model="perPage">
                 <option value="10">10</option>
                 <option value="25">25</option>

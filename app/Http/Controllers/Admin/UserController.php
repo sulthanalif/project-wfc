@@ -20,8 +20,9 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::paginate(10);
+        $n = 1;
        // Tampilkan data ke view.
-       return view('cms.admin.users.index', compact('users'));
+       return view('cms.admin.users.index', compact('users' ,'n'));
     }
 
     /**
@@ -44,13 +45,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'max:225', 'string'],
+            'name' => ['nullable', 'max:225', 'string'],
             'email' => ['required', 'max:25', 'unique:users,email'],
             'password' => ['required'],
             'role' => ['required', 'string'],
-            'address' => ['string'],
-            'phone_number' => ['string'],
+            'address' => ['nullable', 'string'],
+            'phone_number' => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -67,14 +69,13 @@ class UserController extends Controller
                 ($request->role) ? $user->assignRole($request->role) : 'Guest' ;
                 if($request->role !== "agent"){
                     $user->email_verified_at = now();
+                } else {
+                    $user->agentProfile()->create([
+                        'name' => $request->name,
+                        'address' => $request->address,
+                        'phone_number' => $request->phone_number
+                    ]);
                 }
-
-                $user->agentProfile()->create([
-                    'name' => $request->name,
-                    'address' => $request->address,
-                    'phone_number' => $request->phone_number
-                ]);
-
             });
             if (!$user) {
                 return back()->with('error', 'Data Tidak Berhasil Ditambah!');
@@ -178,13 +179,12 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
-        // Pastikan hanya super admin yang dapat mengakses halaman ini.
-        // $this->authorize('delete', $user);
+
 
         $delete = $user->delete();
 
         if ($delete){
-            return redirect()->route('cms.admin.users.index')->with('success', 'User deleted successfully.');
+            return redirect()->route('user.index' ,['page' => $request->page])->with('success', 'User deleted successfully.');
         } else {
             return back()->with('error', 'Data Tidak Bisa Dihapus!');
         }
