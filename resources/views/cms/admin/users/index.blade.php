@@ -40,6 +40,9 @@
                             @endif
                         </div>
                         <div class="flex -ml-2 lg:ml-0 lg:justify-end mt-3 lg:mt-0">
+                            <a href="{{ route('user.show', ['user' => $user->id]) }}"
+                                class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip"
+                                title="Detail"> <i class="w-3 h-3" data-lucide="user"></i> </a>
                             @if (in_array($user->roles->first()->name, ['super_admin', 'admin', 'finance_admin']))
                                 <a href=""
                                     class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip"
@@ -57,11 +60,12 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap lg:flex-nowrap items-center justify-left p-5">
-                        <a href="{{ route('user.show', ['user' => $user->id]) }}"
-                            class="btn btn-primary py-1 px-2 mr-2">Profile</a>
-                        <form method="delete" action="{{ route('user.destroy', ['user' => $user->id]) }}">
+                        <a href="#"
+                            class="btn btn-warning py-1 px-2 mr-2">Aktif</a>
+                        <form method="post" action="{{ route('user.destroy', ['user' => $user->id]) }}">
+                            @method('delete')
                             @csrf
-                            <button type="submit" class="btn btn-danger py-1 px-2">Delete</button>
+                            <button type="submit" class="btn btn-danger py-1 px-2">Hapus</button>
                         </form>
                     </div>
                 </div>
@@ -75,34 +79,31 @@
             {{ $users->links() }}
         </div>
         {{-- <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-        <nav class="w-full sm:w-auto sm:mr-auto">
-            <ul class="pagination">
-                <li class="page-item">
-                    <a class="page-link" href="#"> <i class="w-4 h-4" data-lucide="chevrons-left"></i> </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#"> <i class="w-4 h-4" data-lucide="chevron-left"></i> </a>
-                </li>
-                <li class="page-item"> <a class="page-link" href="#">...</a> </li>
-                <li class="page-item"> <a class="page-link" href="#">1</a> </li>
-                <li class="page-item active"> <a class="page-link" href="#">2</a> </li>
-                <li class="page-item"> <a class="page-link" href="#">3</a> </li>
-                <li class="page-item"> <a class="page-link" href="#">...</a> </li>
-                <li class="page-item">
-                    <a class="page-link" href="#"> <i class="w-4 h-4" data-lucide="chevron-right"></i> </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#"> <i class="w-4 h-4" data-lucide="chevrons-right"></i> </a>
-                </li>
-            </ul>
-        </nav>
-        <select class="w-20 form-select box mt-3 sm:mt-0">
-            <option>10</option>
-            <option>25</option>
-            <option>35</option>
-            <option>50</option>
-        </select>
-    </div> --}}
+            <nav class="w-full sm:w-auto sm:mr-auto">
+                <ul class="pagination">
+                    <li class="page-item {{ $paginator->onFirstPage() ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ $paginator->previousPageUrl() }}">
+                            <i class="w-4 h-4" data-lucide="chevrons-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item {{ $paginator->onFirstPage() ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ $paginator->previousPageUrl() }}">
+                            <i class="w-4 h-4" data-lucide="chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item {{ $paginator->currentPage() === $page ? 'active' : '' }}">
+                        <a class="page-link" href="{{ $paginator->url($page) }}">{{ $page }}</a>
+                    </li>
+                    </ul>
+            </nav>
+        
+            <select class="w-20 form-select box mt-3 sm:mt-0" wire:model="perPage">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="35">35</option>
+                <option value="50">50</option>
+            </select>
+        </div> --}}
         <!-- END: Pagination -->
     </div>
 @endsection
