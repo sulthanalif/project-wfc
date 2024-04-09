@@ -100,12 +100,12 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="javascript:;" class="menu">
+                    <a href="javascript:;" class="menu {{ Route::is('user*') ? 'menu--active' : '' }}">
                         <div class="menu__icon"> <i data-lucide="box"></i> </div>
                         <div class="menu__title"> Master <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                         </div>
                     </a>
-                    <ul class="">
+                    <ul class=" {{ Route::is('user*') ? 'menu__sub-open' : '' }}">
                         <li>
                             <a href="#" class="menu menu--active">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
@@ -130,12 +130,14 @@
                                 <div class="menu__title"> Sub Agen </div>
                             </a>
                         </li>
+                        @hasrole('super_admin|admin')
                         <li>
-                            <a href="" class="menu menu--active">
+                            <a href="{{ route('user.index') }}" class="menu {{ Route::is('user*') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Users </div>
                             </a>
                         </li>
+                        @endhasrole
                     </ul>
                 </li>
             </ul>

@@ -95,14 +95,14 @@
             </ul>
         </li>
         <li>
-            <a href="javascript:;" class="side-menu">
+            <a href="javascript:;" class="side-menu {{ Route::is('user*') ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
                 <div class="side-menu__title">
                     Master
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                 </div>
             </a>
-            <ul class="">
+            <ul class="{{ Route::is('user*') ? 'side-menu__sub-open' : '' }}">
                 <li>
                     <a href="#" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
@@ -127,9 +127,9 @@
                         <div class="side-menu__title"> Sub Agen </div>
                     </a>
                 </li>
-                @hasrole('super_admin')
+                @hasrole('super_admin|admin')
                 <li>
-                    <a href="{{ route('user.index') }}" class="side-menu">
+                    <a href="{{ route('user.index') }}" class="side-menu {{ Route::is('user*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                         <div class="side-menu__title"> Users </div>
                     </a>

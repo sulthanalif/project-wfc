@@ -36,6 +36,7 @@
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=[" your-google-map-api"]&libraries=places"></script>
     <script src="{{ asset('assets/cms/js/app.js') }}"></script>
+    @stack('custom-scripts')
     <!-- END: JS Assets-->
 </body>
 
