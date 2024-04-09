@@ -76,7 +76,7 @@
         <!-- END: Users Layout -->
         <!-- BEGIN: Pagination -->
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $users->links() }}
+            {{ $users->links('cms.layouts.paginate') }}
         </div>
         {{-- <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
             <nav class="w-full sm:w-auto sm:mr-auto">
