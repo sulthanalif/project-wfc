@@ -6,7 +6,7 @@ use App\Helpers\UUIDGenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Catalog extends Model
+class Category extends Model
 {
     use HasFactory, UUIDGenerator;
 
@@ -17,12 +17,13 @@ class Catalog extends Model
 
     protected $fillable = [
         'name',
+        'catalog_id',
         'description',
-        'image',
     ];
 
-    public function category()
+
+    public function catalog()
     {
-        return $this->hasOne(Category::class);
+        return $this->belongsTo(Catalog::class);
     }
 }

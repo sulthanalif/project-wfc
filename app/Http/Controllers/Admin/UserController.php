@@ -83,9 +83,11 @@ class UserController extends Controller
                 return redirect()->route('user.index')->with('success', 'Data Berhasil Ditambah');
             }
         } catch (\Throwable $th) {
-            return response()->json([
+            $data = [
                 'message' => $th->getMessage(),
-            ], 400);
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
 
 
@@ -164,9 +166,11 @@ class UserController extends Controller
                 return redirect()->route('user.index')->with('success', 'Data Berhasil Diubah');
             }
         } catch (\Throwable $th) {
-            return response()->json([
+            $data = [
                 'message' => $th->getMessage(),
-            ], 400);
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
 
 

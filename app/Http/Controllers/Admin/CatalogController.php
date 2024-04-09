@@ -62,9 +62,11 @@ class CatalogController extends Controller
                 return back()->with('error', 'Data Gagal Ditambahkan!');
             }
         } catch (\Throwable $th) {
-            return response()->json([
+            $data = [
                 'message' => $th->getMessage(),
-            ], 400);
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
     }
 
@@ -140,9 +142,11 @@ class CatalogController extends Controller
                 return back()->with('error', 'Data Gagal Diubah!');
             }
         } catch (\Throwable $th) {
-            return response()->json([
+            $data = [
                 'message' => $th->getMessage(),
-            ], 400);
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
     }
 
