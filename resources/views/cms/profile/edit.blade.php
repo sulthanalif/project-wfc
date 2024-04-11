@@ -31,12 +31,12 @@
                                 @enderror
                             </div>
                             <div class="input-form mt-3">
-                                <label for="no_hp" class="form-label w-full flex flex-col sm:flex-row"> Nomor Telepon
+                                <label for="phone_number" class="form-label w-full flex flex-col sm:flex-row"> Nomor Telepon
                                 </label>
-                                <input id="no_hp" type="number" name="no_hp" class="form-control"
+                                <input id="phone_number" type="number" name="phone_number" class="form-control"
                                     placeholder="Isikan Nomor Telepon Aktif" maxlength="13" required
-                                    value="{{ $agent->agentProfile->no_hp }}">
-                                @error('no_hp')
+                                    value="{{ $agent->agentProfile->phone_number }}">
+                                @error('phone_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

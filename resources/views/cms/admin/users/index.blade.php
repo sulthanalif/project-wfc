@@ -8,8 +8,11 @@
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            <a href="{{ route('user.create') }}" class="btn btn-primary shadow-md mr-2">Tambah User</a>
-            <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $users->firstItem() }} hingga {{ $users->lastItem() }} dari {{ $users->total() }} data</div>
+            @hasrole('super_admin')
+                <a href="{{ route('user.create') }}" class="btn btn-primary shadow-md mr-2">Tambah User</a>
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $users->firstItem() }} hingga
+                    {{ $users->lastItem() }} dari {{ $users->total() }} data</div>
+            @endhasrole
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search...">
@@ -60,14 +63,14 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap lg:flex-nowrap items-center justify-left p-5">
-                        <a href="#"
-                            class="btn btn-warning py-1 px-2 mr-2">Aktif</a>
-                            <form method="POST" action="{{ route('user.destroy', $user) }}" onsubmit="return confirm('apakah anda yakin?')">
-                                @csrf
-                                @method('delete')
-                                <input type="hidden" name="page" value="{{ $users->currentPage() }}">
-                                <button type="submit" class="btn btn-danger py-1 px-2">Hapus</button>
-                            </form>
+                        <a href="#" class="btn btn-warning py-1 px-2 mr-2">Aktif</a>
+                        <form method="POST" action="{{ route('user.destroy', $user) }}"
+                            onsubmit="return confirm('apakah anda yakin?')">
+                            @csrf
+                            @method('delete')
+                            <input type="hidden" name="page" value="{{ $users->currentPage() }}">
+                            <button type="submit" class="btn btn-danger py-1 px-2">Hapus</button>
+                        </form>
                     </div>
                 </div>
             </div>

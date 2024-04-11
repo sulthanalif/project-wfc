@@ -48,7 +48,7 @@ class UserController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => ['nullable', 'max:225', 'string'],
-            'email' => ['required', 'max:25', 'unique:users,email'],
+            'email' => ['required', 'max:225', 'unique:users,email'],
             'password' => ['required'],
             'role' => ['required', 'string'],
             'address' => ['nullable', 'string'],
@@ -115,7 +115,7 @@ class UserController extends Controller
      */
     public function edit(Request $request, User $user)
     {
-        return view('users.edit', compact('user'));
+        return view('cms.admin.users.edit', compact('user'));
     }
 
     /**
@@ -174,6 +174,16 @@ class UserController extends Controller
         }
 
 
+    }
+
+    public function changeStatus(Request $request, $user)
+    {
+
+        $user->update([
+            'active' => $request->active
+        ]);
+
+        return response()->json(['message' => 'User berhasil ' . ($request->active == 1 ? 'diaktifkan' : 'dinonaktifkan')]);
     }
 
     /**

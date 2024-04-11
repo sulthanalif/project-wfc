@@ -43,7 +43,7 @@
                     <div class="truncate sm:whitespace-normal flex items-center"> <i data-lucide="mail"
                             class="w-4 h-4 mr-2"></i> {{ $agent->email }} </div>
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="phone"
-                            class="w-4 h-4 mr-2"></i> +6285979592102 </div>
+                            class="w-4 h-4 mr-2"></i> {{ $agent->agentProfile->phone_number ? $agent->agentProfile->phone_number : 'Nomer HP Belum Diisi' }} </div>
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="map-pin"
                             class="w-4 h-4 mr-2"></i>
                         {{ $agent->agentProfile->address == null ? 'Harap isi alamat!' : $agent->agentProfile->address }}
