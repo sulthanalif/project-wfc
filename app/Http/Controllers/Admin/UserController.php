@@ -176,6 +176,16 @@ class UserController extends Controller
 
     }
 
+    public function changeStatus(Request $request, $user)
+    {
+
+        $user->update([
+            'active' => $request->active
+        ]);
+
+        return response()->json(['message' => 'User berhasil ' . ($request->active == 1 ? 'diaktifkan' : 'dinonaktifkan')]);
+    }
+
     /**
      * Hapus pengguna.
      *

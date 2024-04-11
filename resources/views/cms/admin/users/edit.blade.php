@@ -16,7 +16,9 @@
             <div id="form-validation" class="p-5">
                 <div class="preview">
                     <!-- BEGIN: Validation Form -->
-                    <form class="validate-form">
+                    <form class="validate-form" method="post" action="{{ route('user.update', $user) }}">
+                        @csrf
+                        @method('put')
                         <div class="input-form">
                             <label for="validation-form-1" class="form-label w-full flex flex-col sm:flex-row"> Nama Lengkap </label>
                             <input id="validation-form-1" type="text" name="name" class="form-control" placeholder="Salwa" minlength="2" required>

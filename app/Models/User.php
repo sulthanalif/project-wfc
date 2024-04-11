@@ -64,6 +64,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
+    public function isActive()
+    {
+        return $this->active;
+    }
+
     public function agentProfile ()
     {
         return $this->hasOne(AgentProfile::class);
