@@ -33,7 +33,7 @@ class HomeController extends Controller
 
         // return dd($roleName);
 
-        if ($roleName === "agent") {
+        if ($roleName === "agent" && $user->active == 1) {
             return redirect()->route('dashboard-agent');
         } else {
             return redirect()->route('dashboard-admin');

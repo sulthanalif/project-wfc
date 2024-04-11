@@ -35,13 +35,16 @@ Route::get('/', function (){
 
 Auth::routes(['verify' => true]);
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth', 'active'], function () {
 
 
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
-        require __DIR__ . '/admin/masterUser.php';
+            Route::group(['middleware' => 'role:super_admin'], function () {
+                require __DIR__ . '/admin/masterUser.php';
+            });
+
         require __DIR__ . '/admin/masterCatalog.php';
     });
 
@@ -54,23 +57,4 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Route::get('/dashboard-admin', function (){
-//     return '<h1>Dashboard Admin</h1>';
-// })->name('dashboard-admin');
-// Route::get('/dashboard-user', function (){
-//     return '<h1>Dashboard User</h1>';
-// })->name('dashboard-user');
 
-// Route::middleware(['auth', 'role:admin'])->group(function () {
-//     Route::get('/admin', [DashboardController::class, 'index'])->name('dashboard-admin');
-// });
-// Route::get('/dashboard-admin', function (){
-//     return view('cms.admin.index');
-// })->name('dashboard-admin');
-// Route::get('/dashboard-user', function (){
-//     return view('cms.agen.index');
-// })->name('dashboard-user');
-
-// Route::get('temp', function (){
-//     return view('cms.admin.users.index');
-// })->name('users');

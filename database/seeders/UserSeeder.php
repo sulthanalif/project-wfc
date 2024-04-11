@@ -53,6 +53,7 @@ class UserSeeder extends Seeder
         $agent->agentProfile()->create([
             'name' => 'Agent1'
         ]);
+        $agent->active = true;
 
         $agent->assignRole('agent');
 

@@ -17,44 +17,17 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-12 gap-6 mt-5">
-        <div class="intro-y col-span-12">
-            <!-- BEGIN: Form Layout -->
-            <div class="intro-y box p-5">
-                <form action="{{ route('user.update', $user) }}" method="post">
-                    @method('PUT')
-                    @csrf
-                    <div class="grid grid-cols-12 gap-3">
-                        <div class="col-span-12 lg:col-span-6">
-                            <div>
-                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                                <input id="email" name="email" type="email" class="form-control w-full"
-                                    placeholder="example@gmail.com" required value="{{ $user->email }}">
-                            </div>
-                            <div class="mt-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input id="password" name="password" type="password" class="form-control w-full"
-                                    placeholder="Masukkan Password" minlength="4">
-                            </div>
-                            <div class="mt-3">
-                                <label for="role" class="form-label">Hak Akses <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select mt-2 sm:mr-2" id="role" name="role" required>
-                                    <option value="">Pilih...</option>
-                                    <option value="super_admin"
-                                        {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'super_admin' ? 'selected' : '' }}>
-                                        Super Admin</option>
-                                    <option value="admin"
-                                        {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'admin' ? 'selected' : '' }}>
-                                        Admin</option>
-                                    <option value="finance_admin"
-                                        {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'finance_admin' ? 'selected' : '' }}>
-                                        Keuangan</option>
-                                    <option value="agent"
-                                        {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'agent' ? 'selected' : '' }}>
-                                        Agent</option>
-                                </select>
-                            </div>
+<div class="grid grid-cols-12 gap-6 mt-5">
+    <div class="intro-y col-span-12 lg:col-span-6">
+        <!-- BEGIN: Form Validation -->
+        <div class="intro-y box">
+            <div id="form-validation" class="p-5">
+                <div class="preview">
+                    <!-- BEGIN: Validation Form -->
+                    <form class="validate-form">
+                        <div class="input-form">
+                            <label for="validation-form-1" class="form-label w-full flex flex-col sm:flex-row"> Nama Lengkap </label>
+                            <input id="validation-form-1" type="text" name="name" class="form-control" placeholder="Salwa" minlength="2" required>
                         </div>
 
                         @if ($user->roles->first()->name === 'agent')
