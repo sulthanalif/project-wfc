@@ -17,9 +17,9 @@ class CatalogController extends Controller
      */
     public function index(Request $request)
     {
-        $catalog = Catalog::paginate(10);
+        $catalogs = Catalog::paginate(10);
 
-        return view('admin.catalog.index', compact('catalog'));
+        return view('cms.admin.catalogs.index', compact('catalogs'));
     }
 
     /**
@@ -47,12 +47,12 @@ class CatalogController extends Controller
 
         try {
             DB::transaction(function () use ($request, &$catalog) {
-                $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
-                $request->file('image')->storeAs('public/images', $imageName);
+                $imageName = 'catalog_'.time() . '.' . $request->file('image')->getClientOriginalExtension();
+                $request->file('image')->storeAs('public/images/catalog', $imageName);
 
                 $catalog = Catalog::create([
                     'name' => $request->name,
-                    'desctription' => $request->description,
+                    'description' => $request->description,
                     'image' => $imageName
                 ]);
             });
@@ -76,7 +76,7 @@ class CatalogController extends Controller
     public function show(Request $request, Catalog $catalog)
     {
         if ($catalog) {
-            return view('cms.admin.catalogs.detail', compact('$catalog'));
+            return view('cms.admin.catalogs.detail', compact('catalog'));
         } else {
             return back()->with('error', 'Data Tidak Ditemukan!');
         }
@@ -88,7 +88,7 @@ class CatalogController extends Controller
     public function edit(Request $request, Catalog $catalog)
     {
         if ($catalog) {
-            return view('cms.admin.catalogs.edit', compact('$catalog'));
+            return view('cms.admin.catalogs.edit', compact('catalog'));
         } else {
             return back()->with('error', 'Data Tidak Ditemukan!');
         }
@@ -115,13 +115,13 @@ class CatalogController extends Controller
             DB::transaction(function () use ($request, $catalog, &$update) {
                 if ($request->hasFile('image')) {
                     // Delete old image
-                    if ($catalog->image && file_exists(storage_path('app/public/images/' . $catalog->image))) {
-                      unlink(storage_path('app/public/images/' . $catalog->image));
+                    if ($catalog->image && file_exists(storage_path('app/public/images/catalog/' . $catalog->image))) {
+                      unlink(storage_path('app/public/images/catalog/' . $catalog->image));
                     }
 
                     // Upload new image
-                    $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
-                    $request->file('image')->storeAs('public/images', $imageName);
+                    $imageName = 'catalog_'.time() . '.' . $request->file('image')->getClientOriginalExtension();
+                    $request->file('image')->storeAs('public/images/catalog/', $imageName);
 
                     // Update catalog data
                     $update = $catalog->update([
@@ -137,7 +137,7 @@ class CatalogController extends Controller
 
             });
             if ($update) {
-                return redirect()->route('catalog.index')->with('success' ,'Data Berhasil Diubah!');
+                return back()->with('success' ,'Data Berhasil Diubah!');
             } else {
                 return back()->with('error', 'Data Gagal Diubah!');
             }
@@ -155,13 +155,13 @@ class CatalogController extends Controller
      */
     public function destroy(Request $request, Catalog $catalog)
     {
-        if ($catalog->image && file_exists(storage_path('app/public/images/' . $catalog->image))) {
-            unlink(storage_path('app/public/images/' . $catalog->image));
+        if ($catalog->image && file_exists(storage_path('app/public/images/catalog/' . $catalog->image))) {
+            unlink(storage_path('app/public/images/catalog/' . $catalog->image));
         }
 
         $delete = $catalog->delete();
 
-        if($delete) {
+        if ($delete) {
             return redirect()->route('catalog.index', ['page' => $request->page])->with('success', 'Data Berhasil Dihapus');
         } else {
             return back()->with('error', 'Data Gagal Dihapus!');
