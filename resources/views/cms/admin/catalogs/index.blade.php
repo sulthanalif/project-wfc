@@ -63,15 +63,14 @@
                                         <a class="flex items-center mr-3" href="{{ route('catalog.edit', $catalog) }}"> <i
                                                 data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
                                         <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal"> <i data-lucide="trash-2"
+                                            data-tw-target="#delete-confirmation-modal{{ $catalog->id }}"> <i data-lucide="trash-2"
                                                 class="w-4 h-4 mr-1"></i> Hapus </a>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
 
-                        <!-- BEGIN: Delete Confirmation Modal -->
-                        <div id="delete-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
+                            <!-- BEGIN: Delete Confirmation Modal -->
+                        <div id="delete-confirmation-modal{{ $catalog->id }}" class="modal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-body p-0">
@@ -100,7 +99,8 @@
                             </div>
                         </div>
                         <!-- END: Delete Confirmation Modal -->
-                    @endif
+                        @endforeach
+                        @endif
                 </tbody>
             </table>
         </div>
