@@ -41,7 +41,7 @@ Route::group(['middleware' => 'auth', 'active'], function () {
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
-            Route::group(['middleware' => 'role:super_admin'], function () {
+            Route::group(['middleware' => 'role:super_admin|admin'], function () {
                 require __DIR__ . '/admin/masterUser.php';
             });
 

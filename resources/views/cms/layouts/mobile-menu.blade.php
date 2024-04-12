@@ -13,7 +13,7 @@
                     class="w-8 h-8 text-white transform -rotate-90"></i> </a>
             <ul class="scrollable__content py-2">
                 <li>
-                    <a href="{{ route('dashboard-admin') }}" class="menu {{ Route::is('dashboard-admin') ? 'menu--active' : '' }}">
+                    <a href="{{ route('dashboard-admin') }}" class="menu  {{ Route::is('dashboard-admin') ? 'menu--active' : '' }}">
                         <div class="menu__icon"> <i data-lucide="home"></i> </div>
                         <div class="menu__title"> Dashboard </div>
                     </a>
@@ -100,32 +100,38 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="javascript:;" class="menu {{ Route::is('user*') ? 'menu--active' : '' }}">
+                    <a href="javascript:;" class="menu @if (Route::is('user*') || Route::is('catalog*')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="box"></i> </div>
                         <div class="menu__title"> Master <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                         </div>
                     </a>
-                    <ul class=" {{ Route::is('user*') ? 'menu__sub-open' : '' }}">
+                    <ul class="@if (Route::is('user*') || Route::is('catalog*')) menu__sub-open @endif">
                         <li>
-                            <a href="#" class="menu menu--active">
+                            <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Supplier </div>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="menu menu--active">
+                            <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Barang </div>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="menu menu--active">
+                            <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Paket </div>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="menu menu--active">
+                            <a href="{{ route('catalog.index') }}" class="menu {{ Route::is('catalog*') ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Katalog </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Sub Agen </div>
                             </a>
