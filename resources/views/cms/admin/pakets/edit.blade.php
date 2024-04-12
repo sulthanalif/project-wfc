@@ -21,13 +21,13 @@
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
             <div class="intro-y box p-5">
-                <form action="{{ route('paket.update', $paket) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('package.update', $package) }}" method="post" enctype="multipart/form-data">
                     @method('put')
                     @csrf
                     <div>
                         <label for="name" class="form-label">Nama Paket <span class="text-danger">*</span></label>
                         <input id="name" name="name" type="text" class="form-control w-full"
-                            placeholder="Masukkan Nama Paket" required value="{{ $paket->name }}"
+                            placeholder="Masukkan Nama Paket" required value="{{ $package->name }}"
                             @error('name')
                       <span class="invalid-feedback" role="alert">
                           <strong>{{ $message }}</strong>
@@ -39,7 +39,7 @@
                             <label>Deskripsi <span class="text-danger">*</span></label>
                             <div class="mt-2">
                                 <textarea id="description" name="description" class="editor">
-                      {!! $paket->description !!}
+                      {!! $package->description !!}
                     </textarea>
                             </div>
                             @error('description')
@@ -47,6 +47,16 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
+                        </div>
+
+                        <div class="mt-3">
+                            <label for="catalog_id" class="form-label">Katalog <span class="text-danger">(jangan ubah jika tidak masuk katalog)</span></label>
+                            <select class="form-select mt-2 sm:mr-2" id="catalog_id" name="catalog_id" >
+                                <option value="">-</option>
+                                @foreach ($catalogs as $catalog)
+                                    <option value="{{ $catalog->id }}" {{ ($catalog->name == $package->catalogName->name) ? 'selected' : '' }}>{{ $catalog->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="mt-3">
@@ -59,9 +69,9 @@
                                     accept="image/*">
                             </div>
                             <div id="image-preview" class="hidden mt-2"></div>
-                            @if (isset($paket->image))
+                            @if (isset($package->image))
                                 <div class="mt-2" id="existing-image-preview">
-                                    <img src="{{ asset('storage/images/paket/' . $paket->image) }}"
+                                    <img src="{{ asset('storage/images/package/' . $package->image) }}"
                                         class="w-auto h-40 object-fit-cover rounded">
                                 </div>
                             @endif

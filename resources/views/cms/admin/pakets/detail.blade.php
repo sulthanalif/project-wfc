@@ -12,21 +12,23 @@
     <div class="intro-y box px-5 pt-5 mt-5">
         <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
             <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
-                    <img alt="PAKET SMART WFC" class=" img-fluid rounded-md" src="{{ asset('storage/images/paket/' . $paket->image) }}">
+                    <img alt="PAKET SMART WFC" class=" img-fluid rounded-md" src="{{ asset('storage/images/package/' . $package->image) }}">
             </div>
             <div class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
                 <div class="text-slate-600 dark:text-slate-500">
-                    <div class="flex items-center font-bold text-lg justify-center"> 
-                        {{ $paket->name }}
+                    <div class="flex items-center font-bold text-lg justify-center">
+                        {{ $package->name }}
                     </div>
                     <div class="flex items-center justify-between mt-2 gap-3">
                         <div class="flex items-center"> <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Dibuat
-                            {{ \Carbon\Carbon::parse($paket->created_at)->format('d M Y, H:m:i') }} </div>
+                            {{ \Carbon\Carbon::parse($package->created_at)->format('d M Y, H:m:i') }} </div>
                         <div class="flex items-center"> <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Diupdate
-                         {{ \Carbon\Carbon::parse($paket->updated_at)->format('d M Y, H:m:i') }} </div>
+                         {{ \Carbon\Carbon::parse($package->updated_at)->format('d M Y, H:m:i') }} </div>
                     </div>
                     <div class="flex items-center mt-2">
-                        {!! $paket->description !!} </div>
+                        {!! $package->description !!} </div>
+                    <div class="flex items-center mt-2">
+                        {!! $package->catalogName->name !!} </div>
                 </div>
             </div>
         </div>

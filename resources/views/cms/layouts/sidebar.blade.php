@@ -116,7 +116,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="side-menu">
+                    <a href="{{ route('package.index') }}" class="side-menu {{ Route::is('package*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                         <div class="side-menu__title"> Paket </div>
                     </a>

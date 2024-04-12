@@ -8,9 +8,9 @@
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            <a href="{{ route('paket.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Katalog</a>
-            <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $pakets->firstItem() }} hingga
-                {{ $pakets->lastItem() }} dari {{ $pakets->total() }} data</div>
+            <a href="{{ route('package.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Paket</a>
+            <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $packages->firstItem() }} hingga
+                {{ $packages->lastItem() }} dari {{ $packages->total() }} data</div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search...">
@@ -25,53 +25,57 @@
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="whitespace-nowrap">NAMA PAKET</th>
+                        <th class="whitespace-nowrap">KATALOG</th>
                         <th class="whitespace-nowrap">FOTO</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if ($pakets->isEmpty())
+                    @if ($packages->isEmpty())
                         <tr>
-                            <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
-                        @foreach ($pakets as $paket)
+                        @foreach ($packages as $package)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('paket.show', $paket) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $paket->name }} </a>
+                                        href="{{ route('package.show', $package) }}"> <i data-lucide="external-link"
+                                            class="w-4 h-4 mr-2"></i> {{ $package->name }} </a>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 flex items-center mr-3">  {{ $package->catalogName->name }} </p>
                                 </td>
                                 <td class="w-40">
                                     <div class="flex">
                                         <div class="w-10 h-10 image-fit zoom-in">
                                             <img alt="PAKET SMART WFC" class="tooltip rounded-full"
-                                                src="{{ asset('storage/images/paket/' . $paket->image) }}"
-                                                title="@if ($paket->created_at == $paket->updated_at)
-                                                Diupload {{ \Carbon\Carbon::parse($paket->created_at)->format('d M Y, H:m:i') }}
+                                                src="{{ asset('storage/images/package/' . $package->image) }}"
+                                                title="@if ($package->created_at == $package->updated_at)
+                                                Diupload {{ \Carbon\Carbon::parse($package->created_at)->format('d M Y, H:m:i') }}
                                                 @else
-                                                Diupdate {{ \Carbon\Carbon::parse($paket->updated_at)->format('d M Y, H:m:i') }}
+                                                Diupdate {{ \Carbon\Carbon::parse($package->updated_at)->format('d M Y, H:m:i') }}
                                                 @endif">
                                         </div>
                                     </div>
                                 </td>
                                 <td class="table-report__action w-56">
                                     <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="{{ route('paket.edit', $paket) }}"> <i
+                                        <a class="flex items-center mr-3" href="{{ route('package.edit', $package) }}"> <i
                                                 data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
                                         <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal"> <i data-lucide="trash-2"
+                                            data-tw-target="#delete-confirmation-modal{{ $package->id }}"> <i data-lucide="trash-2"
                                                 class="w-4 h-4 mr-1"></i> Hapus </a>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+
 
                         <!-- BEGIN: Delete Confirmation Modal -->
-                        <div id="delete-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
+                        <div id="delete-confirmation-modal{{ $package->id }}" class="modal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-body p-0">
@@ -85,11 +89,11 @@
                                             </div>
                                         </div>
                                         <div class="px-5 pb-8 text-center">
-                                            <form action="{{ route('paket.destroy', $paket) }}" method="post">
+                                            <form action="{{ route('package.destroy', $package) }}" method="post">
                                                 @csrf
                                                 @method('delete')
                                                 <input type="hidden" name="page"
-                                                    value="{{ $pakets->currentPage() }}">
+                                                    value="{{ $packages->currentPage() }}">
                                                 <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                 <button type="button" data-tw-dismiss="modal"
                                                     class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -100,6 +104,7 @@
                             </div>
                         </div>
                         <!-- END: Delete Confirmation Modal -->
+                        @endforeach
                     @endif
                 </tbody>
             </table>
@@ -107,7 +112,7 @@
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $pakets->links('cms.layouts.paginate') }}
+            {{ $packages->links('cms.layouts.paginate') }}
         </div>
         <!-- END: Pagination -->
     </div>

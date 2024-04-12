@@ -2,25 +2,27 @@
 
 namespace App\Models;
 
-use App\Helpers\UUIDGenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class PackageCatalog extends Model
 {
-    use HasFactory, UUIDGenerator;
+    use HasFactory;
 
-    protected $table = 'catalogs';
+    protected $table = 'package_catalog';
     public $incrementing = false;
+    protected $primaryKey;
     protected $keyType = 'string';
-    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name',
+        'package_id',
         'catalog_id',
-        'description',
     ];
 
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
 
     public function catalog()
     {

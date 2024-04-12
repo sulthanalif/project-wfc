@@ -21,7 +21,7 @@
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
             <div class="intro-y box p-5">
-                <form action="{{ route('paket.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('package.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
 
                     <div>
@@ -47,6 +47,16 @@
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
+                    </div>
+
+                    <div class="mt-3">
+                        <label for="catalog_id" class="form-label">Katalog <span class="text-danger">(jangan ubah jika tidak masuk katalog)</span></label>
+                        <select class="form-select mt-2 sm:mr-2" id="catalog_id" name="catalog_id" >
+                            <option value="">Pilih...</option>
+                            @foreach ($catalogs as $catalog)
+                                <option value="{{ $catalog->id }}">{{ $catalog->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="mt-3">
