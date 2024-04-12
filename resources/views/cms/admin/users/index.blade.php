@@ -13,71 +13,117 @@
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $users->firstItem() }} hingga
                     {{ $users->lastItem() }} dari {{ $users->total() }} data</div>
             @endhasrole
-            <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+            <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search...">
-                    <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
+                    <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i> 
                 </div>
+                <select class="w-56 xl:w-auto form-select box ml-2">
+                    <option>Status</option>
+                    <option>Active</option>
+                    <option>Inactive</option>
+                </select>
             </div>
         </div>
-        <!-- BEGIN: Users Layout -->
-        @foreach ($users as $user)
-            <div class="intro-y col-span-12 md:col-span-4">
-                <div class="box">
-                    <div
-                        class="flex flex-col lg:flex-row items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-                        <div class="w-24 h-24 lg:w-12 lg:h-12 image-fit lg:mr-1">
-                            <img alt="Profile" class="rounded-full" src="{{ asset('assets/cms/images/profile.svg') }}">
-                        </div>
-                        <div class="lg:ml-2 lg:mr-auto text-center lg:text-left mt-3 lg:mt-0">
-                            <a href="{{ route('user.show', $user) }}"
-                                class="font-medium">{{ $user->agentProfile ? $user->agentProfile->name : $user->email }}</a>
-                            @if ($user->roles->first()->name == 'super_admin')
-                                <div class="text-slate-500 text-xs mt-0.5">Super Admin</div>
-                            @elseif ($user->roles->first()->name == 'admin')
-                                <div class="text-slate-500 text-xs mt-0.5">Admin</div>
-                            @elseif ($user->roles->first()->name == 'finance_admin')
-                                <div class="text-slate-500 text-xs mt-0.5">Admin Keuangan</div>
-                            @else
-                                <div class="text-slate-500 text-xs mt-0.5">Agen</div>
-                            @endif
-                        </div>
-                        <div class="flex -ml-2 lg:ml-0 lg:justify-end mt-3 lg:mt-0">
-                            <a href="{{ route('user.show', $user) }}"
-                                class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip"
-                                title="Detail"> <i class="w-3 h-3" data-lucide="user"></i> </a>
-                            @if (in_array($user->roles->first()->name, ['super_admin', 'admin', 'finance_admin']))
-                                <a href=""
-                                    class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip"
-                                    title="{{ $user->email }}"> <i class="w-3 h-3" data-lucide="mail"></i> </a>
-                            @else
-                                <a href=""
-                                    class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip"
-                                    title="{{ $user->email }}"> <i class="w-3 h-3" data-lucide="mail"></i> </a>
-                                <a href=""
-                                    class="w-8 h-8 rounded-full flex items-center justify-center border dark:border-darkmode-400 ml-2 text-slate-400 zoom-in tooltip"
-                                    title="{{ empty($user->agentProfile->phone_number) ? 'Nomer HP Belum Diisi' : $user->agentProfile->phone_number }}">
-                                    <i class="w-3 h-3" data-lucide="phone"></i>
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap lg:flex-nowrap items-center justify-left p-5">
-                        <a href="#" class="btn btn-warning py-1 px-2 mr-2">Aktif</a>
-                        <form method="POST" action="{{ route('user.destroy', $user) }}"
-                            onsubmit="return confirm('apakah anda yakin?')">
-                            @csrf
-                            @method('delete')
-                            <input type="hidden" name="page" value="{{ $users->currentPage() }}">
-                            <button type="submit" class="btn btn-danger py-1 px-2">Hapus</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        @endforeach
+        <!-- BEGIN: Data List -->
+        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+            <table class="table table-report -mt-2">
+                <thead>
+                    <tr>
+                        <th class="text-center whitespace-nowrap">#</th>
+                        <th class="whitespace-nowrap">NAMA USER</th>
+                        <th class="text-center whitespace-nowrap">JABATAN</th>
+                        <th class="text-center whitespace-nowrap">STATUS</th>
+                        @hasrole('super_admin')
+                        <th class="text-center whitespace-nowrap">AKSI</th>
+                        @endhasrole
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ($users->isEmpty())
+                        <tr>
+                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                        </tr>
+                    @else
+                        @foreach ($users as $user)
+                            <tr class="intro-x">
+                                <td>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                </td>
+                                <td class="!py-3.5">
+                                    <div class="flex items-center">
+                                        <div class="w-9 h-9 image-fit zoom-in">
+                                            <img alt="PAKET SMART EFC" class="rounded-lg border-white shadow-md tooltip" src="{{ asset('assets/cms/images/profile.svg') }}" title="{{ empty($user->agentProfile->phone_number) ? 'Nomer HP Belum Diisi' : $user->agentProfile->phone_number }}">
+                                        </div>
+                                        <div class="ml-4">
+                                            <a href="{{ route('user.show', $user) }}" class="font-medium whitespace-nowrap">{{ $user->agentProfile ? $user->agentProfile->name : $user->email }}</a> 
+                                            <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $user->email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center capitalize">
+                                    @if ($user->roles->first()->name == 'super_admin')
+                                    Super Admin
+                                @elseif ($user->roles->first()->name == 'admin')
+                                    Admin
+                                @elseif ($user->roles->first()->name == 'finance_admin')
+                                    Admin Keuangan
+                                @else
+                                    Agen
+                                @endif
+                                </td>
+                                <td class="w-40">
+                                    <div class="flex items-center justify-center text-success"> <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> Aktif </div>
+                                </td>
+                                @hasrole('super_admin')
+                                <td class="table-report__action w-56">
+                                    <div class="flex justify-center items-center">
+                                        <a class="flex items-center mr-3" href="#"> <i
+                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                        <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
+                                            data-tw-target="#delete-confirmation-modal"> <i data-lucide="trash-2"
+                                                class="w-4 h-4 mr-1"></i> Hapus </a>
+                                    </div>
+                                </td>
+                                @endhasrole
+                            </tr>
+                        @endforeach
 
+                        <!-- BEGIN: Delete Confirmation Modal -->
+                        <div id="delete-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-body p-0">
+                                        <div class="p-5 text-center">
+                                            <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                            <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                            <div class="text-slate-500 mt-2">
+                                                Apakah anda yakin untuk menghapus data ini?
+                                                <br>
+                                                Proses tidak akan bisa diulangi.
+                                            </div>
+                                        </div>
+                                        <div class="px-5 pb-8 text-center">
+                                            <form action="{{ route('user.destroy', $user) }}" method="post">
+                                                @csrf
+                                                @method('delete')
+                                                <input type="hidden" name="page" value="{{ $users->currentPage() }}">
+                                                <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                                <button type="button" data-tw-dismiss="modal"
+                                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END: Delete Confirmation Modal -->
+                    @endif
+                </tbody>
+            </table>
+        </div>
+        <!-- END: Data List -->
 
-        <!-- END: Users Layout -->
         <!-- BEGIN: Pagination -->
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
             {{ $users->links('cms.layouts.paginate') }}

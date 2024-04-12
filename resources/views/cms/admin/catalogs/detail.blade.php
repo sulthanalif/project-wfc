@@ -26,7 +26,7 @@
                          {{ \Carbon\Carbon::parse($catalog->updated_at)->format('d M Y, H:m:i') }} </div>
                     </div>
                     <div class="flex items-center mt-2">
-                        {{ $catalog->description }} </div>
+                        {!! $catalog->description !!} </div>
                 </div>
             </div>
         </div>
