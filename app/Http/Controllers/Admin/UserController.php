@@ -130,7 +130,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['nullable', 'max:225', 'string'],
             'email' => ['required', 'max:25', 'unique:users,email'],
-            'password' => ['required'],
+            'password' => ['nullable', 'string'],
             'role' => ['required', 'string'],
             'address' => ['string'],
             'phone_number' => ['string'],
@@ -142,16 +142,20 @@ class UserController extends Controller
 
         try {
             DB::transaction(function () use ($request, $user, &$update) {
-                $user->update([
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                ]);
+                if ($request->password) {
+                    $user->update([
+                        'email' => $request->email,
+                        'password' => Hash::make($request->password),
+                    ]);
+                } else {
+                    $user->update([
+                        'email' => $request->email
+                    ]);
+                }
 
                 ($request->role) ? $user->assignRole($request->role) : '';
 
-                if($request->role !== "agent"){
-                    $user->email_verified_at = now();
-                } else {
+                if($request->role == "agent"){
                     $user->agentProfile()->create([
                         'name' => $request->name,
                         'address' => $request->address,

@@ -137,7 +137,7 @@ class CatalogController extends Controller
 
             });
             if ($update) {
-                return back()->with('success' ,'Data Berhasil Diubah!');
+                return redirect()->route('catalog.index')->with('success' ,'Data Berhasil Diubah!');
             } else {
                 return back()->with('error', 'Data Gagal Diubah!');
             }
