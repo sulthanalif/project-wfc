@@ -47,11 +47,9 @@
         <div class="container-fluid container-lg">
 
             <!-- LOGO -->
-            <a class="navbar-brand logo text-uppercase" href="{{ url('/') }}">
-                <img src="{{ asset('assets/logo.PNG') }}" class="logo-light" alt=""
-                    height="50">
-                <img src="{{ asset('assets/logo.PNG') }}" class="logo-dark" alt=""
-                    height="50">
+            <a class="navbar-brand logo text-uppercase" href="{{ route('landing-page') }}">
+                <img src="{{ asset('assets/logo.PNG') }}" class="logo-light" alt="" height="50">
+                <img src="{{ asset('assets/logo.PNG') }}" class="logo-dark" alt="" height="50">
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
@@ -75,7 +73,20 @@
                     </li>
                 </ul>
                 <div class="ms-auto">
-                    <a href="{{ route('login') }}" class="btn bg-gradiant">{{ __('Login') }}</a>
+                    @if (Auth::check())
+                        @if (auth()->user()->hasRole('super_admin|admin|finance_admin'))
+                            <a href="{{ route('dashboard-admin') }}" class="btn bg-gradiant"><img alt="Admin"
+                                    src="{{ asset('assets/cms/images/profile.svg') }}" height="25"></a>
+                        @elseif (auth()->user()->hasRole('agent'))
+                            <a href="{{ route('dashboard-agent') }}" class="btn bg-gradiant"><img alt="Agent"
+                                    src="{{ asset('assets/cms/images/profile.svg') }}" height="25"></a>
+                        @else
+                            <a href="#" class="btn bg-gradiant"><img alt="NewAgent"
+                                    src="{{ asset('assets/cms/images/profile.svg') }}" height="25"></a>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}" class="btn bg-gradiant">{{ __('Login') }}</a>
+                    @endif
                 </div>
 
             </div>
@@ -95,7 +106,8 @@
                     <div class="col-lg-6 ">
                         <h1 class="display-4 fw-bold">Paket Smart WFC</h1>
                         <h4>Temukan Kebutuhan Anda dengan Mudah.</h4>
-                        <p class="text-muted mt-4">Alur kerja fleksibel, mudah untuk siapapun, maju bersama dan mampu menjangkau relasi baru.</p>
+                        <p class="text-muted mt-4">Alur kerja fleksibel, mudah untuk siapapun, maju bersama dan mampu
+                            menjangkau relasi baru.</p>
 
                         <div class="d-flex mt-4">
                             <a href="#profil" class="btn btn-outline-primary">
@@ -114,38 +126,32 @@
                     <div class="logo-box ">
                         <div class="client-slider" id="client-slider">
                             <div class="item text-center">
-                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
-                                    class="img-fluid">
+                                <img src="{{ asset('assets/logo.PNG') }}" alt="" class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
-                                    class="img-fluid">
+                                <img src="{{ asset('assets/logo.PNG') }}" alt="" class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
-                                    class="img-fluid">
+                                <img src="{{ asset('assets/logo.PNG') }}" alt="" class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
-                                    class="img-fluid">
+                                <img src="{{ asset('assets/logo.PNG') }}" alt="" class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
-                                    class="img-fluid">
+                                <img src="{{ asset('assets/logo.PNG') }}" alt="" class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
-                                    class="img-fluid">
+                                <img src="{{ asset('assets/logo.PNG') }}" alt="" class="img-fluid">
                             </div>
                             <!-- slider item -->
                         </div>
@@ -166,7 +172,9 @@
                 <div class="col-lg-6 ">
                     <h6 class="mb-0 fw-bold text-primary">Profil</h6>
                     <h1 class="display-5 fw-bold">Paket Smart WFC</h1>
-                    <p class="text-muted mt-4">Paket Smart WFC berdiri sejak tahun 2019, dan alhamdulillah ditahun ini total agent kami hampir 100 agent yang terbagi di berbagai kota, seperti di Sumedang, Bandung, Ciamis, Tasikmalaya, Cianjur, Depok...</p>
+                    <p class="text-muted mt-4">Paket Smart WFC berdiri sejak tahun 2019, dan alhamdulillah ditahun ini
+                        total agent kami hampir 100 agent yang terbagi di berbagai kota, seperti di Sumedang, Bandung,
+                        Ciamis, Tasikmalaya, Cianjur, Depok...</p>
 
                     <div class="d-flex mt-4">
                         <a href="{{ route('company-profile') }}" class="btn btn-outline-primary">
@@ -191,7 +199,8 @@
                         <p class=" text-primary fw-bold mb-0">Katalog</p>
                         <h3>Apa yang disediakan oleh kami!</h3>
                         <p class="text-muted">Berikut adalah daftar produk-produk yang kami sediakan.</p>
-                        <a href="{{ route('catalogs-product') }}" class="btn bg-gradiant">Lihat Semua <i class="mdi mdi-arrow-right"></i></a>
+                        <a href="{{ route('catalogs-product') }}" class="btn bg-gradiant">Lihat Semua <i
+                                class="mdi mdi-arrow-right"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-8">
@@ -206,14 +215,16 @@
                                         <div class="p-4">
                                             <div class="">
                                                 <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
-                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque officia recusandae quibusdam, inventore deleniti?.
+                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur
+                                                    adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque
+                                                    officia recusandae quibusdam, inventore deleniti?.
                                                 </p>
                                             </div>
                                             <div class="d-flex align-items-center mt-3">
-                                                    <div class="date">
-                                                        <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
-                                                                AM</span></p>
-                                                    </div>
+                                                <div class="date">
+                                                    <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
+                                                            AM</span></p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -231,14 +242,16 @@
                                         <div class="p-4">
                                             <div class="">
                                                 <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
-                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque officia recusandae quibusdam, inventore deleniti?.
+                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur
+                                                    adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque
+                                                    officia recusandae quibusdam, inventore deleniti?.
                                                 </p>
                                             </div>
                                             <div class="d-flex align-items-center mt-3">
-                                                    <div class="date">
-                                                        <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
-                                                                AM</span></p>
-                                                    </div>
+                                                <div class="date">
+                                                    <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
+                                                            AM</span></p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -256,14 +269,16 @@
                                         <div class="p-4">
                                             <div class="">
                                                 <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
-                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque officia recusandae quibusdam, inventore deleniti?.
+                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur
+                                                    adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque
+                                                    officia recusandae quibusdam, inventore deleniti?.
                                                 </p>
                                             </div>
                                             <div class="d-flex align-items-center mt-3">
-                                                    <div class="date">
-                                                        <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
-                                                                AM</span></p>
-                                                    </div>
+                                                <div class="date">
+                                                    <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
+                                                            AM</span></p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -281,14 +296,16 @@
                                         <div class="p-4">
                                             <div class="">
                                                 <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
-                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque officia recusandae quibusdam, inventore deleniti?.
+                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur
+                                                    adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque
+                                                    officia recusandae quibusdam, inventore deleniti?.
                                                 </p>
                                             </div>
                                             <div class="d-flex align-items-center mt-3">
-                                                    <div class="date">
-                                                        <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
-                                                                AM</span></p>
-                                                    </div>
+                                                <div class="date">
+                                                    <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
+                                                            AM</span></p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -390,7 +407,8 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h5 class="mb-1">Lokasi</h5>
-                                        <p class="f-14 mb-0 text-muted">Jl. Cipareuag No. 5, Cihanjuang, Cimanggung, Sumedang</p>
+                                        <p class="f-14 mb-0 text-muted">Jl. Cipareuag No. 5, Cihanjuang, Cimanggung,
+                                            Sumedang</p>
                                     </div>
                                 </div>
                             </div>
@@ -412,7 +430,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h5 class="mb-1">Phone</h5>
-                                        <p class="f-14 mb-0 text-muted">2276 Lynn Ogden Lane Beaumont</p>
+                                        <p class="f-14 mb-0 text-muted">Whatsapp: 0822-1879-9050</p>
                                     </div>
                                 </div>
                             </div>
@@ -425,8 +443,10 @@
                     <div class="m-5">
                         <div class="position-relative">
                             <div class="contact-map">
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.4626033254904!2d107.81037477442035!3d-6.954630468087016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68c521f856593f%3A0xda1dc7320ea63c2b!2sCV.%20Wida%20Nugraha!5e0!3m2!1sen!2sid!4v1712995312675!5m2!1sen!2sid" width="550" height="450" style="border:0;" allowfullscreen=""
-                                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.4626033254904!2d107.81037477442035!3d-6.954630468087016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68c521f856593f%3A0xda1dc7320ea63c2b!2sCV.%20Wida%20Nugraha!5e0!3m2!1sen!2sid!4v1712995312675!5m2!1sen!2sid"
+                                    width="550" height="450" style="border:0;" allowfullscreen=""
+                                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                             </div>
                             <div class="map-shape"></div>
                         </div>
@@ -440,36 +460,35 @@
     <!-- end section -->
 
     <!-- footer section -->
-    <section class=" section footer bg-dark overflow-hidden">
+    <section class="section footer bg-dark overflow-hidden">
         <div class="bg-arrow">
-            <img src="images/home/arrow-bg.png" alt="" class="">
+            {{-- <img src="{{ asset('assets/landing/images/home/arrow-bg.png') }}" alt="" class=""> --}}
         </div>
         <!-- container -->
         <div class="container">
             <div class="row ">
                 <div class="col-lg-4">
                     <a class="navbar-brand logo f-30 text-white fw-bold" href="#home">
-                        <img src="{{ asset('assets/logo.PNG') }}" class="logo-light"
-                            alt="" height="40">
+                        <img src="{{ asset('assets/logo.PNG') }}" class="logo-light" alt="" height="40">
                     </a>
 
                     <div class="footer-icon mt-4">
                         <div class=" d-flex align-items-center">
-                            <a href="" class="me-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="Facebook">
+                            <a href="https://wa.me/6282218799050" class="me-2 avatar-sm text-center" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="Whatsapp" target="_blank">
+                                <i class="mdi mdi-whatsapp f-24 align-middle text-primary"></i>
+                            </a>
+                            <a href="" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="Facebook" target="_blank">
                                 <i class="mdi mdi-facebook f-24 align-middle text-primary"></i>
                             </a>
-                            <a href="" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="twitter">
-                                <i class="mdi mdi-twitter f-24 align-middle text-primary"></i>
+                            <a href="https://www.instagram.com/paketsmartwfc/" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="Instagram" target="_blank">
+                                <i class="mdi mdi-instagram f-24 align-middle text-primary"></i>
                             </a>
                             <a href="" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="googleplay">
-                                <i class="mdi mdi-google-play f-24 align-middle text-primary"></i>
-                            </a>
-                            <a href="" class="mx-2 avatar-sm text-center">
-                                <i class="mdi mdi-linkedin f-24 align-middle text-primary" data-bs-toggle="tooltip"
-                                    data-bs-placement="top" title="linkedin"></i>
+                            data-bs-placement="top" title="Email" target="_blank">
+                                <i class="mdi mdi-email f-24 align-middle text-primary"></i>
                             </a>
                         </div>
 
@@ -492,8 +511,28 @@
                     <div class="text-start">
                         <h5 class="text-white fw-bold">Ketentuan</h5>
                         <ul class="footer-item list-unstyled footer-link mt-3">
-                            <li><a href="#">Syarat & Kondisi</a></li>
-                            <li><a href="#">Kebijakan Privasi</a></li>
+                            <li><a href="#syarat" data-bs-toggle="modal">Syarat & Ketentuan</a></li>
+                            <div class="modal fade bd-example-modal-lg" id="syarat" data-keyboard="false"
+                                tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
+                                    <div class="modal-content hero-modal-0 bg-transparent">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                        <img src="{{ asset('assets/syarat.jpg') }}" alt="Syarat dan Ketentuan">
+                                    </div>
+                                </div>
+                            </div>
+                            <li><a href="#kebijakan" data-bs-toggle="modal">Kebijakan Privasi</a></li>
+                            <div class="modal fade bd-example-modal-lg" id="kebijakan" data-keyboard="false"
+                                tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
+                                    <div class="modal-content hero-modal-0 bg-transparent">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                        <img src="{{ asset('assets/kebijakan.jpg') }}" alt="Syarat dan Ketentuan">
+                                    </div>
+                                </div>
+                            </div>
                         </ul>
                     </div>
                 </div>
