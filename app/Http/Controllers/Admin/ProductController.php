@@ -108,7 +108,7 @@ class ProductController extends Controller
             'price' => ['required', 'numeric'],
             'stock' => ['required', 'numeric'],
             'description' => ['required', 'max:500', 'string'],
-            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'image' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         if ($validator->fails()) {
