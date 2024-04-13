@@ -8,7 +8,7 @@
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            @hasrole('super_admin')
+            @hasrole('super_admin|agent|admin')
                 <a href="{{ route('sub-agent.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Sub Agen</a>
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $subAgents->firstItem() }} hingga
                     {{ $subAgents->lastItem() }} dari {{ $subAgents->total() }} data</div>
@@ -28,7 +28,9 @@
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="whitespace-nowrap">NAMA SUB AGEN</th>
+                        @hasrole('super_admin|admin')
                         <th class="text-center whitespace-nowrap">DARI AGEN</th>
+                        @endhasrole
                         <th class="whitespace-nowrap">ALAMAT</th>
                         <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
                         @hasrole('super_admin')
@@ -58,9 +60,11 @@
                                         </div>
                                     </div>
                                 </td>
+                                @hasrole('super_admin|admin')
                                 <td class="text-center capitalize">
                                     {{ $subAgent->agent->agentProfile->name  }}
                                 </td>
+                                @endhasrole
                                 <td class="w-40">
                                     <p>
                                         {{ $subAgent->address }}

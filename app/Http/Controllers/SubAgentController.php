@@ -19,9 +19,18 @@ class SubAgentController extends Controller
      */
     public function index(Request $request)
     {
-        $subAgents = SubAgent::paginate(10);
+        $user = Auth::user();
+        $roleUser = $user->roles->first();
+        $roleName = $roleUser->name;
 
-        return view('cms.sub-agent.index', compact('subAgents'));
+        if ($roleName == 'agent') {
+            $subAgents = SubAgent::where('agent_id', $user->id)->paginate(10);
+            return view('cms.sub-agent.index', compact('subAgents'));
+        } else {
+            $subAgents = SubAgent::paginate(10);
+            return view('cms.sub-agent.index', compact('subAgents'));
+        }
+
     }
 
     /**

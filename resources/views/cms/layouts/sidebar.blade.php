@@ -188,7 +188,7 @@
             </ul>
         </li>
         <li>
-            <a href="javascript:;" class="side-menu">
+            <a href="{{ route('sub-agent.index') }}" class="side-menu {{ Route::is('sub-agent*') ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-lucide="users"></i> </div>
                 <div class="side-menu__title">
                     Sub Agen
