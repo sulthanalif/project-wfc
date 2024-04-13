@@ -10,6 +10,8 @@
 
     <title>Smart WFC</title>
 
+    <link href="{{ asset('assets/logo2.PNG') }}" rel="shortcut icon">
+
     <!-- BEGIN: CSS Assets-->
     <link rel="stylesheet" href="{{ asset('assets/cms/css/app.css') }}" />
     <!-- END: CSS Assets-->
@@ -23,7 +25,7 @@
             <div class="hidden xl:flex flex-col min-h-screen">
                 <a href="{{ url('/') }}" class="-intro-x flex items-center pt-5">
                     <img alt="Midone - HTML Admin Template" class="w-6"
-                        src="{{ asset('assets/cms/images/logo.svg') }}">
+                        src="{{ asset('assets/logo2.PNG') }}">
                     <span class="text-white text-lg ml-3"> Smart WFC </span>
                 </a>
                 <div class="my-auto">

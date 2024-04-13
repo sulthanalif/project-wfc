@@ -9,7 +9,7 @@
 
     <title>Smart WFC</title>
 
-    <link rel="shortcut icon" href="images/favicon.ico">
+    <link href="{{ asset('assets/logo2.PNG') }}" rel="shortcut icon">
 
     <!-- Bootstrap css -->
     <link rel="stylesheet" href="{{ asset('assets/landing/css/bootstrap.min.css') }}" type="text/css"
@@ -48,10 +48,10 @@
 
             <!-- LOGO -->
             <a class="navbar-brand logo text-uppercase" href="{{ url('/') }}">
-                <img src="{{ asset('assets/landing/images/logo-light.png') }}" class="logo-light" alt=""
-                    height="28">
-                <img src="{{ asset('assets/landing/images/logo-dark.png') }}" class="logo-dark" alt=""
-                    height="28">
+                <img src="{{ asset('assets/logo.PNG') }}" class="logo-light" alt=""
+                    height="50">
+                <img src="{{ asset('assets/logo.PNG') }}" class="logo-dark" alt=""
+                    height="50">
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
@@ -117,37 +117,37 @@
                     <div class="logo-box ">
                         <div class="client-slider" id="client-slider">
                             <div class="item text-center">
-                                <img src="{{ asset('assets/landing/images/logo-dark.png') }}" alt=""
+                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
                                     class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/landing/images/logo-dark.png') }}" alt=""
+                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
                                     class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/landing/images/logo-dark.png') }}" alt=""
+                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
                                     class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/landing/images/logo-dark.png') }}" alt=""
+                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
                                     class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/landing/images/logo-dark.png') }}" alt=""
+                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
                                     class="img-fluid">
                             </div>
                             <!-- slider item -->
 
                             <div class="item text-center">
-                                <img src="{{ asset('assets/landing/images/logo-dark.png') }}" alt=""
+                                <img src="{{ asset('assets/logo.PNG') }}" alt=""
                                     class="img-fluid">
                             </div>
                             <!-- slider item -->
@@ -546,8 +546,8 @@
         <div class="container">
             <div class="row ">
                 <div class="col-lg-4">
-                    <a class="navbar-brand logo f-30 text-white fw-bold" href="index.html">
-                        <img src="{{ asset('assets/landing/images/logo-light.png') }}" class="logo-light"
+                    <a class="navbar-brand logo f-30 text-white fw-bold" href="#home">
+                        <img src="{{ asset('assets/logo.PNG') }}" class="logo-light"
                             alt="" height="40">
                     </a>
 

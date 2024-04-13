@@ -10,7 +10,7 @@
 
     <title>Smart WFC</title>
 
-    <link href="dist/images/logo.svg" rel="shortcut icon">
+    <link href="{{ asset('assets/logo2.PNG') }}" rel="shortcut icon">
     <!-- BEGIN: CSS Assets-->
     <link rel="stylesheet" href="{{ asset('assets/cms/css/app.css') }}" />
     <!-- END: CSS Assets-->
