@@ -95,14 +95,14 @@
             </ul>
         </li>
         <li>
-            <a href="javascript:;" class="side-menu @if (Route::is('user*') || Route::is('catalog*')) side-menu--active @endif">
+            <a href="javascript:;" class="side-menu @if (Route::is('user*') || Route::is('catalog*') || Route::is('package*')) side-menu--active @endif">
                 <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
                 <div class="side-menu__title">
                     Master
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                 </div>
             </a>
-            <ul class="@if (Route::is('user*') || Route::is('catalog*')) side-menu__sub-open @endif">
+            <ul class="@if (Route::is('user*') || Route::is('catalog*') || Route::is('package*')) side-menu__sub-open @endif">
                 <li>
                     <a href="#" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>

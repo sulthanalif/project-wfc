@@ -100,12 +100,12 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="javascript:;" class="menu @if (Route::is('user*') || Route::is('catalog*')) menu--active @endif">
+                    <a href="javascript:;" class="menu @if (Route::is('user*') || Route::is('catalog*') || Route::is('package*')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="box"></i> </div>
                         <div class="menu__title"> Master <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                         </div>
                     </a>
-                    <ul class="@if (Route::is('user*') || Route::is('catalog*')) menu__sub-open @endif">
+                    <ul class="@if (Route::is('user*') || Route::is('catalog*') || Route::is('package*')) menu__sub-open @endif">
                         <li>
                             <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
@@ -119,7 +119,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="menu">
+                            <a href="{{ route('package.index') }}" class="menu {{ Route::is('package*') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Paket </div>
                             </a>
