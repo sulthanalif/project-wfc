@@ -169,7 +169,7 @@
                     <p class="text-muted mt-4">Paket Smart WFC berdiri sejak tahun 2019, dan alhamdulillah ditahun ini total agent kami hampir 100 agent yang terbagi di berbagai kota, seperti di Sumedang, Bandung, Ciamis, Tasikmalaya, Cianjur, Depok...</p>
 
                     <div class="d-flex mt-4">
-                        <a href="#profil" class="btn btn-outline-primary">
+                        <a href="{{ route('company-profile') }}" class="btn btn-outline-primary">
                             Baca Selengkapnya <i class="mdi mdi-arrow-right"></i></a>
                     </div>
                 </div>
@@ -191,7 +191,7 @@
                         <p class=" text-primary fw-bold mb-0">Katalog</p>
                         <h3>Apa yang disediakan oleh kami!</h3>
                         <p class="text-muted">Berikut adalah daftar produk-produk yang kami sediakan.</p>
-                        <button class="btn bg-gradiant">Lihat Semua <i class="mdi mdi-arrow-right"></i></button>
+                        <a href="{{ route('catalogs-product') }}" class="btn bg-gradiant">Lihat Semua <i class="mdi mdi-arrow-right"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-8">

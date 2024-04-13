@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 // use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 // use App\Http\Controllers\AgentProfileController;
+use App\Http\Controllers\LandingpageController;
 use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Admin\DashboardAdminController;
@@ -24,9 +25,9 @@ use App\Http\Controllers\Admin\DashboardAdminController;
 |
 */
 
-Route::get('/', function (){
-    return view('welcome');
-});
+Route::get('/', [LandingpageController::class, 'index'])->name('landing-page');
+Route::get('/company-profile', [LandingpageController::class, 'profile'])->name('company-profile');
+Route::get('/catalogs-product', [LandingpageController::class, 'catalogs'])->name('catalogs-product');
 
 
 // Route::get('/login', [LoginController::class, 'index'])
