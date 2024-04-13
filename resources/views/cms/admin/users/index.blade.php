@@ -73,7 +73,11 @@
                                 @endif
                                 </td>
                                 <td class="w-40">
-                                    <div class="flex items-center justify-center text-{{ ($user->active == 1) ? 'success' : 'danger' }}"> <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> {{ ($user->active == 1) ? 'Aktif' : 'Tidak Aktif' }} </div>
+                                    @if($user->active == 1)
+                                    <div class="flex items-center justify-center text-success"> <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> Aktif </div>
+                                    @else
+                                    <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square" class="w-4 h-4 mr-2"></i> Tidak Aktif</div>
+                                    @endif
                                 </td>
                                 @hasrole('super_admin')
                                 <td class="table-report__action w-56">
