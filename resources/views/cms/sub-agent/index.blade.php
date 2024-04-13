@@ -8,7 +8,7 @@
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            @hasrole('super_admin|agent|admin')
+            @hasrole('super_admin|agent')
                 <a href="{{ route('sub-agent.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Sub Agen</a>
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $subAgents->firstItem() }} hingga
                     {{ $subAgents->lastItem() }} dari {{ $subAgents->total() }} data</div>
@@ -33,7 +33,7 @@
                         @endhasrole
                         <th class="whitespace-nowrap">ALAMAT</th>
                         <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
-                        @hasrole('super_admin')
+                        @hasrole('super_admin|agent')
                         <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
                     </tr>
@@ -49,14 +49,10 @@
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
-                                <td class="!py-3.5">
+                                <td>
                                     <div class="flex items-center">
-                                        <div class="w-9 h-9 image-fit zoom-in">
-                                            <img alt="PAKET SMART EFC" class="rounded-lg border-white shadow-md tooltip" src="{{ asset('assets/cms/images/profile.svg') }}" title="{{ $subAgent->phone_number }}">
-                                        </div>
                                         <div class="ml-4">
-                                            <a href="{{ route('sub-agent.show', $subAgent) }}" class="font-medium whitespace-nowrap">{{ $subAgent->name }}</a>
-                                            {{-- <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $subAgent->agent->agentProfile->name }}</div> --}}
+                                            <p class="font-medium whitespace-nowrap">{{ $subAgent->name }}</p>
                                         </div>
                                     </div>
                                 </td>
@@ -65,9 +61,9 @@
                                     {{ $subAgent->agent->agentProfile->name  }}
                                 </td>
                                 @endhasrole
-                                <td class="w-40">
+                                <td class="!py-3.5">
                                     <p>
-                                        {{ $subAgent->address }}
+                                        {!! $subAgent->address !!}
                                     </p>
                                 </td>
                                 <td class="w-40">
@@ -128,32 +124,6 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
             {{ $subAgents->links('cms.layouts.paginate') }}
         </div>
-        {{-- <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            <nav class="w-full sm:w-auto sm:mr-auto">
-                <ul class="pagination">
-                    <li class="page-item {{ $paginator->onFirstPage() ? 'disabled' : '' }}">
-                        <a class="page-link" href="{{ $paginator->previousPageUrl() }}">
-                            <i class="w-4 h-4" data-lucide="chevrons-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item {{ $paginator->onFirstPage() ? 'disabled' : '' }}">
-                        <a class="page-link" href="{{ $paginator->previousPageUrl() }}">
-                            <i class="w-4 h-4" data-lucide="chevron-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item {{ $paginator->currentPage() === $page ? 'active' : '' }}">
-                        <a class="page-link" href="{{ $paginator->url($page) }}">{{ $page }}</a>
-                    </li>
-                    </ul>
-            </nav>
-
-            <select class="w-20 form-select box mt-3 sm:mt-0" wire:model="perPage">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="35">35</option>
-                <option value="50">50</option>
-            </select>
-        </div> --}}
         <!-- END: Pagination -->
     </div>
 @endsection

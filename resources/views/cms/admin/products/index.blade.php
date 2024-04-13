@@ -47,7 +47,7 @@
                                             class="w-4 h-4 mr-2"></i> {{ $product->name }} </a>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 flex items-center mr-3">  {{ $product->price }} </p>
+                                    <p class="text-slate-500 flex items-center mr-3">Rp. {{ number_format($product->price, 0, ',', '.') }} </p>
                                 </td>
                                 <td class="w-40">
                                     <div class="flex">

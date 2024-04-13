@@ -24,13 +24,11 @@
             <div class="intro-y box p-5">
                 <form action="{{ route('sub-agent.store') }}" method="post">
                     @csrf
-                    <div class="grid grid-cols-12 gap-3">
-                        <div class="col-span-12 lg:col-span-6">
                             <div>
                                 <label for="name" class="form-label">Nama <span class="text-danger">*</span></label>
-                                <input id="name" name="name" type="text" class="form-control w-full" placeholder="Salwa" required>
+                                <input id="name" name="name" type="text" class="form-control w-full" placeholder="Masukkan Nama Lengkap Sub Agent" required>
                             </div>
-                            @hasrole('super_admin|admin')
+                            @hasrole('super_admin')
                             <div class="mt-3">
                                 <label for="agent_id" class="form-label">Dari Agent <span class="text-danger">*</span></label>
                                 <select class="form-select mt-2 sm:mr-2" id="agent_id" name="agent_id" required>
@@ -45,18 +43,22 @@
                             <input type="hidden" name="agent_id" value="{{ auth()->user()->id }}">
                             @endhasrole
                             <div class="mt-3">
-                                <label for="address" class="form-label">Alamat <span class="text-danger">*</span></label>
-                                <input id="address" name="address" type="text" class="form-control w-full" placeholder="Masukkan address" minlength="4" required>
+                                <label>Alamat Lengkap <span class="text-danger">*</span></label>
+                                <div class="mt-2">
+                                <textarea id="address" name="address" class="editor">
+                                    Masukkan Alamat Lengkap
+                                </textarea>
+                                </div>
+                                @error('address')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                             <div class="mt-3">
                                 <label for="phone_number" class="form-label">No Telepon <span class="text-danger">*</span></label>
-                                <input id="phone_number" name="phone_number" type="number" class="form-control w-full" placeholder="Masukkan phone_number" minlength="4" required>
+                                <input id="phone_number" name="phone_number" type="number" class="form-control w-full" placeholder="Masukkan Nomor Telepon" minlength="11" maxlength="13" required>
                             </div>
-                        </div>
-
-
-                    </div>
-
                     <div class="text-left mt-5">
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
                         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
@@ -68,4 +70,6 @@
     </div>
 @endsection
 
-
+@push('custom-scripts')
+    <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
+@endpush

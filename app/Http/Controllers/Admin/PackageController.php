@@ -89,19 +89,11 @@ class PackageController extends Controller
      */
     public function show(Package $package)
     {
-        // if ($package) {
-        //     return view('cms.admin.pakets.detail', compact('package'));
-        // } else {
-        //     return back()->with('error', 'Data Tidak Ditemukan!');
-        // }
-
-        $edit= "kjaiwdj32jre2";
-        $packageCatalog = PackageCatalog::where('package_id', $package->id)
-                    ->first();
-
-        return $packageCatalog->update([
-            'catalog_id' => $edit
-        ]);
+        if ($package) {
+            return view('cms.admin.pakets.detail', compact('package'));
+        } else {
+            return back()->with('error', 'Data Tidak Ditemukan!');
+        }
     }
 
     /**

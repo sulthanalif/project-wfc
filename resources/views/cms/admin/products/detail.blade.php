@@ -16,10 +16,11 @@
             </div>
             <div class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
                 <div class="text-slate-600 dark:text-slate-500">
-                    <div class="flex items-center font-bold text-lg justify-center">
-                        {{ $product->name }}
+                    <div class="flex flex-col items-center justify-center border-b pb-2">
+                        <h1 class="font-bold text-xl">{{ $product->name }}</h1>
+                        <span class="text-muted">Harga: Rp. {{ number_format($product->price, 0, ',', '.') }}</span>
                     </div>
-                    <div class="flex items-center justify-between mt-2 gap-3">
+                    <div class="flex items-center justify-between mt-2 gap-3 pt-2">
                         <div class="flex items-center"> <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Dibuat
                             {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }} </div>
                         <div class="flex items-center"> <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Diupdate
@@ -27,8 +28,6 @@
                     </div>
                     <div class="flex items-center mt-2">
                         {!! $product->description !!} </div>
-                    <div class="flex items-center mt-2">
-                        {!! $product->price !!} </div>
                 </div>
             </div>
         </div>

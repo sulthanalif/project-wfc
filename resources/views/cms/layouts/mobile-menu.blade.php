@@ -100,12 +100,12 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="javascript:;" class="menu @if (Route::is('user*') || Route::is('catalog*') || Route::is('package*') || Route::is('product*')) menu--active @endif">
+                    <a href="javascript:;" class="menu @if (Route::is('user*') || Route::is('catalog*') || Route::is('package*') || Route::is('product*') || Route::is('sub-agent*')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="box"></i> </div>
                         <div class="menu__title"> Master <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                         </div>
                     </a>
-                    <ul class="@if (Route::is('user*') || Route::is('catalog*') || Route::is('package*') || Route::is('product*')) menu__sub-open @endif">
+                    <ul class="@if (Route::is('user*') || Route::is('catalog*') || Route::is('package*') || Route::is('product*') || Route::is('sub-agent*')) menu__sub-open @endif">
                         <li>
                             <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
@@ -131,7 +131,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="menu">
+                            <a href="{{ route('sub-agent.index') }}" class="menu {{ Route::is('sub-agent*') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Sub Agen </div>
                             </a>
@@ -190,7 +190,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#" class="menu">
+                    <a href="{{ route('sub-agent.index') }}" class="menu {{ Route::is('dashboard-agent') ? 'menu--active' : '' }}">
                         <div class="menu__icon"> <i data-lucide="users"></i> </div>
                         <div class="menu__title"> Sub Agen </div>
                     </a>
