@@ -73,7 +73,7 @@
                                 @endif
                                 </td>
                                 <td class="w-40">
-                                    <div class="flex items-center justify-center text-success"> <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> Aktif </div>
+                                    <div class="flex items-center justify-center text-{{ ($user->active == 1) ? 'success' : 'danger' }}"> <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> {{ ($user->active == 1) ? 'Aktif' : 'Tidak Aktif' }} </div>
                                 </td>
                                 @hasrole('super_admin')
                                 <td class="table-report__action w-56">
@@ -104,9 +104,11 @@
                                             </div>
                                         </div>
                                         <div class="px-5 pb-8 text-center">
-                                            <form action="#" method="post">
+                                            <form action="{{ route('user.status', $user) }}" method="post">
                                                 @csrf
+                                                @method('put')
                                                 <input type="hidden" name="page" value="{{ $users->currentPage() }}">
+                                                {{-- <input type="hidden" name="active" value {{ ($user->active == 1) ? 0 : 1 }}> --}}
                                                 <button type="submit" class="btn btn-warning w-24">Ubah</button>
                                                 <button type="button" data-tw-dismiss="modal"
                                                     class="btn btn-outline-secondary w-24 ml-1">Batal</button>

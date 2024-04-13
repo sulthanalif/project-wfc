@@ -180,14 +180,13 @@ class UserController extends Controller
 
     }
 
-    public function changeStatus(Request $request, $user)
+    public function changeStatus(Request $request, User $user)
     {
 
-        $user->update([
-            'active' => $request->active
-        ]);
+        $user->active = ($user->active == 1 ? 0 : 1);
+        $user->save();
 
-        return response()->json(['message' => 'User berhasil ' . ($request->active == 1 ? 'diaktifkan' : 'dinonaktifkan')]);
+        return back()->with('success', 'Data Berhasil '. ($user->active == 1 ? 'Diaktifkan' : 'Dinonaktifkan') );
     }
 
     /**
