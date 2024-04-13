@@ -73,4 +73,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(AgentProfile::class);
     }
+
+    public function adminProfile ()
+    {
+        return $this->hasOne(AdminProfile::class);
+    }
 }

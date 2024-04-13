@@ -47,7 +47,7 @@ class UserController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'name' => ['nullable', 'max:225', 'string'],
+            'name' => ['required', 'max:225', 'string'],
             'email' => ['required', 'max:225', 'unique:users,email'],
             'password' => ['required'],
             'role' => ['required', 'string'],
@@ -69,6 +69,9 @@ class UserController extends Controller
                 ($request->role) ? $user->assignRole($request->role) : 'Guest' ;
                 if($request->role !== "agent"){
                     $user->email_verified_at = now();
+                    $user->adminProfile()->create([
+                        'name' => $request->name
+                    ]);
                 } else {
                     $user->agentProfile()->create([
                         'name' => $request->name,
@@ -128,7 +131,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['nullable', 'max:225', 'string'],
+            'name' => ['required', 'max:225', 'string'],
             'email' => ['required', 'max:25', 'unique:users,email'],
             'password' => ['nullable', 'string'],
             'role' => ['required', 'string'],
@@ -156,10 +159,14 @@ class UserController extends Controller
                 ($request->role) ? $user->assignRole($request->role) : '';
 
                 if($request->role == "agent"){
-                    $user->agentProfile()->create([
+                    $user->agentProfile()->update([
                         'name' => $request->name,
                         'address' => $request->address,
                         'phone_number' => $request->phone_number
+                    ]);
+                } else {
+                    $user->adminProfile()->update([
+                        'name' => $request->name
                     ]);
                 }
 
