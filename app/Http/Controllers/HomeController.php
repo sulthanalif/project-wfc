@@ -32,8 +32,11 @@ class HomeController extends Controller
         $roleName = $userRole->name;
 
         // return dd($roleName);
+        if ($user->active == 0) {
+            return redirect()->route('nonactive');
+        }
 
-        if ($roleName === "agent" && $user->active == 1) {
+        if ($roleName === "agent") {
             return redirect()->route('dashboard-agent');
         } else {
             return redirect()->route('dashboard-admin');

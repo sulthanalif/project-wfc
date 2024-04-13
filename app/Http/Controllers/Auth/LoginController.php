@@ -41,6 +41,9 @@ class LoginController extends Controller
     protected function authenticated(Request $request, $user)
     {
         // Check for specific roles and redirect accordingly
+        if ($user->active == 0) {
+            return redirect()->route('nonactive');
+        }
 
         if ($user->hasRole('admin|super_admin|finance_admin')) {
             return redirect()->route('dashboard-admin');

@@ -10,6 +10,9 @@ use App\Http\Controllers\LandingpageController;
 use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Admin\DashboardAdminController;
+use App\Http\Controllers\SubAgentController;
+use App\Models\SubAgent;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 // use App\Http\Controllers\Auth\AuthController;
 // use App\Http\Controllers\DashboardController;
@@ -36,11 +39,14 @@ Route::get('/catalogs-product', [LandingpageController::class, 'catalogs'])->nam
 
 Auth::routes(['verify' => true]);
 
-Route::group(['middleware' => 'auth', 'active'], function () {
+Route::group(['middleware' => 'auth',], function () {
+    Route::get('/agent', [DashboardController::class, 'noActive'])->name('nonactive');
 
+    //kelola sub agent
+    Route::resource('sub-agent', SubAgentController::class);
 
     //super_admin, finance_admin, admin
-    Route::group(['middleware' => 'role:super_admin|admin|finance_admin'], function () {
+    Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
             Route::group(['middleware' => 'role:super_admin|admin'], function () {
                 require __DIR__ . '/admin/masterUser.php';
@@ -52,7 +58,7 @@ Route::group(['middleware' => 'auth', 'active'], function () {
     });
 
     //agent
-    Route::group(['middleware' => ['role:agent', 'verified']], function () {
+    Route::group(['middleware' => ['role:agent', 'verified', 'active']], function () {
         Route::get('/agent', [DashboardController::class, 'index'])->name('dashboard-agent');
         require __DIR__ . '/agent/profile.php';
     });

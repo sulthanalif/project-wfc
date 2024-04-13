@@ -18,4 +18,9 @@ class DashboardController extends Controller
     {
         return view('cms.agen.index');
     }
+
+    public function noActive()
+    {
+        return view('cms.agen.noactive');
+    }
 }

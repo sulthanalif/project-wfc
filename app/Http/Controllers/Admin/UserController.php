@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\AdminProfile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -213,6 +214,28 @@ class UserController extends Controller
             return redirect()->route('user.index' ,['page' => $request->page])->with('success', 'User deleted successfully.');
         } else {
             return back()->with('error', 'Data Tidak Bisa Dihapus!');
+        }
+    }
+
+    public function getAdmin(Request $request)
+    {
+        $admins = User::role(['admin', 'super_admin', 'finance_admin'])->paginate(10);
+
+        if ($admins) {
+            return view('cms.admin.users.admin', compact('admins'));
+        } else {
+            return back()->with('error', 'Data Tidak Ditemukan!');
+        }
+    }
+
+    public function getAgent(Request $request)
+    {
+        $agents = User::role(['agent'])->paginate(10);
+
+        if ($agents) {
+            return view('cms.admin.users.agent', compact('agents'));
+        } else {
+            return back()->with('error', 'Data Tidak Ditemukan!');
         }
     }
 }
