@@ -38,7 +38,7 @@ class CatalogController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
             'description' => ['required', 'max:500', 'string'],
-            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            // 'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         if ($validator->fails()) {
@@ -47,13 +47,11 @@ class CatalogController extends Controller
 
         try {
             DB::transaction(function () use ($request, &$catalog) {
-                $imageName = 'catalog_'.time() . '.' . $request->file('image')->getClientOriginalExtension();
-                $request->file('image')->storeAs('public/images/catalog', $imageName);
 
                 $catalog = Catalog::create([
                     'name' => $request->name,
                     'description' => $request->description,
-                    'image' => $imageName
+                    // 'image' => $imageName
                 ]);
             });
             if ($catalog) {
@@ -102,7 +100,7 @@ class CatalogController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
             'description' => ['required', 'max:500', 'string'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            // 'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         if ($validator->fails()) {
@@ -113,27 +111,16 @@ class CatalogController extends Controller
 
         try {
             DB::transaction(function () use ($request, $catalog, &$update) {
-                if ($request->hasFile('image')) {
-                    // Delete old image
-                    if ($catalog->image && file_exists(storage_path('app/public/images/catalog/' . $catalog->image))) {
-                      unlink(storage_path('app/public/images/catalog/' . $catalog->image));
-                    }
 
-                    // Upload new image
-                    $imageName = 'catalog_'.time() . '.' . $request->file('image')->getClientOriginalExtension();
-                    $request->file('image')->storeAs('public/images/catalog/', $imageName);
 
                     // Update catalog data
                     $update = $catalog->update([
                       'name' => $request->name,
                       'description' => $request->description,
-                      'image' => $imageName,
+                    //   'image' => $imageName,
                       // Other catalog data
                     ]);
-                  } else {
-                    // Update catalog data without image
-                    $update = $catalog->update($request->except('image'));
-                  }
+
 
             });
             if ($update) {
@@ -155,9 +142,7 @@ class CatalogController extends Controller
      */
     public function destroy(Request $request, Catalog $catalog)
     {
-        if ($catalog->image && file_exists(storage_path('app/public/images/catalog/' . $catalog->image))) {
-            unlink(storage_path('app/public/images/catalog/' . $catalog->image));
-        }
+
 
         $delete = $catalog->delete();
 

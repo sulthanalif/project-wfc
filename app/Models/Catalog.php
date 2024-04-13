@@ -18,7 +18,7 @@ class Catalog extends Model
     protected $fillable = [
         'name',
         'description',
-        'image',
+        // 'image',
     ];
 
     public function package()
