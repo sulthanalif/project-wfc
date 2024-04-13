@@ -7,7 +7,7 @@
     <meta name="description" content=" " />
     <meta name="keywords" content="" />
 
-    <title>Smart WFC</title>
+    <title>Paket Smart WFC</title>
 
     <link href="{{ asset('assets/logo2.PNG') }}" rel="shortcut icon">
 
@@ -93,12 +93,9 @@
                         <img src="{{ asset('assets/landing/images/img1.png') }}" alt="" class="img-fluid">
                     </div>
                     <div class="col-lg-6 ">
-                        <h1 class="display-3 fw-bold">Smart WFC</h1>
-                        <h4>Quality business data for better sale.</h4>
-                        <p class="text-muted mt-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla aut
-                            cupiditate natus ad eveniet unde repudiandae dolorum sit qui, ratione, fuga reiciendis,
-                            pariatur
-                            architecto.</p>
+                        <h1 class="display-4 fw-bold">Paket Smart WFC</h1>
+                        <h4>Temukan Kebutuhan Anda dengan Mudah.</h4>
+                        <p class="text-muted mt-4">Alur kerja fleksibel, mudah untuk siapapun, maju bersama dan mampu menjangkau relasi baru.</p>
 
                         <div class="d-flex mt-4">
                             <a href="#profil" class="btn btn-outline-primary">
@@ -168,11 +165,8 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 ">
                     <h6 class="mb-0 fw-bold text-primary">Profil</h6>
-                    <h1 class="display-5 fw-bold">Smart WFC</h1>
-                    <p class="text-muted mt-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla aut
-                        cupiditate natus ad eveniet unde repudiandae dolorum sit qui, ratione, fuga reiciendis,
-                        pariatur
-                        architecto.</p>
+                    <h1 class="display-5 fw-bold">Paket Smart WFC</h1>
+                    <p class="text-muted mt-4">Paket Smart WFC berdiri sejak tahun 2019, dan alhamdulillah ditahun ini total agent kami hampir 100 agent yang terbagi di berbagai kota, seperti di Sumedang, Bandung, Ciamis, Tasikmalaya, Cianjur, Depok...</p>
 
                     <div class="d-flex mt-4">
                         <a href="#profil" class="btn btn-outline-primary">
@@ -195,10 +189,8 @@
                 <div class="col-lg-4">
                     <div class="title">
                         <p class=" text-primary fw-bold mb-0">Katalog</p>
-                        <h3>What they think of us!</h3>
-                        <p class="text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem officiis
-                            nostrum tempore quasi vero magni voluptate molestias est provident, optio quo sint totam aut
-                            suscipit quisquam laudantium fugit accusamus vitae?</p>
+                        <h3>Apa yang disediakan oleh kami!</h3>
+                        <p class="text-muted">Berikut adalah daftar produk-produk yang kami sediakan.</p>
                         <button class="btn bg-gradiant">Lihat Semua <i class="mdi mdi-arrow-right"></i></button>
                     </div>
                 </div>
@@ -207,190 +199,103 @@
                         <div class="item">
                             <div class="testi-box position-relative overflow-hidden">
                                 <div class="row align-items-center">
-                                    <div class="col-md-5">
-                                        <img src="images/testi/img-1.png" alt="" class="img-fluid">
+                                    <div class="col-md-5 text-center">
+                                        <img src="{{ asset('assets/logo2.png') }}" alt="" class="img-fluid">
                                     </div>
                                     <div class="col-md-7">
                                         <div class="p-4">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
-                                                    <div class="avatar">
-                                                        <img src="images/user/img-1.jpg" alt=""
-                                                            class="img-fluid rounded-circle">
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <p class="f-14 mb-0 text-dark fw-bold"><span
-                                                            class="text-muted fw-normal">Review By </span> Freanki
-                                                        Fabel
-                                                    </p>
+                                            <div class="">
+                                                <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
+                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque officia recusandae quibusdam, inventore deleniti?.
+                                                </p>
+                                            </div>
+                                            <div class="d-flex align-items-center mt-3">
                                                     <div class="date">
-                                                        <p class="text-muted mb-0 f-14">28 jan, 2021 <span>10:25
+                                                        <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
                                                                 AM</span></p>
                                                     </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-3">
-                                                <h5 class="fw-bold">Bulid The App That Everyone Love.</h5>
-                                                <p class="text-muted f-14">Start working with Styza that can provide
-                                                    everything you need to generate awareness, drive traffic, connect.
-                                                </p>
-                                                <button class="btn btn-sm bg-gradiant"><i
-                                                        class="mdi mdi-plus f-16 align-middle"></i>
-                                                    Follow</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="back-image position-absolute end-0 bottom-0">
-                                    <img src="images/testi/rating-image.png" alt="" class="img-fluid">
-                                </div>
 
                             </div>
                         </div>
-                        <!-- slider item -->
-
                         <div class="item">
                             <div class="testi-box position-relative overflow-hidden">
                                 <div class="row align-items-center">
-                                    <div class="col-md-5">
-                                        <img src="images/testi/img-2.png" alt="" class="img-fluid">
+                                    <div class="col-md-5 text-center">
+                                        <img src="{{ asset('assets/logo2.png') }}" alt="" class="img-fluid">
                                     </div>
                                     <div class="col-md-7">
                                         <div class="p-4">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
-                                                    <div class="avatar">
-                                                        <img src="images/user/img-2.jpg" alt=""
-                                                            class="img-fluid rounded-circle">
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <p class="f-14 mb-0 text-dark fw-bold"><span
-                                                            class="text-muted fw-normal">Review By </span> Freanki
-                                                        Fabel
-                                                    </p>
+                                            <div class="">
+                                                <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
+                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque officia recusandae quibusdam, inventore deleniti?.
+                                                </p>
+                                            </div>
+                                            <div class="d-flex align-items-center mt-3">
                                                     <div class="date">
-                                                        <p class="text-muted mb-0 f-14">28 jan, 2021 <span>10:25
+                                                        <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
                                                                 AM</span></p>
                                                     </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-3">
-                                                <h5 class="fw-bold">Easy and prefect solution</h5>
-                                                <p class="text-muted f-14">Start working with Styza that can provide
-                                                    everything you need to generate awareness, drive traffic, connect.
-                                                </p>
-                                                <button class="btn btn-sm bg-gradiant"><i
-                                                        class="mdi mdi-plus f-16 align-middle"></i>
-                                                    Follow</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="back-image position-absolute end-0 bottom-0">
-                                    <img src="images/testi/rating-image.png" alt="" class="img-fluid">
-                                </div>
 
                             </div>
                         </div>
-
-                        <!-- slider item -->
-                        <div class="item ">
+                        <div class="item">
                             <div class="testi-box position-relative overflow-hidden">
                                 <div class="row align-items-center">
-                                    <div class="col-md-5">
-                                        <img src="images/testi/img-3.png" alt="" class="img-fluid">
+                                    <div class="col-md-5 text-center">
+                                        <img src="{{ asset('assets/logo2.png') }}" alt="" class="img-fluid">
                                     </div>
                                     <div class="col-md-7">
                                         <div class="p-4">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
-                                                    <div class="avatar">
-                                                        <img src="images/user/img-3.jpg" alt=""
-                                                            class="img-fluid rounded-circle">
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <p class="f-14 mb-0 text-dark fw-bold"><span
-                                                            class="text-muted fw-normal">Review By </span> Freanki
-                                                        Fabel
-                                                    </p>
+                                            <div class="">
+                                                <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
+                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque officia recusandae quibusdam, inventore deleniti?.
+                                                </p>
+                                            </div>
+                                            <div class="d-flex align-items-center mt-3">
                                                     <div class="date">
-                                                        <p class="text-muted mb-0 f-14">28 jan, 2021 <span>10:25
+                                                        <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
                                                                 AM</span></p>
                                                     </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-3">
-                                                <h5 class="fw-bold">Bulid The App That Everyone Love.</h5>
-                                                <p class="text-muted f-14">Start working with Styza that can provide
-                                                    everything you need to generate awareness, drive traffic, connect.
-                                                </p>
-                                                <button class="btn btn-sm bg-gradiant"><i
-                                                        class="mdi mdi-plus f-16 align-middle"></i>
-                                                    Follow</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="back-image position-absolute end-0 bottom-0">
-                                    <img src="images/testi/rating-image.png" alt="" class="img-fluid">
-                                </div>
 
                             </div>
                         </div>
-
-                        <!-- slider item -->
-                        <div class="item ">
+                        <div class="item">
                             <div class="testi-box position-relative overflow-hidden">
                                 <div class="row align-items-center">
-                                    <div class="col-md-5">
-                                        <img src="images/testi/img-4.png" alt="" class="img-fluid">
+                                    <div class="col-md-5 text-center">
+                                        <img src="{{ asset('assets/logo2.png') }}" alt="" class="img-fluid">
                                     </div>
                                     <div class="col-md-7">
                                         <div class="p-4">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
-                                                    <div class="avatar">
-                                                        <img src="images/user/img-4.jpg" alt=""
-                                                            class="img-fluid rounded-circle">
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <p class="f-14 mb-0 text-dark fw-bold"><span
-                                                            class="text-muted fw-normal">Review By </span> Freanki
-                                                        Fabel
-                                                    </p>
+                                            <div class="">
+                                                <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
+                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque officia recusandae quibusdam, inventore deleniti?.
+                                                </p>
+                                            </div>
+                                            <div class="d-flex align-items-center mt-3">
                                                     <div class="date">
-                                                        <p class="text-muted mb-0 f-14">28 jan, 2021 <span>10:25
+                                                        <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
                                                                 AM</span></p>
                                                     </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-3">
-                                                <h5 class="fw-bold">Bulid The App That Everyone Love.</h5>
-                                                <p class="text-muted f-14">Start working with Styza that can provide
-                                                    everything you need to generate awareness, drive traffic, connect.
-                                                </p>
-                                                <button class="btn btn-sm bg-gradiant"><i
-                                                        class="mdi mdi-plus f-16 align-middle"></i>
-                                                    Follow</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="back-image position-absolute end-0 bottom-0">
-                                    <img src="images/testi/rating-image.png" alt="" class="img-fluid">
-                                </div>
 
                             </div>
                         </div>
-                        <!-- slider item -->
                     </div>
                 </div>
             </div>
@@ -468,8 +373,7 @@
                     <div class="title text-center mb-5">
                         <h6 class="mb-0 fw-bold text-primary">Kontak Kami</h6>
                         <h2 class="f-40">Ayo Hubungi Kami!</h2>
-                        <p class="text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor eos <br>
-                            inventore omnis aliquid rerum alias molestias.</p>
+                        <p class="text-muted">Dapatkan informasi lebih lanjut dan bantuan dari tim kami.</p>
 
                     </div>
                 </div>
@@ -485,8 +389,8 @@
                                         <i class="mdi mdi-google-maps f-50 text-primary"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h5 class="mb-1">Location</h5>
-                                        <p class="f-14 mb-0 text-muted">2276 Lynn Ogden Lane Beaumont</p>
+                                        <h5 class="mb-1">Lokasi</h5>
+                                        <p class="f-14 mb-0 text-muted">Jl. Cipareuag No. 5, Cihanjuang, Cimanggung, Sumedang</p>
                                     </div>
                                 </div>
                             </div>
@@ -521,10 +425,8 @@
                     <div class="m-5">
                         <div class="position-relative">
                             <div class="contact-map">
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d29754.94142818836!2d72.88699279999999!3d21.217263799999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1641286801478!5m2!1sen!2sin"
-                                    width="550" height="450" style="border:0;" allowfullscreen=""
-                                    loading="lazy"></iframe>
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.4626033254904!2d107.81037477442035!3d-6.954630468087016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68c521f856593f%3A0xda1dc7320ea63c2b!2sCV.%20Wida%20Nugraha!5e0!3m2!1sen!2sid!4v1712995312675!5m2!1sen!2sid" width="550" height="450" style="border:0;" allowfullscreen=""
+                                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                             </div>
                             <div class="map-shape"></div>
                         </div>
@@ -620,7 +522,7 @@
                     <p class="mb-0 text-center text-muted">Copyright ©
                         <script>
                             document.write(new Date().getFullYear())
-                        </script> Smart WFC. All Right Reserved
+                        </script> CV. WIDA NUGRAHA. All Right Reserved
                     </p>
                 </div>
             </div>

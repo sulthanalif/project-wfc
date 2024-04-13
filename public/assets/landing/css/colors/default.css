@@ -23,7 +23,7 @@
 .dropleft .dropdown-menu .dropdown-item:focus,
 .dropleft .dropdown-menu .dropdown-item.active,
 .link-post-content i {
-    color: #0076a3 !important;
+    color: #bc8f6e !important;
 }
 
 /* BACKGROUND */
@@ -51,7 +51,7 @@
 .pagination>.active>span:focus,
 .pagination>.active>span:hover,
 .footer-social li a:hover i {
-    background-color: #0076a3 !important;
+    background-color: #bc8f6e !important;
 }
 
 /* BORDER-COLOR */
@@ -74,7 +74,7 @@
 .blockquote,
 .link-post-content,
 .border-primary {
-    border-color: #0076a3 !important;
+    border-color: #bc8f6e !important;
 }
 
 
@@ -91,7 +91,7 @@
     .navbar-custom .navbar-nav li.active a,
     .navbar-custom .navbar-nav li a:hover,
     .navbar-custom .navbar-nav li a:active {
-        color: #0076a3 !important;
+        color: #bc8f6e !important;
     }
 }
 
@@ -123,11 +123,11 @@
 .nav-sticky.navbar-custom .navbar-nav li a:hover,
 .nav-sticky.navbar-custom .navbar-nav li a:focus,
 .nav-sticky.navbar-custom .navbar-nav li a:active {
-    color: #0076a3 !important;
+    color: #bc8f6e !important;
 }
 
 .bg-gradiant {
-    background: linear-gradient(80deg, #46a5bd 0%, #116a8d 100%);
+    background: linear-gradient(80deg, #bc8f6e 0%, #9e795e 100%);
     border: none !important;
     color: #fff !important;
 
