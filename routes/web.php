@@ -55,6 +55,7 @@ Route::group(['middleware' => 'auth',], function () {
         require __DIR__ . '/admin/masterCatalog.php';
         require __DIR__ . '/admin/masterPackage.php';
         require __DIR__ . '/admin/masterProduct.php';
+        require __DIR__ . '/admin/masterSupplier.php';
     });
 
     //agent

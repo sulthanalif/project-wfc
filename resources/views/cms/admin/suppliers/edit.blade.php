@@ -27,13 +27,13 @@
                     @csrf
                             <div>
                                 <label for="name" class="form-label">Nama <span class="text-danger">*</span></label>
-                                <input id="name" name="name" type="text" class="form-control w-full" placeholder="Masukkan Nama Supplier" required value="#">
+                                <input id="name" name="name" type="text" class="form-control w-full" placeholder="Masukkan Nama Supplier" required value="{{ $supplier->name }}">
                             </div>
                             <div class="mt-3">
                                 <label>Alamat Lengkap <span class="text-danger">*</span></label>
                                 <div class="mt-2">
                                 <textarea id="address" name="address" class="editor">
-                                    #
+                                    {{ $supplier->address }}
                                 </textarea>
                                 </div>
                                 @error('address')
@@ -44,7 +44,7 @@
                             </div>
                             <div class="mt-3">
                                 <label for="phone_number" class="form-label">No Telepon <span class="text-danger">*</span></label>
-                                <input id="phone_number" name="phone_number" type="number" class="form-control w-full" placeholder="Masukkan Nomor Telepon" minlength="11" maxlength="13" required value="#">
+                                <input id="phone_number" name="phone_number" type="number" class="form-control w-full" placeholder="Masukkan Nomor Telepon" minlength="11" maxlength="13" required value="{{ $supplier->phone_number }}">
                             </div>
                     <div class="text-left mt-5">
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>

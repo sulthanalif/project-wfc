@@ -93,7 +93,7 @@
                                             </div>
                                         </div>
                                         <div class="px-5 pb-8 text-center">
-                                            <form action="{{ route('sub-agent.destroy', $supplier) }}" method="post">
+                                            <form action="{{ route('supplier.destroy', $supplier) }}" method="post">
                                                 @csrf
                                                 @method('delete')
                                                 <input type="hidden" name="page" value="{{ $suppliers->currentPage() }}">
