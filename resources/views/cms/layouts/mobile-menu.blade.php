@@ -100,14 +100,14 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="javascript:;" class="menu @if (Route::is('user*') || Route::is('catalog*') || Route::is('package*') || Route::is('product*') || Route::is('sub-agent*')) menu--active @endif">
+                    <a href="javascript:;" class="menu @if (Route::is('user*') || Route::is('catalog*') || Route::is('package*') || Route::is('product*') || Route::is('sub-agent*') || Route::is('supplier*')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="box"></i> </div>
                         <div class="menu__title"> Master <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                         </div>
                     </a>
-                    <ul class="@if (Route::is('user*') || Route::is('catalog*') || Route::is('package*') || Route::is('product*') || Route::is('sub-agent*')) menu__sub-open @endif">
+                    <ul class="@if (Route::is('user*') || Route::is('catalog*') || Route::is('package*') || Route::is('product*') || Route::is('sub-agent*') || Route::is('supplier*')) menu__sub-open @endif">
                         <li>
-                            <a href="#" class="menu">
+                            <a href="{{ route('supplier.index') }}" class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Supplier </div>
                             </a>

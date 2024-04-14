@@ -8,7 +8,7 @@
     <meta name="description" content=" " />
     <meta name="keywords" content="" />
 
-    <title>Smart WFC</title>
+    <title>Paket Smart WFC</title>
 
     <link href="{{ asset('assets/logo2.PNG') }}" rel="shortcut icon">
     <!-- BEGIN: CSS Assets-->

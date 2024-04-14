@@ -1,17 +1,17 @@
 @extends('cms.layouts.app', [
-    'title' => 'Sub Agen',
+    'title' => 'Supplier',
 ])
 
 @section('content')
     <h2 class="intro-y text-lg font-medium mt-10">
-        Sub Agen
+        Supplier
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            @hasrole('super_admin|agent')
-                <a href="{{ route('sub-agent.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Sub Agen</a>
-                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $subAgents->firstItem() }} hingga
-                    {{ $subAgents->lastItem() }} dari {{ $subAgents->total() }} data</div>
+            @hasrole('super_admin|admin')
+                <a href="{{ route('supplier.create' )}}" class="btn btn-primary shadow-md mr-2">Tambah Supplier</a>
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $suppliers->firstItem() }} hingga
+                    {{ $suppliers->lastItem() }} dari {{ $suppliers->total() }} data</div>
             @endhasrole
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
                 <div class="w-56 relative text-slate-500">
@@ -27,10 +27,7 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA SUB AGEN</th>
-                        @hasrole('super_admin|admin')
-                        <th class="text-center whitespace-nowrap">DARI AGEN</th>
-                        @endhasrole
+                        <th class="whitespace-nowrap">NAMA SUPPLIER</th>
                         <th class="whitespace-nowrap">ALAMAT</th>
                         <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
                         @hasrole('super_admin|agent')
@@ -39,12 +36,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if ($subAgents->isEmpty())
+                    @if ($suppliers->isEmpty())
                         <tr>
                             <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
-                        @foreach ($subAgents as $subAgent)
+                        @foreach ($suppliers as $supplier)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
@@ -52,32 +49,27 @@
                                 <td>
                                     <div class="flex items-center">
                                         <div class="ml-4">
-                                            <p class="font-medium whitespace-nowrap">{{ $subAgent->name }}</p>
+                                            <p class="font-medium whitespace-nowrap">{{ $supplier->name }}</p>
                                         </div>
                                     </div>
                                 </td>
-                                @hasrole('super_admin|admin')
-                                <td class="text-center capitalize">
-                                    {{ $subAgent->agent->agentProfile->name  }}
-                                </td>
-                                @endhasrole
                                 <td class="!py-3.5">
                                     <p>
-                                        {!! $subAgent->address !!}
+                                        {!! $supplier->address !!}
                                     </p>
                                 </td>
                                 <td class="w-40">
                                     <p>
-                                        {{ $subAgent->phone_number }}
+                                        {{ $supplier->phone_number }}
                                     </p>
                                 </td>
-                                @hasrole('super_admin|agent')
+                                @hasrole('super_admin|admin')
                                 <td class="table-report__action w-56">
                                     <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="{{ route('sub-agent.edit', $subAgent) }}"> <i
+                                        <a class="flex items-center mr-3" href="{{ route('supplier.edit', $supplier) }}"> <i
                                                 data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
                                         <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal{{ $subAgent->id }}"> <i data-lucide="trash-2"
+                                            data-tw-target="#delete-confirmation-modal{{ $supplier->id }}"> <i data-lucide="trash-2"
                                                 class="w-4 h-4 mr-1"></i> Hapus </a>
                                     </div>
                                 </td>
@@ -87,7 +79,7 @@
 
 
                         <!-- BEGIN: Delete Confirmation Modal -->
-                        <div id="delete-confirmation-modal{{ $subAgent->id }}" class="modal" tabindex="-1" aria-hidden="true">
+                        <div id="delete-confirmation-modal{{ $supplier->id }}" class="modal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-body p-0">
@@ -101,10 +93,10 @@
                                             </div>
                                         </div>
                                         <div class="px-5 pb-8 text-center">
-                                            <form action="{{ route('sub-agent.destroy', $subAgent) }}" method="post">
+                                            <form action="{{ route('sub-agent.destroy', $supplier) }}" method="post">
                                                 @csrf
                                                 @method('delete')
-                                                <input type="hidden" name="page" value="{{ $subAgents->currentPage() }}">
+                                                <input type="hidden" name="page" value="{{ $suppliers->currentPage() }}">
                                                 <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                 <button type="button" data-tw-dismiss="modal"
                                                     class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -124,7 +116,7 @@
 
         <!-- BEGIN: Pagination -->
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $subAgents->links('cms.layouts.paginate') }}
+            {{ $suppliers->links('cms.layouts.paginate') }}
         </div>
         <!-- END: Pagination -->
     </div>
