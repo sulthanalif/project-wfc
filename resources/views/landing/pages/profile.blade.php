@@ -110,12 +110,14 @@
                     <p class="text-muted mt-4">Paket Smart WFC berdiri sejak tahun 2019, dan alhamdulillah ditahun ini
                         total agent kami hampir 100 agent yang terbagi di berbagai kota, seperti di Sumedang, Bandung,
                         Ciamis, Tasikmalaya, Cianjur, Depok.</p>
-                        <p class="text-muted">
-                            Alhamdulillah karena antusiasnya yang sangat besar hingga selalu ada ribuan peserta yang terdaftar. Alur kerja yang sangat fleksibel, bisa untuk siapapun yang ingin berkembang, maju bersama dan mampu menggandeng relasi baru.
-                        </p>
-                        <p class="text-muted">
-                            Cara untuk bergabung bersama kami pun cukup mudah dan ada beberapa syarat yang wajib dipenuhi.
-                        </p>
+                    <p class="text-muted">
+                        Alhamdulillah karena antusiasnya yang sangat besar hingga selalu ada ribuan peserta yang
+                        terdaftar. Alur kerja yang sangat fleksibel, bisa untuk siapapun yang ingin berkembang, maju
+                        bersama dan mampu menggandeng relasi baru.
+                    </p>
+                    <p class="text-muted">
+                        Cara untuk bergabung bersama kami pun cukup mudah dan ada beberapa syarat yang wajib dipenuhi.
+                    </p>
                 </div>
                 <div class="col-lg-6 text-center">
                     <img src="{{ asset('assets/logo.PNG') }}" alt="" class="img-fluid">
@@ -139,7 +141,8 @@
             <div class="row">
                 <div class="col-lg-6 text-center">
                     <h3 class="fw-bold">Visi Perusahaan</h3>
-                    <p class="text-muted fst-italic">"Menjadi pusat penyediaan kebutuhan Hari Raya yang amanah, mudah dan murah"</p>
+                    <p class="text-muted fst-italic">"Menjadi pusat penyediaan kebutuhan Hari Raya yang amanah, mudah
+                        dan murah"</p>
                 </div>
                 <div class="col-lg-6 text-center">
                     <h3 class="fw-bold">Misi Perusahaan</h3>
@@ -156,49 +159,59 @@
     <!-- end section -->
 
     <!-- agent section -->
-    <section class="section team" id="agent">
+    <section class="section team service" id="agent">
         <!-- start container -->
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="title text-center mb-5">
-                        <h6 class="mb-0 fw-bold text-primary">Agent!</h6>
-                        <h2 class="f-40">Daftar Agent Perusahaan!</h2>
+                        <h6 class="mb-0 fw-bold text-primary">Agent</h6>
+                        <h2 class="f-40">Daftar Agent Perusahaan</h2>
                     </div>
                 </div>
             </div>
 
             <div class="row justify-content-center mt-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="team-box text-start">
-                        <div class="row justify-content-end">
-                            <div class="col-lg-9 col-10">
-                                <div class="team-image">
-                                    <img src="{{ asset('assets/logo2.PNG') }}" alt="" class="img-fluid">
-                                </div>
-                                <div class="team-icon ">
-                                    <div class="d-flex mt-2">
-                                        <div class="social-icon facebook mx-2">
-                                            <a href=""> <i class="mdi mdi-facebook f-20"></i></a>
+                @foreach ($agentUsers as $agent)
+                    <div class="col-6 col-lg-3 col-md-6">
+                        <div class="service-box">
+                            <div class="team-box text-start">
+                                <div class="row justify-content-end">
+                                    <div class="col-lg-10 col-9">
+                                        <div class="team-image">
+                                            <img src="{{ asset('assets/cms/images/profile.svg') }}" alt=""
+                                                class="img-fluid">
                                         </div>
-                                        <div class="social-icon instagram mx-2">
-                                            <a href=""><i class="mdi mdi-instagram f-20"></i></a>
-                                        </div>
-                                        <div class="social-icon twitter mx-2">
-                                            <a href=""><i class="mdi mdi-twitter f-20"></i></a>
-                                        </div>
-                                        <div class="social-icon linkedin mx-2">
-                                            <a href=""><i class="mdi mdi-linkedin f-20"></i></a>
+                                        <div class="team-icon ">
+                                            <div class="d-flex mt-2 align-items-center justify-content-center">
+                                                <div class="social-icon whatsapp mx-2">
+                                                    <a href="{{ $agent->agentProfile->phone_number ? 'https://wa.me/' . $agent->agentProfile->phone_number : '#' }}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="{{ $agent->agentProfile->phone_number ? $agent->agentProfile->phone_number : 'Belum Ada Nomor' }}"
+                                                        target="_blank"> <i class="mdi mdi-whatsapp f-20"></i></a>
+                                                </div>
+                                                <div class="social-icon google-maps mx-2">
+                                                    @php
+                                                        $address = $agent->agentProfile->address ?? 'Belum Ada Alamat';
+                                                        $mapUrl =
+                                                            'https://www.google.com/maps/place/' . urlencode($address);
+                                                    @endphp
+                                                    <a href="{{ $mapUrl }}" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="{{ $address }}"
+                                                        target="_blank"><i class="mdi mdi-google-maps f-20"></i></a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="team-info position-absolute">
+                                    <p class="h6 fw-bold">{{ $agent->agentProfile->name }} <span
+                                            class="f-14 text-muted fw-normal">/ agent</span></p>
+                                </div>
                             </div>
                         </div>
-                        <div class="team-info position-absolute">
-                            <h6>Salwa <span class="f-14 text-muted fw-normal">/ owner</span></h6>
-                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
         </div>
         <!-- end container -->
@@ -220,20 +233,20 @@
 
                     <div class="footer-icon mt-4">
                         <div class=" d-flex align-items-center">
-                            <a href="https://wa.me/6282218799050" class="me-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="Whatsapp" target="_blank">
+                            <a href="https://wa.me/6282218799050" class="me-2 avatar-sm text-center"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Whatsapp" target="_blank">
                                 <i class="mdi mdi-whatsapp f-24 align-middle text-primary"></i>
                             </a>
                             <a href="" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
                                 data-bs-placement="top" title="Facebook" target="_blank">
                                 <i class="mdi mdi-facebook f-24 align-middle text-primary"></i>
                             </a>
-                            <a href="https://www.instagram.com/paketsmartwfc/" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="Instagram" target="_blank">
+                            <a href="https://www.instagram.com/paketsmartwfc/" class="mx-2 avatar-sm text-center"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Instagram" target="_blank">
                                 <i class="mdi mdi-instagram f-24 align-middle text-primary"></i>
                             </a>
                             <a href="" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Email" target="_blank">
+                                data-bs-placement="top" title="Email" target="_blank">
                                 <i class="mdi mdi-email f-24 align-middle text-primary"></i>
                             </a>
                         </div>

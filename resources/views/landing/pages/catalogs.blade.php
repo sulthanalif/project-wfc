@@ -80,50 +80,64 @@
     </nav>
     <!-- END NAVBAR -->
 
-    <!-- agent section -->
-    <section class="section team" id="agent">
+    <!-- katalog section -->
+    <section class="section team service">
         <!-- start container -->
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="title text-center mb-5">
-                        <h6 class="mb-0 fw-bold text-primary">Agent!</h6>
-                        <h2 class="f-40">Daftar Agent Perusahaan!</h2>
+                        <h6 class="mb-0 fw-bold text-primary">Katalog</h6>
+                        <h2 class="f-40">Daftar Katalog Paket Smart WFC</h2>
                     </div>
                 </div>
             </div>
 
             <div class="row justify-content-center mt-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="team-box text-start">
-                        <div class="row justify-content-end">
-                            <div class="col-lg-9 col-10">
-                                <div class="team-image">
-                                    <img src="{{ asset('assets/logo2.PNG') }}" alt="" class="img-fluid">
+                @if ($packages->isEmpty())
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="title text-center mb-5">
+                                <h2 class="f-30">Belum Ada Katalog Paket</h2>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    @foreach ($packages as $package)
+                        <div class="col-6 col-lg-3 col-md-6 mb-5">
+                            <a href="#detailModal" class="text-primary" data-bs-toggle="modal">
+                                <div class="service-box">
+                                    <div class="team-box text-start">
+                                        <div class="row justify-content-end">
+                                            <div class="col-lg-10 col-9">
+                                                <div class="team-image">
+                                                    <img src="{{ asset('storage/images/package/' . $package->image) }}"
+                                                        alt="" class="img-fluid">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="team-info position-absolute">
+                                            <p class="h6 fw-bold">{{ $package->name }} <span
+                                                    class="f-14 text-muted fw-normal">/
+                                                    {{ $package->catalogName->name }}</span></p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="team-icon ">
-                                    <div class="d-flex mt-2">
-                                        <div class="social-icon facebook mx-2">
-                                            <a href=""> <i class="mdi mdi-facebook f-20"></i></a>
-                                        </div>
-                                        <div class="social-icon instagram mx-2">
-                                            <a href=""><i class="mdi mdi-instagram f-20"></i></a>
-                                        </div>
-                                        <div class="social-icon twitter mx-2">
-                                            <a href=""><i class="mdi mdi-twitter f-20"></i></a>
-                                        </div>
-                                        <div class="social-icon linkedin mx-2">
-                                            <a href=""><i class="mdi mdi-linkedin f-20"></i></a>
-                                        </div>
+                            </a>
+
+                            <div class="modal fade bd-example-modal-lg" id="detailModal" data-keyboard="false"
+                                tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
+                                    <div class="modal-content hero-modal-0 bg-transparent">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                        <img src="{{ asset('assets/syarat.jpg') }}" alt="Syarat dan Ketentuan">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="team-info position-absolute">
-                            <h6>Salwa <span class="f-14 text-muted fw-normal">/ owner</span></h6>
-                        </div>
-                    </div>
-                </div>
+                    @endforeach
+                @endif
             </div>
         </div>
         <!-- end container -->
@@ -145,20 +159,20 @@
 
                     <div class="footer-icon mt-4">
                         <div class=" d-flex align-items-center">
-                            <a href="https://wa.me/6282218799050" class="me-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="Whatsapp" target="_blank">
+                            <a href="https://wa.me/6282218799050" class="me-2 avatar-sm text-center"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Whatsapp" target="_blank">
                                 <i class="mdi mdi-whatsapp f-24 align-middle text-primary"></i>
                             </a>
                             <a href="" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
                                 data-bs-placement="top" title="Facebook" target="_blank">
                                 <i class="mdi mdi-facebook f-24 align-middle text-primary"></i>
                             </a>
-                            <a href="https://www.instagram.com/paketsmartwfc/" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="Instagram" target="_blank">
+                            <a href="https://www.instagram.com/paketsmartwfc/" class="mx-2 avatar-sm text-center"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Instagram" target="_blank">
                                 <i class="mdi mdi-instagram f-24 align-middle text-primary"></i>
                             </a>
                             <a href="" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Email" target="_blank">
+                                data-bs-placement="top" title="Email" target="_blank">
                                 <i class="mdi mdi-email f-24 align-middle text-primary"></i>
                             </a>
                         </div>
