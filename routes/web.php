@@ -59,9 +59,15 @@ Route::group(['middleware' => 'auth',], function () {
     });
 
     //agent
-    Route::group(['middleware' => ['role:agent', 'verified', 'active']], function () {
-        Route::get('/agent', [DashboardController::class, 'index'])->name('dashboard-agent');
-        require __DIR__ . '/agent/profile.php';
+    Route::group(['middleware' => ['role:agent', 'verified']], function () {
+        Route::group(['middleware' => ['active']], function () {
+            Route::get('/agent', [DashboardController::class, 'index'])->name('dashboard-agent');
+            require __DIR__ . '/agent/profile.php';
+        });
+
+        Route::get('/new-agent', function (){
+            return view('cms.agen.new-agent.index');
+        })->name('nonactive');
     });
 });
 

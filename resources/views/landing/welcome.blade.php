@@ -474,20 +474,20 @@
 
                     <div class="footer-icon mt-4">
                         <div class=" d-flex align-items-center">
-                            <a href="https://wa.me/6282218799050" class="me-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="Whatsapp" target="_blank">
+                            <a href="https://wa.me/6282218799050" class="me-2 avatar-sm text-center"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Whatsapp" target="_blank">
                                 <i class="mdi mdi-whatsapp f-24 align-middle text-primary"></i>
                             </a>
                             <a href="" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
                                 data-bs-placement="top" title="Facebook" target="_blank">
                                 <i class="mdi mdi-facebook f-24 align-middle text-primary"></i>
                             </a>
-                            <a href="https://www.instagram.com/paketsmartwfc/" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="Instagram" target="_blank">
+                            <a href="https://www.instagram.com/paketsmartwfc/" class="mx-2 avatar-sm text-center"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Instagram" target="_blank">
                                 <i class="mdi mdi-instagram f-24 align-middle text-primary"></i>
                             </a>
                             <a href="" class="mx-2 avatar-sm text-center" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Email" target="_blank">
+                                data-bs-placement="top" title="Email" target="_blank">
                                 <i class="mdi mdi-email f-24 align-middle text-primary"></i>
                             </a>
                         </div>

@@ -35,7 +35,7 @@
                         <th class="text-center whitespace-nowrap">JABATAN</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
                         @hasrole('super_admin')
-                        <th class="text-center whitespace-nowrap">AKSI</th>
+                            <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
                     </tr>
                 </thead>
@@ -53,106 +53,116 @@
                                 <td class="!py-3.5">
                                     <div class="flex items-center">
                                         <div class="w-9 h-9 image-fit zoom-in">
-                                            <img alt="PAKET SMART EFC" class="rounded-lg border-white shadow-md tooltip" src="{{ asset('assets/cms/images/profile.svg') }}" title="{{ empty($user->agentProfile->phone_number) ? 'Nomer HP Belum Diisi' : $user->agentProfile->phone_number }}">
+                                            <img alt="PAKET SMART EFC" class="rounded-lg border-white shadow-md tooltip"
+                                                src="{{ asset('assets/cms/images/profile.svg') }}"
+                                                title="{{ empty($user->agentProfile->phone_number) ? 'Nomer HP Belum Diisi' : $user->agentProfile->phone_number }}">
                                         </div>
                                         <div class="ml-4">
-                                            <a href="{{ route('user.show', $user) }}" class="font-medium whitespace-nowrap">{{ $user->agentProfile ? $user->agentProfile->name : $user->email }}</a>
-                                            <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $user->email }}</div>
+                                            <a href="{{ route('user.show', $user) }}"
+                                                class="font-medium whitespace-nowrap">{{ $user->agentProfile ? $user->agentProfile->name : $user->email }}</a>
+                                            <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $user->email }}
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="text-center capitalize">
                                     @if ($user->roles->first()->name == 'super_admin')
-                                    Super Admin
-                                @elseif ($user->roles->first()->name == 'admin')
-                                    Admin
-                                @elseif ($user->roles->first()->name == 'finance_admin')
-                                    Admin Keuangan
-                                @else
-                                    Agen
-                                @endif
+                                        Super Admin
+                                    @elseif ($user->roles->first()->name == 'admin')
+                                        Admin
+                                    @elseif ($user->roles->first()->name == 'finance_admin')
+                                        Admin Keuangan
+                                    @else
+                                        Agen
+                                    @endif
                                 </td>
                                 <td class="w-40">
-                                    @if($user->active == 1)
-                                    <div class="flex items-center justify-center text-success"> <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> Aktif </div>
+                                    @if ($user->active == 1)
+                                        <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> Aktif </div>
                                     @else
-                                    <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square" class="w-4 h-4 mr-2"></i> Tidak Aktif</div>
+                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
+                                                class="w-4 h-4 mr-2"></i> Tidak Aktif</div>
                                     @endif
                                 </td>
                                 @hasrole('super_admin')
-                                <td class="table-report__action w-56">
-                                    <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#upstat-confirmation-modal{{ $user->id }}"> <i
-                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
-                                        <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal{{ $user->id }}"> <i data-lucide="trash-2"
-                                                class="w-4 h-4 mr-1"></i> Hapus </a>
-                                    </div>
-                                </td>
+                                    <td class="table-report__action w-56">
+                                        <div class="flex justify-center items-center">
+                                            <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#upstat-confirmation-modal{{ $user->id }}"> <i
+                                                    data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                            <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#delete-confirmation-modal{{ $user->id }}"> <i
+                                                    data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                        </div>
+                                    </td>
                                 @endhasrole
                             </tr>
 
                             <!-- BEGIN: Update Status Confirmation Modal -->
-                        <div id="upstat-confirmation-modal{{ $user->id }}" class="modal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-body p-0">
-                                        <div class="p-5 text-center">
-                                            <i data-lucide="x-circle" class="w-16 h-16 text-warning mx-auto mt-3"></i>
-                                            <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                            <div class="text-slate-500 mt-2">
-                                                Apakah anda yakin untuk mengubah status data ini?
-                                                <br>
-                                                Proses tidak akan bisa diulangi.
+                            <div id="upstat-confirmation-modal{{ $user->id }}" class="modal" tabindex="-1"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-0">
+                                            <div class="p-5 text-center">
+                                                <i data-lucide="x-circle" class="w-16 h-16 text-warning mx-auto mt-3"></i>
+                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                <div class="text-slate-500 mt-2">
+                                                    Apakah anda yakin untuk mengubah status data ini?
+                                                    <br>
+                                                    Proses tidak akan bisa diulangi.
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="px-5 pb-8 text-center">
-                                            <form action="{{ route('user.status', $user) }}" method="post">
-                                                @csrf
-                                                @method('put')
-                                                <input type="hidden" name="page" value="{{ $users->currentPage() }}">
-                                                {{-- <input type="hidden" name="active" value {{ ($user->active == 1) ? 0 : 1 }}> --}}
-                                                <button type="submit" class="btn btn-warning w-24">Ubah</button>
-                                                <button type="button" data-tw-dismiss="modal"
-                                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                            </form>
+                                            <div class="px-5 pb-8 text-center">
+                                                <form action="{{ route('user.status', $user) }}" method="post">
+                                                    @csrf
+                                                    @method('put')
+                                                    <input type="hidden" name="page"
+                                                        value="{{ $users->currentPage() }}">
+                                                    {{-- <input type="hidden" name="active" value {{ ($user->active == 1) ? 0 : 1 }}> --}}
+                                                    <button type="submit" class="btn btn-warning w-24">Ubah</button>
+                                                    <button type="button" data-tw-dismiss="modal"
+                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- END: Update Status Confirmation Modal -->
+                            <!-- END: Update Status Confirmation Modal -->
 
-                        <!-- BEGIN: Delete Confirmation Modal -->
-                        <div id="delete-confirmation-modal{{ $user->id }}" class="modal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-body p-0">
-                                        <div class="p-5 text-center">
-                                            <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                            <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                            <div class="text-slate-500 mt-2">
-                                                Apakah anda yakin untuk menghapus data ini?
-                                                <br>
-                                                Proses tidak akan bisa diulangi.
+                            <!-- BEGIN: Delete Confirmation Modal -->
+                            <div id="delete-confirmation-modal{{ $user->id }}" class="modal" tabindex="-1"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-0">
+                                            <div class="p-5 text-center">
+                                                <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                <div class="text-slate-500 mt-2">
+                                                    Apakah anda yakin untuk menghapus data ini?
+                                                    <br>
+                                                    Proses tidak akan bisa diulangi.
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="px-5 pb-8 text-center">
-                                            <form action="{{ route('user.destroy', $user) }}" method="post">
-                                                @csrf
-                                                @method('delete')
-                                                <input type="hidden" name="page" value="{{ $users->currentPage() }}">
-                                                <button type="submit" class="btn btn-danger w-24">Hapus</button>
-                                                <button type="button" data-tw-dismiss="modal"
-                                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                            </form>
+                                            <div class="px-5 pb-8 text-center">
+                                                <form action="{{ route('user.destroy', $user) }}" method="post">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <input type="hidden" name="page"
+                                                        value="{{ $users->currentPage() }}">
+                                                    <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                                    <button type="button" data-tw-dismiss="modal"
+                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- END: Delete Confirmation Modal -->
+                            <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
                 </tbody>

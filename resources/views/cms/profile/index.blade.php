@@ -31,9 +31,9 @@
                 <div class="ml-5">
                     <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">
                         {{ $agent->agentProfile->name }}</div>
-                        @if (auth()->user()->hasRole('agent'))
-                            <div class="text-slate-500">Agen</div>
-                        @endif
+                    @if (auth()->user()->hasRole('agent'))
+                        <div class="text-slate-500">Agen</div>
+                    @endif
                 </div>
             </div>
             <div
@@ -43,7 +43,9 @@
                     <div class="truncate sm:whitespace-normal flex items-center"> <i data-lucide="mail"
                             class="w-4 h-4 mr-2"></i> {{ $agent->email }} </div>
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="phone"
-                            class="w-4 h-4 mr-2"></i> {{ $agent->agentProfile->phone_number ? $agent->agentProfile->phone_number : 'Nomer HP Belum Diisi' }} </div>
+                            class="w-4 h-4 mr-2"></i>
+                        {{ $agent->agentProfile->phone_number ? $agent->agentProfile->phone_number : 'Nomer HP Belum Diisi' }}
+                    </div>
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="map-pin"
                             class="w-4 h-4 mr-2"></i>
                         {{ $agent->agentProfile->address == null ? 'Harap isi alamat!' : $agent->agentProfile->address }}

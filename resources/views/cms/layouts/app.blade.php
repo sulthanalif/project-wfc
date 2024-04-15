@@ -19,7 +19,7 @@
 
 <body class="py-5 md:py-0">
     @include('cms.layouts.mobile-menu')
-    
+
     @include('cms.layouts.topbar')
 
     <div class="flex overflow-hidden">

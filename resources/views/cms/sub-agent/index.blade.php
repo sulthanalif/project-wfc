@@ -29,12 +29,12 @@
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="whitespace-nowrap">NAMA SUB AGEN</th>
                         @hasrole('super_admin|admin')
-                        <th class="text-center whitespace-nowrap">DARI AGEN</th>
+                            <th class="text-center whitespace-nowrap">DARI AGEN</th>
                         @endhasrole
                         <th class="whitespace-nowrap">ALAMAT</th>
                         <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
                         @hasrole('super_admin|agent')
-                        <th class="text-center whitespace-nowrap">AKSI</th>
+                            <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
                     </tr>
                 </thead>
@@ -57,9 +57,9 @@
                                     </div>
                                 </td>
                                 @hasrole('super_admin|admin')
-                                <td class="text-center capitalize">
-                                    {{ $subAgent->agent->agentProfile->name  }}
-                                </td>
+                                    <td class="text-center capitalize">
+                                        {{ $subAgent->agent->agentProfile->name }}
+                                    </td>
                                 @endhasrole
                                 <td class="!py-3.5">
                                     <p>
@@ -72,49 +72,51 @@
                                     </p>
                                 </td>
                                 @hasrole('super_admin|agent')
-                                <td class="table-report__action w-56">
-                                    <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="{{ route('sub-agent.edit', $subAgent) }}"> <i
-                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
-                                        <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal{{ $subAgent->id }}"> <i data-lucide="trash-2"
-                                                class="w-4 h-4 mr-1"></i> Hapus </a>
-                                    </div>
-                                </td>
+                                    <td class="table-report__action w-56">
+                                        <div class="flex justify-center items-center">
+                                            <a class="flex items-center mr-3" href="{{ route('sub-agent.edit', $subAgent) }}">
+                                                <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
+                                            <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#delete-confirmation-modal{{ $subAgent->id }}"> <i
+                                                    data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                        </div>
+                                    </td>
                                 @endhasrole
                             </tr>
 
 
 
-                        <!-- BEGIN: Delete Confirmation Modal -->
-                        <div id="delete-confirmation-modal{{ $subAgent->id }}" class="modal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-body p-0">
-                                        <div class="p-5 text-center">
-                                            <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                            <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                            <div class="text-slate-500 mt-2">
-                                                Apakah anda yakin untuk menghapus data ini?
-                                                <br>
-                                                Proses tidak akan bisa diulangi.
+                            <!-- BEGIN: Delete Confirmation Modal -->
+                            <div id="delete-confirmation-modal{{ $subAgent->id }}" class="modal" tabindex="-1"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-0">
+                                            <div class="p-5 text-center">
+                                                <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                <div class="text-slate-500 mt-2">
+                                                    Apakah anda yakin untuk menghapus data ini?
+                                                    <br>
+                                                    Proses tidak akan bisa diulangi.
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="px-5 pb-8 text-center">
-                                            <form action="{{ route('sub-agent.destroy', $subAgent) }}" method="post">
-                                                @csrf
-                                                @method('delete')
-                                                <input type="hidden" name="page" value="{{ $subAgents->currentPage() }}">
-                                                <button type="submit" class="btn btn-danger w-24">Hapus</button>
-                                                <button type="button" data-tw-dismiss="modal"
-                                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                            </form>
+                                            <div class="px-5 pb-8 text-center">
+                                                <form action="{{ route('sub-agent.destroy', $subAgent) }}" method="post">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <input type="hidden" name="page"
+                                                        value="{{ $subAgents->currentPage() }}">
+                                                    <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                                    <button type="button" data-tw-dismiss="modal"
+                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- END: Delete Confirmation Modal -->
+                            <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
                 </tbody>

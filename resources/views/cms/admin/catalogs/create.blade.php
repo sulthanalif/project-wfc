@@ -38,7 +38,7 @@
                     <div class="mt-3">
                         <label>Deskripsi <span class="text-danger">*</span></label>
                         <div class="mt-2">
-                          <textarea id="description" name="description" class="editor">
+                            <textarea id="description" name="description" class="editor">
                             Masukkan Deskripsi Katalog
                           </textarea>
                         </div>
@@ -48,16 +48,16 @@
                             </span>
                         @enderror
                     </div>
-                  </div>
-
-                    <div class="text-left mt-5">
-                        <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
-                    </div>
-                </form>
             </div>
-            <!-- END: Form Layout -->
+
+            <div class="text-left mt-5">
+                <button type="submit" class="btn btn-primary w-24">Simpan</button>
+                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
+            </div>
+            </form>
         </div>
+        <!-- END: Form Layout -->
+    </div>
     </div>
 @endsection
 

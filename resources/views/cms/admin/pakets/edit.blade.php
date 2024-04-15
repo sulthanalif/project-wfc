@@ -50,11 +50,14 @@
                         </div>
 
                         <div class="mt-3">
-                            <label for="catalog_id" class="form-label">Katalog <span class="text-danger">(jangan ubah jika tidak masuk katalog)</span></label>
-                            <select class="form-select mt-2 sm:mr-2" id="catalog_id" name="catalog_id" >
+                            <label for="catalog_id" class="form-label">Katalog <span class="text-danger">(jangan ubah jika
+                                    tidak masuk katalog)</span></label>
+                            <select class="form-select mt-2 sm:mr-2" id="catalog_id" name="catalog_id">
                                 <option value="">-</option>
                                 @foreach ($catalogs as $catalog)
-                                    <option value="{{ $catalog->id }}" {{ ($catalog->name == $package->catalogName->name) ? 'selected' : '' }}>{{ $catalog->name }}</option>
+                                    <option value="{{ $catalog->id }}"
+                                        {{ $catalog->name == $package->catalogName->name ? 'selected' : '' }}>
+                                        {{ $catalog->name }}</option>
                                 @endforeach
                             </select>
                         </div>

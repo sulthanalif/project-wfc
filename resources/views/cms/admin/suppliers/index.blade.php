@@ -9,7 +9,7 @@
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin|admin')
-                <a href="{{ route('supplier.create' )}}" class="btn btn-primary shadow-md mr-2">Tambah Supplier</a>
+                <a href="{{ route('supplier.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Supplier</a>
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $suppliers->firstItem() }} hingga
                     {{ $suppliers->lastItem() }} dari {{ $suppliers->total() }} data</div>
             @endhasrole
@@ -31,7 +31,7 @@
                         <th class="whitespace-nowrap">ALAMAT</th>
                         <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
                         @hasrole('super_admin|agent')
-                        <th class="text-center whitespace-nowrap">AKSI</th>
+                            <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
                     </tr>
                 </thead>
@@ -64,49 +64,51 @@
                                     </p>
                                 </td>
                                 @hasrole('super_admin|admin')
-                                <td class="table-report__action w-56">
-                                    <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="{{ route('supplier.edit', $supplier) }}"> <i
-                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
-                                        <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal{{ $supplier->id }}"> <i data-lucide="trash-2"
-                                                class="w-4 h-4 mr-1"></i> Hapus </a>
-                                    </div>
-                                </td>
+                                    <td class="table-report__action w-56">
+                                        <div class="flex justify-center items-center">
+                                            <a class="flex items-center mr-3" href="{{ route('supplier.edit', $supplier) }}"> <i
+                                                    data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
+                                            <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#delete-confirmation-modal{{ $supplier->id }}"> <i
+                                                    data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                        </div>
+                                    </td>
                                 @endhasrole
                             </tr>
 
 
 
-                        <!-- BEGIN: Delete Confirmation Modal -->
-                        <div id="delete-confirmation-modal{{ $supplier->id }}" class="modal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-body p-0">
-                                        <div class="p-5 text-center">
-                                            <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                            <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                            <div class="text-slate-500 mt-2">
-                                                Apakah anda yakin untuk menghapus data ini?
-                                                <br>
-                                                Proses tidak akan bisa diulangi.
+                            <!-- BEGIN: Delete Confirmation Modal -->
+                            <div id="delete-confirmation-modal{{ $supplier->id }}" class="modal" tabindex="-1"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-0">
+                                            <div class="p-5 text-center">
+                                                <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                <div class="text-slate-500 mt-2">
+                                                    Apakah anda yakin untuk menghapus data ini?
+                                                    <br>
+                                                    Proses tidak akan bisa diulangi.
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="px-5 pb-8 text-center">
-                                            <form action="{{ route('supplier.destroy', $supplier) }}" method="post">
-                                                @csrf
-                                                @method('delete')
-                                                <input type="hidden" name="page" value="{{ $suppliers->currentPage() }}">
-                                                <button type="submit" class="btn btn-danger w-24">Hapus</button>
-                                                <button type="button" data-tw-dismiss="modal"
-                                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                            </form>
+                                            <div class="px-5 pb-8 text-center">
+                                                <form action="{{ route('supplier.destroy', $supplier) }}" method="post">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <input type="hidden" name="page"
+                                                        value="{{ $suppliers->currentPage() }}">
+                                                    <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                                    <button type="button" data-tw-dismiss="modal"
+                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- END: Delete Confirmation Modal -->
+                            <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
                 </tbody>

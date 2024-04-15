@@ -55,7 +55,7 @@
                                         Agent</option>
                                 </select>
                             </div>
-</div>
+                        </div>
                         @if ($user->roles->first()->name === 'agent')
                             <div class="col-span-12 lg:col-span-6 mt-3 lg:mt-0" id="agent-fields" style="display: none">
                                 <div>
@@ -76,7 +76,7 @@
                                 </div>
                             </div>
                         @endif
-</div>
+                    </div>
                     <div class="text-left mt-5">
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
                         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
