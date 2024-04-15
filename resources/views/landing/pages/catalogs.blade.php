@@ -127,11 +127,23 @@
 
                             <div class="modal fade bd-example-modal-lg" id="detailModal" data-keyboard="false"
                                 tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
-                                    <div class="modal-content hero-modal-0 bg-transparent">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                        <img src="{{ asset('assets/syarat.jpg') }}" alt="Syarat dan Ketentuan">
+                                <div
+                                    class="modal-dialog modal-dialog-centered modal-dialog modal-lg modal-dialog-scrollable">
+                                    <div class="modal-content hero-modal-0">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">{{ $package->name }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="text-center">
+                                                <img src="{{ asset('storage/images/package/' . $package->image) }}"
+                                                    alt="" class="img-fluid">
+                                            </div>
+                                            <p class="text-muted text-center my-2">Kategori:
+                                                {{ $package->catalogName->name }}</p>
+                                            <p>{!! $package->description !!}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
