@@ -194,7 +194,7 @@ class UserController extends Controller
         $user->active = ($user->active == 1 ? 0 : 1);
         $user->save();
 
-        return back()->with('success', 'Data Berhasil '. ($user->active == 1 ? 'Diaktifkan' : 'Dinonaktifkan') );
+        return redirect()->route('user.index')->with('success', 'Data Berhasil '. ($user->active == 1 ? 'Diaktifkan' : 'Dinonaktifkan') );
     }
 
     /**

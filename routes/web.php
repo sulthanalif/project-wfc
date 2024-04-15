@@ -12,6 +12,7 @@ use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Admin\DashboardAdminController;
 use App\Http\Controllers\AdministrationController;
 use App\Http\Controllers\SubAgentController;
+// use App\Models\Administration;
 use App\Models\SubAgent;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -49,14 +50,17 @@ Route::group(['middleware' => 'auth',], function () {
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
-            Route::group(['middleware' => 'role:super_admin|admin'], function () {
-                require __DIR__ . '/admin/masterUser.php';
-            });
+    });
 
+    //super_admin, admin
+    Route::group(['middleware' => 'role:super_admin|admin'], function () {
+        require __DIR__ . '/admin/masterUser.php';
         require __DIR__ . '/admin/masterCatalog.php';
         require __DIR__ . '/admin/masterPackage.php';
         require __DIR__ . '/admin/masterProduct.php';
         require __DIR__ . '/admin/masterSupplier.php';
+
+        Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
     });
 
     //agent

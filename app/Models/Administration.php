@@ -20,7 +20,7 @@ class Administration extends Model
         'ktp',
         'kk',
         'sPerjanjian',
-        'stat'
+
     ];
 
     public function user()

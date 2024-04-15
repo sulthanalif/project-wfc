@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Administration;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ class AdministrationController extends Controller
 
     public function waiting()
     {
-        return view('cms.agen.new-agen.waiting');
+        return view('cms.agen.new-agent.waiting');
     }
 
     public function store(Request $request)
@@ -63,8 +64,12 @@ class AdministrationController extends Controller
         }
     }
 
-    public function acc()
+    public function getAdministration(Request $request, User $user)
     {
-
+        if ($user) {
+            return view('cms.admin.administrations.index', compact('user'));
+        } else {
+            return back()->with('error', 'Data Tidak Ditemukan');
+        }
     }
 }

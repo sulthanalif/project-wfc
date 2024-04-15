@@ -34,7 +34,7 @@
                         <th class="whitespace-nowrap">NAMA USER</th>
                         <th class="text-center whitespace-nowrap">JABATAN</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
-                        @hasrole('super_admin')
+                        @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
                     </tr>
@@ -96,6 +96,14 @@
                                                     data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
                                         </div>
                                     </td>
+                                @endhasrole
+                                @hasrole('admin')
+                                <td class="table-report__action w-56">
+                                    <div class="flex justify-center items-center">
+                                        <a class="flex items-center mr-3" href="{{ route('getAdministration', $user) }}"> <i
+                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Cek Administrasi </a>
+                                    </div>
+                                </td>
                                 @endhasrole
                             </tr>
 

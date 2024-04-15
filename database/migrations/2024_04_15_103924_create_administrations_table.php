@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('ktp');
             $table->string('kk');
             $table->string('sPerjanjian');
-            $table->string('stat')->default('0');
+            // $table->string('stat')->default('0');
             $table->timestamps();
         });
     }
