@@ -21,8 +21,8 @@ class Supplier extends Model
         'phone_number',
     ];
 
-    public function productSupplier ()
+    public function product()
     {
-        //
+        return $this->hasOne(ProductSupplier::class);
     }
 }

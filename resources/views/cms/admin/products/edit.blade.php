@@ -72,6 +72,16 @@
                         </div>
 
                         <div class="mt-3">
+                            <label for="supplier_id" class="form-label">Supplier <span class="text-danger">(jangan ubah jika tidak masuk Supplier)</span></label>
+                            <select class="form-select mt-2 sm:mr-2" id="supplier_id" name="supplier_id" >
+                                <option value="">-</option>
+                                @foreach ($suppliers as $supplier)
+                                    <option value="{{ $supplier->id }}" {{ ($supplier->name == $product->supplierName->name) ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mt-3">
                             <label for="image" class="form-label">Upload Foto</label>
                             <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
                                 <i data-lucide="image" class="w-4 h-4 mr-2"></i>

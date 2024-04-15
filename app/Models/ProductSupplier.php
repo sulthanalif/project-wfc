@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductSupplier extends Model
 {
-    use HasFactory, UUIDGenerator;
-
+    use HasFactory;
     protected $table = 'product_suppliers';
     public $incrementing = false;
+    protected $primaryKey;
     protected $keyType = 'string';
-    protected $primaryKey ;
+
+
 
     protected $fillable = [
         'product_id',

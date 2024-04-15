@@ -25,6 +25,7 @@
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="whitespace-nowrap">NAMA BARANG</th>
+                        <th class="whitespace-nowrap">SUPPLIER</th>
                         <th class="whitespace-nowrap">HARGA</th>
                         <th class="whitespace-nowrap">FOTO</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
@@ -33,7 +34,7 @@
                 <tbody>
                     @if ($products->isEmpty())
                         <tr>
-                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
                         @foreach ($products as $product)
@@ -45,6 +46,9 @@
                                     <a class="text-slate-500 flex items-center mr-3"
                                         href="{{ route('product.show', $product) }}"> <i data-lucide="external-link"
                                             class="w-4 h-4 mr-2"></i> {{ $product->name }} </a>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 flex items-center mr-3">{{ $product->supplierName->name }} </p>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 flex items-center mr-3">Rp. {{ number_format($product->price, 0, ',', '.') }} </p>

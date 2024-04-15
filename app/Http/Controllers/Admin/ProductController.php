@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Product;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
+use App\Models\ProductSupplier;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -27,7 +29,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('cms.admin.products.create');
+        $suppliers = Supplier::all();
+        return view('cms.admin.products.create', compact('suppliers'));
     }
 
     /**
@@ -41,6 +44,7 @@ class ProductController extends Controller
             'stock' => ['required', 'numeric'],
             'description' => ['required', 'max:500', 'string'],
             'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'supplier_id' => ['nullable'],
         ]);
 
         if ($validator->fails()) {
@@ -59,6 +63,15 @@ class ProductController extends Controller
                     'description' => $request->description,
                     'image' => $imageName
                 ]);
+
+                // Jika pengguna memilih katalog
+                if ($request->filled('supplier_id')) {
+                    // Menambahkan data ke dalam PackageCatalog
+                    ProductSupplier::create([
+                        'product_id' => $product->id,
+                        'supplier_id' => $request->supplier_id
+                    ]);
+                }
             });
             if ($product) {
                 return redirect()->route('product.index')->with('success' ,'Data Berhasil Ditambahkan!');
@@ -66,11 +79,12 @@ class ProductController extends Controller
                 return back()->with('error', 'Data Gagal Ditambahkan!');
             }
         } catch (\Throwable $th) {
-            $data = [
-                'message' => $th->getMessage(),
-                'status' => 400
-            ];
-            return view('cms.error', compact('data'));
+            // $data = [
+            //     'message' => $th->getMessage(),
+            //     'status' => 400
+            // ];
+            // return view('cms.error', compact('data'));
+            return $th->getMessage();
         }
     }
 
@@ -92,7 +106,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         if ($product) {
-            return view('cms.admin.products.edit', compact('product'));
+            $suppliers = Supplier::all();
+            return view('cms.admin.products.edit', compact('product', 'suppliers'));
         } else {
             return back()->with('error', 'Data Tidak Ditemukan!');
         }
@@ -109,6 +124,7 @@ class ProductController extends Controller
             'stock' => ['required', 'numeric'],
             'description' => ['required', 'max:500', 'string'],
             'image' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'supplier_id' => ['nullable', 'string']
         ]);
 
         if ($validator->fails()) {
@@ -133,8 +149,29 @@ class ProductController extends Controller
                         'description' => $request->description,
                         'image' => $imageName
                     ]);
+
+
                 } else {
                     $update = $product->update($request->except('image'));
+                }
+
+                if ($request->filled('supplier_id')) {
+                    $productSupplier = ProductSupplier::where('product_id', $product->id)
+                    ->first();
+
+                    if ($productSupplier) {
+                        $productSupplier->update([
+                            'supplier_id' => $request->supplier_id
+                        ]);
+                    } else {
+                        ProductSupplier::create([
+                            'product_id' => $product->id,
+                            'supplier_id' => $request->supplier_id
+                        ]);
+                    }
+                } else {
+                    // Hapus relasi
+                    $product->supplier()->delete();
                 }
             });
             if ($update) {
@@ -143,11 +180,13 @@ class ProductController extends Controller
                 return back()->with('error', 'Data Gagal Diupbah!');
             }
         } catch (\Throwable $th) {
-            $data = [
-                'message' => $th->getMessage(),
-                'status' => 400
-            ];
-            return view('cms.error', compact('data'));
+            // $data = [
+            //     'message' => $th->getMessage(),
+            //     'status' => 400
+            // ];
+            // return view('cms.error', compact('data'));
+
+            return $th->getMessage();
         }
     }
 
@@ -159,6 +198,13 @@ class ProductController extends Controller
         // Delete old image
         if ($product->image && file_exists(storage_path('app/public/images/product/' . $product->image))) {
             unlink(storage_path('app/public/images/product/' . $product->image));
+        }
+
+        $productSupplier = ProductSupplier::where('product_id', $product->id)
+                    ->first();
+
+        if ($productSupplier){
+            $product->supplier()->delete();
         }
 
         $delete = $product->delete();

@@ -19,6 +19,7 @@
                     <div class="flex flex-col items-center justify-center border-b pb-2">
                         <h1 class="font-bold text-xl">{{ $product->name }}</h1>
                         <span class="text-muted">Harga: Rp. {{ number_format($product->price, 0, ',', '.') }}</span>
+                        <span class="text-muted">Supplier : {{ $product->supplierName->name }}</span>
                     </div>
                     <div class="flex items-center justify-between mt-2 gap-3 pt-2">
                         <div class="flex items-center"> <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Dibuat

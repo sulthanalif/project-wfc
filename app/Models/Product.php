@@ -22,4 +22,14 @@ class Product extends Model
         'price',
         'image',
     ];
+
+    public function supplier()
+    {
+        return $this->hasOne(ProductSupplier::class);
+    }
+
+    public function supplierName()
+    {
+        return $this->hasOneThrough(Supplier::class, ProductSupplier::class, 'product_id', 'id', 'id', 'supplier_id')->withDefault(['name' => '-']);
+    }
 }
