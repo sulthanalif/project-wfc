@@ -32,7 +32,7 @@
                                 data-lucide="refresh-ccw" class="w-4 h-4 mr-3"></i> Reload Data </a>
                     </div>
                     <div class="intro-y box p-5 mt-5">
-                        <form action="#" method="post" enctype="multipart/form-data" class="mt-3">
+                        <form action="{{ route('upload') }}" method="post" enctype="multipart/form-data" class="mt-3">
                             @csrf
 
                             <div>

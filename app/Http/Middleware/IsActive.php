@@ -18,9 +18,10 @@ class IsActive
     {
         if (auth()->user() && auth()->user()->active == 1) {
             return $next($request);
+        } else if (auth()->user() && auth()->user()->active == 0) {
+            return redirect()->route('nonactive');
         }
 
-        auth()->guard('web')->logout();
-        abort('403');
+
     }
 }

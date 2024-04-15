@@ -10,6 +10,7 @@ use App\Http\Controllers\LandingpageController;
 use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Admin\DashboardAdminController;
+use App\Http\Controllers\AdministrationController;
 use App\Http\Controllers\SubAgentController;
 use App\Models\SubAgent;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -65,9 +66,9 @@ Route::group(['middleware' => 'auth',], function () {
             require __DIR__ . '/agent/profile.php';
         });
 
-        Route::get('/new-agent', function (){
-            return view('cms.agen.new-agent.index');
-        })->name('nonactive');
+        Route::get('/new-agent',[AdministrationController::class, 'index'])->name('nonactive');
+        Route::post('/new-agent',[AdministrationController::class, 'store'])->name('upload');
+        Route::get('/waiting',[AdministrationController::class, 'waiting'])->name('waiting');
     });
 });
 

@@ -42,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at',
         'email',
         'password',
+        'active'
     ];
 
     /**
@@ -77,6 +78,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function adminProfile ()
     {
         return $this->hasOne(AdminProfile::class);
+    }
+
+    public function administration ()
+    {
+        return $this->hasOne(Administration::class);
     }
 
     public function subAgent ()

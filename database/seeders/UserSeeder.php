@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
             // 'name' => 'Super Admin',
             'email' => 'superadmin@gmail.com',
             'password' => Hash::make('password'),
+            'active' => 1
         ]);
 
         $superAdmin->assignRole('super_admin');
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
             // 'name' => 'Finance Admin',
             'email' => 'financeadmin@gmail.com',
             'password' => Hash::make('password'),
+            'active' => 1
         ]);
 
         $financeAdmin->assignRole('finance_admin');
@@ -38,6 +40,7 @@ class UserSeeder extends Seeder
             // 'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('password'),
+            'active' => 1
         ]);
 
         $admin->assignRole('admin');
@@ -47,7 +50,8 @@ class UserSeeder extends Seeder
             // 'name' => 'Agent',
             'email' => 'agent1@gmail.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
+            'active' => 0
         ]);
 
         $agent->agentProfile()->create([
@@ -62,7 +66,8 @@ class UserSeeder extends Seeder
             // 'name' => 'Agent',
             'email' => 'agent2@gmail.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
+            'active' => 0
         ]);
 
         $agent2->agentProfile()->create([
@@ -76,7 +81,8 @@ class UserSeeder extends Seeder
             // 'name' => 'Agent',
             'email' => 'agent3@gmail.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
+            'active' => 1
         ]);
 
         $agent3->agentProfile()->create([
@@ -90,7 +96,8 @@ class UserSeeder extends Seeder
             // 'name' => 'Agent',
             'email' => 'agent4@gmail.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
+            'active' => 1
         ]);
 
         $agent4->agentProfile()->create([
@@ -104,7 +111,8 @@ class UserSeeder extends Seeder
             // 'name' => 'Agent',
             'email' => 'agent5@gmail.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
+            'active' => 1
         ]);
 
         $agent5->agentProfile()->create([
@@ -118,7 +126,8 @@ class UserSeeder extends Seeder
             // 'name' => 'Agent',
             'email' => 'agent6@gmail.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
+            'active' => 1
         ]);
 
         $agent6->agentProfile()->create([
@@ -132,7 +141,8 @@ class UserSeeder extends Seeder
             // 'name' => 'Agent',
             'email' => 'agent7@gmail.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
+            'active' => 1
         ]);
 
         $agent7->agentProfile()->create([
@@ -146,7 +156,8 @@ class UserSeeder extends Seeder
             // 'name' => 'Agent',
             'email' => 'agent8@gmail.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
+            'active' => 1
         ]);
 
         $agent8->agentProfile()->create([
