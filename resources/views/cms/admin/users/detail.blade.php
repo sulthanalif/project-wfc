@@ -110,13 +110,15 @@
                                 <tbody>
                                     @if ($subAgents->isEmpty())
                                         <tr>
-                                            <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                                            <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada
+                                                Data</td>
                                         </tr>
                                     @else
                                         @foreach ($subAgents as $data)
                                             <tr class="intro-x">
                                                 <td>
-                                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                                    <p class="font-medium whitespace-nowrap text-center">
+                                                        {{ $loop->iteration }}</p>
                                                 </td>
                                                 <td>
                                                     <p class="font-medium">{{ $data->name }}</p>
@@ -149,59 +151,89 @@
                         </div>
                         <div class="px-5 pt-3">
                             @if ($user->administration == null)
-                            <div
-                                class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
                                 <div
-                                    class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
-                                        <span class="text-muted">Belum Ada Berkas</span>
+                                    class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
+                                    <div
+                                        class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
+                                            <span class="text-muted">Belum Ada Berkas</span>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
+                                            <span class="text-muted">Belum Ada Berkas</span>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
+                                            <span class="text-muted">Belum Ada Berkas</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div
-                                    class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
-                                        <span class="text-muted">Belum Ada Berkas</span>
+                            @else
+                                @if ($user->administration->ktp == 'default.png')
+                                    <div
+                                        class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
+                                        <div
+                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
+                                                <img alt="KTP" class=" img-fluid rounded-md"
+                                                    src="{{ asset('assets/logo2.PNG') }}">
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
+                                                <img alt="KK" class=" img-fluid rounded-md"
+                                                    src="{{ asset('assets/logo2.PNG') }}">
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
+                                                <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
+                                                    src="{{ asset('assets/logo2.PNG') }}">
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div
-                                    class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
-                                        <span class="text-muted">Belum Ada Berkas</span>
+                                @else
+                                    <div
+                                        class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
+                                        <div
+                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
+                                                <img alt="KTP" class=" img-fluid rounded-md"
+                                                    src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->ktp) }}">
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
+                                                <img alt="KK" class=" img-fluid rounded-md"
+                                                    src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->kk) }}">
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
+                                            <div class="flex flex-col items-center justify-center">
+                                                <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
+                                                <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
+                                                    src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->sPerjanjian) }}">
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        @else
-                            <div
-                                class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
-                                <div
-                                    class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
-                                        <img alt="KTP" class=" img-fluid rounded-md"
-                                            src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->ktp) }}">
-                                    </div>
-                                </div>
-                                <div
-                                    class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
-                                        <img alt="KK" class=" img-fluid rounded-md"
-                                            src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->kk) }}">
-                                    </div>
-                                </div>
-                                <div
-                                    class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
-                                        <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
-                                            src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->sPerjanjian) }}">
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
+                                @endif
+                            @endif
                         </div>
                     </div>
                     <!-- END: Sub Agen -->

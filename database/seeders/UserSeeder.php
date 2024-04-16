@@ -61,6 +61,12 @@ class UserSeeder extends Seeder
 
         $agent->assignRole('agent');
 
+        $agent->administration()->create([
+            'ktp' => 'default.png',
+            'kk' => 'default.png',
+            'sPerjanjian' => 'default.png',
+        ]);
+
         // Agent User
         $agent2 = User::create([
             // 'name' => 'Agent',
@@ -75,6 +81,12 @@ class UserSeeder extends Seeder
         ]);
 
         $agent2->assignRole('agent');
+
+        $agent2->administration()->create([
+            'ktp' => 'default.png',
+            'kk' => 'default.png',
+            'sPerjanjian' => 'default.png',
+        ]);
 
         // Agent User
         $agent3 = User::create([
