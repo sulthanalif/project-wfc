@@ -47,21 +47,26 @@ Route::group(['middleware' => 'auth',], function () {
     //kelola sub agent
     Route::resource('sub-agent', SubAgentController::class);
 
-    //super_admin, finance_admin, admin
-    Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
+    //super_admin
+    Route::group(['middleware' => 'role:super_admin', 'active'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
+
+        //admin
+        Route::group(['middleware' => 'role:admin'], function () {
+            require __DIR__ . '/admin/masterUser.php';
+            require __DIR__ . '/admin/masterCatalog.php';
+            require __DIR__ . '/admin/masterPackage.php';
+            require __DIR__ . '/admin/masterProduct.php';
+            require __DIR__ . '/admin/masterSupplier.php';
+
+            Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
+        });
+
+        Route::group(['middleware' => 'role:finance_admin'], function () {
+
+        });
     });
 
-    //super_admin, admin
-    Route::group(['middleware' => 'role:super_admin|admin'], function () {
-        require __DIR__ . '/admin/masterUser.php';
-        require __DIR__ . '/admin/masterCatalog.php';
-        require __DIR__ . '/admin/masterPackage.php';
-        require __DIR__ . '/admin/masterProduct.php';
-        require __DIR__ . '/admin/masterSupplier.php';
-
-        Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
-    });
 
     //agent
     Route::group(['middleware' => ['role:agent', 'verified']], function () {

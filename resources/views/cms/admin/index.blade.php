@@ -60,8 +60,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">2.149</div>
-                                    <div class="text-base text-slate-500 mt-1">Total Products</div>
+                                    <div class="text-3xl font-medium leading-8 mt-6">{{ $data['totalProduct'] }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Total Produk</div>
                                 </div>
                             </div>
                         </div>
@@ -77,8 +77,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">152.040</div>
-                                    <div class="text-base text-slate-500 mt-1">Unique Visitor</div>
+                                    <div class="text-3xl font-medium leading-8 mt-6">{{ $data['totalAgent'] }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Total Agen</div>
                                 </div>
                             </div>
                         </div>
