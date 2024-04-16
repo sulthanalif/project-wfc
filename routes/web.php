@@ -47,12 +47,13 @@ Route::group(['middleware' => 'auth',], function () {
     //kelola sub agent
     Route::resource('sub-agent', SubAgentController::class);
 
-    //super_admin
-    Route::group(['middleware' => 'role:super_admin', 'active'], function () {
+    //super_admin, finance_admin, admin
+    Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
 
-        //admin
-        Route::group(['middleware' => 'role:admin'], function () {
+    });
+        //admin, super_admin
+        Route::group(['middleware' => 'role:admin|super_admin'], function () {
             require __DIR__ . '/admin/masterUser.php';
             require __DIR__ . '/admin/masterCatalog.php';
             require __DIR__ . '/admin/masterPackage.php';
@@ -62,10 +63,10 @@ Route::group(['middleware' => 'auth',], function () {
             Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
         });
 
-        Route::group(['middleware' => 'role:finance_admin'], function () {
+        //finance_admin, super_admin
+        Route::group(['middleware' => 'role:finance_admin|super_admin'], function () {
 
         });
-    });
 
 
     //agent
