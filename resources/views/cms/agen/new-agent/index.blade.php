@@ -10,10 +10,6 @@
                         <h2 class="text-lg font-medium truncate mr-5">
                             Syarat dan Ketentuan
                         </h2>
-                        <div class="sm:ml-auto mt-3 sm:mt-0 relative text-slate-500">
-                            <i data-lucide="calendar" class="w-4 h-4 z-10 absolute my-auto inset-y-0 ml-3 left-0"></i>
-                            <input type="text" class="datepicker form-control sm:w-56 box pl-10">
-                        </div>
                     </div>
                     <div class="intro-y box p-5 mt-12 sm:mt-5">
                         <div class="flex flex-col md:flex-row md:items-center">

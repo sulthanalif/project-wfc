@@ -103,7 +103,8 @@
                         Route::is('package*') ||
                         Route::is('product*') ||
                         Route::is('sub-agent*') ||
-                        Route::is('supplier*')) side-menu--active @endif">
+                        Route::is('supplier*') ||
+                        Route::is('getAdministration')) side-menu--active @endif">
                     <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
                     <div class="side-menu__title">
                         Master
@@ -115,7 +116,8 @@
                         Route::is('package*') ||
                         Route::is('product*') ||
                         Route::is('sub-agent*') ||
-                        Route::is('supplier*')) side-menu__sub-open @endif">
+                        Route::is('supplier*') ||
+                        Route::is('getAdministration')) side-menu__sub-open @endif">
                     <li>
                         <a href="{{ route('supplier.index') }}"
                             class="side-menu {{ Route::is('supplier*') ? 'side-menu--active' : '' }}">
@@ -154,7 +156,7 @@
                     @hasrole('super_admin|admin')
                         <li>
                             <a href="{{ route('user.index') }}"
-                                class="side-menu {{ Route::is('user*') ? 'side-menu--active' : '' }}">
+                                class="side-menu @if (Route::is('user*') || Route::is('getAdministration')) side-menu--active @endif">
                                 <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="side-menu__title"> Users </div>
                             </a>
@@ -169,6 +171,7 @@
     @hasrole('agent')
         <ul>
             @if (auth()->user()->active == 0)
+                @if (auth()->user()->administration == null)
                 <li>
                     <a href="{{ route('nonactive') }}"
                         class="side-menu {{ Route::is('nonactive') ? 'side-menu--active' : '' }}">
@@ -178,6 +181,17 @@
                         </div>
                     </a>
                 </li>
+                @else
+                <li>
+                    <a href="{{ route('waiting') }}"
+                        class="side-menu {{ Route::is('waiting') ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"> <i data-lucide="home"></i> </div>
+                        <div class="side-menu__title">
+                            Dashboard
+                        </div>
+                    </a>
+                </li>
+                @endif
             @else
                 <li>
                     <a href="{{ route('dashboard-agent') }}"

@@ -5,42 +5,66 @@
 @section('content')
     <div class="intro-y flex items-center mt-8">
         <h2 class="text-lg font-medium mr-auto">
-            Administrasi {{ $user->agentProfile->name }}
+            Berkas Administrasi {{ $user->agentProfile->name }}
         </h2>
+        @if ($user->roles->first()->name === 'agent')
+            @if ($user->administration !== null)
+            <a class="btn btn-primary" href="javascript:;" data-tw-toggle="modal"
+            data-tw-target="#upstat-confirmation-modal{{ $user->id }}"> <i
+                data-lucide="edit" class="w-4 h-4 mr-1"></i> {{ ($user->active == 0) ? 'Approve' : 'Non aktif' }} </a>
+            @else
+            <a href="{{ url()->previous() }}" class="btn btn-dark">Kembali</a>
+            @endif
+        @endif
     </div>
 
     <div class="intro-y box px-5 pt-5 mt-5">
-        <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
-            <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
-                <img alt="KTP" class=" img-fluid rounded-md"
-                    src="{{ asset('storage/images/administration/'. $user->id . '/' . $user->administration->ktp) }}">
+        @if ($user->administration == null)
+        <div class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
+                <div class="flex flex-col items-center justify-center">
+                    <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
+                    <span class="text-muted">Belum Ada Berkas</span>
+                </div>
             </div>
-            <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
-                <img alt="KK" class=" img-fluid rounded-md"
-                    src="{{ asset('storage/images/administration/'. $user->id . '/' . $user->administration->kk) }}">
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
+                <div class="flex flex-col items-center justify-center">
+                    <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
+                    <span class="text-muted">Belum Ada Berkas</span>
+                </div>
             </div>
-            <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
-                <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
-                    src="{{ asset('storage/images/administration/'. $user->id . '/' . $user->administration->sPerjanjian) }}">
-            </div>
-            <div
-                class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
-                <div class="text-slate-600 dark:text-slate-500">
-                    <div class="flex flex-col items-center justify-center border-b pb-2">
-                        <h1 class="font-bold text-xl">{{ $user->agentProfile->name }}</h1>
-                        {{-- <span class="text-muted">Katalog: {!! $package->catalogName->name !!}</span> --}}
-                    </div>
-                    <div class="flex items-center justify-between mt-2 gap-3 pt-2">
-                        <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#upstat-confirmation-modal{{ $user->id }}"> <i
-                                                    data-lucide="edit" class="w-4 h-4 mr-1"></i> {{ ($user->active == 0) ? 'Approve' : 'Non aktif' }} </a>
-
-
-                    </div>
-
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
+                <div class="flex flex-col items-center justify-center">
+                    <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
+                    <span class="text-muted">Belum Ada Berkas</span>
                 </div>
             </div>
         </div>
+        @else
+        <div class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
+                <div class="flex flex-col items-center justify-center">
+                    <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
+                    <img alt="KTP" class=" img-fluid rounded-md"
+                        src="{{ asset('storage/images/administration/'. $user->id . '/' . $user->administration->ktp) }}">
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
+                <div class="flex flex-col items-center justify-center">
+                    <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
+                    <img alt="KK" class=" img-fluid rounded-md"
+                        src="{{ asset('storage/images/administration/'. $user->id . '/' . $user->administration->kk) }}">
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
+                <div class="flex flex-col items-center justify-center">
+                    <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
+                    <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
+                        src="{{ asset('storage/images/administration/'. $user->id . '/' . $user->administration->sPerjanjian) }}">
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 
     <!-- BEGIN: Update Status Confirmation Modal -->
@@ -53,7 +77,7 @@
                         <i data-lucide="x-circle" class="w-16 h-16 text-warning mx-auto mt-3"></i>
                         <div class="text-3xl mt-5">Apakah anda yakin?</div>
                         <div class="text-slate-500 mt-2">
-                            Apakah anda yakin untuk mengubah status data ini?
+                            Apakah anda yakin untuk menyetujui berkas data ini?
                             <br>
                             Proses tidak akan bisa diulangi.
                         </div>
@@ -63,7 +87,7 @@
                             @csrf
                             @method('put')
                             {{-- <input type="hidden" name="active" value {{ ($user->active == 1) ? 0 : 1 }}> --}}
-                            <button type="submit" class="btn btn-warning w-24">Ubah</button>
+                            <button type="submit" class="btn btn-warning w-24">Setujui</button>
                             <button type="button" data-tw-dismiss="modal"
                                 class="btn btn-outline-secondary w-24 ml-1">Batal</button>
                         </form>

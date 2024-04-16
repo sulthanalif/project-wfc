@@ -33,8 +33,8 @@
                     <div class="notification-content__title">Notifications</div>
                     <div class="cursor-pointer relative flex items-center ">
                         <div class="w-12 h-12 flex-none image-fit mr-1">
-                            <img alt="Midone - HTML Admin Template" class="rounded-full"
-                                src="dist/images/profile-3.jpg">
+                            <img alt="Paket Smart WFC" class="rounded-full"
+                                src="{{ asset('assets/cms/images/profile.svg') }}">
                             <div
                                 class="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white">
                             </div>
@@ -51,8 +51,8 @@
                     </div>
                     <div class="cursor-pointer relative flex items-center mt-5">
                         <div class="w-12 h-12 flex-none image-fit mr-1">
-                            <img alt="Midone - HTML Admin Template" class="rounded-full"
-                                src="dist/images/profile-4.jpg">
+                            <img alt="Paket Smart WFC" class="rounded-full"
+                                src="{{ asset('assets/cms/images/profile.svg') }}">
                             <div
                                 class="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white">
                             </div>

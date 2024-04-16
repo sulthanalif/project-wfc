@@ -85,26 +85,60 @@
                                                 class="w-4 h-4 mr-2"></i> Tidak Aktif</div>
                                     @endif
                                 </td>
-                                @hasrole('super_admin')
-                                    <td class="table-report__action w-56">
-                                        <div class="flex justify-center items-center">
-                                            <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#upstat-confirmation-modal{{ $user->id }}"> <i
-                                                    data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
-                                            <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#delete-confirmation-modal{{ $user->id }}"> <i
-                                                    data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                        </div>
-                                    </td>
-                                @endhasrole
-                                @hasrole('admin')
-                                <td class="table-report__action w-56">
-                                    <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="{{ route('getAdministration', $user) }}"> <i
-                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Cek Administrasi </a>
-                                    </div>
-                                </td>
-                                @endhasrole
+                                @if ($user->roles->first()->name == 'agent')
+                                    @hasrole('super_admin|admin')
+                                        @if ($user->active == 1)
+                                            <td class="table-report__action w-56">
+                                                <div class="flex justify-center items-center">
+                                                    <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                        data-tw-target="#upstat-confirmation-modal{{ $user->id }}"> <i
+                                                            data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                                    @hasrole('super_admin')
+                                                        <a class="flex items-center text-danger" href="javascript:;"
+                                                            data-tw-toggle="modal"
+                                                            data-tw-target="#delete-confirmation-modal{{ $user->id }}"> <i
+                                                                data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                                    @endhasrole
+                                                </div>
+                                            </td>
+                                        @else
+                                            <td class="table-report__action w-56">
+                                                <div class="flex justify-center items-center">
+                                                    <a class="flex items-center mr-3"
+                                                        href="{{ route('getAdministration', $user) }}"> <i data-lucide="edit"
+                                                            class="w-4 h-4 mr-1"></i> Cek Administrasi </a>
+                                                    @hasrole('super_admin')
+                                                        <a class="flex items-center text-danger" href="javascript:;"
+                                                            data-tw-toggle="modal"
+                                                            data-tw-target="#delete-confirmation-modal{{ $user->id }}"> <i
+                                                                data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                                    @endhasrole
+                                                </div>
+                                            </td>
+                                        @endif
+                                    @endhasrole
+                                @else
+                                    @hasrole('admin')
+                                        <td class="table-report__action w-56">
+                                            <div class="flex justify-center items-center">
+                                                <span class="flex items-center mr-3"> Bukan Agent </span>
+                                            </div>
+                                        </td>
+                                    @endhasrole
+                                    @hasrole('super_admin')
+                                        <td class="table-report__action w-56">
+                                            <div class="flex justify-center items-center">
+                                                <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                    data-tw-target="#upstat-confirmation-modal{{ $user->id }}"> <i
+                                                        data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                                <a class="flex items-center text-danger" href="javascript:;"
+                                                    data-tw-toggle="modal"
+                                                    data-tw-target="#delete-confirmation-modal{{ $user->id }}"> <i
+                                                        data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                            </div>
+                                        </td>
+                                    @endhasrole
+                                @endif
                             </tr>
 
                             <!-- BEGIN: Update Status Confirmation Modal -->

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\AdminProfile;
+use App\Models\SubAgent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -106,8 +107,10 @@ class UserController extends Controller
      */
     public function show(Request $request, User $user)
     {
+        $subAgents = SubAgent::where('agent_id', $user->id)->get();
+        // dd($subAgents);
 
-        return view('cms.admin.users.detail', compact('user'));
+        return view('cms.admin.users.detail', compact(['user', 'subAgents']));
     }
 
     /**

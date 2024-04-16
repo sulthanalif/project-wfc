@@ -86,7 +86,7 @@
                 </div>
                 <!-- END: General Report -->
                 <!-- BEGIN: Sales Report -->
-                <div class="col-span-12 lg:col-span-6 mt-8">
+                {{-- <div class="col-span-12 lg:col-span-6 mt-8">
                     <div class="intro-y block sm:flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
                             Sales Report
@@ -133,10 +133,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <!-- END: Sales Report -->
                 <!-- BEGIN: Weekly Top Seller -->
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 mt-8">
+                {{-- <div class="col-span-12 sm:col-span-6 lg:col-span-3 mt-8">
                     <div class="intro-y flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
                             Weekly Top Seller
@@ -166,10 +166,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <!-- END: Weekly Top Seller -->
                 <!-- BEGIN: Sales Report -->
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 mt-8">
+                {{-- <div class="col-span-12 sm:col-span-6 lg:col-span-3 mt-8">
                     <div class="intro-y flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
                             Sales Report
@@ -199,10 +199,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <!-- END: Sales Report -->
                 <!-- BEGIN: Weekly Top Products -->
-                <div class="col-span-12 mt-6">
+                {{-- <div class="col-span-12 mt-6">
                     <div class="intro-y block sm:flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
                             Weekly Top Products
@@ -426,11 +426,11 @@
                             <option>50</option>
                         </select>
                     </div>
-                </div>
+                </div> --}}
                 <!-- END: Weekly Top Products -->
             </div>
         </div>
-        <div class="col-span-12 2xl:col-span-3">
+        {{-- <div class="col-span-12 2xl:col-span-3">
             <div class="2xl:border-l -mb-10 pb-10">
                 <div class="2xl:pl-6 grid grid-cols-12 gap-x-6 2xl:gap-x-0 gap-y-6">
                     <!-- BEGIN: Transactions -->
@@ -699,6 +699,6 @@
                     <!-- END: Schedules -->
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection
