@@ -28,6 +28,11 @@ class Package extends Model
         return $this->hasOne(PackageCatalog::class);
     }
 
+    public function product()
+    {
+        return $this->hasOne(ProductPackage::class);
+    }
+
     public function catalogName()
     {
         return $this->hasOneThrough(Catalog::class, PackageCatalog::class, 'package_id', 'id', 'id', 'catalog_id')->withDefault(['name' => '-']);

@@ -17,10 +17,9 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'description',
         'stock',
         'price',
-        'image',
+        'days'
     ];
 
     public function supplier()
@@ -28,8 +27,23 @@ class Product extends Model
         return $this->hasOne(ProductSupplier::class);
     }
 
+    public function detail()
+    {
+        return $this->hasOne(ProductDetail::class);
+    }
+
+    public function package()
+    {
+        return $this->hasOne(ProductPackage::class);
+    }
+
     public function supplierName()
     {
         return $this->hasOneThrough(Supplier::class, ProductSupplier::class, 'product_id', 'id', 'id', 'supplier_id')->withDefault(['name' => '-']);
+    }
+
+    public function packagerName()
+    {
+        return $this->hasOneThrough(Package::class, ProductPackage::class, 'product_id', 'id', 'id', 'package_id')->withDefault(['name' => '-']);
     }
 }

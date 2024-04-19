@@ -25,4 +25,6 @@ class Catalog extends Model
     {
         return $this->hasOne(PackageCatalog::class);
     }
+
+
 }
