@@ -271,7 +271,8 @@ class ProductController extends Controller
             $product->package()->delete();
         }
 
-        $delete = $product->delete();
+        $product->detail()->delete();
+        $delete =  $product->delete();
 
         if ($delete) {
             return redirect()->route('product.index', ['page' => $request->page])->with('success', 'Data Berhasil Dihapus');
