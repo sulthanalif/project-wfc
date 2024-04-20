@@ -94,7 +94,7 @@
             </div>
 
             <div class="row justify-content-center mt-4">
-                @if ($packages->isEmpty())
+                @if ($products->isEmpty())
                     <div class="row justify-content-center">
                         <div class="col-lg-8">
                             <div class="title text-center mb-5">
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                 @else
-                    @foreach ($packages as $package)
+                    @foreach ($products as $product)
                         <div class="col-6 col-lg-3 col-md-6 mb-5">
                             <a href="#detailModal" class="text-primary" data-bs-toggle="modal">
                                 <div class="service-box">
@@ -111,15 +111,15 @@
                                         <div class="row justify-content-end">
                                             <div class="col-lg-10 col-9">
                                                 <div class="team-image">
-                                                    <img src="{{ asset('storage/images/package/' . $package->image) }}"
+                                                    <img src="{{ asset('storage/images/product/' . $product->detail->image) }}"
                                                         alt="" class="img-fluid">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="team-info position-absolute">
-                                            <p class="h6 fw-bold">{{ $package->name }} <span
+                                            <p class="h6 fw-bold">{{ $product->name }} <span
                                                     class="f-14 text-muted fw-normal">/
-                                                    {{ $package->catalogName->name }}</span></p>
+                                                    {{ $product->packagerName->name }}</span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -131,18 +131,23 @@
                                     class="modal-dialog modal-dialog-centered modal-dialog modal-lg modal-dialog-scrollable">
                                     <div class="modal-content hero-modal-0">
                                         <div class="modal-header">
-                                            <h5 class="modal-title">{{ $package->name }}</h5>
+                                            <h5 class="modal-title">{{ $product->name }}</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <div class="text-center">
-                                                <img src="{{ asset('storage/images/package/' . $package->image) }}"
+                                            <div class="text-center mb-2">
+                                                <img src="{{ asset('storage/images/product/' . $product->detail->image) }}"
                                                     alt="" class="img-fluid">
                                             </div>
-                                            <p class="text-muted text-center my-2">Kategori:
-                                                {{ $package->catalogName->name }}</p>
-                                            <p>{!! $package->description !!}</p>
+                                            <div class="flex flex-row p-0 m-0">
+                                                <p>Supplier: <span class="text-muted">{{ $product->supplierName->name }}</span></p>
+                                                <p>Paket: <span class="text-muted">{{ $product->packagerName->name }}</span></p>
+                                                <p>Harga: <span class="text-muted">Rp.
+                                                    {{ number_format($product->price, 0, ',', '.') }}/hari</span></p>
+                                                <p>Jangka Waktu: <span class="text-muted">{{ $product->days }} hari</span></p>
+                                                <p>Deskripsi: <span class="text-muted">{!! $product->detail->description !!}</span></p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

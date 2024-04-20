@@ -23,89 +23,109 @@
             <div class="intro-y box p-5">
                 <form action="{{ route('product.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
-
-                    <div>
-                        <label for="name" class="form-label">Nama Barang <span class="text-danger">*</span></label>
-                        <input id="name" name="name" type="text" class="form-control w-full"
-                            placeholder="Masukkan Nama Barang" required>
-                        @error('name')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-
-                    <div class="mt-3">
-                        <label for="price" class="form-label">Harga Barang <span class="text-danger">*</span></label>
-                        <input id="price" name="price" type="number" class="form-control w-full"
-                            placeholder="Masukkan Harga Barang" required>
-                        @error('price')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-
-                    <div class="mt-3">
-                        <label for="stock" class="form-label">Stok Barang <span class="text-danger">*</span></label>
-                        <input id="stock" name="stock" type="number" class="form-control w-full"
-                            placeholder="Masukkan Harga Barang" required>
-                        @error('stock')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-
-                    <div class="mt-3">
-                        <label>Deskripsi <span class="text-danger">*</span></label>
-                        <div class="mt-2">
-                            <textarea id="description" name="description" class="editor">
-                            Masukkan Deskripsi Barang
-                          </textarea>
+                    <div class="grid grid-cols-12 gap-4">
+                        <div class="col-span-12 lg:col-span-6 intro-y">
+                            <div>
+                                <label for="name" class="form-label">Nama Barang <span class="text-danger">*</span></label>
+                                <input id="name" name="name" type="text" class="form-control w-full"
+                                    placeholder="Masukkan Nama Barang" required>
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="mt-3">
+                                <label for="price" class="form-label">Harga Barang/hari <span class="text-danger">*</span></label>
+                                <input id="price" name="price" type="number" class="form-control w-full"
+                                    placeholder="Masukkan Harga Barang" required>
+                                @error('price')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="mt-3">
+                                <label for="days" class="form-label">Jangka Waktu (hari) <span class="text-danger">*</span></label>
+                                <input id="days" name="days" type="number" class="form-control w-full"
+                                    placeholder="Masukkan Jangka Waktu" required>
+                                @error('days')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="mt-3">
+                                <label for="stock" class="form-label">Stok Barang <span class="text-danger">*</span></label>
+                                <input id="stock" name="stock" type="number" class="form-control w-full"
+                                    placeholder="Masukkan Harga Barang" required>
+                                @error('stock')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="mt-3">
+                                <label for="supplier_id" class="form-label">Supplier <span class="text-danger">(Jangan ubah jika
+                                        tidak ada Supplier)</span></label>
+                                <select class="form-select mt-2 sm:mr-2" id="supplier_id" name="supplier_id">
+                                    <option value="">Pilih...</option>
+                                    @foreach ($suppliers as $supplier)
+                                        <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mt-3">
+                                <label for="package_id" class="form-label">Paket <span class="text-danger">(Jangan ubah jika
+                                        tidak masuk Paket)</span></label>
+                                <select class="form-select mt-2 sm:mr-2" id="package_id" name="package_id">
+                                    <option value="">Pilih...</option>
+                                    @foreach ($packages as $package)
+                                        <option value="{{ $package->id }}">{{ $package->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        @error('description')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-
-                    <div class="mt-3">
-                        <label for="supplier_id" class="form-label">Supplier <span class="text-danger">(jangan ubah jika
-                                tidak masuk Supplier)</span></label>
-                        <select class="form-select mt-2 sm:mr-2" id="supplier_id" name="supplier_id">
-                            <option value="">Pilih...</option>
-                            @foreach ($suppliers as $supplier)
-                                <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="mt-3">
-                        <label for="image" class="form-label">Upload Foto <span class="text-danger">*</span></label>
-                        <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
-                            <i data-lucide="image" class="w-4 h-4 mr-2"></i>
-                            <span class="text-primary mr-1">Upload a file</span> or drag and drop
-                            <input id="image" name="image" type="file"
-                                class="w-full h-full top-0 left-0 absolute opacity-0" onchange="previewFile(this)">
+                        <div class="col-span-12 lg:col-span-6 intro-y mt-3 lg:mt-0">
+                            <div>
+                                <label>Deskripsi <span class="text-danger">*</span></label>
+                                <div class="mt-2">
+                                    <textarea id="description" name="description" class="editor">
+                                    Masukkan Deskripsi Barang
+                                  </textarea>
+                                </div>
+                                @error('description')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="mt-3">
+                                <label for="image" class="form-label">Upload Foto <span class="text-danger">*</span></label>
+                                <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
+                                    <i data-lucide="image" class="w-4 h-4 mr-2"></i>
+                                    <span class="text-primary mr-1">Upload a file</span> or drag and drop
+                                    <input id="image" name="image" type="file"
+                                        class="w-full h-full top-0 left-0 absolute opacity-0" onchange="previewFile(this)">
+                                </div>
+                                <div id="image-preview" class="hidden mt-2"></div>
+                                @error('image')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
-                        <div id="image-preview" class="hidden mt-2"></div>
-                        @error('image')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
                     </div>
-            </div>
 
-            <div class="text-left mt-5">
-                <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
+                    <div class="text-left mt-5">
+                        <button type="submit" class="btn btn-primary w-24">Simpan</button>
+                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
+                    </div>
+                    </form>
+                    <!-- END: Form Layout -->
             </div>
-            </form>
         </div>
-        <!-- END: Form Layout -->
     </div>
     </div>
 @endsection

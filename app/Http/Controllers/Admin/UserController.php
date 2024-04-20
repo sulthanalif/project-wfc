@@ -66,6 +66,7 @@ class UserController extends Controller
                 $user = User::create([
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
+                    'active' => 0,
                 ]);
 
                 ($request->role) ? $user->assignRole($request->role) : 'Guest' ;

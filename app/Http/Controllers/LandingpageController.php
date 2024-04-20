@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Package;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,9 @@ class LandingpageController extends Controller
 {
     public function index()
     {
-        return view('landing.welcome');
+        $products = Product::paginate(5);
+
+        return view('landing.welcome', compact('products'));
     }
 
     public function profile()
@@ -29,8 +32,8 @@ class LandingpageController extends Controller
 
     public function catalogs()
     {
-        $packages = Package::all();
+        $products = Product::all();
 
-        return view('landing.pages.catalogs', compact('packages'));
+        return view('landing.pages.catalogs', compact('products'));
     }
 }

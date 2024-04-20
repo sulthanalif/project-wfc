@@ -58,7 +58,7 @@
                                     <div class="flex">
                                         <div class="w-10 h-10 image-fit zoom-in">
                                             <img alt="PAKET SMART WFC" class="tooltip rounded-full"
-                                                src="{{ asset('storage/images/product/' . $product->image) }}"
+                                                src="{{ asset('storage/images/product/' . $product->detail->image) }}"
                                                 title="@if ($product->created_at == $product->updated_at) Diupload {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }}
                                                 @else
                                                 Diupdate {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y, H:m:i') }} @endif">
