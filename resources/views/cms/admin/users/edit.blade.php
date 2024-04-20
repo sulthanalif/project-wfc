@@ -27,6 +27,11 @@
                     <div class="grid grid-cols-12 gap-3">
                         <div class="col-span-12 lg:col-span-6">
                             <div>
+                                <label for="name" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                                <input id="name" name="name" type="text" class="form-control w-full" value="{{ $user->adminProfile->name ?? '' }}"
+                                placeholder="Masukkan Nama Lengkap" required>
+                            </div>
+                            <div class="mt-3">
                                 <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                                 <input id="email" name="email" type="email" class="form-control w-full"
                                     placeholder="example@gmail.com" required value="{{ $user->email }}">
@@ -79,7 +84,7 @@
                     </div>
                     <div class="text-left mt-5">
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
+                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
                 </form>
             </div>

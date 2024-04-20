@@ -120,13 +120,6 @@
                             Route::is('supplier*') ||
                             Route::is('getAdministration')) menu__sub-open @endif">
                         <li>
-                            <a href="{{ route('supplier.index') }}"
-                                class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Supplier </div>
-                            </a>
-                        </li>
-                        <li>
                             <a href="{{ route('product.index') }}"
                                 class="menu {{ Route::is('product*') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
@@ -145,6 +138,13 @@
                                 class="menu {{ Route::is('catalog*') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Katalog </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('supplier.index') }}"
+                                class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Supplier </div>
                             </a>
                         </li>
                         <li>

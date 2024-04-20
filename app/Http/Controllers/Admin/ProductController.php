@@ -145,7 +145,7 @@ class ProductController extends Controller
             'stock' => ['required', 'numeric'],
             'days' => [ 'string'],
             'description' => ['required', 'max:500', 'string'],
-            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'supplier_id' => ['nullable', 'string'],
             'package_id' => ['nullable', 'string'],
         ]);

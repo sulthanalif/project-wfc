@@ -205,114 +205,42 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="testi-slider" id="testi-slider">
-                        <div class="item">
-                            <div class="testi-box position-relative overflow-hidden">
-                                <div class="row align-items-center">
-                                    <div class="col-md-5 text-center">
-                                        <img src="{{ asset('assets/logo2.png') }}" alt="" class="img-fluid">
-                                    </div>
-                                    <div class="col-md-7">
-                                        <div class="p-4">
-                                            <div class="">
-                                                <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
-                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur
-                                                    adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque
-                                                    officia recusandae quibusdam, inventore deleniti?.
-                                                </p>
+                        @if ($products->isEmpty())
+                            <div class="item">
+                                <div class="testi-box position-relative overflow-hidden">
+                                    <h4 class="text-center fw-bold p-5">Belum ada produk</h4>
+                                </div>
+                            </div>
+                        @else
+                            @foreach ($products as $product)
+                                <div class="item">
+                                    <div class="testi-box position-relative overflow-hidden">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-5 text-center px-3">
+                                                <img src="{{ asset('storage/images/product/' . $product->detail->image) }}" alt=""
+                                                    class="img-fluid">
                                             </div>
-                                            <div class="d-flex align-items-center mt-3">
-                                                <div class="date">
-                                                    <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
-                                                            AM</span></p>
+                                            <div class="col-md-7">
+                                                <div class="p-4">
+                                                    <div class="">
+                                                        <h5 class="fw-bold f-24">{{ $product->name }}</h5>
+                                                        <p class="text-muted">{{ Str::limit(strip_tags($product->detail->description), 250) }}
+                                                        </p>
+                                                    </div>
+                                                    <div class="d-flex align-items-center mt-3">
+                                                        <div class="date">
+                                                            <p class="text-muted mb-0 f-14">Rp.
+                                                                {{ number_format($product->price, 0, ',', '.') }}/hari <span>({{ $product->days }} hari)</span></p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
-
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="testi-box position-relative overflow-hidden">
-                                <div class="row align-items-center">
-                                    <div class="col-md-5 text-center">
-                                        <img src="{{ asset('assets/logo2.png') }}" alt="" class="img-fluid">
-                                    </div>
-                                    <div class="col-md-7">
-                                        <div class="p-4">
-                                            <div class="">
-                                                <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
-                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur
-                                                    adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque
-                                                    officia recusandae quibusdam, inventore deleniti?.
-                                                </p>
-                                            </div>
-                                            <div class="d-flex align-items-center mt-3">
-                                                <div class="date">
-                                                    <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
-                                                            AM</span></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="testi-box position-relative overflow-hidden">
-                                <div class="row align-items-center">
-                                    <div class="col-md-5 text-center">
-                                        <img src="{{ asset('assets/logo2.png') }}" alt="" class="img-fluid">
-                                    </div>
-                                    <div class="col-md-7">
-                                        <div class="p-4">
-                                            <div class="">
-                                                <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
-                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur
-                                                    adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque
-                                                    officia recusandae quibusdam, inventore deleniti?.
-                                                </p>
-                                            </div>
-                                            <div class="d-flex align-items-center mt-3">
-                                                <div class="date">
-                                                    <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
-                                                            AM</span></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="testi-box position-relative overflow-hidden">
-                                <div class="row align-items-center">
-                                    <div class="col-md-5 text-center">
-                                        <img src="{{ asset('assets/logo2.png') }}" alt="" class="img-fluid">
-                                    </div>
-                                    <div class="col-md-7">
-                                        <div class="p-4">
-                                            <div class="">
-                                                <h5 class="fw-bold">Paket Smart 2023-2024.</h5>
-                                                <p class="text-muted f-14">Lorem ipsum dolor sit amet consectetur
-                                                    adipisicing elit. Ullam, pariatur in! Adipisci eum nisi eaque
-                                                    officia recusandae quibusdam, inventore deleniti?.
-                                                </p>
-                                            </div>
-                                            <div class="d-flex align-items-center mt-3">
-                                                <div class="date">
-                                                    <p class="text-muted mb-0 f-14">28 jan, 2024 <span>10:25
-                                                            AM</span></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
