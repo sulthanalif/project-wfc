@@ -50,11 +50,17 @@ class UserController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
-            'email' => ['required', 'max:225', 'unique:users,email'],
+            // 'email' => ['required', 'max:225', 'unique:users,email'],
             'password' => ['required'],
             'role' => ['required', 'string'],
-            'address' => ['nullable', 'string'],
-            'phone_number' => ['nullable', 'string'],
+            // 'address' => 'required|string',
+            'phone_number' => 'string',
+            'rt' => 'string',
+            'rw'=> 'string',
+            'village'=> 'string',
+            'district'=> 'string',
+            'regency'=> 'string',
+            'province'=> 'string',
         ]);
 
         if ($validator->fails()) {
@@ -78,8 +84,14 @@ class UserController extends Controller
                 } else {
                     $user->agentProfile()->create([
                         'name' => $request->name,
-                        'address' => $request->address,
-                        'phone_number' => $request->phone_number
+                        // 'address' => $request,
+                        'phone_number' => $request->phone_number,
+                        'rt' => $request->rt,
+                        'rw'=> $request->rw,
+                        'village'=> $request->village,
+                        'district'=> $request->district,
+                        'regency'=> $request->regency,
+                        'province'=> $request->province,
                     ]);
                 }
             });
@@ -137,11 +149,16 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
-            'email' => ['required', 'max:25', 'unique:users,email'],
+            // 'email' => ['required', 'max:25', 'unique:users,email'],
             'password' => ['nullable', 'string'],
             'role' => ['required', 'string'],
-            'address' => ['string'],
-            'phone_number' => ['string'],
+            'phone_number' => 'string',
+            'rt' => 'string',
+            'rw'=> 'string',
+            'village'=> 'string',
+            'district'=> 'string',
+            'regency'=> 'string',
+            'province'=> 'string',
         ]);
 
         if ($validator->fails()) {
@@ -150,14 +167,21 @@ class UserController extends Controller
 
         try {
             DB::transaction(function () use ($request, $user, &$update) {
-                if ($request->password) {
+                // if ($request->password) {
+                //     $user->update([
+                //         'email' => $request->email,
+                //         'password' => Hash::make($request->password),
+                //     ]);
+                // } else {
+                //     $user->update([
+                //         'email' => $request->email
+                //     ]);
+                // }
+
+                if ($request->filled('password')) {
                     $user->update([
-                        'email' => $request->email,
+                        // 'email' => $request->email,
                         'password' => Hash::make($request->password),
-                    ]);
-                } else {
-                    $user->update([
-                        'email' => $request->email
                     ]);
                 }
 
@@ -166,8 +190,13 @@ class UserController extends Controller
                 if($request->role == "agent"){
                     $user->agentProfile()->update([
                         'name' => $request->name,
-                        'address' => $request->address,
-                        'phone_number' => $request->phone_number
+                        'phone_number' => $request->phone_number,
+                        'rt' => $request->rt,
+                        'rw'=> $request->rw,
+                        'village'=> $request->village,
+                        'district'=> $request->district,
+                        'regency'=> $request->regency,
+                        'province'=> $request->province,
                     ]);
                 } else {
                     $user->adminProfile()->update([

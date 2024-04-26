@@ -15,8 +15,14 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
-            $table->text('address')->nullable();
+            // $table->text('address')->nullable();
             $table->string('phone_number')->nullable();
+            $table->string('rt')->nullable();
+            $table->string('rw')->nullable();
+            $table->string('village')->nullable();
+            $table->string('district')->nullable();
+            $table->string('regency')->nullable();
+            $table->string('province')->nullable();
             $table->timestamps();
         });
     }

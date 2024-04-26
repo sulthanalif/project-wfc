@@ -25,6 +25,10 @@ class UserSeeder extends Seeder
 
         $superAdmin->assignRole('super_admin');
 
+        $superAdmin->adminProfile()->create([
+            'name' => 'Owner'
+        ]);
+
         // Finance Admin User
         $financeAdmin = User::create([
             // 'name' => 'Finance Admin',
@@ -35,6 +39,10 @@ class UserSeeder extends Seeder
 
         $financeAdmin->assignRole('finance_admin');
 
+        $financeAdmin->adminProfile()->create([
+            'name' => 'Admin Keuangan'
+        ]);
+
         // Admin User
         $admin = User::create([
             // 'name' => 'Admin',
@@ -44,6 +52,10 @@ class UserSeeder extends Seeder
         ]);
 
         $admin->assignRole('admin');
+
+        $admin->adminProfile()->create([
+            'name' => 'Salwa'
+        ]);
 
         // Agent User
         $agent = User::create([
