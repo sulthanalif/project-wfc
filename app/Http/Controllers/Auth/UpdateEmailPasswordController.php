@@ -41,7 +41,8 @@ class UpdateEmailPasswordController extends Controller
         try {
             DB::transaction(function () use ($request, $user, &$update) {
                 $update = $user->update([
-                    'email' => $request->email
+                    'email' => $request->email,
+                    'email_verified_at' => NULL
                 ]);
             });
             if ($update) {
