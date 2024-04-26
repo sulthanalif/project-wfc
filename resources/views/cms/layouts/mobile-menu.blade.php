@@ -100,61 +100,61 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="javascript:;" class="menu @if (Route::is('user*') ||
-                            Route::is('catalog*') ||
-                            Route::is('package*') ||
-                            Route::is('product*') ||
-                            Route::is('sub-agent*') ||
-                            Route::is('supplier*') ||
-                            Route::is('getAdministration')) menu--active @endif">
-                        <div class="menu__icon"> <i data-lucide="box"></i> </div>
-                        <div class="menu__title"> Master <i data-lucide="chevron-down" class="menu__sub-icon "></i>
-                        </div>
-                    </a>
-                    <ul class="@if (Route::is('user*') ||
-                            Route::is('catalog*') ||
-                            Route::is('package*') ||
-                            Route::is('product*') ||
-                            Route::is('sub-agent*') ||
-                            Route::is('supplier*') ||
-                            Route::is('getAdministration')) menu__sub-open @endif">
-                        <li>
-                            <a href="{{ route('product.index') }}"
-                                class="menu {{ Route::is('product*') ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Barang </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('package.index') }}"
-                                class="menu {{ Route::is('package*') ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Paket </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('catalog.index') }}"
-                                class="menu {{ Route::is('catalog*') ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Katalog </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('supplier.index') }}"
-                                class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Supplier </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('sub-agent.index') }}"
-                                class="menu {{ Route::is('sub-agent*') ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Sub Agen </div>
-                            </a>
-                        </li>
-                        @hasrole('super_admin|admin')
+                @hasrole('super_admin|admin')
+                    <li>
+                        <a href="javascript:;" class="menu @if (Route::is('user*') ||
+                                Route::is('catalog*') ||
+                                Route::is('package*') ||
+                                Route::is('product*') ||
+                                Route::is('sub-agent*') ||
+                                Route::is('supplier*') ||
+                                Route::is('getAdministration')) menu--active @endif">
+                            <div class="menu__icon"> <i data-lucide="box"></i> </div>
+                            <div class="menu__title"> Master <i data-lucide="chevron-down" class="menu__sub-icon "></i>
+                            </div>
+                        </a>
+                        <ul class="@if (Route::is('user*') ||
+                                Route::is('catalog*') ||
+                                Route::is('package*') ||
+                                Route::is('product*') ||
+                                Route::is('sub-agent*') ||
+                                Route::is('supplier*') ||
+                                Route::is('getAdministration')) menu__sub-open @endif">
+                            <li>
+                                <a href="{{ route('product.index') }}"
+                                    class="menu {{ Route::is('product*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Barang </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('package.index') }}"
+                                    class="menu {{ Route::is('package*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Paket </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('catalog.index') }}"
+                                    class="menu {{ Route::is('catalog*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Katalog </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('supplier.index') }}"
+                                    class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Supplier </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('sub-agent.index') }}"
+                                    class="menu {{ Route::is('sub-agent*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Sub Agen </div>
+                                </a>
+                            </li>
                             <li>
                                 <a href="{{ route('user.index') }}"
                                     class="menu @if (Route::is('user*') || Route::is('getAdministration')) menu--active @endif">
@@ -162,9 +162,9 @@
                                     <div class="menu__title"> Users </div>
                                 </a>
                             </li>
-                        @endhasrole
-                    </ul>
-                </li>
+                        </ul>
+                    </li>
+                @endhasrole
             </ul>
         </div>
     @endhasrole

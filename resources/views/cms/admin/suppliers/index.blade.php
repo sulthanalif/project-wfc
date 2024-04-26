@@ -30,7 +30,7 @@
                         <th class="whitespace-nowrap">NAMA SUPPLIER</th>
                         <th class="whitespace-nowrap">ALAMAT</th>
                         <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
-                        @hasrole('super_admin|agent')
+                        @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
                     </tr>

@@ -59,7 +59,13 @@
                                         </div>
                                         <div class="ml-4">
                                             <a href="{{ route('user.show', $user) }}"
-                                                class="font-medium whitespace-nowrap">{{ $user->agentProfile ? $user->agentProfile->name : $user->email }}</a>
+                                                class="font-medium whitespace-nowrap">
+                                                @if ($user->roles->first()->name == 'agent')
+                                                {{ $user->agentProfile ? $user->agentProfile->name : $user->email }}
+                                                @else
+                                                {{ $user->adminProfile ? $user->adminProfile->name : $user->email }}
+                                                @endif
+                                            </a>
                                             <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $user->email }}
                                             </div>
                                         </div>

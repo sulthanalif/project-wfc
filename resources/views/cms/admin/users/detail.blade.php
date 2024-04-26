@@ -25,7 +25,12 @@
                 </div>
                 <div class="ml-5">
                     <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">
-                        {{ $user->agentProfile ? $user->agentProfile->name : $user->roles->first()->name }}</div>
+                        @if ($user->roles->first()->name == 'agent')
+                        {{ $user->agentProfile ? $user->agentProfile->name : 'Belum Mengisi Nama Lengkap' }}
+                        @else
+                        {{ $user->adminProfile ? $user->adminProfile->name : 'Belum Mengisi Nama Lengkap' }}
+                        @endif
+                    </div>
                     @if ($user->roles->first()->name == 'super_admin')
                         <div class="text-slate-500">Super Admin</div>
                     @elseif ($user->roles->first()->name == 'admin')
