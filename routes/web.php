@@ -74,6 +74,7 @@ Route::group(['middleware' => 'auth',], function () {
         Route::group(['middleware' => ['active']], function () {
             Route::get('/agent', [DashboardController::class, 'index'])->name('dashboard-agent');
             require __DIR__ . '/agent/profile.php';
+            require __DIR__ . '/agent/changeEmailPass.php';
         });
 
         Route::get('/new-agent',[AdministrationController::class, 'index'])->name('nonactive');

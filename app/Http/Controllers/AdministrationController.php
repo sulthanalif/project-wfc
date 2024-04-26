@@ -13,12 +13,21 @@ class AdministrationController extends Controller
 {
     public function index()
     {
-        return view('cms.agen.new-agent.index');
+
+        if (Auth::user()->active == 0){
+            return view('cms.agen.new-agent.index');
+        } else {
+            return redirect()->route('dashboard-agent');
+        }
     }
 
     public function waiting()
     {
-        return view('cms.agen.new-agent.waiting');
+        if (Auth::user()->active == 0) {
+            return view('cms.agen.new-agent.waiting');
+        } else {
+            return redirect()->route('dashboard-agent');
+        }
     }
 
     public function store(Request $request)
