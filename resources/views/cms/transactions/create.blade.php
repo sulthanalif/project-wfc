@@ -25,8 +25,8 @@
                     @csrf
                     <div>
                         <label for="order_number" class="form-label">No. Pesanan <span class="text-danger">*</span></label>
-                        <input id="order_number" name="order_number" value="{{ $orderNumber }}" type="text" class="form-control w-full"
-                            placeholder="Masukkan Nama Lengkap Sub Agent" readonly>
+                        <input id="order_number" name="order_number" value="{{ $orderNumber }}" type="text"
+                            class="form-control w-full" placeholder="Masukkan Nama Lengkap Sub Agent" readonly>
                     </div>
                     @hasrole('super_admin|admin')
                         <div class="mt-3">
@@ -54,9 +54,9 @@
                     </div>
 
                     <div class="mt-3" id="product_fields" style="display: none;">
-                        <label for="product_id_item" class="form-label">Pilih Item <span class="text-danger">*</span></label>
+                        <label for="product_id_item" class="form-label">Pilih Item <span
+                                class="text-danger">*</span></label>
                         <select class="form-select mt-2 sm:mr-2" id="product_id_item" name="product_id_item" required>
-                            <option value="">Pilih...</option>
                         </select>
                         <button type="button" class="btn btn-primary" onclick="tambahItem()">Tambah</button>
                     </div>
@@ -101,44 +101,48 @@
 
 @push('custom-scripts')
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
-
-    <script>
-        document.getElementById('package_id').addEventListener('change', function() {
-        var packageId = this.value;
-        var productFields = document.getElementById('product_fields');
-        if (packageId) {
-            productFields.style.display = 'block';
-            populateProducts(packageId);
-        } else {
-            productFields.style.display = 'none';
-        }
-    });
-
-    function populateProducts(packageId) {
-        var productSelect = document.getElementById('product_id_item');
-        productSelect.innerHTML = '<option value="">Pilih...</option>';
-        @foreach ($packages as $package)
-            if ('{{ $package->id }}' == packageId) {
-                @foreach ($package->products as $product)
-                    var option = document.createElement('option');
-                    option.value = '{{ $product->id }}';
-                    option.textContent = '{{ $product->name }} - {{ $product->price }}';
-                    productSelect.appendChild(option);
-                @endforeach
-            }
-        @endforeach
-    }
-    </script>
-
     <script>
         var totalHarga = 0;
         var qty = 0;
         var listItem = [];
 
+        document.getElementById('package_id').addEventListener('change', function() {
+            var packageId = this.value;
+            var productFields = document.getElementById('product_fields');
+            if (packageId) {
+                productFields.style.display = 'block';
+                populateProducts(packageId);
+            } else {
+                productFields.style.display = 'none';
+            }
+        });
 
+        function populateProducts(packageId) {
+            var productSelect = document.getElementById('product_id_item');
+            productSelect.innerHTML = '<option value="">Pilih...</option>';
+            @foreach ($packages as $package)
+                if ('{{ $package->id }}' == packageId) {
+                    @foreach ($package->product as $product)
+                        var option = document.createElement('option');
+                        option.value = '{{ $product->product->id }}';
+                        option.textContent =
+                            '{{ $product->product->name }} - Rp. {{ number_format($product->product->price, 0, ',', '.') }}';
+                        option.dataset.harga = '{{ $product->product->price }}';
+                        productSelect.appendChild(option);
+                    @endforeach
+                }
+            @endforeach
+        }
 
         function tambahItem() {
-            updateTotalHarga(parseInt($('#product_id_item').find(':selected').data('harga')))
+            var selectedOption = $('#product_id_item').find(':selected');
+            if (selectedOption.length > 0 && selectedOption.data('harga')) {
+                updateTotalHarga(parseInt(selectedOption.data('harga')));
+            } else {
+                // Handle the situation where no option is selected or data-harga is missing
+                console.error('Error: No product price found');
+            }
+            updateTotalHarga(selectedOption)
         }
 
         function updateTotalHarga(nom) {
@@ -146,6 +150,5 @@
             $('[name=total_price]').val(totalHarga)
             $('.totalHarga').html(formatRupiah(totalHarga.toString()))
         }
-
     </script>
 @endpush

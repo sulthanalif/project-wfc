@@ -12,14 +12,14 @@
                 </a>
             </li>
             <li>
-                <a href="javascript:;" class="side-menu">
+                <a href="javascript:;" class="side-menu @if (Route::is('order*')) side-menu--active @endif">
                     <div class="side-menu__icon"> <i data-lucide="shopping-bag"></i> </div>
                     <div class="side-menu__title">
                         Transaksi
                         <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                     </div>
                 </a>
-                <ul class="">
+                <ul class="@if (Route::is('order*')) side-menu__sub-open @endif">
                     <li>
                         <a href="#" class="side-menu">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
@@ -27,7 +27,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('order.create') }}" class="side-menu">
+                        <a href="{{ route('order.index') }}" class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Penjualan Paket </div>
                         </a>

@@ -30,11 +30,11 @@ class OrderController extends Controller
         if ($roleName == 'agent') {
             $orders = Order::where('agent_id', $user->id)->paginate(10);
 
-            return view('cms.agen.order.index', compact('orders'));
+            return view('cms.transactions.index', compact('orders'));
         } else {
             $orders = Order::paginate(10);
 
-            return view('cms.admin.order.index', compact('orders'));
+            return view('cms.transactions.index', compact('orders'));
         }
     }
 
