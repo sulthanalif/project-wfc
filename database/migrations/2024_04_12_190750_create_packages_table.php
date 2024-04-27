@@ -16,7 +16,7 @@ return new class extends Migration
             // $table->uuid('catalog_id')->constrained('catalogs')->onDelete('cascade')->nullable();
             $table->string('name');
             $table->text('description');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

@@ -53,8 +53,8 @@ Route::group(['middleware' => 'auth',], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
 
     });
-        //admin, super_admin
-        Route::group(['middleware' => 'role:admin|super_admin'], function () {
+        //master
+        Route::group(['prefix' => 'master' ,'middleware' => 'role:admin|super_admin'], function () {
             require __DIR__ . '/admin/masterUser.php';
             require __DIR__ . '/admin/masterCatalog.php';
             require __DIR__ . '/admin/masterPackage.php';
@@ -70,7 +70,7 @@ Route::group(['middleware' => 'auth',], function () {
         });
 
         //admin, super_admin, agent
-        Route::group(['middleware' => 'role:admin|super_admin|agent'], function () {
+        Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin|agent'], function () {
             Route::resource('order', OrderController::class);
         });
 

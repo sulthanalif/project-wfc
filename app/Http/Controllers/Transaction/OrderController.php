@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Models\Package;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 
@@ -45,7 +46,7 @@ class OrderController extends Controller
         $orders = Order::all()->count();
         $orderNumber = GenerateRandomString::make(8) . now()->format('dmY') . '-' . ($orders + 1);
 
-        $products = Product::all();
+        $packages = Package::with('product')->get();
 
         $user = Auth::user();
         $roleUser = $user->roles->first();
@@ -54,13 +55,13 @@ class OrderController extends Controller
         if ($roleName == 'agent') {
             return view('cms.transactions.create', [
                 'orderNumber' => $orderNumber,
-                'products' => $products
+                'packages' => $packages
             ]);
         } else {
             return view('cms.transactions.create', [
                 'agents' => User::role('agent')->get(),
                 'orderNumber' => $orderNumber,
-                'products' => $products
+                'packages' => $packages
             ]);
         }
 

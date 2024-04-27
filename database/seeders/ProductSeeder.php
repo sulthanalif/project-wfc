@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use App\Models\ProductDetail;
+use App\Models\ProductPackage;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,29 +15,55 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        $product1 = Product::create([
-            'name' => 'Produk 1',
+        $cibaba1 = Product::create([
+            'name' => 'Kasur',
             'stock' => 500,
-            'price' => 2000,
+            'price' => 3000,
             'days' => 360
         ]);
 
         ProductDetail::create([
-            'product_id' => $product1->id,
-            'description' => 'ini adalah product 1',
+            'product_id' => $cibaba1->id,
+            'description' => 'ini adalah kasur',
             'image' => 'image.jpg'
         ]);
 
-        $product2 = Product::create([
-            'name' => 'Produk 2',
+        $cibaba2 = Product::create([
+            'name' => 'lemari makan',
             'stock' => 500,
             'price' => 5000,
             'days' => 360
         ]);
 
         ProductDetail::create([
-            'product_id' => $product2->id,
-            'description' => 'ini adalah product 1',
+            'product_id' => $cibaba2->id,
+            'description' => 'ini adalah lemari makan',
+            'image' => 'image.jpg'
+        ]);
+
+        $phl1 = Product::create([
+            'name' => 'Paket Hampers Lebaran 1',
+            'stock' => 500,
+            'price' => 3000,
+            'days' => 325
+        ]);
+
+        ProductDetail::create([
+            'product_id' => $phl1->id,
+            'description' => '<p>item paket :</p><ul><li>Uang hampers Rp. 500.000</li><li>Lidah kucing</li><li>dll</li><li>dll</li><li>dll</li></ul>',
+            'image' => 'image.jpg'
+        ]);
+
+        $phl2 = Product::create([
+            'name' => 'Paket Hampers Lebaran 2',
+            'stock' => 500,
+            'price' => 3000,
+            'days' => 325
+        ]);
+
+        ProductDetail::create([
+            'product_id' => $phl2->id,
+            'description' => '<p>item paket :</p><ul><li>Uang hampers Rp. 300.000</li><li>Lidah kucing</li><li>dll</li><li>dll</li><li>dll</li></ul>',
             'image' => 'image.jpg'
         ]);
     }

@@ -30,7 +30,7 @@ class Package extends Model
 
     public function product()
     {
-        return $this->hasOne(ProductPackage::class);
+        return $this->hasMany(ProductPackage::class);
     }
 
     public function catalogName()

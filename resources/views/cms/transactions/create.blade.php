@@ -44,16 +44,19 @@
                     @endhasrole
 
                     <div class="mt-3">
-                        <label for="product_id" class="form-label">Pilih Product <span class="text-danger">*</span></label>
-                        <select class="form-select mt-2 sm:mr-2" id="product_id" name="product_id" required>
+                        <label for="package_id" class="form-label">Pilih Paket <span class="text-danger">*</span></label>
+                        <select class="form-select mt-2 sm:mr-2" id="package_id" name="package_id" required>
                             <option value="">Pilih...</option>
-                            @foreach ($products as $product)
-                                <option value="{{ $product->id }}"
-                                    data-nama="{{ $product->name }}"
-                                    data-id="{{ $product->id }}"
-                                    data-harga="{{ $product->price }}"
-                                    >{{ $product->name . ' - ' . $product->price }}</option>
+                            @foreach ($packages as $package)
+                                <option value="{{ $package->id }}">{{ $package->name }}</option>
                             @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mt-3" id="product_fields" style="display: none;">
+                        <label for="product_id_item" class="form-label">Pilih Item <span class="text-danger">*</span></label>
+                        <select class="form-select mt-2 sm:mr-2" id="product_id_item" name="product_id_item" required>
+                            <option value="">Pilih...</option>
                         </select>
                         <button type="button" class="btn btn-primary" onclick="tambahItem()">Tambah</button>
                     </div>
@@ -100,6 +103,34 @@
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
 
     <script>
+        document.getElementById('package_id').addEventListener('change', function() {
+        var packageId = this.value;
+        var productFields = document.getElementById('product_fields');
+        if (packageId) {
+            productFields.style.display = 'block';
+            populateProducts(packageId);
+        } else {
+            productFields.style.display = 'none';
+        }
+    });
+
+    function populateProducts(packageId) {
+        var productSelect = document.getElementById('product_id_item');
+        productSelect.innerHTML = '<option value="">Pilih...</option>';
+        @foreach ($packages as $package)
+            if ('{{ $package->id }}' == packageId) {
+                @foreach ($package->products as $product)
+                    var option = document.createElement('option');
+                    option.value = '{{ $product->id }}';
+                    option.textContent = '{{ $product->name }} - {{ $product->price }}';
+                    productSelect.appendChild(option);
+                @endforeach
+            }
+        @endforeach
+    }
+    </script>
+
+    <script>
         var totalHarga = 0;
         var qty = 0;
         var listItem = [];
@@ -107,7 +138,7 @@
 
 
         function tambahItem() {
-            updateTotalHarga(parseInt($('#product_id').find(':selected').data('harga')))
+            updateTotalHarga(parseInt($('#product_id_item').find(':selected').data('harga')))
         }
 
         function updateTotalHarga(nom) {
