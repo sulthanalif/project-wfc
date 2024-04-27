@@ -12,6 +12,7 @@ use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Admin\DashboardAdminController;
 use App\Http\Controllers\AdministrationController;
 use App\Http\Controllers\SubAgentController;
+use App\Http\Controllers\Transaction\OrderController;
 // use App\Models\Administration;
 use App\Models\SubAgent;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -68,6 +69,10 @@ Route::group(['middleware' => 'auth',], function () {
 
         });
 
+        //admin, super_admin, agent
+        Route::group(['middleware' => 'role:admin|super_admin|agent'], function () {
+            Route::resource('order', OrderController::class);
+        });
 
     //agent
     Route::group(['middleware' => ['role:agent', 'verified']], function () {

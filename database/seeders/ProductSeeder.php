@@ -26,5 +26,18 @@ class ProductSeeder extends Seeder
             'description' => 'ini adalah product 1',
             'image' => 'image.jpg'
         ]);
+
+        $product2 = Product::create([
+            'name' => 'Produk 2',
+            'stock' => 500,
+            'price' => 5000,
+            'days' => 360
+        ]);
+
+        ProductDetail::create([
+            'product_id' => $product2->id,
+            'description' => 'ini adalah product 1',
+            'image' => 'image.jpg'
+        ]);
     }
 }
