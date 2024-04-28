@@ -12,8 +12,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Models\OrderDetail;
 use App\Models\Package;
 use App\Models\Product;
+use App\Models\ProductDetail;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -84,15 +86,29 @@ class OrderController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, &$store) {
-                $store = Order::create([
+            DB::transaction(function () use ($request, &$order) {
+                $order = Order::create([
                     'agent_id' => $request->agent_id,
                     'order_number' => $request->order_number,
                     'total_price' => $request->total_price,
                     'order_date' => now(),
                 ]);
+
+
+                foreach ($request->get('product_id') as $product_id) {
+                    $daftar = Product::findOrFail($product_id);
+
+                    OrderDetail::create([
+                        'order_id' => $order->id,
+                        // 'order_number' => $request->order_number,
+                        'name' => $daftar->nama,
+                        'price' => $daftar->harga,
+                        'qty' => $request->get('qty')
+                    ]);
+
+                }
             });
-            if ($store) {
+            if ($order) {
                 return redirect()->route('order.index')->with('success', 'Pesanan Telah Dibuat');
             } else {
                 return redirect()->route('order.index')->with('error', 'Pesanan Gagal Dibuat');
