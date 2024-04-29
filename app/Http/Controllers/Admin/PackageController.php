@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Nette\Utils\Image;
+use App\Models\Catalog;
+// use Illuminate\Routing\Controller;
 use App\Models\Package;
 use Illuminate\Http\Request;
-// use Illuminate\Routing\Controller;
+use App\Models\PackageCatalog;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StorepackageRequest;
 use App\Http\Requests\UpdatepackageRequest;
-use App\Models\Catalog;
-use App\Models\PackageCatalog;
 
 class PackageController extends Controller
 {
@@ -52,13 +53,27 @@ class PackageController extends Controller
         // return dd($validator);
         try {
             DB::transaction(function () use ($request, &$package) {
-                $imageName = 'package_'.time() . '.' . $request->file('image')->getClientOriginalExtension();
-                $request->file('image')->storeAs('public/images/package', $imageName);
+
+                // Manipulasi gambar menggunakan Intervention Image
+                $image = Image::make($request->file('image'));
+                $image->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+
+                // Extract the filename without the extension
+                $imageData = pathinfo($request->file('image')->getClientOriginalName(), PATHINFO_FILENAME);
+                $imageFileName = strtotime(date('Y-m-d H:i:s')) . '.' . $imageData . '.webp';
+
+                // Simpan file dengan nama yang sudah dikodekan ke direktori yang sesuai
+                $image->save(base_path() . '/' . env('UPLOADS_DIRECTORY_IMAGE') . '/package/' . $imageFileName, 90, 'webp');
+
+                // $imageName = 'package_'.time() . '.' . $request->file('image')->getClientOriginalExtension();
+                // $request->file('image')->storeAs('public/images/package', $imageName);
 
                 $package = Package::create([
                     'name' => $request->name,
                     'description' => $request->description,
-                    'image' => $imageName
+                    'image' => $imageFileName
                 ]);
 
                 // Jika pengguna memilih katalog

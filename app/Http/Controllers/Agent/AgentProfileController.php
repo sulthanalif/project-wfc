@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Agent;
 
 use App\Models\User;
 use App\Models\AgentProfile;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 // use App\Http\Requests\StoreagentProfileRequest;
 // use App\Http\Requests\UpdateagentProfileRequest;
@@ -40,8 +40,9 @@ class AgentProfileController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $validasi = Validator::make(Request::all(), [
+        $validasi = Validator::make($request->all(), [
             'name' => 'required|string',
+            'photo' => 'string',
             // 'address' => 'required|string',
             'phone_number' => 'string',
             'rt' => 'string',
@@ -59,8 +60,30 @@ class AgentProfileController extends Controller
         $agent = Auth::user();
 
         try {
-            DB::transaction(function () use ( $agent, &$update) {
-                $update = $agent->agentProfile->update(Request::all());
+            DB::transaction(function () use ($request, $agent, &$update) {
+                if ($request->hasFile('image')) {
+                    // Delete old image
+                    if ($agent->agentProfile->image && file_exists(storage_path('app/public/photos/'.$agent->id. '/'. $agent->agentProfile->image))) {
+                        unlink(storage_path('app/public/photos/' . $agent->agentProfile->image));
+                      }
+
+                    $photoName = 'photo_'.time() . '.' . $request->file('photo')->getClientOriginalExtension();
+                    $request->file('photo')->storeAs('public/photos/'.$agent->id. '/', $photoName);
+
+                    $update = $agent->agentProfile->update([
+                        'name' => $request->name,
+                        'photo' => $photoName,
+                        'phone_number' => $request->phone_number,
+                        'rt' => $request->rt,
+                        'rw'=> $request->rw,
+                        'village'=> $request->village,
+                        'district'=> $request->district,
+                        'regency'=> $request->regency,
+                        'province'=> $request->province,
+                    ]);
+                } else {
+                    $update = $agent->agentProfile->update($request->except('image'));
+                }
             });
             if(!$update) {
                 return back()->with('error', 'Data Tidak Berhasil Diubah!');

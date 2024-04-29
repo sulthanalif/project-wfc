@@ -45,8 +45,6 @@ Auth::routes(['verify' => true]);
 Route::group(['middleware' => 'auth',], function () {
     Route::get('/agent', [DashboardController::class, 'noActive'])->name('nonactive');
 
-    //kelola sub agent
-    Route::resource('sub-agent', SubAgentController::class);
 
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
@@ -72,6 +70,11 @@ Route::group(['middleware' => 'auth',], function () {
         //admin, super_admin, agent
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin|agent'], function () {
             Route::resource('order', OrderController::class);
+        });
+
+        Route::group(['prefix' => 'master', 'middleware' => 'role:admin|super_admin|agent'], function () {
+            //kelola sub agent
+            Route::resource('sub-agent', SubAgentController::class);
         });
 
     //agent

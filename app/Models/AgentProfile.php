@@ -18,6 +18,7 @@ class AgentProfile extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'photo',
         'phone_number',
         'rt',
         'rw',
