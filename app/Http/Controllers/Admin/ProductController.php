@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Package;
 use App\Models\Product;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use App\Models\ProductDetail;
+use App\Models\ProductPackage;
 use App\Models\ProductSupplier;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Models\Package;
-use App\Models\ProductDetail;
-use App\Models\ProductPackage;
 
 class ProductController extends Controller
 {
@@ -59,8 +60,8 @@ class ProductController extends Controller
 
         try {
             DB::transaction(function () use ($request, &$product) {
-                $imageName = 'product_'.time() . '.' . $request->file('image')->getClientOriginalExtension();
-                $request->file('image')->storeAs('public/images/product', $imageName);
+                $imageName = 'product_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
+                Storage::disk('public')->put('images/product/' . $imageName, $request->file('image')->getContent());
 
                 $product = Product::create([
                     'name' => $request->name,
@@ -162,8 +163,8 @@ class ProductController extends Controller
                         unlink(storage_path('app/public/images/product/' . $product->image));
                     }
 
-                    $imageName = 'product_'.time() . '.' . $request->file('image')->getClientOriginalExtension();
-                    $request->file('image')->storeAs('public/images/product', $imageName);
+                    $imageName = 'product_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
+                    Storage::disk('public')->put('images/product/' . $imageName, $request->file('image')->getContent());
 
                     $update = $product->update([
                         'name' => $request->name,

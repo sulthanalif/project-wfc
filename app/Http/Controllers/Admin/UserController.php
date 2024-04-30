@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\AdminProfile;
 use App\Models\SubAgent;
+use App\Models\AdminProfile;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -82,8 +83,12 @@ class UserController extends Controller
                         'name' => $request->name
                     ]);
                 } else {
+                    $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
+                    Storage::disk('public')->put('photos/' .$user->id. '/' . $photoName, $request->file('photo')->getContent());
+
                     $user->agentProfile()->create([
                         'name' => $request->name,
+                        'photo' => $photoName,
                         // 'address' => $request,
                         'phone_number' => $request->phone_number,
                         'rt' => $request->rt,
@@ -178,6 +183,7 @@ class UserController extends Controller
                 //     ]);
                 // }
 
+
                 if ($request->filled('password')) {
                     $user->update([
                         // 'email' => $request->email,
@@ -188,16 +194,29 @@ class UserController extends Controller
                 ($request->role) ? $user->assignRole($request->role) : '';
 
                 if($request->role == "agent"){
-                    $user->agentProfile()->update([
-                        'name' => $request->name,
-                        'phone_number' => $request->phone_number,
-                        'rt' => $request->rt,
-                        'rw'=> $request->rw,
-                        'village'=> $request->village,
-                        'district'=> $request->district,
-                        'regency'=> $request->regency,
-                        'province'=> $request->province,
-                    ]);
+                    if ($request->hasFile('photo')) {
+                        if ($user->agentProfile->photo && file_exists(storage_path('app/public/photos/'.$user->id. '/'. $user->agentProfile->photo))) {
+                            unlink(storage_path('app/public/photos/' . $user->agentProfile->photo));
+                        }
+
+                        $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
+                        Storage::disk('public')->put('photos/' .$user->id. '/' . $photoName, $request->file('photo')->getContent());
+
+                        $user->agentProfile()->update([
+                            'name' => $request->name,
+                            'photo' => $photoName,
+                            'phone_number' => $request->phone_number,
+                            'rt' => $request->rt,
+                            'rw'=> $request->rw,
+                            'village'=> $request->village,
+                            'district'=> $request->district,
+                            'regency'=> $request->regency,
+                            'province'=> $request->province,
+                        ]);
+                    } else {
+
+                    }
+
                 } else {
                     $user->adminProfile()->update([
                         'name' => $request->name

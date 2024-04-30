@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 // use App\Http\Requests\StoreagentProfileRequest;
@@ -61,14 +62,17 @@ class AgentProfileController extends Controller
 
         try {
             DB::transaction(function () use ($request, $agent, &$update) {
-                if ($request->hasFile('image')) {
-                    // Delete old image
-                    if ($agent->agentProfile->image && file_exists(storage_path('app/public/photos/'.$agent->id. '/'. $agent->agentProfile->image))) {
-                        unlink(storage_path('app/public/photos/' . $agent->agentProfile->image));
+                if ($request->hasFile('photo')) {
+                    // Delete old photo
+                    if ($agent->agentProfile->photo && file_exists(storage_path('app/public/photos/'.$agent->id. '/'. $agent->agentProfile->photo))) {
+                        unlink(storage_path('app/public/photos/' . $agent->agentProfile->photo));
                       }
 
-                    $photoName = 'photo_'.time() . '.' . $request->file('photo')->getClientOriginalExtension();
-                    $request->file('photo')->storeAs('public/photos/'.$agent->id. '/', $photoName);
+                    $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
+                    Storage::disk('public')->put('photos/' .$agent->id. '/' . $photoName, $request->file('photo')->getContent());
+
+                    // $photoName = 'photo_'.time() . '.' . $request->file('photo')->getClientOriginalExtension();
+                    // $request->file('photo')->storeAs('public/photos/'.$agent->id. '/', $photoName);
 
                     $update = $agent->agentProfile->update([
                         'name' => $request->name,
@@ -82,7 +86,7 @@ class AgentProfileController extends Controller
                         'province'=> $request->province,
                     ]);
                 } else {
-                    $update = $agent->agentProfile->update($request->except('image'));
+                    $update = $agent->agentProfile->update($request->except('photo'));
                 }
             });
             if(!$update) {
