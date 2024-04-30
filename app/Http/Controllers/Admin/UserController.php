@@ -258,9 +258,16 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
+        $roleUser = $user->roles->first();
+        $roleName = $roleUser->name;
 
-
-        $delete = $user->delete();
+        if ($roleName == 'agent') {
+            $user->agentProfile()->delete();
+            $delete = $user->delete();
+        } else {
+            $user->adminProfile()->delete();
+            $delete = $user->delete();
+        }
 
         if ($delete){
             return redirect()->route('user.index' ,['page' => $request->page])->with('success', 'User deleted successfully.');

@@ -135,13 +135,25 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+        $user = Auth::user();
+        $roleUser = $user->roles->first();
+        $roleName = $roleUser->name;
+
+        if ($roleName == "agent") {
+            $data = [
+                'message' => 'Anda Tidak Diizinkan Untuk Ini!',
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        } else {
+            return view('cms.transactions.edit', $order);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateOrderRequest $request, Order $order)
+    public function update(Request $request, Order $order)
     {
         //
     }
