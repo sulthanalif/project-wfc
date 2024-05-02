@@ -91,7 +91,7 @@ class OrderController extends Controller
                     'agent_id' => $request->agent_id,
                     'order_number' => $request->order_number,
                     'total_price' => $request->total_price,
-                    'order_date' => now(),
+                    'order_date' => $request->order_date,
                 ]);
 
 
