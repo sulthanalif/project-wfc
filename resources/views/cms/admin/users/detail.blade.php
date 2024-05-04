@@ -26,9 +26,9 @@
                 <div class="ml-5">
                     <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">
                         @if ($user->roles->first()->name == 'agent')
-                        {{ $user->agentProfile ? $user->agentProfile->name : 'Belum Mengisi Nama Lengkap' }}
+                            {{ $user->agentProfile ? $user->agentProfile->name : 'Belum Mengisi Nama Lengkap' }}
                         @else
-                        {{ $user->adminProfile ? $user->adminProfile->name : 'Belum Mengisi Nama Lengkap' }}
+                            {{ $user->adminProfile ? $user->adminProfile->name : 'Belum Mengisi Nama Lengkap' }}
                         @endif
                     </div>
                     @if ($user->roles->first()->name == 'super_admin')
@@ -62,8 +62,8 @@
                 </div>
             </div>
         </div>
-        @if ($user->roles->first()->name == 'agent')
-            <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center" role="tablist">
+        <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center" role="tablist">
+            @if ($user->roles->first()->name == 'agent')
                 <li id="sub-agen-tab" class="nav-item" role="presentation"> <a href="javascript:;"
                         class="nav-link py-4 active" data-tw-target="#sub-agen" aria-controls="sub-agen"
                         aria-selected="true" role="tab"> Sub Agen
@@ -71,12 +71,18 @@
                 <li id="berkas-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
                         data-tw-target="#berkas" aria-controls="berkas" aria-selected="true" role="tab"> Berkas
                     </a> </li>
-            </ul>
-        @endif
+            @endif
+            <li id="cpassword-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
+                    data-tw-target="#cpassword" aria-controls="cpassword" aria-selected="true" role="tab"> Reset Password
+                </a> </li>
+            <li id="cemail-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
+                    data-tw-target="#cemail" aria-controls="cemail" aria-selected="true" role="tab"> Ubah Email
+                </a> </li>
+        </ul>
     </div>
     <!-- END: Profile Info -->
-    @if ($user->roles->first()->name == 'agent')
-        <div class="intro-y tab-content mt-5">
+    <div class="intro-y tab-content mt-5">
+            @if ($user->roles->first()->name == 'agent')
             <div id="sub-agen" class="tab-pane active" role="tabpanel" aria-labelledby="sub-agen-tab">
                 <div class="grid grid-cols-12 gap-6">
                     <!-- BEGIN: Sub Agen -->
@@ -244,6 +250,78 @@
                     <!-- END: Sub Agen -->
                 </div>
             </div>
+            @endif
+            <div id="cpassword" class="tab-pane" role="tabpanel" aria-labelledby="cpassword-tab">
+                <div class="grid grid-cols-12 gap-6">
+                     <!-- BEGIN: Change Password -->
+                     <div class="intro-y box col-span-12 lg:col-span-6">
+                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                            @if (session('status'))
+                                <div id="success-notification-content" class="toastify-content flex my-3 w-full">
+                                    <i class="text-success" data-lucide="check-circle"></i>
+                                    <div class="ml-4 mr-4">
+                                        <div class="font-medium">{{ session('status') }}</div>
+                                    </div>
+                                </div>
+                            @endif
+                            <form method="POST" action="{{ route('password.email') }}" class="w-full">
+                                @csrf
+                                <div class="intro-x mt-8">
+                                    <input id="email" type="email"
+                                        class="intro-x login__input form-control py-3 px-4 block @error('email') is-invalid @enderror"
+                                        name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
+                                        placeholder="Email">
+                                    @error('email')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
+                                    <button class="btn btn-primary py-3 px-4 w-full xl:mr-3 align-top"
+                                        type="submit">{{ __('Kirim Link Reset Password') }}</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- END: Change Password -->
+                </div>
+            </div>
+            <div id="cemail" class="tab-pane" role="tabpanel" aria-labelledby="cemail-tab">
+                <div class="grid grid-cols-12 gap-6">
+                     <!-- BEGIN: Change Email -->
+                     <div class="intro-y box col-span-12 lg:col-span-6">
+                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                            @if (session('status'))
+                                <div id="success-notification-content" class="toastify-content flex my-3 w-full">
+                                    <i class="text-success" data-lucide="check-circle"></i>
+                                    <div class="ml-4 mr-4">
+                                        <div class="font-medium">{{ session('status') }}</div>
+                                    </div>
+                                </div>
+                            @endif
+                            <form method="POST" action="{{ route('password.email') }}" class="w-full">
+                                @csrf
+                                <div class="intro-x mt-8">
+                                    <input id="email" type="email"
+                                        class="intro-x login__input form-control py-3 px-4 block @error('email') is-invalid @enderror"
+                                        name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
+                                        placeholder="Email">
+                                    @error('email')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
+                                    <button class="btn btn-primary py-3 px-4 w-full xl:mr-3 align-top"
+                                        type="submit">{{ __('Kirim Link Reset Password') }}</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- END: Change Email -->
+                </div>
+            </div>
         </div>
-    @endif
 @endsection

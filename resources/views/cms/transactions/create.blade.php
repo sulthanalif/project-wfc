@@ -21,7 +21,7 @@
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
             <div class="intro-y box p-5">
-                <form action="{{ route('order.store') }}" method="post">
+                <form id="orderForm" amethod="post">
                     @csrf
                     <div>
                         <label for="order_number" class="form-label">No. Pesanan <span class="text-danger">*</span></label>
@@ -89,7 +89,7 @@
 
                     <div class="text-left mt-5">
                         <input type="hidden" name="total_price" value="0">
-                        <button type="submit" class="btn btn-primary w-24" onclick="simpan()">Simpan</button>
+                        <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Simpan</button>
                         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
                     </div>
                 </form>
@@ -178,7 +178,7 @@
             const itemPrice = parseInt(selectedOption.dataset.harga);
             const itemQuantity = 1;
 
-            const existingRow = $('.transaksiItem td:first-child').filter(function() {
+            const existingRow = $('.transaksiItem td:nth-child(2)').filter(function() {
                 return $(this).text() === itemName;
             }).closest('tr');
 
@@ -200,10 +200,10 @@
 
         function createTableRow(id, name, price, quantity) {
             const row = `<tr>
-                <input value="${id}" id="product_id" hidden>
+                <input value="${id}" id="product-id" name="product-id" type="hidden">
                 <td>${name}</td>
                 <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
-                <td class="text-center"><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}"></td>     
+                <td class="text-center"><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}" id="product-qty"></td>     
                 <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>          
                 <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button></td>
                 </tr>`;
@@ -236,7 +236,7 @@
             }
 
             const initialQuantity = parseInt($(input).data('initialValue'));
-            const itemPrice = parseInt(row.find('td:nth-child(2)').text().replace(/[^0-9,-]/g, ''));
+            const itemPrice = parseInt(row.find('td:nth-child(3)').text().replace(/[^0-9,-]/g, ''));
 
             const quantityChange = newQuantity - initialQuantity;
             const newPrice = itemPrice * newQuantity;
@@ -248,7 +248,7 @@
 
             row.find('.quantityInput').val(newQuantity);
 
-            row.find('td:nth-child(4)').text(newPrice.toLocaleString('id-ID', {
+            row.find('td:nth-child(5)').text(newPrice.toLocaleString('id-ID', {
                 style: 'currency',
                 currency: 'IDR'
             }));
@@ -257,9 +257,9 @@
             $(input).data('initialValue', newQuantity);
         }
 
-        function removeItem(button) {               
+        function removeItem(button) {
             const row = $(button).closest('tr');
-            const itemPrice = parseInt(row.find('td:nth-child(2)').text().replace(/[^0-9,-]/g, ''));
+            const itemPrice = parseInt(row.find('td:nth-child(3)').text().replace(/[^0-9,-]/g, ''));
             const quantity = parseInt(row.find('.quantityInput').val());
 
             const totalPrice = itemPrice * quantity;
@@ -287,42 +287,49 @@
             return formatter.format(number);
         }
 
-        function simpan() {
+        function simpan(event) {
+            event.preventDefault();
+
             const formData = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
                 order_number: $('#order_number').val(),
                 agent_id: $('#agent_id').val(),
-                // package_id: $('#package_id').val(),
                 products: [],
                 total_price: totalHarga
             };
 
             $('.transaksiItem tr').each(function() {
-                const productId = $(this).find('#product_id').val();
-                // const name = $(this).find('td:nth-child(1)').text();
-                // const price = $(this).find('td:nth-child(2)').attr('data-price');
-                const qty = $(this).find('td:nth-child(3)').attr('data-qty');
-                // const subtotal = $(this).find('td:nth-child(4)').attr('data-subtotal');
+                const productId = $(this).find('#product-id').val();
+                const qty = $(this).find('#product-qty').val();
 
                 formData.products.push({
                     productId: productId,
-                    // name: name,
-                    // price: price,
                     qty: qty,
-                    // subtotal: subtotal
                 });
             });
 
             console.log(formData);
 
+            // const csrfToken = $('meta[name="csrf-token"]').attr('content');
+            // const data = {
+            //     _token: csrfToken,
+            //     ...formData
+            // };
+
             $.ajax({
                 url: "{{ route('order.store') }}",
                 type: 'POST',
                 data: formData,
-                contentType: false,
-                processData: false,
+                // data: JSON.stringify(formData),
+                // contentType: 'application/json',
+                // processData: false,
+                // headers: {
+                //     'X-CSRF-TOKEN': csrfToken
+                // },
                 success: function(response) {
                     // Handle response dari backend jika request berhasil
                     console.log('Data berhasil disimpan:', response);
+                    window.location.href = "{{ route('order.index') }}";
                 },
                 error: function(xhr, status, error) {
                     // Handle error jika request gagal
