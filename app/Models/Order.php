@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, UUIDGenerator;
 
     protected $table = 'orders';
     public $incrementing = false;
@@ -20,7 +20,7 @@ class Order extends Model
         'order_number',
         'total_price',
         'order_date',
-        'estimate_date',
+        // 'estimate_date',
         'status',
         'payment_status',
     ];

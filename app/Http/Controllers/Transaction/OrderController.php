@@ -75,10 +75,13 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+
+        dd($request->all());
         $validator = Validator::make($request->all(), [
             'agent_id' => ['required'],
             'order_number' => ['required'],
             'total_price' => ['required', 'numeric'],
+
         ]);
 
         if ($validator->fails()) {
@@ -87,25 +90,27 @@ class OrderController extends Controller
 
         try {
             DB::transaction(function () use ($request, &$order) {
+
                 $order = Order::create([
                     'agent_id' => $request->agent_id,
                     'order_number' => $request->order_number,
                     'total_price' => $request->total_price,
-                    'order_date' => $request->order_date,
+                    'order_date' => now(),
                 ]);
 
 
-                foreach ($request->get('product_id') as $product_id) {
-                    $daftar = Product::findOrFail($product_id);
+                // Looping through products in formData
+                foreach ($request->products as $product) {
+                    // Retrieve product details based on productId
+                    $daftar = Product::findOrFail($product['productId']);
 
+                    // Create OrderDetail for each product
                     OrderDetail::create([
                         'order_id' => $order->id,
-                        // 'order_number' => $request->order_number,
                         'name' => $daftar->nama,
                         'price' => $daftar->harga,
-                        'qty' => $request->get('qty')
+                        'qty' => $product['qty']
                     ]);
-
                 }
             });
             if ($order) {
