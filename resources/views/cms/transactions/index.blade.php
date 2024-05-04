@@ -1,15 +1,15 @@
 @extends('cms.layouts.app', [
-    'title' => 'Penjualan Paket',
+    'title' => 'Pesanan Paket',
 ])
 
 @section('content')
     <h2 class="intro-y text-lg font-medium mt-10">
-        Penjualan Paket
+        Pesanan Paket
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin|agent')
-                <a href="{{ route('order.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Penjualan</a>
+                <a href="{{ route('order.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Pesanan</a>
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $orders->firstItem() }} hingga
                     {{ $orders->lastItem() }} dari {{ $orders->total() }} data</div>
             @endhasrole
@@ -27,13 +27,12 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA Transaksi Paket</th>
+                        <th class="whitespace-nowrap">NOMOR PESANAN</th>
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">DARI AGEN</th>
                         @endhasrole
-                        <th class="whitespace-nowrap">ALAMAT</th>
-                        <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
-                        @hasrole('super_admin|agent')
+                        <th class="whitespace-nowrap">TOTAL HARGA</th>
+                        @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
                     </tr>
@@ -41,7 +40,7 @@
                 <tbody>
                     @if ($orders->isEmpty())
                         <tr>
-                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
                         @foreach ($orders as $order)

@@ -14,28 +14,28 @@
             <ul class="scrollable__content py-2">
                 <li>
                     <a href="{{ route('dashboard-admin') }}"
-                        class="menu  {{ Route::is('dashboard-admin') ? 'menu--active' : '' }}">
+                        class="menu {{ Route::is('dashboard-admin') ? 'menu--active' : '' }}">
                         <div class="menu__icon"> <i data-lucide="home"></i> </div>
                         <div class="menu__title"> Dashboard </div>
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:;" class="menu">
+                    <a href="javascript:;" class="menu @if (Route::is('order*')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="shopping-bag"></i> </div>
                         <div class="menu__title"> Transaksi <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                         </div>
                     </a>
-                    <ul class="">
-                        <li>
+                    <ul class="@if (Route::is('order*')) menu__sub-open @endif">
+                        {{-- <li>
                             <a href="#" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Pengisian Paket </div>
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
-                            <a href="#" class="menu">
+                            <a href="{{ route('order.index') }}" class="menu {{ Route::is('order*') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Penjualan Paket </div>
+                                <div class="menu__title"> Pesanan </div>
                             </a>
                         </li>
                         <li>
@@ -124,7 +124,7 @@
                                 <a href="{{ route('product.index') }}"
                                     class="menu {{ Route::is('product*') ? 'menu--active' : '' }}">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Barang </div>
+                                    <div class="menu__title"> Produk </div>
                                 </a>
                             </li>
                             <li>
@@ -134,13 +134,13 @@
                                     <div class="menu__title"> Paket </div>
                                 </a>
                             </li>
-                            <li>
+                            {{-- <li>
                                 <a href="{{ route('catalog.index') }}"
                                     class="menu {{ Route::is('catalog*') ? 'menu--active' : '' }}">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                     <div class="menu__title"> Katalog </div>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li>
                                 <a href="{{ route('supplier.index') }}"
                                     class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">

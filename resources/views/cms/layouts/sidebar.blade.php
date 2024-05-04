@@ -20,16 +20,16 @@
                     </div>
                 </a>
                 <ul class="@if (Route::is('order*')) side-menu__sub-open @endif">
-                    <li>
+                    {{-- <li>
                         <a href="#" class="side-menu">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Pengisian Paket </div>
                         </a>
-                    </li>
+                    </li> --}}
                     <li>
                         <a href="{{ route('order.index') }}" class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Penjualan Paket </div>
+                            <div class="side-menu__title"> Pesanan </div>
                         </a>
                     </li>
                     <li>
@@ -123,7 +123,7 @@
                             <a href="{{ route('product.index') }}"
                                 class="side-menu {{ Route::is('product*') ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="side-menu__title"> Barang </div>
+                                <div class="side-menu__title"> Produk </div>
                             </a>
                         </li>
                         <li>
@@ -133,13 +133,13 @@
                                 <div class="side-menu__title"> Paket </div>
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('catalog.index') }}"
                                 class="side-menu {{ Route::is('catalog*') ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="side-menu__title"> Katalog </div>
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('supplier.index') }}"
                                 class="side-menu {{ Route::is('supplier*') ? 'side-menu--active' : '' }}">
