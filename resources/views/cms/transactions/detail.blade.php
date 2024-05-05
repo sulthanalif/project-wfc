@@ -21,6 +21,8 @@
                     <div class="flex flex-col items-center justify-center border-b pb-2">
                         <h1 class="font-bold text-xl">{{ $order->order_number }}</h1>
                         <span class="text-muted">{{$order->order_date}}</span>
+                        <span class="text-muted">{{$order->status}}</span>
+                        <span class="text-muted">{{$order->payment_status}}</span>
                     </div>
 
                     <div class="flex items-center mt-2">
@@ -40,13 +42,21 @@
                             Belum Ada
                         @endif
                     </div>
-
+                    @hasrole('agent')
                     <div class="mt-3">
                         <a class="flex items-center text-success" href="javascript:;" data-tw-toggle="modal"
                                                 data-tw-target="#upload-confirmation-modal">
                                                  <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Upload bukti pembayaran </a>
                     </div>
+                    @endhasrole
 
+                    @hasrole('super_admin')
+                    <div class="mt-3">
+                        <a class="btn btn-success" href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#acc-confirmation-modal">
+                                                 <i data-lucide="edit" class="w-4 h-4 mr-1"></i> {{$order->payment_status == 'unpaid' ? 'Acc' : 'Tolak'}} pembayaran </a>
+                    </div>
+                    @endhasrole
 
                 </div>
             </div>
@@ -87,6 +97,35 @@
                                 </div>
                             </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: Delete Confirmation Modal -->
+
+    <!-- BEGIN: Delete Confirmation Modal -->
+    <div id="acc-confirmation-modal" class="modal" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+                    <div class="p-5 text-center">
+                        {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
+                        <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                        <div class="text-slate-500 mt-2">
+                            Apakah anda yakin untuk {{$order->payment_status == 'unpaid' ? 'Acc' : 'Tolak'}} data ini?
+                            <br>
+                            Proses tidak akan bisa diulangi.
+                        </div>
+                    </div>
+                    <div class="px-5 pb-8 text-center">
+                        <form action="{{ route('changePaymentStatus', $order) }}" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-primary w-24">{{$order->payment_status == 'unpaid' ? 'Acc' : 'Tolak'}}</button>
+                            <button type="button" data-tw-dismiss="modal"
+                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

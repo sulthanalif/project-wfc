@@ -42,20 +42,31 @@ class PaymentController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $order, &$store) {
-                $imageName = 'payment_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-                Storage::disk('public')->put('images/payment/'. $order->agent_id . '/' . $imageName, $request->file('image')->getContent());
+            DB::transaction(function () use ($request, $order) {
+            $existingPayment = $order->payment; // Check if payment exists
 
-                $store = Payment::create([
-                    'order_id' => $order->id,
-                    'image' => $imageName
-                ]);
-            });
-            if ($store) {
-                return redirect()->route('order.show', $order)->with('success', 'Bukti pembayaran telah ditambhakan');
-            } else {
-                return back()->with('error', 'Bukti pembayaran gagal ditambahkan');
+            $imageName = null; // Initialize image name to null
+
+            if ($request->hasFile('image')) { // Check if a new image is uploaded
+                $imageName = 'payment_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
+                $path = 'images/payment/' . $order->agent_id . '/';
+
+                // Delete existing image if present
+                if ($existingPayment && Storage::disk('public')->exists($path . $existingPayment->image)) {
+                    Storage::disk('public')->delete($path . $existingPayment->image);
+                }
+
+                Storage::disk('public')->put($path . $imageName, $request->file('image')->getContent());
             }
+
+            // Update or create payment record
+            $payment = $existingPayment ? $existingPayment : new Payment();
+            $payment->order_id = $order->id;
+            $payment->image = $imageName;
+            $payment->save();
+        });
+
+        return redirect()->route('order.show', $order)->with('success', 'Bukti pembayaran telah diubah');
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),
@@ -88,4 +99,6 @@ class PaymentController extends Controller
             }
         }
     }
+
+
 }

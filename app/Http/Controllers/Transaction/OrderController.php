@@ -61,7 +61,7 @@ class OrderController extends Controller
             ]);
         } else {
             return view('cms.transactions.create', [
-                'agents' => User::role('agent')->get(),
+                'agents' => User::role('agent')->where('active', 1)->get(),
                 'orderNumber' => $orderNumber,
                 'packages' => $packages
             ]);
