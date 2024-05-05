@@ -203,4 +203,24 @@ class OrderController extends Controller
             return back()->with('error', 'Data Tidak Ditemukan');
         }
     }
+
+    public function getOrderStats()
+    {
+        try {
+            $stats = [
+                'total_income' => Order::sum('total_price'),
+                'total_orders' => Order::count(),
+                'total_paid' => Order::where('payment_status', 'paid')->count(),
+                'total_unpaid' => Order::where('payment_status', '!=', 'paid')->count(),
+            ];
+
+            return response()->json($stats,200);
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400,
+            ];
+            return response()->json($data, 400);
+        }
+    }
 }

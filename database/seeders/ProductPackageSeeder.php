@@ -11,6 +11,24 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ProductPackageSeeder extends Seeder
 {
+
+    public static function generateRandomNumbers($min, $max) {
+        // Initialize an empty array to store random numbers
+        $randomNumbers = [];
+
+        // Generate 1000 random numbers
+        for ($i = 0; $i < 1000; $i++) {
+            // Generate a random number between min and max
+            $randomNumber = rand($min, $max);
+
+            // Add the random number to the array
+            $randomNumbers[] = $randomNumber;
+        }
+
+        // Return the array of random numbers
+        return $randomNumbers;
+    }
+
     /**
      * Run the database seeds.
      */
@@ -51,13 +69,16 @@ class ProductPackageSeeder extends Seeder
 
 
         foreach ($datas as $data) {
+            $price = self::generateRandomNumbers(3000, 8000)[0];
+            $stock = self::generateRandomNumbers(100, 300)[0];
+            $days = self::generateRandomNumbers(300, 400)[0];
             $package = Package::create($data);
 
             $product1 = Product::create([
                 'name' => 'Product ' . $package->name . ' 1',
-                'stock' => 500,
-                'price' => 3000,
-                'days' => 360
+                'stock' => $stock,
+                'price' => $price,
+                'days' => $days
             ]);
 
             ProductDetail::create([
@@ -67,10 +88,10 @@ class ProductPackageSeeder extends Seeder
             ]);
 
             $product2 = Product::create([
-                'name' => 'Product ' . $package->name . ' 1',
-                'stock' => 500,
-                'price' => 3000,
-                'days' => 360
+                'name' => 'Product ' . $package->name . ' 2',
+                'stock' => $stock,
+                'price' => $price,
+                'days' => $days
             ]);
 
             ProductDetail::create([

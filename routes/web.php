@@ -79,6 +79,9 @@ Route::group(['middleware' => 'auth',], function () {
             Route::post('/acc/{order}', [OrderController::class, 'accOrder'])->name('order.accOrder');
             Route::post('/changeOrderStatus/{order}', [OrderController::class, 'changeOrderStatus'])->name('order.changeOrderStatus');
             Route::post('/changePaymentStatus/{order}', [PaymentController::class, 'changePaymentStatus'])->name('changePaymentStatus');
+
+            //order stats
+            Route::get('/orderStats', [OrderController::class, 'getOrderStats'])->name('getOrderStats');
         });
 
 
