@@ -34,60 +34,23 @@
                                         value="{{ $user->adminProfile->name ?? '' }}" placeholder="Masukkan Nama Lengkap"
                                         required>
                                 </div>
-                                <div class="mt-3">
-                                    <label for="role" class="form-label">Hak Akses <span
-                                            class="text-danger">*</span></label>
-                                    <select class="form-select mt-2 sm:mr-2" id="role" name="role" required>
-                                        <option value="">Pilih...</option>
-                                        <option value="super_admin"
-                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'super_admin' ? 'selected' : '' }}>
-                                            Super Admin</option>
-                                        <option value="admin"
-                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'admin' ? 'selected' : '' }}>
-                                            Admin</option>
-                                        <option value="finance_admin"
-                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'finance_admin' ? 'selected' : '' }}>
-                                            Keuangan</option>
-                                        <option value="agent"
-                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'agent' ? 'selected' : '' }}>
-                                            Agent</option>
-                                    </select>
-                                </div>
                             </div>
                         @endif
                         @if ($user->roles->first()->name === 'agent')
                             <div class="col-span-12 lg:col-span-6">
                                 <div>
                                     <label for="name" class="form-label">Nama Lengkap <span
-                                        class="text-danger">*</span></label>
+                                            class="text-danger">*</span></label>
                                     <input id="name" name="name" type="text" class="form-control w-full"
-                                        placeholder="Masukkan Nama Lengkap" value="{{ $user->agentProfile->name }}" required>
+                                        placeholder="Masukkan Nama Lengkap" value="{{ $user->agentProfile->name }}"
+                                        required>
                                 </div>
                                 <div class="mt-3">
                                     <label for="phone_number" class="form-label">Nomor Handphone <span
-                                        class="text-danger">*</span></label>
+                                            class="text-danger">*</span></label>
                                     <input id="phone_number" name="phone_number" type="number" class="form-control w-full"
                                         placeholder="Masukkan Nomor Handphone" maxlength="13"
                                         value="{{ $user->agentProfile->phone_number }}" required>
-                                </div>
-                                <div class="mt-3">
-                                    <label for="role" class="form-label">Hak Akses <span
-                                            class="text-danger">*</span></label>
-                                    <select class="form-select mt-2 sm:mr-2" id="role" name="role" required>
-                                        <option value="">Pilih...</option>
-                                        <option value="super_admin"
-                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'super_admin' ? 'selected' : '' }}>
-                                            Super Admin</option>
-                                        <option value="admin"
-                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'admin' ? 'selected' : '' }}>
-                                            Admin</option>
-                                        <option value="finance_admin"
-                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'finance_admin' ? 'selected' : '' }}>
-                                            Keuangan</option>
-                                        <option value="agent"
-                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'agent' ? 'selected' : '' }}>
-                                            Agent</option>
-                                    </select>
                                 </div>
                                 <div class="mt-3">
                                     <label for="image" class="form-label">Upload Foto <span
@@ -110,25 +73,72 @@
                             <div class="col-span-12 lg:col-span-6 mt-3 lg:mt-0" id="agent-fields">
                                 <div>
                                     <label for="address" class="form-label">Detail Alamat <span
-                                        class="text-danger">*</span></label>
+                                            class="text-danger">*</span></label>
                                     <input id="address" name="address" type="text" class="form-control w-full"
-                                        placeholder="Masukkan Detail Alamat" value="{{ $user->agentProfile->address }}" required>
+                                        placeholder="Masukkan Detail Alamat" value="{{ $user->agentProfile->address }}"
+                                        required>
                                 </div>
                                 <div class="grid grid-cols-12 gap-3">
                                     <div class="col-span-6 mt-3">
                                         <div>
                                             <label for="rt" class="form-label">RT <span
-                                                class="text-danger">*</span></label>
-                                            <input id="rt" name="rt" type="number" class="form-control w-full"
-                                                placeholder="Masukkan Nomor RT" value="{{ $user->agentProfile->rt }}" required>
+                                                    class="text-danger">*</span></label>
+                                            <input id="rt" name="rt" type="number"
+                                                class="form-control w-full" placeholder="Masukkan Nomor RT"
+                                                value="{{ $user->agentProfile->rt }}" required>
                                         </div>
                                     </div>
                                     <div class="col-span-6 mt-3">
                                         <div>
                                             <label for="rw" class="form-label">RW <span
-                                                class="text-danger">*</span></label>
-                                            <input id="rw" name="rw" type="number" class="form-control w-full"
-                                                placeholder="Masukkan Nomor RW" value="{{ $user->agentProfile->rw }}" required>
+                                                    class="text-danger">*</span></label>
+                                            <input id="rw" name="rw" type="number"
+                                                class="form-control w-full" placeholder="Masukkan Nomor RW"
+                                                value="{{ $user->agentProfile->rw }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-12 gap-3">
+                                    <div class="col-span-12 lg:col-span-6 mt-3">
+                                        <div>
+                                            <label for="province" class="form-label">Provinsi <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select mt-2 sm:mr-2" id="province" name="province"
+                                                required>
+                                                <option value="">Pilih Provinsi</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-12 lg:col-span-6 mt-3">
+                                        <div>
+                                            <label for="regency" class="form-label">Kota/Kabupaten <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select mt-2 sm:mr-2" id="regency" name="regency"
+                                                required>
+                                                <option value="">Pilih Kota/Kabupaten</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-12 gap-3">
+                                    <div class="col-span-12 lg:col-span-6 mt-3">
+                                        <div>
+                                            <label for="district" class="form-label">Kecamatan <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select mt-2 sm:mr-2" id="district" name="district"
+                                                required>
+                                                <option value="">Pilih Kecamatan</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-12 lg:col-span-6 mt-3">
+                                        <div>
+                                            <label for="village" class="form-label">Desa/Kelurahan <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select mt-2 sm:mr-2" id="village" name="village"
+                                                required>
+                                                <option value="">Pilih Desa/Kelurahan</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -148,17 +158,6 @@
 
 @push('custom-scripts')
     <script>
-        const roleSelect = document.getElementById('role');
-        const agentFields = document.getElementById('agent-fields');
-
-        roleSelect.addEventListener('change', (event) => {
-            if (event.target.value === 'agent') {
-                agentFields.style.display = 'block';
-            } else {
-                agentFields.style.display = 'none';
-            }
-        });
-
         function previewFile(input) {
             const file = input.files[0];
             const preview = document.getElementById('image-preview');
@@ -178,7 +177,7 @@
                 const extension = file.name.split('.').pop().toLowerCase();
                 if (!allowedExtensions.includes(extension)) {
                     alert("Hanya file dengan tipe (jpg, jpeg, png) yang diperbolehkan!!");
-                    preview.innerHTML = ''; 
+                    preview.innerHTML = '';
                     preview.classList.add('hidden');
                     input.value = '';
                     return;
@@ -190,8 +189,8 @@
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     img.classList.add('w-auto', 'h-40', 'object-cover', 'rounded');
-                    preview.innerHTML = ''; 
-                    preview.classList.remove('hidden'); 
+                    preview.innerHTML = '';
+                    preview.classList.remove('hidden');
                     preview.appendChild(img);
                 };
 
@@ -200,6 +199,94 @@
                 preview.innerHTML = '';
                 preview.classList.add('hidden');
             }
+        }
+
+        fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
+            .then(response => response.json())
+            .then(data => {
+                const provinceOption = document.getElementById('province');
+
+                data.forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = province.id;
+                    option.textContent = province.name;
+                    provinceOption.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            provinceSelect = document.getElementById('province');
+            provinceSelect.addEventListener('change', handleProvinceChange);
+            regencySelect = document.getElementById('regency');
+            regencySelect.addEventListener('change', handleRegencyChange);
+            districtSelect = document.getElementById('district');
+            districtSelect.addEventListener('change', handleDistrictChange);
+        });
+
+        // Functions
+        function handleProvinceChange(event) {
+            const provinceId = event.target.value;
+            const regencyOption = document.getElementById('regency');
+
+            regencyOption.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
+
+            if (!provinceId) return;
+
+            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(regency => {
+                    const option = document.createElement('option');
+                    option.value = regency.id;
+                    option.textContent = regency.name;
+                    regencyOption.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function handleRegencyChange(event) {
+            const regencyId = event.target.value;
+            const districtOption = document.getElementById('district');
+
+            districtOption.innerHTML = '<option value="">Pilih Kecamatan</option>';
+
+            if (!regencyId) return;
+
+            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regencyId}.json`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.id;
+                    option.textContent = district.name;
+                    districtOption.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function handleDistrictChange(event) {
+            const district = event.target.value;
+            const villageOption = document.getElementById('village');
+
+            villageOption.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
+
+            if (!district) return;
+
+            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${district}.json`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(village => {
+                    const option = document.createElement('option');
+                    option.value = village.id;
+                    option.textContent = village.name;
+                    villageOption.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
         }
     </script>
 @endpush

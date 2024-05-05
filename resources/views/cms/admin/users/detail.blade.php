@@ -9,7 +9,7 @@
         </h2>
         @hasrole('super_admin')
             <a href="{{ route('user.edit', $user) }}" class="btn btn-primary"><i data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah
-                User</a>
+                Detail</a>
         @endhasrole
     </div>
     <!-- BEGIN: Profile Info -->
@@ -72,17 +72,23 @@
                         data-tw-target="#berkas" aria-controls="berkas" aria-selected="true" role="tab"> Berkas
                     </a> </li>
             @endif
-            <li id="cpassword-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
-                    data-tw-target="#cpassword" aria-controls="cpassword" aria-selected="true" role="tab"> Reset Password
-                </a> </li>
-            <li id="cemail-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
-                    data-tw-target="#cemail" aria-controls="cemail" aria-selected="true" role="tab"> Ubah Email
-                </a> </li>
+            @hasrole('super_admin')
+                <li id="cpassword-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
+                        data-tw-target="#cpassword" aria-controls="cpassword" aria-selected="true" role="tab"> Reset
+                        Password
+                    </a> </li>
+                <li id="cemail-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
+                        data-tw-target="#cemail" aria-controls="cemail" aria-selected="true" role="tab"> Ubah Email
+                    </a> </li>
+                <li id="cakses-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
+                        data-tw-target="#cakses" aria-controls="cakses" aria-selected="true" role="tab"> Ubah Hak Akses
+                    </a> </li>
+            @endhasrole
         </ul>
     </div>
     <!-- END: Profile Info -->
     <div class="intro-y tab-content mt-5">
-            @if ($user->roles->first()->name == 'agent')
+        @if ($user->roles->first()->name == 'agent')
             <div id="sub-agen" class="tab-pane active" role="tabpanel" aria-labelledby="sub-agen-tab">
                 <div class="grid grid-cols-12 gap-6">
                     <!-- BEGIN: Sub Agen -->
@@ -250,11 +256,12 @@
                     <!-- END: Sub Agen -->
                 </div>
             </div>
-            @endif
+        @endif
+        @hasrole('super_admin')
             <div id="cpassword" class="tab-pane" role="tabpanel" aria-labelledby="cpassword-tab">
                 <div class="grid grid-cols-12 gap-6">
-                     <!-- BEGIN: Change Password -->
-                     <div class="intro-y box col-span-12 lg:col-span-6">
+                    <!-- BEGIN: Change Password -->
+                    <div class="intro-y box col-span-12 lg:col-span-6">
                         <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                             @if (session('status'))
                                 <div id="success-notification-content" class="toastify-content flex my-3 w-full">
@@ -289,8 +296,8 @@
             </div>
             <div id="cemail" class="tab-pane" role="tabpanel" aria-labelledby="cemail-tab">
                 <div class="grid grid-cols-12 gap-6">
-                     <!-- BEGIN: Change Email -->
-                     <div class="intro-y box col-span-12 lg:col-span-6">
+                    <!-- BEGIN: Change Email -->
+                    <div class="intro-y box col-span-12 lg:col-span-6">
                         <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                             @if (session('status'))
                                 <div id="success-notification-content" class="toastify-content flex my-3 w-full">
@@ -315,7 +322,7 @@
                                 </div>
                                 <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
                                     <button class="btn btn-primary py-3 px-4 w-full xl:mr-3 align-top"
-                                        type="submit">{{ __('Kirim Link Reset Password') }}</button>
+                                        type="submit">{{ __('Simpan Perubahan') }}</button>
                                 </div>
                             </form>
                         </div>
@@ -323,5 +330,53 @@
                     <!-- END: Change Email -->
                 </div>
             </div>
-        </div>
+            <div id="cakses" class="tab-pane" role="tabpanel" aria-labelledby="cakses-tab">
+                <div class="grid grid-cols-12 gap-6">
+                    <!-- BEGIN: Change Email -->
+                    <div class="intro-y box col-span-12 lg:col-span-6">
+                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                            @if (session('status'))
+                                <div id="success-notification-content" class="toastify-content flex my-3 w-full">
+                                    <i class="text-success" data-lucide="check-circle"></i>
+                                    <div class="ml-4 mr-4">
+                                        <div class="font-medium">{{ session('status') }}</div>
+                                    </div>
+                                </div>
+                            @endif
+                            <form method="POST" action="{{ route('password.email') }}" class="w-full">
+                                @csrf
+                                <div class="intro-x mt-8">
+                                    <select class="form-select mt-2 sm:mr-2" id="role" name="role" required>
+                                        <option value="" disabled>Pilih Hak Akses...</option>
+                                        <option value="super_admin"
+                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'super_admin' ? 'selected' : '' }}>
+                                            Super Admin</option>
+                                        <option value="admin"
+                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'admin' ? 'selected' : '' }}>
+                                            Admin</option>
+                                        <option value="finance_admin"
+                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'finance_admin' ? 'selected' : '' }}>
+                                            Keuangan</option>
+                                        <option value="agent"
+                                            {{ isset($user->roles->first()->name) && $user->roles->first()->name === 'agent' ? 'selected' : '' }}>
+                                            Agent</option>
+                                    </select>
+                                    @error('email')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
+                                    <button class="btn btn-primary py-3 px-4 w-full xl:mr-3 align-top"
+                                        type="submit">{{ __('Simpan Perubahan') }}</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- END: Change Email -->
+                </div>
+            </div>
+        @endhasrole
+    </div>
 @endsection
