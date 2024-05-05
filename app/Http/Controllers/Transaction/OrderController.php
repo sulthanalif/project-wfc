@@ -66,8 +66,6 @@ class OrderController extends Controller
                 'packages' => $packages
             ]);
         }
-
-
     }
 
     /**
@@ -76,7 +74,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
 
-        dd($request->all());
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'agent_id' => ['required'],
             'order_number' => ['required'],
@@ -98,20 +96,37 @@ class OrderController extends Controller
                     'order_date' => now(),
                 ]);
 
+                $products = json_decode($request->products, true);
 
-                // Looping through products in formData
-                foreach ($request->products as $product) {
-                    // Retrieve product details based on productId
-                    $daftar = Product::findOrFail($product['productId']);
+                // dd($products);
 
-                    // Create OrderDetail for each product
+                // Membuat OrderDetail untuk setiap produk
+                foreach ($products as $product) {
+                    // Mendapatkan detail produk berdasarkan productId
+                    $productDetail = Product::findOrFail($product['productId']);
+
+                    // Membuat OrderDetail untuk setiap produk
                     OrderDetail::create([
                         'order_id' => $order->id,
-                        'name' => $daftar->nama,
-                        'price' => $daftar->harga,
+                        'name' => $productDetail->name,
+                        'price' => $productDetail->price,
                         'qty' => $product['qty']
                     ]);
                 }
+
+                // Looping through products in formData
+                // foreach ($request->products as $product) {
+                    // Retrieve product details based on productId
+                    // $daftar = Product::findOrFail($product['productId']);
+
+                    // Create OrderDetail for each product
+                    // OrderDetail::create([
+                        // 'order_id' => $order->id,
+                //         'name' => $daftar->nama,
+                //         'price' => $daftar->harga,
+                //         'qty' => $product['qty']
+                //     ]);
+                // }
             });
             if ($order) {
                 return redirect()->route('order.index')->with('success', 'Pesanan Telah Dibuat');

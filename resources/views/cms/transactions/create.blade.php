@@ -21,7 +21,7 @@
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
             <div class="intro-y box p-5">
-                <form id="orderForm" amethod="post">
+                <form id="orderForm" action="{{ route('order.store') }}" method="post">
                     @csrf
                     <div>
                         <label for="order_number" class="form-label">No. Pesanan <span class="text-danger">*</span></label>
@@ -62,8 +62,8 @@
                     </div>
 
                     <div class="row mt-3">
-                        <div class="col-md-12 table-responsive">
-                            <table class="table table-hover table-bordered">
+                        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+                            <table class="table table-report">
                                 <thead>
                                     <tr class="text-center">
                                         <th>Nama</th>
@@ -89,6 +89,7 @@
 
                     <div class="text-left mt-5">
                         <input type="hidden" name="total_price" value="0">
+                        <input type="hidden" name="products" id="productData" value="">
                         <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Simpan</button>
                         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
                     </div>
@@ -149,20 +150,6 @@
                     @endforeach
                 }
             @endforeach
-
-            // const packages = @json($packages);
-            // packages.forEach(package => {
-            //     if (package.id === packageId) {
-            //         package.product.forEach(product => {
-            //             console.log(product.product_id);
-            //             const option = document.createElement('option');
-            //             option.value = product.id;
-            //             option.textContent = `${product.name} - Rp. ${formatRupiah(product.price)}`;
-            //             option.dataset.harga = product.price;
-            //             productSelect.appendChild(option);
-            //         });
-            //     }
-            // });
         }
 
         function addItem() {
@@ -288,54 +275,20 @@
         }
 
         function simpan(event) {
-            event.preventDefault();
-
-            const formData = {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                order_number: $('#order_number').val(),
-                agent_id: $('#agent_id').val(),
-                products: [],
-                total_price: totalHarga
-            };
-
+            const productData = [];
             $('.transaksiItem tr').each(function() {
                 const productId = $(this).find('#product-id').val();
                 const qty = $(this).find('#product-qty').val();
 
-                formData.products.push({
+                productData.push({
                     productId: productId,
-                    qty: qty,
+                    qty: qty
                 });
             });
 
-            console.log(formData);
+            $('#productData').val(JSON.stringify(productData));
 
-            // const csrfToken = $('meta[name="csrf-token"]').attr('content');
-            // const data = {
-            //     _token: csrfToken,
-            //     ...formData
-            // };
-
-            $.ajax({
-                url: "{{ route('order.store') }}",
-                type: 'POST',
-                data: formData,
-                // data: JSON.stringify(formData),
-                // contentType: 'application/json',
-                // processData: false,
-                // headers: {
-                //     'X-CSRF-TOKEN': csrfToken
-                // },
-                success: function(response) {
-                    // Handle response dari backend jika request berhasil
-                    console.log('Data berhasil disimpan:', response);
-                    window.location.href = "{{ route('order.index') }}";
-                },
-                error: function(xhr, status, error) {
-                    // Handle error jika request gagal
-                    console.error('Terjadi kesalahan:', error);
-                }
-            });
+            $('#orderForm').submit();
         }
     </script>
 @endpush

@@ -32,6 +32,8 @@
                             <th class="text-center whitespace-nowrap">DARI AGEN</th>
                         @endhasrole
                         <th class="whitespace-nowrap">TOTAL HARGA</th>
+                        <th class="whitespace-nowrap">STATUS</th>
+                        <th class="whitespace-nowrap">PEMBAYARAN</th>
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
@@ -49,28 +51,33 @@
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td>
-                                    <div class="flex items-center">
-                                        <div class="ml-4">
-                                            <p class="font-medium whitespace-nowrap">{{ $order->name }}</p>
-                                        </div>
-                                    </div>
+                                    <a class="text-slate-500 flex items-center mr-3"
+                                        href="{{ route('order.show', $order) }}"> <i data-lucide="external-link"
+                                            class="w-4 h-4 mr-2"></i> {{ $order->order_number }} </a>
                                 </td>
                                 @hasrole('super_admin|admin')
                                     <td class="text-center capitalize">
                                         {{ $order->agent->agentProfile->name }}
                                     </td>
                                 @endhasrole
-                                <td class="!py-3.5">
+                                <td>
                                     <p>
-                                        {!! $order->address !!}
+                                        Rp. {{ number_format($order->total_price, 0, ',', '.') }}
                                     </p>
                                 </td>
-                                <td class="w-40">
-                                    <p>
-                                        {{ $order->phone_number }}
-                                    </p>
+                                <td>
+                                    {{ $order->status }}
                                 </td>
-                                @hasrole('super_admin|agent')
+                                <td>
+                                    @if ($order->payment_status === 'paid')
+                                        <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> Lunas </div>
+                                    @else
+                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
+                                                class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
+                                    @endif
+                                </td>
+                                @hasrole('super_admin|admin')
                                     <td class="table-report__action w-56">
                                         <div class="flex justify-center items-center">
                                             <a class="flex items-center mr-3" href="{{ route('sub-agent.edit', $order) }}">
