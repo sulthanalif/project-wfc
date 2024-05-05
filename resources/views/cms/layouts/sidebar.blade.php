@@ -203,7 +203,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:;" class="side-menu">
+                    <a href="{{route('order.index')}}" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="shopping-bag"></i> </div>
                         <div class="side-menu__title">
                             Transaksi

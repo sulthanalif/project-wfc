@@ -40,7 +40,7 @@
                         </div>
                     @endhasrole
                     @hasrole('agent')
-                        <input type="text" name="agent_id" value="{{ auth()->user()->id }}">
+                        <input type="hidden" name="agent_id" value="{{ auth()->user()->id }}">
                     @endhasrole
 
                     <div class="mt-3">
@@ -190,8 +190,8 @@
                 <input value="${id}" id="product-id" name="product-id" type="hidden">
                 <td>${name}</td>
                 <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
-                <td class="text-center"><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}" id="product-qty"></td>     
-                <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>          
+                <td class="text-center"><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}" id="product-qty"></td>
+                <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
                 <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button></td>
                 </tr>`;
 

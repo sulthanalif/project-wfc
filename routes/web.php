@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\DashboardAdminController;
 use App\Http\Controllers\AdministrationController;
 use App\Http\Controllers\SubAgentController;
 use App\Http\Controllers\Transaction\OrderController;
+use App\Http\Controllers\Transaction\PaymentController;
 // use App\Models\Administration;
 use App\Models\SubAgent;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -60,6 +61,8 @@ Route::group(['middleware' => 'auth',], function () {
             require __DIR__ . '/admin/masterSupplier.php';
 
             Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
+
+
         });
 
         //finance_admin, super_admin
@@ -67,10 +70,18 @@ Route::group(['middleware' => 'auth',], function () {
 
         });
 
-        //admin, super_admin, agent
+        //Transaction
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin|agent'], function () {
             Route::resource('order', OrderController::class);
+            Route::post('/payment/{order}', [PaymentController::class, 'storePayment'])->name('storePayment');
         });
+        Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin'], function () {
+            Route::post('/acc/{order}', [OrderController::class, 'accOrder'])->name('order.accOrder');
+            Route::post('/changeOrderStatus/{order}', [OrderController::class, 'changeOrderStatus'])->name('order.changeOrderStatus');
+        });
+
+
+
 
         Route::group(['prefix' => 'master', 'middleware' => 'role:admin|super_admin|agent'], function () {
             //kelola sub agent
