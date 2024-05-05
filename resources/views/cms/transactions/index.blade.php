@@ -80,11 +80,12 @@
                                 @hasrole('super_admin|admin')
                                     <td class="table-report__action w-56">
                                         <div class="flex justify-center items-center">
-                                            <a class="flex items-center mr-3" href="{{ route('sub-agent.edit', $order) }}">
-                                                <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
-                                            <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#delete-confirmation-modal{{ $order->id }}"> <i
-                                                    data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                            <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                            data-tw-target="#change-confirmation-modal{{ $order->id }}">
+                                                <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                            <a class="flex items-center text-success" href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#delete-confirmation-modal{{ $order->id }}">
+                                                 <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Accept </a>
                                         </div>
                                     </td>
                                 @endhasrole
@@ -99,21 +100,61 @@
                                     <div class="modal-content">
                                         <div class="modal-body p-0">
                                             <div class="p-5 text-center">
-                                                <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
                                                 <div class="text-3xl mt-5">Apakah anda yakin?</div>
                                                 <div class="text-slate-500 mt-2">
-                                                    Apakah anda yakin untuk menghapus data ini?
+                                                    Apakah anda yakin untuk acc order ini?
                                                     <br>
                                                     Proses tidak akan bisa diulangi.
                                                 </div>
                                             </div>
                                             <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('sub-agent.destroy', $order) }}" method="post">
+                                                <form action="{{ route('order.accOrder', $order) }}" method="post">
                                                     @csrf
-                                                    @method('delete')
                                                     <input type="hidden" name="page"
                                                         value="{{ $orders->currentPage() }}">
-                                                    <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                                    <button type="submit" class="btn btn-success w-24">Acc</button>
+                                                    <button type="button" data-tw-dismiss="modal"
+                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END: Delete Confirmation Modal -->
+
+                            <!-- BEGIN: Delete Confirmation Modal -->
+                            <div id="change-confirmation-modal{{ $order->id }}" class="modal" tabindex="-1"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-0">
+                                            <div class="p-5 text-center">
+                                                {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
+                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                <div class="text-slate-500 mt-2">
+                                                    Apakah anda yakin untuk Ubah Status order ini?
+                                                    <br>
+                                                    Proses tidak akan bisa diulangi.
+                                                </div>
+                                            </div>
+                                            <div class="px-5 pb-8 text-center">
+                                                <form action="{{ route('order.changeOrderStatus', $order) }}" method="post">
+                                                    @csrf
+                                                    <div class="mt-3 mb-3">
+                                                        <label for="status" class="form-label">Ubah Status <span class="text-danger">*</span></label>
+                                                        <select class="form-select mt-2 sm:mr-2" id="status" name="status" required>
+                                                            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                            <option value="accepted" {{ $order->status == 'accepted' ? 'selected' : '' }}>Diterima</option>
+                                                            <option value="reject" {{ $order->status == 'reject' ? 'selected' : '' }}>Ditolak</option>
+                                                            <option value="canceled" {{ $order->status == 'canceled' ? 'selected' : '' }}>Dibatalkan</option>
+
+                                                        </select>
+                                                    </div>
+                                                    <input type="hidden" name="page"
+                                                        value="{{ $orders->currentPage() }}">
+                                                    <button type="submit" class="btn btn-success w-24">Ubah</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
                                                 </form>

@@ -147,7 +147,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        return view('cms.transactions.detail', $order);
+        return view('cms.transactions.detail', compact('order'));
     }
 
     /**
@@ -170,19 +170,37 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Order $order)
+    public function accOrder(Order $order)
     {
-        //
+        if($order) {
+            $update = $order->update([
+                'status' => 'accepted'
+            ]);
+
+            if($update) {
+                return redirect()->route('order.index')->with('success', 'Order Berhasil diterima');
+            } else {
+                return back()->with('error', 'Kesalahan');
+            }
+        } else {
+            return back()->with('error', 'Data Tidak Ditemukan');
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
+    public function changeOrderStatus(Request $request, Order $order)
     {
-        //
+        if($order) {
+            $update = $order->update([
+                'status' => $request->status
+            ]);
+
+            if($update) {
+                return redirect()->route('order.index')->with('success', 'Order Status Berhasil Diubah');
+            } else {
+                return back()->with('error', 'Kesalahan');
+            }
+        } else {
+            return back()->with('error', 'Data Tidak Ditemukan');
+        }
     }
 }
