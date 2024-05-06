@@ -11,6 +11,7 @@ use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Admin\DashboardAdminController;
 use App\Http\Controllers\AdministrationController;
+use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
 use App\Http\Controllers\Transaction\OrderController;
 use App\Http\Controllers\Transaction\PaymentController;
@@ -36,6 +37,7 @@ Route::get('/', [LandingpageController::class, 'index'])->name('landing-page');
 Route::get('/company-profile', [LandingpageController::class, 'profile'])->name('company-profile');
 Route::get('/catalogs-product', [LandingpageController::class, 'catalogs'])->name('catalogs-product');
 
+Route::get('storage/images/{path}/{imageName}', [GetImageController::class, 'displayImage'])->name('getImage');
 
 // Route::get('/login', [LoginController::class, 'index'])
 
