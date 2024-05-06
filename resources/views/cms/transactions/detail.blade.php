@@ -36,7 +36,8 @@
                         @if ($order->payment)
                         <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
                             <img alt="PAKET SMART WFC" class=" img-fluid rounded-md"
-                                src="{{ asset('storage/images/payment/'. $order->agent_id . '/' . $order->payment->image) }}">
+                                {{-- src="{{ asset('storage/images/payment/'. $order->agent_id . '/' . $order->payment->image) }}"> --}}
+                                src="{{ route('getImage', ['path' => 'payment/'.$order->agent_id, 'imageName' => $order->payment->image]) }}">
                         </div>
                         @else
                             Belum Ada
