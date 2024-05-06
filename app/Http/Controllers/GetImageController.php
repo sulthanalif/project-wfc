@@ -10,7 +10,7 @@ class GetImageController extends Controller
 {
     public function displayImage($path ,$imageName)
     {
-        $path = storage_path('app/public/'. $path . '/' . $imageName);
+        $path = storage_path('app/public/images/'. $path . '/' . $imageName);
         if (!File::exists($path)) {
             abort(404);
         }
