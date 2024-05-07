@@ -47,7 +47,6 @@ Auth::routes(['verify' => true]);
 
 Route::group(['middleware' => 'auth',], function () {
     Route::get('/agent', [DashboardController::class, 'noActive'])->name('nonactive');
-    Route::post('/payemnt-success/{order}', [OrderController::class, 'successPayment'])->name('successPayment');
 
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
@@ -75,7 +74,10 @@ Route::group(['middleware' => 'auth',], function () {
         //Transaction
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin|agent'], function () {
             Route::resource('order', OrderController::class);
-            Route::post('/payment/{order}', [PaymentController::class, 'storePayment'])->name('storePayment');
+            Route::post('/paymentImage/{order}/{payment}', [PaymentController::class, 'storePaymentImage'])->name('storePaymentImage');
+            Route::post('/payemnt-success/{payment}', [OrderController::class, 'successPayment'])->name('successPayment');
+            Route::post('/payment/{order}', [PaymentController::class, 'paymentGateWay'])->name('paymentGateWay');
+            Route::get('/payment/detail/{payment}', [PaymentController::class, 'paymentDetail'])->name('payment.detail');
         });
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin'], function () {
             Route::post('/acc/{order}', [OrderController::class, 'accOrder'])->name('order.accOrder');

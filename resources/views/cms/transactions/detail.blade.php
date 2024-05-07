@@ -36,28 +36,42 @@
                             <br>
                         @endforeach
                     </div>
+                    @include('cms.transactions.table.table')
 
-                    <div class="mt-3">
-                        @if ($order->payment)
+                    {{-- <div class="mt-3">
+                        @if (!$order->payment->image)
                         <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
-                            <img alt="PAKET SMART WFC" class=" img-fluid rounded-md"
+                            <img alt="PAKET SMART WFC" class=" img-fluid rounded-md" --}}
                                 {{-- src="{{ asset('storage/images/payment/'. $order->agent_id . '/' . $order->payment->image) }}"> --}}
-                                src="{{ route('getImage', ['path' => 'payment/'.$order->agent_id, 'imageName' => $order->payment->image]) }}">
+                                {{-- src="{{ route('getImage', ['path' => 'payment/'.$order->agent_id, 'imageName' => $order->payment->image]) }}">
                         </div>
                         @else
                             Belum Ada
                         @endif
-                    </div>
+                    </div> --}}
                     @hasrole('agent')
-                    <div class="mt-3">
-                        <a class="flex items-center text-success" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#upload-confirmation-modal">
-                                                 <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Upload bukti pembayaran </a>
-                    </div>
 
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-success" id="pay-button">Bayar</button>
-                    </div>
+
+                    @if ($order->payment->sortByDesc('created_at')->first())
+                        @if ($order->payment->sortByDesc('created_at')->first()->status == 'unpaid')
+                            <div class="mt-3">
+                                <a class="btn btn-primary" href="{{ route('payment.detail', ['payment' => $order->payment->sortByDesc('created_at')->first()]) }}">
+                                                        Bayar </a>
+                            </div>
+                        @else
+                            <div class="mt-3">
+                                <a class="btn btn-primary" href="javascript:;" data-tw-toggle="modal"
+                                                    data-tw-target="#payment-confirmation-modal">
+                                                    Bayar </a>
+                            </div>
+                        @endif
+                    @else
+                        <div class="mt-3">
+                            <a class="btn btn-primary" href="javascript:;" data-tw-toggle="modal"
+                                                    data-tw-target="#payment-confirmation-modal">
+                                                    Bayar </a>
+                        </div>
+                    @endif
                     @endhasrole
 
                     @hasrole('super_admin')
@@ -73,35 +87,36 @@
         </div>
     </div>
 
+
     <!-- BEGIN: Delete Confirmation Modal -->
-    <div id="upload-confirmation-modal" class="modal" tabindex="-1"
+    <div id="payment-confirmation-modal" class="modal" tabindex="-1"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body p-0">
                     <div class="p-5 text-center">
                         {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
-                    <form action="{{ route('storePayment', $order) }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('paymentGateWay', $order) }}" method="post" >
                         @csrf
                         <div class="mt-3">
-                            <label for="image" class="form-label">Upload Bukti Pembayaran <span class="text-danger">*</span></label>
-                            <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
-                                <i data-lucide="image" class="w-4 h-4 mr-2"></i>
-                                <span class="text-primary mr-1">Upload a file</span> or drag and drop
-                                <input id="image" name="image" type="file"
-                                    class="w-full h-full top-0 left-0 absolute opacity-0" onchange="previewFile(this)">
-                            </div>
-                            <div id="image-preview" class="hidden mt-2"></div>
-                            @error('image')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                            <label class="form-label">Total Pembayaran</label>
+                            <span> Rp. {{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '.') }}</span>
                         </div>
-                        <div class="px-5 pb-8 text-center">
+
+                            <div class="mt-3">
+                                <label for="pay" class="form-label">Jumlah Pembayaran <span class="text-danger">*</span></label>
+                                <input id="pay" name="pay" type="number" value="{{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '') }}" class="form-control w-full"
+                                    placeholder="Masukkan Jumlah Pembayaran" required>
+                                @error('pay')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
 
 
-                                <button type="submit" class="btn btn-success w-24">Simpan</button>
+                        <div class="px-5 mt-3 pb-8 text-center">
+                                <button type="submit" class="btn btn-success w-24">Bayar</button>
                                 <button type="button" data-tw-dismiss="modal"
                                     class="btn btn-outline-secondary w-24 ml-1">Batal</button>
                                 </div>
@@ -144,56 +159,8 @@
 @endsection
 
 @push('custom-scripts')
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
-    <script type="text/javascript">
-        document.getElementById('pay-button').onclick = function(){
-          // SnapToken acquired from previous step
-          snap.pay('{{ $order->snap_token }}', {
-            // Optional
-            onSuccess: function(result){
-             /* Kirim permintaan POST ke route Laravel untuk memperbarui status pesanan */
-            fetch('{{ route('successPayment', $order) }}', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                // Tambahkan token CSRF jika diperlukan
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                body: JSON.stringify(result)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                console.log('Status pesanan berhasil diperbarui menjadi paid!');
-                alert('Pembayaran Berhasil!');
-                // Reload page after a delay
-                // Reload page immediately
-                window.location.reload()
-                } else {
-                console.error('Error memperbarui status pesanan:', data.message);
-                // Tampilkan pesan error
-                }
-            })
-            .catch(error => {
-                console.error('Error mengirim permintaan ke server:', error);
-                // Tampilkan pesan error
-            });
 
-            /* Anda dapat tetap menampilkan JSON result di halaman */
-            window.location.reload();
-            },
-            // Optional
-            onPending: function(result){
-              /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-            },
-            // Optional
-            onError: function(result){
-              /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-            }
-          });
-        };
-      </script>
     <script>
         function previewFile(input) {
             const file = input.files[0];

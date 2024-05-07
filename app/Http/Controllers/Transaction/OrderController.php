@@ -18,6 +18,7 @@ use App\Helpers\GenerateRandomString;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -93,11 +94,11 @@ class OrderController extends Controller
         try {
             DB::transaction(function () use ($request, &$order) {
 
-                $user = Auth::user();
-                $roleUser = $user->roles->first();
-                $roleName = $roleUser->name;
+                // $user = Auth::user();
+                // $roleUser = $user->roles->first();
+                // $roleName = $roleUser->name;
 
-                $agent = User::findOrFail($request->agent_id);
+                // $agent = User::findOrFail($request->agent_id);
 
                 $order = Order::create([
                     'agent_id' => $request->agent_id,
@@ -123,33 +124,6 @@ class OrderController extends Controller
                         'qty' => $product['qty']
                     ]);
                 }
-
-                // Set your Merchant Server Key
-                \Midtrans\Config::$serverKey = config('midtrans.serverKey');
-                // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-                \Midtrans\Config::$isProduction = false;
-                // Set sanitization on (default)
-                \Midtrans\Config::$isSanitized = true;
-                // Set 3DS transaction for credit card to true
-                \Midtrans\Config::$is3ds = true;
-
-                $params = array(
-                    'transaction_details' => array(
-                        'order_id' => $order->order_number,
-                        'gross_amount' => $request->total_price,
-                    ),
-                    'customer_details' => array(
-                        'first_name' => $roleName == 'agent' ? Auth::user()->agentProfile->name : $agent->agentProfile->name,
-                        'email' => $roleName == 'agent' ? Auth::user()->email : $agent->email,
-                    ),
-
-                );
-
-                $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-                $order->snap_token = $snapToken;
-                $order->save();
-
             });
             if ($order) {
                 return redirect()->route('order.index')->with('success', 'Pesanan Telah Dibuat');
@@ -247,17 +221,17 @@ class OrderController extends Controller
         }
     }
 
-    public function successPayment(Order $order)
+    public function successPayment(Payment $payment)
     {
         try {
-            DB::transaction(function () use ($order) {
-                $order->payment_status = 'paid';
-                $order->save();
+            DB::transaction(function () use ($payment) {
+                $payment->status = 'paid';
+                $payment->save();
             });
 
             Session::flash('payment_success', 'Pembayaran Berhasil');
 
-            return redirect()->route('order.show', $order)->with('success', 'Pembayaran Berhasil');
+            return redirect()->route('order.show', $payment->order)->with('success', 'Pembayaran Berhasil');
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),

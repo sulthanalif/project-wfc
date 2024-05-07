@@ -30,7 +30,7 @@ class PaymentController extends Controller
         }
     }
 
-    public function storePayment(Request $request, Order $order)
+    public function storePaymentImage(Request $request, Order $order, Payment $payment)
     {
         // dd($request->all(), $order);
         $validator = Validator::make($request->all(),[
@@ -42,26 +42,21 @@ class PaymentController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $order) {
-            $existingPayment = $order->payment; // Check if payment exists
-
-            $imageName = null; // Initialize image name to null
+            DB::transaction(function () use ($request, $order, $payment) {
 
             if ($request->hasFile('image')) { // Check if a new image is uploaded
                 $imageName = 'payment_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-                $path = 'images/payment/' . $order->agent_id . '/';
+                $path = 'images/payment/' . $order->order_number . '/';
 
                 // Delete existing image if present
-                if ($existingPayment && Storage::disk('public')->exists($path . $existingPayment->image)) {
-                    Storage::disk('public')->delete($path . $existingPayment->image);
+                if ($payment && Storage::disk('public')->exists($path . $payment->image)) {
+                    Storage::disk('public')->delete($path . $payment->image);
                 }
 
                 Storage::disk('public')->put($path . $imageName, $request->file('image')->getContent());
             }
 
             // Update or create payment record
-            $payment = $existingPayment ? $existingPayment : new Payment();
-            $payment->order_id = $order->id;
             $payment->image = $imageName;
             $payment->save();
         });
@@ -100,5 +95,77 @@ class PaymentController extends Controller
         }
     }
 
+    public function paymentGateWay(Request $request, Order $order)
+    {
+        $validator = Validator::make($request->all(), [
+            'pay' => ['required', 'numeric'],
+        ]);
 
+        if($validator->fails()) {
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            DB::transaction(function () use ($request, $order, &$payment) {
+                $payment = new Payment();
+                $payment->order_id = $order->id;
+                $payment->pay = $request->pay;
+                $payment->remaining_payment = $order->total_price - $request->pay;
+                $payment->save();
+
+
+                // Set your Merchant Server Key
+                \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+                // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+                \Midtrans\Config::$isProduction = false;
+                // Set sanitization on (default)
+                \Midtrans\Config::$isSanitized = true;
+                // Set 3DS transaction for credit card to true
+                \Midtrans\Config::$is3ds = true;
+
+                $params = array(
+                    'transaction_details' => array(
+                        'order_id' => $payment->id,
+                        'gross_amount' => $request->pay,
+                    ),
+                    'customer_details' => array(
+                        'first_name' => Auth::user()->agentProfile->name ,
+                        'email' => Auth::user()->email,
+                    ),
+
+                );
+
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+                $payment->snap_token = $snapToken;
+                $payment->save();
+            });
+
+            return redirect()->route('payment.detail', $payment);
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
+    }
+
+    public function paymentDetail(Payment $payment)
+    {
+        return view('cms.transactions.detail-payment', compact('payment'));
+    }
+
+    // public function storePayment(Request $request, Order $order)
+    // {
+    //     try {
+    //         DB::transaction(function () use ($request, $order) {
+    //             $payment = new Payment();
+    //             $payment->order_id = $order->id;
+    //             $payment->
+    //         });
+    //     } catch (\Throwable $th) {
+    //         //throw $th;
+    //     }
+    // }
 }
