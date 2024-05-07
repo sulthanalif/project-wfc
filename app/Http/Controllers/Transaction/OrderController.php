@@ -30,11 +30,11 @@ class OrderController extends Controller
         $roleName = $roleUser->name;
 
         if ($roleName == 'agent') {
-            $orders = Order::where('agent_id', $user->id)->paginate(10);
+            $orders = Order::where('agent_id', $user->id)->orderByDesc('created_at')->paginate(10);
 
             return view('cms.transactions.index', compact('orders'));
         } else {
-            $orders = Order::paginate(10);
+            $orders = Order::orderByDesc('created_at')->paginate(10);
 
             return view('cms.transactions.index', compact('orders'));
         }

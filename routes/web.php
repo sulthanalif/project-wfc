@@ -11,6 +11,7 @@ use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Admin\DashboardAdminController;
 use App\Http\Controllers\AdministrationController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
 use App\Http\Controllers\Transaction\OrderController;
@@ -53,6 +54,12 @@ Route::group(['middleware' => 'auth',], function () {
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
 
+        //Report
+        Route::group(['prefix' => 'report'], function () {
+            Route::get('/total-deposit', [ReportController::class, 'totalDeposit'])->name('totalDeposit');
+            Route::get('/product-detail', [ReportController::class, 'productDetail'])->name('productDetail');
+            Route::get('/instalment', [ReportController::class, 'instalment'])->name('instalment');
+        });
     });
         //master
         Route::group(['prefix' => 'master' ,'middleware' => 'role:admin|super_admin'], function () {
