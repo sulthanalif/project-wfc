@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers\Transaction;
 
-use App\Helpers\GenerateRandomString;
+// use Session;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Package;
+use App\Models\Product;
+use App\Models\OrderDetail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\ProductDetail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\GenerateRandomString;
+use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
-use App\Models\OrderDetail;
-use App\Models\Package;
-use App\Models\Product;
-use App\Models\ProductDetail;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -30,11 +32,13 @@ class OrderController extends Controller
         $roleName = $roleUser->name;
 
         if ($roleName == 'agent') {
-            $orders = Order::where('agent_id', $user->id)->paginate(10);
+            $orders = Order::where('agent_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
             return view('cms.transactions.index', compact('orders'));
         } else {
-            $orders = Order::paginate(10);
+            $orders = Order::orderBy('created_at', 'desc')->paginate(10);
 
             return view('cms.transactions.index', compact('orders'));
         }
@@ -89,6 +93,12 @@ class OrderController extends Controller
         try {
             DB::transaction(function () use ($request, &$order) {
 
+                $user = Auth::user();
+                $roleUser = $user->roles->first();
+                $roleName = $roleUser->name;
+
+                $agent = User::findOrFail($request->agent_id);
+
                 $order = Order::create([
                     'agent_id' => $request->agent_id,
                     'order_number' => $request->order_number,
@@ -114,19 +124,32 @@ class OrderController extends Controller
                     ]);
                 }
 
-                // Looping through products in formData
-                // foreach ($request->products as $product) {
-                    // Retrieve product details based on productId
-                    // $daftar = Product::findOrFail($product['productId']);
+                // Set your Merchant Server Key
+                \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+                // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+                \Midtrans\Config::$isProduction = false;
+                // Set sanitization on (default)
+                \Midtrans\Config::$isSanitized = true;
+                // Set 3DS transaction for credit card to true
+                \Midtrans\Config::$is3ds = true;
 
-                    // Create OrderDetail for each product
-                    // OrderDetail::create([
-                        // 'order_id' => $order->id,
-                //         'name' => $daftar->nama,
-                //         'price' => $daftar->harga,
-                //         'qty' => $product['qty']
-                //     ]);
-                // }
+                $params = array(
+                    'transaction_details' => array(
+                        'order_id' => $order->order_number,
+                        'gross_amount' => $request->total_price,
+                    ),
+                    'customer_details' => array(
+                        'first_name' => $roleName == 'agent' ? Auth::user()->agentProfile->name : $agent->agentProfile->name,
+                        'email' => $roleName == 'agent' ? Auth::user()->email : $agent->email,
+                    ),
+
+                );
+
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+                $order->snap_token = $snapToken;
+                $order->save();
+
             });
             if ($order) {
                 return redirect()->route('order.index')->with('success', 'Pesanan Telah Dibuat');
@@ -215,6 +238,26 @@ class OrderController extends Controller
             ];
 
             return response()->json($stats,200);
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400,
+            ];
+            return response()->json($data, 400);
+        }
+    }
+
+    public function successPayment(Order $order)
+    {
+        try {
+            DB::transaction(function () use ($order) {
+                $order->payment_status = 'paid';
+                $order->save();
+            });
+
+            Session::flash('payment_success', 'Pembayaran Berhasil');
+
+            return redirect()->route('order.show', $order)->with('success', 'Pembayaran Berhasil');
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),

@@ -90,7 +90,7 @@
                     <div class="text-left mt-5">
                         <input type="hidden" name="total_price" value="0">
                         <input type="hidden" name="products" id="productData" value="">
-                        <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Simpan</button>
+                        <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Pesan</button>
                         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
                     </div>
                 </form>

@@ -47,7 +47,7 @@ Auth::routes(['verify' => true]);
 
 Route::group(['middleware' => 'auth',], function () {
     Route::get('/agent', [DashboardController::class, 'noActive'])->name('nonactive');
-
+    Route::post('/payemnt-success/{order}', [OrderController::class, 'successPayment'])->name('successPayment');
 
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {

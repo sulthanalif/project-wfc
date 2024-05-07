@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('order_date')->nullable();
             $table->string('status')->default('pending');
             $table->string('payment_status')->default('unpaid');
+            $table->string('snap_token')->nullable();
             $table->timestamps();
         });
     }
