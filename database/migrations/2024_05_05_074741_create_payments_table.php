@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->uuid('order_id')->constrained('orders')->onDelete('cascade');
-            $table->string('image')->nullable();
+            $table->decimal('pay', 15, 2);
+            $table->decimal('remaining_payment', 15, 2);
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

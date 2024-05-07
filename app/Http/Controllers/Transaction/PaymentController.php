@@ -30,7 +30,7 @@ class PaymentController extends Controller
         }
     }
 
-    public function storePayment(Request $request, Order $order)
+    public function storePaymentImage(Request $request, Order $order)
     {
         // dd($request->all(), $order);
         $validator = Validator::make($request->all(),[
@@ -100,5 +100,48 @@ class PaymentController extends Controller
         }
     }
 
+    public function storePayment(Request $request, Order $order)
+    {
+        $validator = Validator::make($request->all(), [
+            'pay' => ['required', 'numeric']
+        ]);
 
+        if($validator->fails()) {
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            DB::transaction(function () use ($request, $order) {
+                $payment = new Payment();
+                $payment->order_id = $order->id;
+                $payment->pay = $request->pay;
+                $payment->remaining_payment = $order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment - $request->pay  : $order->total_price - $request->pay;
+                $payment->status = 'success';
+                $payment->save();
+            });
+            return redirect()->route('order.show', $order)->with('success' , 'Pembayaran berhasil ditambahkan');
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
+    }
+
+    public function destroy(Request $request, Payment $payment)
+    {
+        try {
+            DB::transaction(function () use ($request, $payment) {
+                $payment->delete();
+            });
+            return back()->with('success', 'Berhasil dihapus');
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
+    }
 }

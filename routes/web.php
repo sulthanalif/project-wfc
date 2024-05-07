@@ -75,12 +75,13 @@ Route::group(['middleware' => 'auth',], function () {
         //Transaction
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin|agent'], function () {
             Route::resource('order', OrderController::class);
-            Route::post('/payment/{order}', [PaymentController::class, 'storePayment'])->name('storePayment');
+            Route::post('/payment/image/{order}', [PaymentController::class, 'storePaymentImage'])->name('storePaymentImage');
         });
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin'], function () {
             Route::post('/acc/{order}', [OrderController::class, 'accOrder'])->name('order.accOrder');
             Route::post('/changeOrderStatus/{order}', [OrderController::class, 'changeOrderStatus'])->name('order.changeOrderStatus');
             Route::post('/changePaymentStatus/{order}', [PaymentController::class, 'changePaymentStatus'])->name('changePaymentStatus');
+            Route::post('/payment/{order}', [PaymentController::class, 'storePayment'])->name('storePayment');
 
             //order stats
             Route::get('/orderStats', [OrderController::class, 'getOrderStats'])->name('getOrderStats');

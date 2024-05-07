@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
+use App\Helpers\UUIDGenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-    use HasFactory;
+    use HasFactory, UUIDGenerator;
 
     protected $table = 'payments';
     public $incrementing = false;
-    protected $primaryKey;
+    protected $primaryKey = 'id';
     protected $keyType = 'string';
 
     protected $fillable = [
         'order_id',
-        'image',
+        'pay',
+        'remaining_payment',
+        'status',
     ];
 
     public function order()

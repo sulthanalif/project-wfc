@@ -9,12 +9,19 @@
         </h2>
     </div>
 
+    @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
     <div class="intro-y box px-5 pt-5 mt-5">
+
         <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
             {{-- <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
                 <img alt="PAKET SMART WFC" class=" img-fluid rounded-md"
                     src="{{ asset('storage/images/package/' . $package->image) }}">
             </div> --}}
+
             <div
                 class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
                 <div class="text-slate-600 dark:text-slate-500">
@@ -31,68 +38,94 @@
                             <br>
                         @endforeach
                     </div>
+                    @include('cms.transactions.table.table')
 
-                    <div class="mt-3">
-                        @if ($order->payment)
+                    {{-- <div class="mt-3">
+                        @if (!$order->payment->image)
                         <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
-                            <img alt="PAKET SMART WFC" class=" img-fluid rounded-md"
+                            <img alt="PAKET SMART WFC" class=" img-fluid rounded-md" --}}
                                 {{-- src="{{ asset('storage/images/payment/'. $order->agent_id . '/' . $order->payment->image) }}"> --}}
-                                src="{{ route('getImage', ['path' => 'payment/'.$order->agent_id, 'imageName' => $order->payment->image]) }}">
+                                {{-- src="{{ route('getImage', ['path' => 'payment/'.$order->agent_id, 'imageName' => $order->payment->image]) }}">
                         </div>
                         @else
                             Belum Ada
                         @endif
-                    </div>
-                    @hasrole('agent')
-                    <div class="mt-3">
-                        <a class="flex items-center text-success" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#upload-confirmation-modal">
-                                                 <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Upload bukti pembayaran </a>
-                    </div>
+                    </div> --}}
+                    @hasrole('super_admin')
+
+
+                    @if ($order->payment->sortByDesc('created_at')->first())
+                        @if ($order->payment->sortByDesc('created_at')->first()->status == 'unpaid')
+                            <div class="mt-3">
+                                <a class="btn btn-primary" href="{{ route('payment.detail', ['payment' => $order->payment->sortByDesc('created_at')->first()]) }}">
+                                                        Setor </a>
+                                                        <a class="btn btn-primary" href="{{ route('order.index') }}">
+                                                            Kembali </a>
+                            </div>
+                        @else
+                            <div class="mt-3">
+                                <a class="btn btn-primary" href="javascript:;" data-tw-toggle="modal"
+                                                    data-tw-target="#payment-confirmation-modal">
+                                                    Setor </a>
+                                                    <a class="btn btn-primary" href="{{ route('order.index') }}">
+                                                        Kembali </a>
+                            </div>
+                        @endif
+                    @else
+                        <div class="mt-3">
+                            <a class="btn btn-primary" href="javascript:;" data-tw-toggle="modal"
+                                                    data-tw-target="#payment-confirmation-modal">
+                                                    Setor </a>
+                                                    <a class="btn btn-primary" href="{{ route('order.index') }}">
+                                                        Kembali </a>
+                        </div>
+                    @endif
+
                     @endhasrole
 
-                    @hasrole('super_admin')
+                    {{-- @hasrole('super_admin')
                     <div class="mt-3">
                         <a class="btn btn-success" href="javascript:;" data-tw-toggle="modal"
                                                 data-tw-target="#acc-confirmation-modal">
                                                  <i data-lucide="edit" class="w-4 h-4 mr-1"></i> {{$order->payment_status == 'unpaid' ? 'Acc' : 'Tolak'}} pembayaran </a>
                     </div>
-                    @endhasrole
+                    @endhasrole --}}
 
                 </div>
             </div>
         </div>
     </div>
 
+
     <!-- BEGIN: Delete Confirmation Modal -->
-    <div id="upload-confirmation-modal" class="modal" tabindex="-1"
+    <div id="payment-confirmation-modal" class="modal" tabindex="-1"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body p-0">
                     <div class="p-5 text-center">
                         {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
-                    <form action="{{ route('storePayment', $order) }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('storePayment', $order) }}" method="post" >
                         @csrf
                         <div class="mt-3">
-                            <label for="image" class="form-label">Upload Bukti Pembayaran <span class="text-danger">*</span></label>
-                            <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
-                                <i data-lucide="image" class="w-4 h-4 mr-2"></i>
-                                <span class="text-primary mr-1">Upload a file</span> or drag and drop
-                                <input id="image" name="image" type="file"
-                                    class="w-full h-full top-0 left-0 absolute opacity-0" onchange="previewFile(this)">
-                            </div>
-                            <div id="image-preview" class="hidden mt-2"></div>
-                            @error('image')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                            <label class="form-label">Total Pembayaran</label>
+                            <span> Rp. {{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '.') }}</span>
                         </div>
-                        <div class="px-5 pb-8 text-center">
+
+                            <div class="mt-3">
+                                <label for="pay" class="form-label">Jumlah Pembayaran <span class="text-danger">*</span></label>
+                                <input id="pay" name="pay" type="number" value="{{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '') }}" class="form-control w-full"
+                                    placeholder="Masukkan Jumlah Pembayaran" required>
+                                @error('pay')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
 
 
-                                <button type="submit" class="btn btn-success w-24">Simpan</button>
+                        <div class="px-5 mt-3 pb-8 text-center">
+                                <button type="submit" class="btn btn-success w-24">Setor</button>
                                 <button type="button" data-tw-dismiss="modal"
                                     class="btn btn-outline-secondary w-24 ml-1">Batal</button>
                                 </div>
@@ -136,6 +169,7 @@
 
 @push('custom-scripts')
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
+
     <script>
         function previewFile(input) {
             const file = input.files[0];
@@ -181,4 +215,3 @@
         }
     </script>
 @endpush
-
