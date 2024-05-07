@@ -78,7 +78,8 @@ class ProductPackageSeeder extends Seeder
                 'name' => 'Product ' . $package->name . ' 1',
                 'stock' => $stock,
                 'price' => $price,
-                'days' => $days
+                'days' => $days,
+                'total_price' => $price * $days
             ]);
 
             ProductDetail::create([
@@ -91,7 +92,8 @@ class ProductPackageSeeder extends Seeder
                 'name' => 'Product ' . $package->name . ' 2',
                 'stock' => $stock,
                 'price' => $price,
-                'days' => $days
+                'days' => $days,
+                'total_price' => $price * $days
             ]);
 
             ProductDetail::create([

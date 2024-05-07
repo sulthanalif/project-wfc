@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('stock')->nullable();
             $table->decimal('price', 15, 2);
             $table->integer('days')->nullable();
+            $table->decimal('total_price', 15, 2);
             $table->timestamps();
         });
     }

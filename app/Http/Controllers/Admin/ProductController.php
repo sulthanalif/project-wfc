@@ -68,6 +68,7 @@ class ProductController extends Controller
                     'price' => $request->price,
                     'stock' => $request->stock,
                     'days' => $request->days,
+                    'total_price' => $request->price * $request->days
                 ]);
 
                 ProductDetail::create([
@@ -170,7 +171,8 @@ class ProductController extends Controller
                         'name' => $request->name,
                         'price' => $request->price,
                         'stock' => $request->stock,
-                        'days' => $request->days
+                        'days' => $request->days,
+                        'total_price' => $request->price * $request->days
                     ]);
 
                     $product->detail()->update([
@@ -184,7 +186,8 @@ class ProductController extends Controller
                         'name' => $request->name,
                         'price' => $request->price,
                         'stock' => $request->stock,
-                        'days' => $request->days
+                        'days' => $request->days,
+                        'total_price' => $request->price * $request->days
                     ]);
 
                     $product->detail()->update([
