@@ -10,8 +10,9 @@ use App\Http\Controllers\LandingpageController;
 use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Admin\DashboardAdminController;
+use App\Http\Controllers\Admin\DistributionController;
 use App\Http\Controllers\AdministrationController;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
 use App\Http\Controllers\Transaction\OrderController;
@@ -59,7 +60,10 @@ Route::group(['middleware' => 'auth',], function () {
             Route::get('/total-deposit', [ReportController::class, 'totalDeposit'])->name('totalDeposit');
             Route::get('/product-detail', [ReportController::class, 'productDetail'])->name('productDetail');
             Route::get('/instalment', [ReportController::class, 'instalment'])->name('instalment');
+            Route::resource('distribution', [DistributionController::class]);
         });
+
+        //distribution
     });
         //master
         Route::group(['prefix' => 'master' ,'middleware' => 'role:admin|super_admin'], function () {
