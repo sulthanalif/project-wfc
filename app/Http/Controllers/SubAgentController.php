@@ -6,8 +6,10 @@ use App\Models\User;
 use App\Models\SubAgent;
 use Illuminate\Http\Request;
 // use App\Http\Controllers\Controller;
+use App\Exports\SubAgentExport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreSubAgentRequest;
 use App\Http\Requests\UpdateSubAgentRequest;
@@ -31,6 +33,11 @@ class SubAgentController extends Controller
             return view('cms.sub-agent.index', compact('subAgents'));
         }
 
+    }
+
+    public function export()
+    {
+        return Excel::download(new SubAgentExport, 'SubAgent_export_'.now().'.xlsx');
     }
 
     /**
