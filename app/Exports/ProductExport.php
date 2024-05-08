@@ -13,7 +13,7 @@ class ProductExport implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        $products = Product::with('packageName')->get();
+        $products = Product::with('packageName', 'detail')->get();
         $datas = $products->map(function ($product) {
             return [
                 'id' => $product->id,
@@ -23,6 +23,7 @@ class ProductExport implements FromCollection, WithHeadings
                 'price' => $product->price,
                 'days' => $product->days,
                 'total_price' => $product->total_price,
+                'desctription' =>$product->detail->description,
                 'created_at' => $product->created_at,
                 'updated_at' => $product->updated_at,
             ];
@@ -42,6 +43,7 @@ class ProductExport implements FromCollection, WithHeadings
             'price',
             'days',
             'total_price',
+            'descrtiption',
             'created_at',
             'updated_at',
         ];

@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\SubAgent;
+use App\Exports\AgentExport;
+use App\Imports\AgentImport;
 use App\Models\AdminProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,6 +29,42 @@ class UserController extends Controller
 
        // Tampilkan data ke view.
        return view('cms.admin.users.index', compact('users' ));
+    }
+
+    public function export()
+    {
+        return Excel::download(new AgentExport, 'Agent_export_'.now().'.xlsx');
+    }
+
+
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        if($validator->fails()){
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            // Storage::disk('public')->put('doc/package/' . $fileName, $request->file('file')->getContent());
+
+            Excel::import(new AgentImport, $file);
+
+            return redirect()->route('user.index')->with('success', 'Data Berhasil Diimport');
+
+
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
     }
 
     /**

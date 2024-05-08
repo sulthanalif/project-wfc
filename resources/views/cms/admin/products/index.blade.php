@@ -146,6 +146,7 @@
                         <div class="p-5 text-center">
                             {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
                             <div class="text-3xl mt-5">Import Data</div>
+                            <span>Jika Belum Ada Format Bisa Download <a class="mt-3 text-danger" href="{{ route('download.file', ['file' => 'format-produk.xlsx']) }}">Disini</a></span>
                             <div class="text-slate-500 mt-2">
                                 <input type="file" name="file">
                             </div>
