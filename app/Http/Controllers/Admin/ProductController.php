@@ -7,10 +7,13 @@ use App\Models\Product;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use App\Models\ProductDetail;
+use App\Exports\ProductExport;
+use App\Imports\ProductImport;
 use App\Models\ProductPackage;
 use App\Models\ProductSupplier;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
@@ -23,9 +26,52 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        // $datas = Product::with('packageName')->get();
+        // $array = [];
+        // foreach ($datas as $data) {
+        //     $array [] = [
+        //         'package' => $data->packageName->name
+        //     ];
+        // }
+        // dd($array);
+
         $products = Product::paginate(10);
 
         return view('cms.admin.products.index', compact('products'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new ProductExport, 'Product_Export_'.now().'.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        if($validator->fails()){
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            // Storage::disk('public')->put('doc/package/' . $fileName, $request->file('file')->getContent());
+
+            Excel::import(new ProductImport, $file);
+
+            return redirect()->route('product.index')->with('success', 'Data Berhasil Diimport');
+
+
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
     }
 
     /**

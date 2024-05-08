@@ -1,24 +1,26 @@
 <?php
 
+use App\Models\SubAgent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
 // use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\HomeController;
 // use App\Http\Controllers\AgentProfileController;
-use App\Http\Controllers\LandingpageController;
-use App\Http\Controllers\AgentProfileController;
-use App\Http\Controllers\Agent\DashboardController;
-use App\Http\Controllers\Admin\DashboardAdminController;
-use App\Http\Controllers\Admin\DistributionController;
-use App\Http\Controllers\AdministrationController;
-use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\LandingpageController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\AgentProfileController;
+use App\Http\Controllers\Admin\PackageController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\AdministrationController;
+use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Transaction\OrderController;
-use App\Http\Controllers\Transaction\PaymentController;
+use App\Http\Controllers\Admin\DistributionController;
 // use App\Models\Administration;
-use App\Models\SubAgent;
+use App\Http\Controllers\Transaction\PaymentController;
+use App\Http\Controllers\Admin\DashboardAdminController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 // use App\Http\Controllers\Auth\AuthController;
@@ -55,6 +57,11 @@ Route::group(['middleware' => 'auth',], function () {
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
 
+        //export
+        require __DIR__ . '/admin/export.php';
+
+        //import
+        require __DIR__ . '/admin/import.php';
         //Report
         Route::group(['prefix' => 'report'], function () {
             Route::get('/total-deposit', [ReportController::class, 'totalDeposit'])->name('totalDeposit');

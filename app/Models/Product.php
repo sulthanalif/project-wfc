@@ -19,7 +19,8 @@ class Product extends Model
         'name',
         'stock',
         'price',
-        'days'
+        'days',
+        'total_price'
     ];
 
     public function supplier()
@@ -42,7 +43,7 @@ class Product extends Model
         return $this->hasOneThrough(Supplier::class, ProductSupplier::class, 'product_id', 'id', 'id', 'supplier_id')->withDefault(['name' => '-']);
     }
 
-    public function packagerName()
+    public function packageName()
     {
         return $this->hasOneThrough(Package::class, ProductPackage::class, 'product_id', 'id', 'id', 'package_id')->withDefault(['name' => '-']);
     }

@@ -13,9 +13,7 @@ class DistributionController extends Controller
      */
     public function index(Request $request)
     {
-        $distributions = Distribution::paginate(10);
-
-        return view('cms.admin.distributions', compact('distributions'));
+        //
     }
 
     /**
