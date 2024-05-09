@@ -64,11 +64,13 @@ class ReportController extends Controller
                 }
             }
 
-            $datas [] = [
-                'agent_name' => $agent->agentProfile->name,
-                'total_product' => $totalProduct,
-                'total_price' => $totalPrice
-            ];
+            if ($totalPrice > 0) {
+                $datas [] = [
+                    'agent_name' => $agent->agentProfile->name,
+                    'total_product' => $totalProduct,
+                    'total_price' => $totalPrice
+                ];
+            }
         }
 
         $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
@@ -97,13 +99,14 @@ class ReportController extends Controller
                     // $totalRemainingPayment += $order->payment->sortByDesc('created_at')->first()->remaining_payment;
                 }
 
-
-                $datas[] = [
-                    'agent_name' => $agent->agentProfile->name,
-                    'total_deposit' => $totalPriceOrder,
-                    // 'total_deposit' => $totalDeposit,
-                    // 'total_remaining_payment' => $totalPriceOrder - $totalDeposit
-                ];
+                if ($totalPriceOrder > 0) {
+                    $datas[] = [
+                        'agent_name' => $agent->agentProfile->name,
+                        'total_deposit' => $totalPriceOrder,
+                        // 'total_deposit' => $totalDeposit,
+                        // 'total_remaining_payment' => $totalPriceOrder - $totalDeposit
+                    ];
+                }
             }
 
         $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
