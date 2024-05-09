@@ -1,7 +1,4 @@
-<div class="flex flex-col items-center justify-center border-b pb-2">
-    <h1 class="font-bold text-xl">Pembayaran</h1>
-</div>
-<table class="table table-report -mt-2">
+<table class="table table-striped">
     <thead>
         <tr>
             <th class="text-center whitespace-nowrap">#</th>

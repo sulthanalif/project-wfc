@@ -144,8 +144,8 @@
                         var option = document.createElement('option');
                         option.value = '{{ $product->product->id }}';
                         option.textContent =
-                            '{{ $product->product->name }} - Rp. {{ number_format($product->product->price, 0, ',', '.') }}';
-                        option.dataset.harga = '{{ $product->product->price }}';
+                            '{{ $product->product->name }} - Rp. {{ number_format($product->product->total_price, 0, ',', '.') }}';
+                        option.dataset.harga = '{{ $product->product->total_price }}';
                         productSelect.appendChild(option);
                     @endforeach
                 }
@@ -186,6 +186,8 @@
         }
 
         function createTableRow(id, name, price, quantity) {
+            const subtotal = price * quantity;
+
             const row = `<tr>
                 <input value="${id}" id="product-id" name="product-id" type="hidden">
                 <td>${name}</td>
@@ -278,10 +280,12 @@
             const productData = [];
             $('.transaksiItem tr').each(function() {
                 const productId = $(this).find('#product-id').val();
+                const subTotal = parseInt($(this).find('td:nth-child(5)').text().replace(/[^0-9,-]/g, ''));
                 const qty = $(this).find('#product-qty').val();
 
                 productData.push({
                     productId: productId,
+                    subTotal: subTotal,
                     qty: qty
                 });
             });

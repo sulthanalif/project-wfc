@@ -27,13 +27,13 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NOMOR PESANAN</th>
+                        <th class="text-center whitespace-nowrap">NOMOR PESANAN</th>
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">DARI AGEN</th>
                         @endhasrole
-                        <th class="whitespace-nowrap">TOTAL HARGA</th>
-                        <th class="whitespace-nowrap">STATUS</th>
-                        <th class="whitespace-nowrap">PEMBAYARAN</th>
+                        <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
+                        <th class="text-center whitespace-nowrap">STATUS</th>
+                        <th class="text-center whitespace-nowrap">PEMBAYARAN</th>
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
@@ -42,7 +42,7 @@
                 <tbody>
                     @if ($orders->isEmpty())
                         <tr>
-                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
                         @foreach ($orders as $order)
@@ -66,7 +66,19 @@
                                     </p>
                                 </td>
                                 <td>
-                                    {{ $order->status }}
+                                    @if ($order->status === 'accepted')
+                                        <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Diterima </div>
+                                    @elseif ($order->status === 'reject')
+                                        <div class="flex items-center justify-center text-danger"> <i
+                                                data-lucide="alert-circle" class="w-4 h-4 mr-2"></i> Ditolak </div>
+                                    @elseif ($order->status === 'canceled')
+                                        <div class="flex items-center justify-center text-danger"> <i
+                                                data-lucide="x-circle" class="w-4 h-4 mr-2"></i> Dibatalkan </div>
+                                    @else
+                                        <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
+                                                class="w-4 h-4 mr-2"></i> Pending</div>
+                                    @endif
                                 </td>
                                 <td>
                                     @if ($order->payment_status === 'paid')
@@ -83,18 +95,22 @@
                                             <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
                                             data-tw-target="#change-confirmation-modal{{ $order->id }}">
                                                 <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                            {{-- @if ($order->status === 'pending')
                                             <a class="flex items-center text-success" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#delete-confirmation-modal{{ $order->id }}">
+                                                data-tw-target="#accept-confirmation-modal{{ $order->id }}">
                                                  <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Accept </a>
+                                            @else
+                                            <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                            data-tw-target="#change-confirmation-modal{{ $order->id }}">
+                                                <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                            @endif --}}
                                         </div>
                                     </td>
                                 @endhasrole
                             </tr>
 
-
-
-                            <!-- BEGIN: Delete Confirmation Modal -->
-                            <div id="delete-confirmation-modal{{ $order->id }}" class="modal" tabindex="-1"
+                            <!-- BEGIN: Accept Confirmation Modal -->
+                            <div id="accept-confirmation-modal{{ $order->id }}" class="modal" tabindex="-1"
                                 aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -122,19 +138,19 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- END: Delete Confirmation Modal -->
+                            <!-- END: Accept Confirmation Modal -->
 
-                            <!-- BEGIN: Delete Confirmation Modal -->
+                            <!-- BEGIN: Change Confirmation Modal -->
                             <div id="change-confirmation-modal{{ $order->id }}" class="modal" tabindex="-1"
                                 aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body p-0">
                                             <div class="p-5 text-center">
-                                                {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
+                                                <i data-lucide="alert-circle" class="w-16 h-16 text-warning mx-auto mt-3"></i>
                                                 <div class="text-3xl mt-5">Apakah anda yakin?</div>
                                                 <div class="text-slate-500 mt-2">
-                                                    Apakah anda yakin untuk Ubah Status order ini?
+                                                    Apakah anda yakin untuk mengubah status pesanan ini?
                                                     <br>
                                                     Proses tidak akan bisa diulangi.
                                                 </div>
@@ -142,8 +158,7 @@
                                             <div class="px-5 pb-8 text-center">
                                                 <form action="{{ route('order.changeOrderStatus', $order) }}" method="post">
                                                     @csrf
-                                                    <div class="mt-3 mb-3">
-                                                        <label for="status" class="form-label">Ubah Status <span class="text-danger">*</span></label>
+                                                    <div class="mb-3">
                                                         <select class="form-select mt-2 sm:mr-2" id="status" name="status" required>
                                                             <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                                             <option value="accepted" {{ $order->status == 'accepted' ? 'selected' : '' }}>Diterima</option>
@@ -154,7 +169,7 @@
                                                     </div>
                                                     <input type="hidden" name="page"
                                                         value="{{ $orders->currentPage() }}">
-                                                    <button type="submit" class="btn btn-success w-24">Ubah</button>
+                                                    <button type="submit" class="btn btn-warning w-24">Ubah</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
                                                 </form>
@@ -163,7 +178,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- END: Delete Confirmation Modal -->
+                            <!-- END: Change Confirmation Modal -->
                         @endforeach
                     @endif
                 </tbody>
