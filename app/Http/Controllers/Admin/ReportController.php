@@ -41,7 +41,8 @@ class ReportController extends Controller
 
         $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
 
-        return $paginationData;
+        // return view('cms.admin.reports.total-deposit', compact('paginationData'));
+        return response()->json(compact('paginationData'));
     }
 
     public function productDetail(Request $request)

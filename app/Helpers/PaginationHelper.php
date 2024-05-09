@@ -14,7 +14,9 @@ class PaginationHelper
 
         $totalPage = ceil(count($data) / $perPage);
 
-        $paginatedData = array_slice($data, $offset, $perPage);
+        $data = array_slice($data, $offset, $perPage);
+
+        $totalData = count($data);
 
         $canPrevious = $currentPage > 1;
         $canNext = $currentPage < $totalPage;
@@ -30,6 +32,6 @@ class PaginationHelper
             $prevUrl = route($routeName, ['page' => $currentPage - 1]);
         }
 
-        return compact('paginatedData', 'perPage', 'currentPage', 'totalPage', 'canPrevious', 'canNext', 'nextUrl', 'prevUrl');
+        return compact('data', 'perPage', 'totalData', 'currentPage', 'totalPage', 'canPrevious', 'canNext', 'nextUrl', 'prevUrl');
     }
 }
