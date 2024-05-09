@@ -12,7 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('distributions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('distribution_number');
+            $table->date('date');
+            $table->string('police_number');
+            $table->string('driver');
+            // $table->uuid('agent_id')->constrained('users')->onDelete('cascade');
+            $table->uuid('order_id')->constrained('orders')->onDelete('cascade');
             $table->timestamps();
         });
     }

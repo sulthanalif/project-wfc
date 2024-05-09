@@ -64,6 +64,9 @@ Route::group(['middleware' => 'auth',], function () {
         });
 
         //distribution
+        Route::resource('distribution', DistributionController::class);
+        // Route::group(['prefix' => 'distribution'], function () {
+        // });
     });
         //master
         Route::group(['prefix' => 'master' ,'middleware' => 'role:admin|super_admin'], function () {

@@ -2,10 +2,30 @@
 
 namespace App\Models;
 
+use App\Helpers\UUIDGenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Distribution extends Model
 {
-    use HasFactory;
+    use HasFactory, UUIDGenerator;
+
+    protected $table = 'distributions';
+    public $incrementing = false;
+    protected $keyType = 'string';
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'distribution_number',
+        'date',
+        'police_number',
+        'driver',
+        // 'agent_id',
+        'order_id',
+    ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

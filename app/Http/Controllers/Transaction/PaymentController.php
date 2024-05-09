@@ -118,6 +118,11 @@ class PaymentController extends Controller
                 $payment->remaining_payment = $order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment - $request->pay  : $order->total_price - $request->pay;
                 $payment->status = 'success';
                 $payment->save();
+
+                if ($payment->remaining_payment == 0) {
+                    $order->payment_status = 'paid';
+                    $order->save();
+                }
             });
             return redirect()->route('order.show', $order)->with('success' , 'Pembayaran berhasil ditambahkan');
         } catch (\Throwable $th) {
