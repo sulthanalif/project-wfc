@@ -19,6 +19,7 @@ class Payment extends Model
         'order_id',
         'pay',
         'remaining_payment',
+        'image',
         'status',
     ];
 
