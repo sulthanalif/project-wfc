@@ -37,10 +37,9 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 |
 */
 
-Route::get('/', [LandingpageController::class, 'index'])->name('landing-page');
-Route::get('/company-profile', [LandingpageController::class, 'profile'])->name('company-profile');
-Route::get('/catalogs-product', [LandingpageController::class, 'catalogs'])->name('catalogs-product');
+require __DIR__ . '/landingpage/page.php';
 
+//nampilin image
 Route::get('storage/images/{path}/{imageName}', [GetImageController::class, 'displayImage'])->name('getImage');
 
 // Route::get('/login', [LoginController::class, 'index'])
@@ -62,11 +61,11 @@ Route::group(['middleware' => 'auth',], function () {
 
         //import
         require __DIR__ . '/admin/import.php';
+
+
         //Report
         Route::group(['prefix' => 'report'], function () {
-            Route::get('/total-deposit', [ReportController::class, 'totalDeposit'])->name('totalDeposit');
-            Route::get('/product-detail', [ReportController::class, 'productDetail'])->name('productDetail');
-            Route::get('/instalment', [ReportController::class, 'instalment'])->name('instalment');
+            require __DIR__ . '/admin/report.php';
             // Route::resource('distribution', DistributionController::class);
         });
 
@@ -96,18 +95,10 @@ Route::group(['middleware' => 'auth',], function () {
         //Transaction
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin|agent'], function () {
             Route::resource('order', OrderController::class);
-            Route::post('/payment/image/{order}', [PaymentController::class, 'storePaymentImage'])->name('storePaymentImage');
-            Route::post('/payment/{order}', [PaymentController::class, 'storePayment'])->name('storePayment');
+            require __DIR__ . '/transaction/payment.php';
         });
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin'], function () {
-            Route::post('/acc/{order}', [OrderController::class, 'accOrder'])->name('order.accOrder');
-            Route::post('/changeOrderStatus/{order}', [OrderController::class, 'changeOrderStatus'])->name('order.changeOrderStatus');
-            Route::post('/accPayment/{payment}/{order}', [PaymentController::class, 'accPayment'])->name('accPayment');
-            Route::post('/rejectPayment/{payment}/{order}', [PaymentController::class, 'rejectPayment'])->name('rejectPayment');
-            Route::post('/changePaymentStatus/{order}', [PaymentController::class, 'changePaymentStatus'])->name('changePaymentStatus');
-
-            //order stats
-            Route::get('/orderStats', [OrderController::class, 'getOrderStats'])->name('getOrderStats');
+            require __DIR__ . '/transaction/status.php';
         });
 
 
@@ -126,9 +117,7 @@ Route::group(['middleware' => 'auth',], function () {
             require __DIR__ . '/agent/changeEmailPass.php';
         });
 
-        Route::get('/new-agent',[AdministrationController::class, 'index'])->name('nonactive');
-        Route::post('/new-agent',[AdministrationController::class, 'store'])->name('upload');
-        Route::get('/waiting',[AdministrationController::class, 'waiting'])->name('waiting');
+        require __DIR__ . '/agent/administration.php';
     });
 });
 
