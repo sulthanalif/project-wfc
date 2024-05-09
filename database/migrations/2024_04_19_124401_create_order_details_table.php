@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('order_details', function (Blueprint $table) {
             $table->uuid('order_id')->constrained('orders')->onDelete('cascade');
-            $table->string('name')->nullable();
-            $table->decimal('price', 15, 2);
+            $table->uuid('product_id')->constrained('products')->onDelete('cascade');
+            $table->decimal('sub_price', 15, 2);
             $table->string('qty');
             $table->timestamps();
         });

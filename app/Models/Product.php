@@ -37,6 +37,11 @@ class Product extends Model
         return $this->hasOne(ProductPackage::class);
     }
 
+    public function order()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
     public function supplierName()
     {
         return $this->hasOneThrough(Supplier::class, ProductSupplier::class, 'product_id', 'id', 'id', 'supplier_id')->withDefault(['name' => '-']);
