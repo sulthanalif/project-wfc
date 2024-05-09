@@ -30,13 +30,15 @@ class ReportController extends Controller
                     // $totalRemainingPayment += $order->payment->sortByDesc('created_at')->first()->remaining_payment;
                 }
 
+                if ($totalPriceOrder > 0) {
+                    $datas[] = [
+                        'agent_name' => $agent->agentProfile->name,
+                        'total_price_order' => $totalPriceOrder,
+                        'total_deposit' => $totalDeposit,
+                        'total_remaining_payment' => $totalPriceOrder - $totalDeposit
+                    ];
+                }
 
-                $datas[] = [
-                    'agent_name' => $agent->agentProfile->name,
-                    'total_price_order' => $totalPriceOrder,
-                    'total_deposit' => $totalDeposit,
-                    'total_remaining_payment' => $totalPriceOrder - $totalDeposit
-                ];
             }
 
         $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
