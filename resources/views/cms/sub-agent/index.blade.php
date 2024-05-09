@@ -10,6 +10,7 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin|agent')
                 <a href="{{ route('sub-agent.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Sub Agen</a>
+                <a href="{{ route('export.subAgent') }}" class="btn btn-primary shadow-md mr-2">Export</a>
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $subAgents->firstItem() }} hingga
                     {{ $subAgents->lastItem() }} dari {{ $subAgents->total() }} data</div>
             @endhasrole

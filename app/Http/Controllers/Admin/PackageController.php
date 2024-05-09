@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\PackageExport;
 use App\Models\Catalog;
 use App\Models\Package;
 // use Illuminate\Routing\Controller;
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StorepackageRequest;
 use App\Http\Requests\UpdatepackageRequest;
+use App\Imports\PackageImport;
+use Maatwebsite\Excel\Excel as ExcelExcel;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PackageController extends Controller
 {
@@ -25,6 +29,42 @@ class PackageController extends Controller
         $packages = Package::paginate(10);
 
         return view('cms.admin.pakets.index', compact('packages'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new PackageExport, 'Paket_export_'.now().'.xlsx');
+    }
+
+
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        if($validator->fails()){
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            // Storage::disk('public')->put('doc/package/' . $fileName, $request->file('file')->getContent());
+
+            Excel::import(new PackageImport, $file);
+
+            return redirect()->route('package.index')->with('success', 'Data Berhasil Diimport');
+
+
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
     }
 
     /**

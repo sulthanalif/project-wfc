@@ -9,6 +9,9 @@
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             <a href="{{ route('product.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Barang</a>
+            <a href="{{ route('export.product') }}" class="btn btn-primary shadow-md mr-2">Export</a>
+            <a href="javascript:;" data-tw-toggle="modal"
+            data-tw-target="#import-confirmation-modal" class="btn btn-primary shadow-md mr-2">Import</a>
             <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $products->firstItem() }} hingga
                 {{ $products->lastItem() }} dari {{ $products->total() }} data</div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
@@ -57,11 +60,15 @@
                                 <td class="w-40">
                                     <div class="flex">
                                         <div class="w-10 h-10 image-fit zoom-in">
-                                            <img alt="PAKET SMART WFC" class="tooltip rounded-full"
+                                            @if ($product->detail->image == NULL)
+                                                -
+                                            @else
+                                                <img alt="PAKET SMART WFC" class="tooltip rounded-full"
                                                 src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
                                                 title="@if ($product->created_at == $product->updated_at) Diupload {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }}
                                                 @else
                                                 Diupdate {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y, H:m:i') }} @endif">
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
@@ -127,4 +134,33 @@
                     data-lucide="x" class="w-4 h-4"></i> </button>
         </div>
     @endif
+
+    <!-- BEGIN: Delete Confirmation Modal -->
+    <div id="import-confirmation-modal" class="modal" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+                    <form action="{{ route('import.product') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="p-5 text-center">
+                            {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
+                            <div class="text-3xl mt-5">Import Data</div>
+                            <span>Jika Belum Ada Format Bisa Download <a class="mt-3 text-danger" href="{{ route('download.file', ['file' => 'format-produk.xlsx']) }}">Disini</a></span>
+                            <div class="text-slate-500 mt-2">
+                                <input type="file" name="file">
+                            </div>
+                        </div>
+                        <div class="px-5 pb-8 text-center">
+
+                                <button type="submit" class="btn btn-primary w-24">Import</button>
+                                <button type="button" data-tw-dismiss="modal"
+                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: Delete Confirmation Modal -->
 @endsection

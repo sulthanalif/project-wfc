@@ -10,6 +10,9 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin')
                 <a href="{{ route('user.create') }}" class="btn btn-primary shadow-md mr-2">Tambah User</a>
+                <a href="{{ route('export.agent') }}" class="btn btn-primary shadow-md mr-2">Export</a>
+                <a href="javascript:;" data-tw-toggle="modal"
+                data-tw-target="#import-confirmation-modal" class="btn btn-primary shadow-md mr-2">Import</a>
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $users->firstItem() }} hingga
                     {{ $users->lastItem() }} dari {{ $users->total() }} data</div>
             @endhasrole
@@ -250,4 +253,32 @@
         </div> --}}
         <!-- END: Pagination -->
     </div>
+    <!-- BEGIN: Delete Confirmation Modal -->
+    <div id="import-confirmation-modal" class="modal" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+                    <form action="{{ route('import.agent') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="p-5 text-center">
+                            {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
+                            <div class="text-3xl mt-5">Import Data</div>
+                            <span>Jika Belum Ada Format Bisa Download <a class="mt-3 text-danger" href="{{ route('download.file', ['file' => 'format-agent.xlsx']) }}">Disini</a></span>
+                            <div class="text-slate-500 mt-2">
+                                <input type="file" name="file">
+                            </div>
+                        </div>
+                        <div class="px-5 pb-8 text-center">
+
+                                <button type="submit" class="btn btn-primary w-24">Import</button>
+                                <button type="button" data-tw-dismiss="modal"
+                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: Delete Confirmation Modal -->
 @endsection

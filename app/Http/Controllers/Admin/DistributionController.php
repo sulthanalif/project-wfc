@@ -20,7 +20,7 @@ class DistributionController extends Controller
     {
         $distributions = Distribution::paginate(10);
 
-        return view('cms.admin.distributions.index', compact('distributions'));
+        return view('cms.admin.distributions', compact('distributions'));
     }
 
     /**

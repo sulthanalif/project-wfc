@@ -47,7 +47,7 @@
                         </div>
                         <div class="col-span-6 lg:col-span-10 intro-y">
                             <p>{{ $product->supplierName->name }}</p>
-                            <p>{{ $product->packagerName->name }}</p>
+                            <p>{{ $product->packageName->name }}</p>
                             <p>Rp. {{ number_format($product->price, 0, ',', '.') }}/hari</p>
                             <p>{{ $product->days }} hari</p>
                             <p>{!! $product->detail->description !!}</p>
