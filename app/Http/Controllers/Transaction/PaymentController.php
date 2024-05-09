@@ -116,7 +116,7 @@ class PaymentController extends Controller
                 $payment->order_id = $order->id;
                 $payment->pay = $request->pay;
                 $payment->remaining_payment = $order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment - $request->pay  : $order->total_price - $request->pay;
-                $payment->status = 'success';
+                $payment->status = 'pending';
                 $payment->save();
 
                 if ($payment->remaining_payment == 0) {
@@ -125,6 +125,40 @@ class PaymentController extends Controller
                 }
             });
             return redirect()->route('order.show', $order)->with('success' , 'Pembayaran berhasil ditambahkan');
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
+    }
+
+    public function accPayment(Payment $payment, Order $order)
+    {
+        try {
+            DB::transaction(function () use ($payment) {
+                $payment->status = 'success';
+                $payment->save();
+            });
+            return redirect()->route('order.show', $order)->with('success', 'Pembayaran Diterima');
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
+    }
+
+    public function rejectPayment(Payment $payment, Order $order)
+    {
+        try {
+            DB::transaction(function () use ($payment) {
+                $payment->status = 'reject';
+                $payment->save();
+            });
+            return redirect()->route('order.show', $order)->with('success', 'Pembayaran Diterima');
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),

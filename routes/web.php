@@ -102,6 +102,8 @@ Route::group(['middleware' => 'auth',], function () {
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin'], function () {
             Route::post('/acc/{order}', [OrderController::class, 'accOrder'])->name('order.accOrder');
             Route::post('/changeOrderStatus/{order}', [OrderController::class, 'changeOrderStatus'])->name('order.changeOrderStatus');
+            Route::post('/accPayment/{payment}/{order}', [PaymentController::class, 'accPayment'])->name('accPayment');
+            Route::post('/rejectPayment/{payment}/{order}', [PaymentController::class, 'rejectPayment'])->name('rejectPayment');
             Route::post('/changePaymentStatus/{order}', [PaymentController::class, 'changePaymentStatus'])->name('changePaymentStatus');
 
             //order stats
