@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Helpers\GenerateRandomString;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Builder;
 
 class DistributionController extends Controller
 {
@@ -28,10 +29,18 @@ class DistributionController extends Controller
     public function create()
     {
         $orders = Order::where(['status' => 'accepted', 'payment_status' => 'paid'])->get();
+        $datas = [];
+        foreach ($orders as $order) {
+            $cek = Distribution::where('order_id', $order->id)->first();
+            if (!$cek) {
+                $datas [] = $order;
+            }
+        }
+
         $distributionNumber = 'D-'.GenerateRandomString::make(8) . now()->format('dmY');
 
-        return view('cms.admin.distributions.create', compact('orders', 'distributionNumber'));
-        // return response()->json(compact('distributionNumber'));
+        return view('cms.admin.distributions.create', compact('datas', 'distributionNumber'));
+        // return response()->json($datas);
     }
 
     /**

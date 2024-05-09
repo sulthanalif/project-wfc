@@ -72,7 +72,7 @@
                         <label for="order_id" class="form-label">Order <span class="text-danger">*</span></label>
                         <select class="form-select mt-2 sm:mr-2" id="order_id" name="order_id">
                             <option value="">Pilih...</option>
-                            @foreach ($orders as $order)
+                            @foreach ($datas as $order)
                                 <option value="{{ $order->id }}">{{ $order->order_number }} - {{ $order->agent->agentProfile->name }}</option>
                             @endforeach
                         </select>
