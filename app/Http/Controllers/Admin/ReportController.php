@@ -6,6 +6,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ReportInstalmentExport;
+use App\Exports\ReportTotalDepositExport;
+use App\Exports\ReportProductDetailExport;
 
 class ReportController extends Controller
 {
@@ -13,10 +17,10 @@ class ReportController extends Controller
     {
         $agents = User::role('agent')->get();
         $datas = [];
+        
             foreach ($agents as $agent) {
                 $totalPriceOrder = 0;
                 $totalDeposit = 0;
-                // $totalRemainingPayment = 0;
 
                 //total price order
                 foreach ($agent->order as $order) {
@@ -26,8 +30,6 @@ class ReportController extends Controller
                     foreach ($order->payment as $payment) {
                         $totalDeposit += $payment->pay;
                     }
-
-                    // $totalRemainingPayment += $order->payment->sortByDesc('created_at')->first()->remaining_payment;
                 }
 
                 if ($totalPriceOrder > 0) {
@@ -38,13 +40,31 @@ class ReportController extends Controller
                         'total_remaining_payment' => $totalPriceOrder - $totalDeposit
                     ];
                 }
-
             }
+            if (is_array($datas)) {
+                $totalPriceOrderAll = array_sum(array_column($datas, 'total_price_order'));
+                $totalDepositAll = array_sum(array_column($datas, 'total_deposit'));
+                $totalRemainingAll = array_sum(array_column($datas, 'total_remaining_payment'));
+              }
+        
+        $stats = [
+            'totalPriceOrderAll' => $totalPriceOrderAll,
+            'totalDepositAll' => $totalDepositAll,
+            'totalRemainingAll' => $totalRemainingAll
+        ];
 
-        $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
+        $paginationData = PaginationHelper::paginate($datas, 10, 'totalDeposit');
+        
 
-        // return view('cms.admin.reports.total-deposit', compact('paginationData'));
-        return response()->json(compact('paginationData'));
+        // untuk export, routenya harus "route('totalDeposit', ['export' => 1])"
+        if ($request->get('export') == 1) {
+            return Excel::download(new ReportTotalDepositExport($datas, $stats), 'Laporan_Total_Setoran_'.now()->format('dmY').'.xlsx');
+        }
+
+        return view('cms.admin.reports.total-deposit', compact('stats', 'paginationData'));
+        // return response()->json(compact('stats', 'paginationData'));
+        // routenya 'report/total-deposit'
+
     }
 
     public function productDetail(Request $request)
@@ -72,10 +92,26 @@ class ReportController extends Controller
                 ];
             }
         }
+        if (is_array($datas)) {
+            $totalProductAll = array_sum(array_column($datas, 'total_product'));
+            $totalPriceAll = array_sum(array_column($datas, 'total_price'));
+        }
+
+        $stats = [
+            'totalProductAll' => $totalProductAll,
+            'totalPriceAll' => $totalPriceAll,
+        ];
+
+        // untuk export, routenya harus "route('productDetail', ['export' => 1])"
+        if ($request->get('export') == 1) {
+            return Excel::download(new ReportProductDetailExport($datas, $stats), 'Laporan_Rincian_Perpaket_'.now()->format('dmY').'.xlsx');
+        }
 
         $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
 
-        return $paginationData;
+        // return view('cms.admin.reports.product-detail', compact('stats', 'paginationData'));
+        return response()->json(compact('stats', 'paginationData'));
+        // routenya 'report/product-detail'
     }
 
     public function instalment(Request $request)
@@ -84,35 +120,43 @@ class ReportController extends Controller
         $datas = [];
             foreach ($agents as $agent) {
                 $totalPriceOrder = 0;
-                // $totalDeposit = 0;
-                // $totalRemainingPayment = 0;
+
 
                 //total price order
                 foreach ($agent->order as $order) {
                     $totalPriceOrder += $order->total_price;
-
-                    //total deposit
-                    // foreach ($order->payment as $payment) {
-                    //     $totalDeposit += $payment->pay;
-                    // }
-
-                    // $totalRemainingPayment += $order->payment->sortByDesc('created_at')->first()->remaining_payment;
                 }
 
                 if ($totalPriceOrder > 0) {
                     $datas[] = [
                         'agent_name' => $agent->agentProfile->name,
                         'total_deposit' => $totalPriceOrder,
-                        // 'total_deposit' => $totalDeposit,
-                        // 'total_remaining_payment' => $totalPriceOrder - $totalDeposit
                     ];
                 }
             }
 
-        $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
+            if (is_array($datas)) {
+                $totalDeposit = array_sum(array_column($datas, 'total_deposit'));
+            }
 
-        return $paginationData;
+            $stats = [
+                'totalDeposit' => $totalDeposit,
+            ];
+
+
+        // untuk export, routenya harus "route('instalment', ['export' => 1])"
+        if ($request->get('export') == 1) {
+            return Excel::download(new ReportInstalmentExport($datas, $stats), 'Laporan_Rincian_Perpaket_'.now()->format('dmY').'.xlsx');
+        }
+
+        $paginationData = PaginationHelper::paginate($datas, 10, 'instalment');
+
+        // return view('cms.admin.reports.instalment', compact('stats', 'paginationData'));
+        return response()->json(compact('stats', 'paginationData'));
+        // routenya 'report/instalment'
     }
+
+
 
 
 }

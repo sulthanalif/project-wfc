@@ -7,17 +7,24 @@
         Laporan Total Deposit
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
+        <a href="{{ route('totalDeposit', ['export' => 1]) }}" class="btn btn-primary shadow-md mr-2">Export</a>
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            {{-- <a href="{{ route('package.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Paket</a> --}}
-            {{-- <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $data->paginationData->firstItem() }} hingga
-                {{ $paginationData->lastItem() }} dari {{ $paginationData->total() }} data</div> --}}
-            <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-                <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Search...">
-                    <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
-                </div>
+            <div class="intro-y col-span-6 flex flex-col items-center px-4 py-6 bg-white shadow-md rounded-md">
+              <h3 class="text-lg font-medium text-gray-900">Total Pemasukan</h3>
+              <p class="text-4xl font-bold text-teal-600 mt-2">Rp. {{ number_format($stats['totalPriceOrderAll'], 0, ',', '.') }}</p>
             </div>
-        </div>
+          
+            <div class="intro-y col-span-6 flex flex-col items-center px-4 py-6 bg-white shadow-md rounded-md">
+              <h3 class="text-lg font-medium text-gray-900">Total Setoran</h3>
+              <p class="text-4xl font-bold text-amber-600 mt-2">Rp. {{ number_format($stats['totalDepositAll'], 0, ',', '.') }}</p>
+            </div>
+          
+            <div class="intro-y col-span-6 flex flex-col items-center px-4 py-6 bg-white shadow-md rounded-md">
+              <h3 class="text-lg font-medium text-gray-900">Total Sisa</h3>
+              <p class="text-4xl font-bold text-rose-600 mt-2">Rp. {{ number_format($stats['totalRemainingAll'], 0, ',', '.') }}</p>
+            </div>
+          </div>
+          
         <!-- BEGIN: Data List -->
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
             <table class="table table-report -mt-2">
@@ -25,9 +32,9 @@
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="whitespace-nowrap">NAMA AGEN</th>
-                        <th class="whitespace-nowrap">TOTAL PEMASUKAN</th>
-                        <th class="whitespace-nowrap">TOTAL SETORAN</th>
-                        <th class="whitespace-nowrap">TOTAL SISA</th>
+                        <th class="whitespace-nowrap">PEMASUKAN</th>
+                        <th class="whitespace-nowrap">SETORAN</th>
+                        <th class="whitespace-nowrap">SISA</th>
                         {{-- <th class="text-center whitespace-nowrap">AKSI</th> --}}
                     </tr>
                 </thead>
@@ -46,6 +53,16 @@
                                 <td>
                                     <p class="text-slate-500 flex items-center mr-3"> {{ $agent['agent_name'] }} </p>
                                 </td>
+                                <td>
+                                    <p class="text-slate-500 flex items-center mr-3"> Rp. {{ number_format($agent['total_price_order'], 0, ',', '.') }} </p>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 flex items-center mr-3"> Rp. {{ number_format($agent['total_deposit'], 0, ',', '.') }} </p>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 flex items-center mr-3"> Rp. {{ number_format($agent['total_remaining_payment'], 0, ',', '.') }} </p>
+                                </td>
+                                
                                 {{-- <td>
                                     <p class="text-slate-500 flex items-center mr-3"> {{ $package->catalogName->name }} </p>
                                 </td> --}}
