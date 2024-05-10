@@ -146,7 +146,7 @@ class ReportController extends Controller
 
         // untuk export, routenya harus "route('instalment', ['export' => 1])"
         if ($request->get('export') == 1) {
-            return Excel::download(new ReportInstalmentExport($datas, $stats), 'Laporan_Rincian_Perpaket_'.now()->format('dmY').'.xlsx');
+            return Excel::download(new ReportInstalmentExport($datas, $stats), 'Laporan_Rincian_Cicilan_'.now()->format('dmY').'.xlsx');
         }
 
         $paginationData = PaginationHelper::paginate($datas, 10, 'instalment');
