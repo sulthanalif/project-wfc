@@ -102,6 +102,7 @@ class PaymentController extends Controller
 
     public function storePayment(Request $request, Order $order)
     {
+        // dd(($order->payment->count() < 1));
         $validator = Validator::make($request->all(), [
             'pay' => ['required', 'numeric']
         ]);
@@ -112,17 +113,20 @@ class PaymentController extends Controller
 
         try {
             DB::transaction(function () use ($request, $order) {
+                $existingPayment = $order->payment;
+                if ($existingPayment->count() < 1){
+                    $order->payment_status = 'pending';
+                    $order->save();
+                }
+
+                $existingPaymentSuccess = $order->payment->sortByDesc('created_at')->where('status', 'success')->first();
                 $payment = new Payment();
                 $payment->order_id = $order->id;
                 $payment->pay = $request->pay;
-                $payment->remaining_payment = $order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment - $request->pay  : $order->total_price - $request->pay;
+                $payment->remaining_payment = $existingPaymentSuccess ? $existingPaymentSuccess->remaining_payment - $request->pay  : $order->total_price - $request->pay;
                 $payment->status = 'pending';
                 $payment->save();
 
-                if ($payment->remaining_payment == 0) {
-                    $order->payment_status = 'paid';
-                    $order->save();
-                }
             });
             return redirect()->route('order.show', $order)->with('success' , 'Pembayaran berhasil ditambahkan');
         } catch (\Throwable $th) {
@@ -137,9 +141,14 @@ class PaymentController extends Controller
     public function accPayment(Payment $payment, Order $order)
     {
         try {
-            DB::transaction(function () use ($payment) {
+            DB::transaction(function () use ($payment, $order) {
                 $payment->status = 'success';
                 $payment->save();
+
+                if ($payment->remaining_payment == 0) {
+                    $order->payment_status = 'paid';
+                    $order->save();
+                }
             });
             return redirect()->route('order.show', $order)->with('success', 'Pembayaran Diterima');
         } catch (\Throwable $th) {
@@ -183,4 +192,5 @@ class PaymentController extends Controller
             return view('cms.error', compact('data'));
         }
     }
+
 }

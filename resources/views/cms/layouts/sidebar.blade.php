@@ -78,21 +78,21 @@
                 </a>
                 <ul class="">
                     <li>
-                        <a href="#" class="side-menu">
+                        <a href="{{ route('totalDeposit') }}" class="side-menu">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Pembelian Barang </div>
+                            <div class="side-menu__title"> Total Setoran </div>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="side-menu">
+                        <a href="{{ route('productDetail') }}" class="side-menu">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Data Barang </div>
+                            <div class="side-menu__title"> Rincian Perpaket </div>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="side-menu">
+                        <a href="{{ route('instalment') }}" class="side-menu">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> QTY Paket </div>
+                            <div class="side-menu__title"> Rincian CIcilan </div>
                         </a>
                     </li>
                 </ul>

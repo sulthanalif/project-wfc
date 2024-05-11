@@ -116,19 +116,6 @@ class OrderController extends Controller
                     ]);
                 }
 
-                // Looping through products in formData
-                // foreach ($request->products as $product) {
-                    // Retrieve product details based on productId
-                    // $daftar = Product::findOrFail($product['productId']);
-
-                    // Create OrderDetail for each product
-                    // OrderDetail::create([
-                        // 'order_id' => $order->id,
-                //         'name' => $daftar->nama,
-                //         'price' => $daftar->harga,
-                //         'qty' => $product['qty']
-                //     ]);
-                // }
             });
             if ($order) {
                 return redirect()->route('order.index')->with('success', 'Pesanan Telah Dibuat');
