@@ -104,7 +104,8 @@ class PaymentController extends Controller
     {
         // dd(($order->payment->count() < 1));
         $validator = Validator::make($request->all(), [
-            'pay' => ['required', 'numeric']
+            'pay' => ['required', 'numeric'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
         ]);
 
         if($validator->fails()) {
@@ -119,12 +120,20 @@ class PaymentController extends Controller
                     $order->save();
                 }
 
+
+                //nambah image
+                $imageName = 'payment_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
+                $path = 'images/payment/' . $order->agent_id . '/';
+                Storage::disk('public')->put($path . $imageName, $request->file('image')->getContent());
+
                 $existingPaymentSuccess = $order->payment->sortByDesc('created_at')->where('status', 'success')->first();
+
                 $payment = new Payment();
                 $payment->order_id = $order->id;
                 $payment->pay = $request->pay;
                 $payment->remaining_payment = $existingPaymentSuccess ? $existingPaymentSuccess->remaining_payment - $request->pay  : $order->total_price - $request->pay;
                 $payment->status = 'pending';
+                $payment->image = $imageName;
                 $payment->save();
 
             });
