@@ -11,9 +11,13 @@
 
     <div class="intro-y box px-5 pt-5 mt-5">
         <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
-            <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
-                <img alt="PAKET SMART WFC" class=" img-fluid rounded-md"
-                    src="{{ asset('storage/images/product/' . $product->detail->image) }}">
+            <div class="flex flex-1 px-5 items-center justify-center">
+                @if ($product->detail->image == 'image.jpg')
+                    <img alt="PAKET SMART WFC" class=" img-fluid rounded-md" src="{{ asset('assets/logo2.PNG') }}">
+                @else
+                    <img alt="PAKET SMART WFC" class=" img-fluid rounded-md"
+                        src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}">
+                @endif
             </div>
             <div
                 class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">

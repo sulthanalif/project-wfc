@@ -12,14 +12,14 @@
                 </a>
             </li>
             <li>
-                <a href="javascript:;" class="side-menu @if (Route::is('order*')) side-menu--active @endif">
+                <a href="javascript:;" class="side-menu @if (Route::is('order*') || Route::is('distribution*')) side-menu--active @endif">
                     <div class="side-menu__icon"> <i data-lucide="shopping-bag"></i> </div>
                     <div class="side-menu__title">
                         Transaksi
                         <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                     </div>
                 </a>
-                <ul class="@if (Route::is('order*')) side-menu__sub-open @endif">
+                <ul class="@if (Route::is('order*') || Route::is('distribution*')) side-menu__sub-open @endif">
                     {{-- <li>
                         <a href="#" class="side-menu">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
@@ -27,17 +27,30 @@
                         </a>
                     </li> --}}
                     <li>
-                        <a href="{{ route('order.index') }}" class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
+                        <a href="{{ route('order.index') }}"
+                            class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Pesanan </div>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('distribution.index') }}" class="side-menu">
+                        <a href="{{ route('distribution.index') }}"
+                            class="side-menu {{ Route::is('distribution*') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Pendistribusian </div>
                         </a>
                     </li>
+                </ul>
+            </li>
+            <li class="side-nav__devider my-6"></li>
+            <li>
+                <a href="javascript:;" class="side-menu">
+                    <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
+                    <div class="side-menu__title"> Laporan
+                        <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                    </div>
+                </a>
+                <ul class="">
                     <li>
                         <a href="javascript:;" class="side-menu">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
@@ -66,17 +79,6 @@
                             </li>
                         </ul>
                     </li>
-                </ul>
-            </li>
-            <li class="side-nav__devider my-6"></li>
-            <li>
-                <a href="javascript:;" class="side-menu">
-                    <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
-                    <div class="side-menu__title"> Laporan
-                        <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
-                    </div>
-                </a>
-                <ul class="">
                     <li>
                         <a href="{{ route('totalDeposit') }}" class="side-menu">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
@@ -203,7 +205,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{route('order.index')}}" class="side-menu">
+                    <a href="{{ route('order.index') }}"
+                        class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-lucide="shopping-bag"></i> </div>
                         <div class="side-menu__title">
                             Transaksi

@@ -193,7 +193,7 @@
                                     </div>
                                 </div>
                             @else
-                                @if ($user->administration->ktp == 'default.png')
+                                @if ($user->administration->ktp == 'image.jpg')
                                     <div
                                         class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
                                         <div

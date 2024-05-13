@@ -38,6 +38,11 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="mt-3">
+                            <label for="order_date" class="form-label">Tanggal Pesanan <span class="text-danger">*</span></label>
+                            <input id="order_date" name="order_date" type="date"
+                            class="form-control w-full">
+                        </div>
                     @endhasrole
                     @hasrole('agent')
                         <input type="hidden" name="agent_id" value="{{ auth()->user()->id }}">

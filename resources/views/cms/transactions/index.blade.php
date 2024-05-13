@@ -69,6 +69,9 @@
                                     @if ($order->status === 'accepted')
                                         <div class="flex items-center justify-center text-success"> <i
                                                 data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Diterima </div>
+                                    @elseif ($order->status === 'stop')
+                                        <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Mundur </div>
                                     @elseif ($order->status === 'reject')
                                         <div class="flex items-center justify-center text-danger"> <i
                                                 data-lucide="alert-circle" class="w-4 h-4 mr-2"></i> Ditolak </div>
@@ -84,6 +87,9 @@
                                     @if ($order->payment_status === 'paid')
                                         <div class="flex items-center justify-center text-success"> <i
                                                 data-lucide="check-square" class="w-4 h-4 mr-2"></i> Lunas </div>
+                                    @elseif ($order->payment_status === 'pending')
+                                        <div class="flex items-center justify-center text-warning"> <i
+                                                data-lucide="clock" class="w-4 h-4 mr-2"></i> Dicicil </div>
                                     @else
                                         <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
                                                 class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
@@ -160,8 +166,8 @@
                                                     @csrf
                                                     <div class="mb-3">
                                                         <select class="form-select mt-2 sm:mr-2" id="status" name="status" required>
-                                                            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                                             <option value="accepted" {{ $order->status == 'accepted' ? 'selected' : '' }}>Diterima</option>
+                                                            <option value="stop" {{ $order->status == 'stop' ? 'selected' : '' }}>Mundur</option>
                                                             <option value="reject" {{ $order->status == 'reject' ? 'selected' : '' }}>Ditolak</option>
                                                             <option value="canceled" {{ $order->status == 'canceled' ? 'selected' : '' }}>Dibatalkan</option>
 
