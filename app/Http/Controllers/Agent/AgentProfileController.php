@@ -44,7 +44,7 @@ class AgentProfileController extends Controller
         $validasi = Validator::make($request->all(), [
             'name' => 'required|string',
             'photo' => 'string',
-            // 'address' => 'required|string',
+            'address' => 'string',
             'phone_number' => 'string',
             'rt' => 'string',
             'rw'=> 'string',
@@ -78,6 +78,7 @@ class AgentProfileController extends Controller
                         'name' => $request->name,
                         'photo' => $photoName,
                         'phone_number' => $request->phone_number,
+                        'address' => $request->address,
                         'rt' => $request->rt,
                         'rw'=> $request->rw,
                         'village'=> $request->village,
