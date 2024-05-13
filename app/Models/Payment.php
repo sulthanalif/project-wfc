@@ -20,6 +20,7 @@ class Payment extends Model
         'pay',
         'remaining_payment',
         'image',
+        'description',
         'status',
     ];
 

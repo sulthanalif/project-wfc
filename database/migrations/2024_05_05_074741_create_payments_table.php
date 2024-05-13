@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('pay', 15, 2);
             $table->decimal('remaining_payment', 15, 2);
             $table->string('image')->nullable();
+            $table->string('description')->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();
         });

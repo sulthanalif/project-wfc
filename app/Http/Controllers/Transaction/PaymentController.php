@@ -95,6 +95,7 @@ class PaymentController extends Controller
                     }
                 } else {
                     $payment->status = 'reject';
+                    $payment->description = $request->description;
                     $payment->save();
                 }
 

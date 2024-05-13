@@ -23,6 +23,7 @@ class Order extends Model
         // 'estimate_date',
         'status',
         'payment_status',
+        'description',
     ];
 
     public function agent()

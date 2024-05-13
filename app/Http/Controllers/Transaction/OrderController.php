@@ -180,7 +180,8 @@ class OrderController extends Controller
     {
         if($order) {
             $update = $order->update([
-                'status' => $request->status
+                'status' => $request->status,
+                'description' => $request->description
             ]);
 
             if($update) {
