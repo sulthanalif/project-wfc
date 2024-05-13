@@ -76,36 +76,48 @@ class PaymentController extends Controller
         }
     }
 
-    public function changePaymentStatus(Order $order)
+    public function changePaymentStatus(Request $request, Payment $payment)
     {
-        if ($order) {
-            try {
-                DB::transaction(function () use ($order, &$update) {
-                    $update = $order->update([
-                        'payment_status' => $order->payment_status == 'unpaid' ? 'paid' : 'unpaid'
-                    ]);
-                });
-                if ($update) {
-                    return back()->with('success', 'Status pembayaran berhasil diubah');
+        // return response()->json([
+        //     'data' => $request->all(),
+        //     'payment' => $payment
+        // ]);
+
+        try {
+            DB::transaction(function () use ($request, $payment) {
+                if ($request->status == 'success') {
+                    $payment->status = 'success';
+                    $payment->save();
+
+                    if ($payment->remaining_payment == 0) {
+                        $payment->order->payment_status = 'paid';
+                        $payment->order->save();
+                    }
                 } else {
-                    return back()->with('error', 'Status pembayaran gagal diubah');
+                    $payment->status = 'reject';
+                    $payment->save();
                 }
-            } catch (\Throwable $th) {
-                $data = [
-                    'message' => $th->getMessage(),
-                    'status' => 400
-                ];
-                return view('cms.error', compact('data'));
-            }
+
+            });
+            return redirect()->route('order.show', $payment->order)->with('success', 'Pembayaran Diterima');
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
     }
 
     public function storePayment(Request $request, Order $order)
     {
-        // dd(($order->payment->count() < 1));
+        // return response()->json([
+        //     'request' => $request->all(),
+        //     'order' => $order
+        // ]);
         $validator = Validator::make($request->all(), [
             'pay' => ['required', 'numeric'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
+            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
         ]);
 
         if($validator->fails()) {

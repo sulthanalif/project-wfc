@@ -259,7 +259,7 @@
                 <div class="modal-body p-0">
                     <div class="p-5 text-center">
                         {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
-                        <form action="{{ route('storePayment', $order) }}" method="post">
+                        <form action="{{ route('storePayment', $order) }}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="mt-3">
                                 <label class="form-label">Total Pembayaran</label>
