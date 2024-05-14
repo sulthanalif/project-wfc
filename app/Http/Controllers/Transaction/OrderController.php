@@ -73,13 +73,12 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-
+        // return response()->json($request->all());
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'agent_id' => ['required'],
             'order_number' => ['required'],
             'total_price' => ['required', 'numeric'],
-
         ]);
 
         if ($validator->fails()) {
@@ -89,12 +88,14 @@ class OrderController extends Controller
         try {
             DB::transaction(function () use ($request, &$order) {
 
-                $order = Order::create([
+                $order = new Order([
                     'agent_id' => $request->agent_id,
                     'order_number' => $request->order_number,
                     'total_price' => $request->total_price,
-                    'order_date' => now(),
+                    'order_date' => $request->order_date ? $request->order_date : now()
                 ]);
+
+                $order->save();
 
                 $products = json_decode($request->products, true);
 
