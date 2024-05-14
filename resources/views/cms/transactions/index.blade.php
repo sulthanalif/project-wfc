@@ -76,8 +76,8 @@
                                         <div class="flex items-center justify-center text-danger"> <i
                                                 data-lucide="alert-circle" class="w-4 h-4 mr-2"></i> Ditolak </div>
                                     @elseif ($order->status === 'canceled')
-                                        <div class="flex items-center justify-center text-danger"> <i
-                                                data-lucide="x-circle" class="w-4 h-4 mr-2"></i> Dibatalkan </div>
+                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-circle"
+                                                class="w-4 h-4 mr-2"></i> Dibatalkan </div>
                                     @else
                                         <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
                                                 class="w-4 h-4 mr-2"></i> Pending</div>
@@ -88,63 +88,30 @@
                                         <div class="flex items-center justify-center text-success"> <i
                                                 data-lucide="check-square" class="w-4 h-4 mr-2"></i> Lunas </div>
                                     @elseif ($order->payment_status === 'pending')
-                                        <div class="flex items-center justify-center text-warning"> <i
-                                                data-lucide="clock" class="w-4 h-4 mr-2"></i> Dicicil </div>
+                                        <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
+                                                class="w-4 h-4 mr-2"></i> Dicicil </div>
                                     @else
                                         <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
                                                 class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
                                     @endif
                                 </td>
                                 @hasrole('super_admin|admin')
-                                    <td class="table-report__action w-56">
-                                        <div class="flex justify-center items-center">
-                                            <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#change-confirmation-modal{{ $order->id }}">
-                                                <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
-                                            {{-- @if ($order->status === 'pending')
-                                            <a class="flex items-center text-success" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#accept-confirmation-modal{{ $order->id }}">
-                                                 <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Accept </a>
-                                            @else
-                                            <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#change-confirmation-modal{{ $order->id }}">
-                                                <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
-                                            @endif --}}
-                                        </div>
-                                    </td>
+                                    @if ($order->payment_status == 'paid')
+                                        <td class="table-report__action w-56">
+                                            <div class="flex items-center justify-center text-success"> <i
+                                                    data-lucide="check-square" class="w-4 h-4 mr-2"></i> </div>
+                                        </td>
+                                    @else
+                                        <td class="table-report__action w-56">
+                                            <div class="flex justify-center items-center">
+                                                <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                    data-tw-target="#change-confirmation-modal{{ $order->id }}">
+                                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                            </div>
+                                        </td>
+                                    @endif
                                 @endhasrole
                             </tr>
-
-                            <!-- BEGIN: Accept Confirmation Modal -->
-                            <div id="accept-confirmation-modal{{ $order->id }}" class="modal" tabindex="-1"
-                                aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-body p-0">
-                                            <div class="p-5 text-center">
-                                                {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
-                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                                <div class="text-slate-500 mt-2">
-                                                    Apakah anda yakin untuk acc order ini?
-                                                    <br>
-                                                    Proses tidak akan bisa diulangi.
-                                                </div>
-                                            </div>
-                                            <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('order.accOrder', $order) }}" method="post">
-                                                    @csrf
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $orders->currentPage() }}">
-                                                    <button type="submit" class="btn btn-success w-24">Acc</button>
-                                                    <button type="button" data-tw-dismiss="modal"
-                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- END: Accept Confirmation Modal -->
 
                             <!-- BEGIN: Change Confirmation Modal -->
                             <div id="change-confirmation-modal{{ $order->id }}" class="modal" tabindex="-1"
@@ -153,7 +120,8 @@
                                     <div class="modal-content">
                                         <div class="modal-body p-0">
                                             <div class="p-5 text-center">
-                                                <i data-lucide="alert-circle" class="w-16 h-16 text-warning mx-auto mt-3"></i>
+                                                <i data-lucide="alert-circle"
+                                                    class="w-16 h-16 text-warning mx-auto mt-3"></i>
                                                 <div class="text-3xl mt-5">Apakah anda yakin?</div>
                                                 <div class="text-slate-500 mt-2">
                                                     Apakah anda yakin untuk mengubah status pesanan ini?
@@ -161,17 +129,31 @@
                                                     Proses tidak akan bisa diulangi.
                                                 </div>
                                             </div>
-                                            <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('order.changeOrderStatus', $order) }}" method="post">
+                                            <div class="px-5 pb-8">
+                                                <form action="{{ route('order.changeOrderStatus', $order) }}"
+                                                    method="post">
                                                     @csrf
                                                     <div class="mb-3">
-                                                        <select class="form-select mt-2 sm:mr-2" id="status" name="status" required>
-                                                            <option value="accepted" {{ $order->status == 'accepted' ? 'selected' : '' }}>Diterima</option>
-                                                            <option value="stop" {{ $order->status == 'stop' ? 'selected' : '' }}>Mundur</option>
-                                                            <option value="reject" {{ $order->status == 'reject' ? 'selected' : '' }}>Ditolak</option>
-                                                            <option value="canceled" {{ $order->status == 'canceled' ? 'selected' : '' }}>Dibatalkan</option>
+                                                        <select class="form-select mt-2 sm:mr-2" id="status"
+                                                            name="status" required>
+                                                            <option value="accepted"
+                                                                {{ $order->status == 'accepted' ? 'selected' : '' }}>
+                                                                Diterima</option>
+                                                            <option value="stop"
+                                                                {{ $order->status == 'stop' ? 'selected' : '' }}>Mundur
+                                                            </option>
+                                                            <option value="reject"
+                                                                {{ $order->status == 'reject' ? 'selected' : '' }}>Ditolak
+                                                            </option>
+                                                            <option value="canceled"
+                                                                {{ $order->status == 'canceled' ? 'selected' : '' }}>
+                                                                Dibatalkan</option>
 
                                                         </select>
+                                                    </div>
+
+                                                    <div class="mb-3" id="desc-fields" style="display: none">
+                                                        <textarea id="description" name="description" class="form-control w-full" placeholder="Masukkan Description "></textarea>
                                                     </div>
                                                     <input type="hidden" name="page"
                                                         value="{{ $orders->currentPage() }}">
@@ -199,3 +181,24 @@
         <!-- END: Pagination -->
     </div>
 @endsection
+
+@push('custom-scripts')
+    <script>
+        const modals = document.querySelectorAll('.modal');
+
+        modals.forEach(modal => {
+            const statSelect = modal.querySelector('#status');
+
+            if (statSelect) {
+                statSelect.addEventListener('change', (event) => {
+                    const descField = modal.querySelector('#desc-fields');
+                    if (event.target.value === 'reject') {
+                        descField.style.display = 'block';
+                    } else {
+                        descField.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+@endpush

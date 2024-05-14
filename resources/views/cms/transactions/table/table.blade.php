@@ -2,20 +2,20 @@
     <thead>
         <tr>
             <th class="text-center whitespace-nowrap">#</th>
-            <th class="text-center whitespace-nowrap">TANGGAL</th>
-            <th class="text-center whitespace-nowrap">JUMLAH BAYAR</th>
-            {{-- <th class="whitespace-nowrap">SISA PEMBAYARAN</th> --}}
-            <th class="text-center whitespace-nowrap">BUKTI</th>
-            <th class="text-center whitespace-nowrap">STATUS</th>
+            <th class="text-center">TANGGAL</th>
+            <th class="text-center">JUMLAH BAYAR</th>
+            <th class="text-center">BUKTI</th>
+            <th class="text-center">STATUS</th>
+            <th class="text-center">KETERANGAN</th>
             @hasrole('finance_admin|super_admin')
-                <th class="text-center whitespace-nowrap">AKSI</th>
+                <th class="text-center ">AKSI</th>
             @endhasrole
         </tr>
     </thead>
     <tbody>
         @if ($order->payment->isEmpty())
             <tr>
-                <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
             </tr>
         @else
             @foreach ($order->payment as $payment)
@@ -33,27 +33,15 @@
                     </td>
 
                     <td class="text-center">
-                        @if ($payment->image !== null)
-                            <div class="flex">
-                                <div class="w-10 h-10 image-fit zoom-in">
-                                    <img alt="PAKET SMART WFC"
-                                        class="rounded-lg border-2 border-white shadow-md tooltip"
-                                        src="{{ route('getImage', ['path' => 'payment/' . $order->agent_id, 'imageName' => $payment->image]) }}"
-                                        title="@if ($payment->created_at == $payment->updated_at) Diupload {{ \Carbon\Carbon::parse($payment->created_at)->format('d M Y, H:m:i') }}
+                        <div class="flex">
+                            <div class="w-10 h-10 image-fit zoom-in">
+                                <img alt="PAKET SMART WFC" class="rounded-lg border-2 border-white shadow-md tooltip"
+                                    src="{{ route('getImage', ['path' => 'payment/' . $order->agent_id, 'imageName' => $payment->image]) }}"
+                                    title="@if ($payment->created_at == $payment->updated_at) Diupload {{ \Carbon\Carbon::parse($payment->created_at)->format('d M Y, H:m:i') }}
                                         @else
                                         Diupdate {{ \Carbon\Carbon::parse($payment->updated_at)->format('d M Y, H:m:i') }} @endif">
-                                </div>
                             </div>
-                        @else
-                            @hasrole('agent')
-                                <a class="flex items-center text-success" href="javascript:;" data-tw-toggle="modal"
-                                    data-tw-target="#upload-confirmation-modal{{ $payment->id }}">
-                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Upload bukti pembayaran </a>
-                            @endhasrole
-                            @hasrole('admin|super_admin|finance_admin')
-                                -
-                            @endhasrole
-                        @endif
+                        </div>
                     </td>
 
                     <td>
@@ -65,14 +53,20 @@
                                 <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
                                         class="w-4 h-4 mr-2"></i></div>
                             @else
-                            <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
-                                    class="w-4 h-4 mr-2"></i></div>
+                                <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
+                                        class="w-4 h-4 mr-2"></i></div>
                             @endif
                         @endif
                     </td>
 
+                    <td>
+                        <p>
+                            {{ $payment->description }}
+                        </p>
+                    </td>
+
                     @hasrole('finance_admin|super_admin')
-                        <td class="table-report__action w-56">
+                        <td class="table-report__action">
                             <div class="flex justify-center items-center">
                                 @if ($payment->status === 'pending')
                                     <a class="flex items-center mr-3 text-warning" href="javascript:;"
@@ -87,50 +81,6 @@
                         </td>
                     @endhasrole
                 </tr>
-
-                <!-- BEGIN: Upload Payment Confirmation Modal -->
-                <div id="upload-confirmation-modal{{ $payment->id }}" class="modal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-body p-0">
-                                <div class="p-5 text-center">
-                                    {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
-                                    <form
-                                        action="{{ route('storePaymentImage', ['order' => $order, 'payment' => $payment]) }}"
-                                        method="post" enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="mt-3">
-                                            <label for="image" class="form-label">Upload Bukti Pembayaran <span
-                                                    class="text-danger">*</span></label>
-                                            <div
-                                                class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
-                                                <i data-lucide="image" class="w-4 h-4 mr-2"></i>
-                                                <span class="text-primary mr-1">Upload a file</span> or drag and drop
-                                                <input id="image" name="image" type="file"
-                                                    class="w-full h-full top-0 left-0 absolute opacity-0"
-                                                    onchange="previewFile(this)">
-                                            </div>
-                                            <div id="image-preview" class="hidden mt-2"></div>
-                                            @error('image')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        <div class="px-5 pb-8 text-center">
-
-
-                                            <button type="submit" class="btn btn-success w-24">Simpan</button>
-                                            <button type="button" data-tw-dismiss="modal"
-                                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                        </div>
-                                </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- END: Upload Payment Confirmation Modal -->
 
                 <!-- BEGIN: Change Status Payment Confirmation Modal -->
                 <div id="cpayment-confirmation-modal{{ $payment->id }}" class="modal" tabindex="-1"
@@ -163,6 +113,10 @@
 
                                             </select>
                                         </div>
+
+                                        <div class="mb-3" id="desc-fields" style="display: none">
+                                            <textarea id="description" name="description" class="form-control w-full" placeholder="Masukkan Description "></textarea>
+                                        </div>
                                         {{-- <input type="hidden" name="page"
                                                         value="{{ $payment->currentPage() }}"> --}}
                                         <button type="submit" class="btn btn-warning w-24">Ubah</button>
@@ -190,3 +144,24 @@
         </tfoot>
     @endif
 </table>
+
+@push('custom-scripts')
+    <script>
+        const modals = document.querySelectorAll('.modal');
+
+        modals.forEach(modal => {
+            const statSelect = modal.querySelector('#status');
+
+            if (statSelect) {
+                statSelect.addEventListener('change', (event) => {
+                    const descField = modal.querySelector('#desc-fields');
+                    if (event.target.value === 'reject') {
+                        descField.style.display = 'block';
+                    } else {
+                        descField.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+@endpush

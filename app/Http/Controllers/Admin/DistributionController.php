@@ -28,7 +28,7 @@ class DistributionController extends Controller
      */
     public function create()
     {
-        $orders = Order::where(['status' => 'accepted' | 'stop'])->get();
+        $orders = Order::whereIn('status', ['accepted', 'stop'])->get();
         $datas = [];
         foreach ($orders as $order) {
             $cek = Distribution::where('order_id', $order->id)->first();

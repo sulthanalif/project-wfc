@@ -80,11 +80,19 @@
                     @elseif ($order->status === 'stop')
                         <span class="bg-success/20 text-success rounded px-2 ml-1">Mundur</span>
                     @elseif ($order->status === 'reject')
-                        <span class="bg-danger/20 text-danger rounded px-2 ml-1">Ditolak</span>
+                        <span class="bg-danger text-white rounded px-2 ml-1">Ditolak</span>
                     @elseif ($order->status === 'canceled')
-                        <span class="bg-danger/20 text-danger rounded px-2 ml-1">Ditolak</span>
+                        <span class="bg-danger text-white rounded px-2 ml-1">Dibatalkan</span>
                     @else
                         <span class="bg-warning/20 text-warning rounded px-2 ml-1">Pending</span>
+                    @endif
+                </div>
+                <div class="flex items-center mt-3"> <i data-lucide="clock" class="w-4 h-4 text-slate-500 mr-2"></i>
+                    Keterangan:
+                    @if ($order->status === 'reject')
+                        <p class="ml-1">{{ $order->description }}</p>
+                    @else
+                        <p class="ml-1">-</p>
                     @endif
                 </div>
             </div>
@@ -101,7 +109,7 @@
                     <div class="flex items-center mt-3"> <i data-lucide="calendar" class="w-4 h-4 text-slate-500 mr-2"></i>
                         Nomor Telepon: {{ $order->agent->agentProfile->phone_number }} </div>
                     <div class="flex items-center mt-3"> <i data-lucide="map-pin" class="w-4 h-4 text-slate-500 mr-2"></i>
-                        Alamat: {{ $order->agent->agentProfile->rt }} </div>
+                        Alamat: {{ $order->agent->agentProfile->address }} </div>
                 </div>
             @endhasrole
             {{-- <div class="box p-5 rounded-md mt-5">
@@ -191,11 +199,19 @@
                                                 @if ($item->product->detail->image == null)
                                                     -
                                                 @else
-                                                    <div class="w-10 h-10 image-fit zoom-in">
-                                                        <img alt="PAKET SMART WFC"
-                                                            class="rounded-lg border-2 border-white shadow-md tooltip"
-                                                            src="{{ route('getImage', ['path' => 'product', 'imageName' => $item->product->detail->image]) }}">
-                                                    </div>
+                                                    @if ($item->product->detail->image == 'image.jpg')
+                                                        <div class="w-10 h-10 image-fit zoom-in">
+                                                            <img alt="PAKET SMART WFC"
+                                                                class="rounded-lg border-2 border-white shadow-md"
+                                                                src="{{ asset('assets/logo2.PNG') }}">
+                                                        </div>
+                                                    @else
+                                                        <div class="w-10 h-10 image-fit zoom-in">
+                                                            <img alt="PAKET SMART WFC"
+                                                                class="rounded-lg border-2 border-white shadow-md"
+                                                                src="{{ route('getImage', ['path' => 'product', 'imageName' => $item->product->detail->image]) }}">
+                                                        </div>
+                                                    @endif
                                                 @endif
                                                 <span
                                                     class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}</span>
