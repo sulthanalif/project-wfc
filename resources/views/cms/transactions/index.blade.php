@@ -157,9 +157,11 @@
                                                     </div>
                                                     <input type="hidden" name="page"
                                                         value="{{ $orders->currentPage() }}">
-                                                    <button type="submit" class="btn btn-warning w-24">Ubah</button>
-                                                    <button type="button" data-tw-dismiss="modal"
-                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                    <div class="text-center">
+                                                        <button type="submit" class="btn btn-warning w-24">Ubah</button>
+                                                        <button type="button" data-tw-dismiss="modal"
+                                                            class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>

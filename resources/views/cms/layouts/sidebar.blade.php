@@ -20,12 +20,6 @@
                     </div>
                 </a>
                 <ul class="@if (Route::is('order*') || Route::is('distribution*')) side-menu__sub-open @endif">
-                    {{-- <li>
-                        <a href="#" class="side-menu">
-                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Pengisian Paket </div>
-                        </a>
-                    </li> --}}
                     <li>
                         <a href="{{ route('order.index') }}"
                             class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
@@ -44,14 +38,14 @@
             </li>
             <li class="side-nav__devider my-6"></li>
             <li>
-                <a href="javascript:;" class="side-menu">
+                <a href="javascript:;" class="side-menu @if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment')) side-menu--active @endif">
                     <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
                     <div class="side-menu__title"> Laporan
                         <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                     </div>
                 </a>
-                <ul class="">
-                    <li>
+                <ul class="@if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment')) side-menu__sub-open @endif">
+                    {{-- <li>
                         <a href="javascript:;" class="side-menu">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Setoran <i data-lucide="chevron-down"
@@ -78,23 +72,23 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
+                    </li> --}}
                     <li>
-                        <a href="{{ route('totalDeposit') }}" class="side-menu">
+                        <a href="{{ route('totalDeposit') }}" class="side-menu {{ Route::is('totalDeposit') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Total Setoran </div>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('productDetail') }}" class="side-menu">
+                        <a href="{{ route('rproductDetail') }}" class="side-menu {{ Route::is('rproductDetail') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Rincian Perpaket </div>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('instalment') }}" class="side-menu">
+                        <a href="{{ route('instalment') }}" class="side-menu {{ Route::is('instalment') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Rincian CIcilan </div>
+                            <div class="side-menu__title"> Rincian Cicilan </div>
                         </a>
                     </li>
                 </ul>

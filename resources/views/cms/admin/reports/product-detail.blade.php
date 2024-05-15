@@ -1,18 +1,18 @@
 @extends('cms.layouts.app', [
-    'title' => 'Laporan Total Deposit',
+    'title' => 'Laporan Rincian Perpaket',
 ])
 
 @section('content')
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 2xl:col-span-9">
             <div class="grid grid-cols-12 gap-6">
-                <!-- BEGIN: Laporan Total Deposit -->
+                <!-- BEGIN: Laporan Rincian Perpaket -->
                 <div class="col-span-12 mt-8">
                     <div class="intro-y flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
-                            Laporan Total Deposit
+                            Laporan Rincian Perpaket
                         </h2>
-                        <a href="{{ route('totalDeposit', ['export' => 1]) }}"
+                        <a href="{{ route('rproductDetail', ['export' => 1]) }}"
                             class="ml-auto flex items-center btn btn-primary shadow-md"> <i data-lucide="file"
                                 class="w-4 h-4 mr-3"></i> Export </a>
                     </div>
@@ -29,9 +29,8 @@
                                             </div>
                                         </div> --}}
                                     </div>
-                                    <div class="text-2xl font-bold leading-8 mt-6">Rp.
-                                        {{ number_format($stats['totalPriceOrderAll'], 0, ',', '.') }}</div>
-                                    <div class="text-base text-slate-500 mt-1">Total Pemasukan</div>
+                                    <div class="text-2xl font-bold leading-8 mt-6">{{ $stats['totalProductAll'] }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Total Produk</div>
                                 </div>
                             </div>
                         </div>
@@ -48,32 +47,14 @@
                                         </div> --}}
                                     </div>
                                     <div class="text-2xl font-bold leading-8 mt-6">Rp.
-                                        {{ number_format($stats['totalDepositAll'], 0, ',', '.') }}</div>
-                                    <div class="text-base text-slate-500 mt-1">Total Setoran</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
-                            <div class="report-box zoom-in">
-                                <div class="box p-5">
-                                    <div class="flex">
-                                        <i data-lucide="credit-card" class="report-box__icon text-warning"></i>
-                                        {{-- <div class="ml-auto">
-                                            <div class="report-box__indicator bg-success tooltip cursor-pointer"
-                                                title="12% Higher than last month"> 12% <i data-lucide="chevron-up"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
-                                        </div> --}}
-                                    </div>
-                                    <div class="text-2xl font-bold leading-8 mt-6">Rp.
-                                        {{ number_format($stats['totalRemainingAll'], 0, ',', '.') }}</div>
-                                    <div class="text-base text-slate-500 mt-1">Total Sisa</div>
+                                        {{ number_format($stats['totalPriceAll'], 0, ',', '.') }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Total Harga</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- END: Laporan Total Deposit -->
+                <!-- END: Laporan Rincian Perpaket -->
             </div>
         </div>
         <!-- BEGIN: Data List -->
@@ -83,16 +64,14 @@
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">NAMA AGEN</th>
-                        <th class="text-center whitespace-nowrap">PEMASUKAN</th>
-                        <th class="text-center whitespace-nowrap">SETORAN</th>
-                        <th class="text-center whitespace-nowrap">SISA</th>
-                        {{-- <th class="text-center whitespace-nowrap">AKSI</th> --}}
+                        <th class="text-center whitespace-nowrap">TOTAL PRODUK</th>
+                        <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (!$paginationData)
                         <tr>
-                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
                         @foreach ($paginationData['data'] as $agent)
@@ -105,21 +84,12 @@
                                     <p class="text-slate-500 flex items-center mr-3"> {{ $agent['agent_name'] }} </p>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 text-center"> Rp.
-                                        {{ number_format($agent['total_price_order'], 0, ',', '.') }} </p>
+                                    <p class="text-slate-500 text-center">{{ $stats['totalProductAll'] }}</p>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 text-center"> Rp.
-                                        {{ number_format($agent['total_deposit'], 0, ',', '.') }} </p>
+                                        {{ number_format($agent['total_price'], 0, ',', '.') }} </p>
                                 </td>
-                                <td>
-                                    <p class="text-slate-500 text-center"> Rp.
-                                        {{ number_format($agent['total_remaining_payment'], 0, ',', '.') }} </p>
-                                </td>
-
-                                {{-- <td>
-                                    <p class="text-slate-500 flex items-center mr-3"> {{ $package->catalogName->name }} </p>
-                                </td> --}}
 
                             </tr>
                         @endforeach

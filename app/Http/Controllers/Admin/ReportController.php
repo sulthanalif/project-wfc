@@ -109,8 +109,8 @@ class ReportController extends Controller
 
         $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
 
-        // return view('cms.admin.reports.product-detail', compact('stats', 'paginationData'));
-        return response()->json(compact('stats', 'paginationData'));
+        return view('cms.admin.reports.product-detail', compact('stats', 'paginationData'));
+        // return response()->json(compact('stats', 'paginationData'));
         // routenya 'report/product-detail'
     }
 
@@ -151,8 +151,8 @@ class ReportController extends Controller
 
         $paginationData = PaginationHelper::paginate($datas, 10, 'instalment');
 
-        // return view('cms.admin.reports.instalment', compact('stats', 'paginationData'));
-        return response()->json(compact('stats', 'paginationData'));
+        return view('cms.admin.reports.instalment', compact('stats', 'paginationData'));
+        // return response()->json(compact('stats', 'paginationData'));
         // routenya 'report/instalment'
     }
 

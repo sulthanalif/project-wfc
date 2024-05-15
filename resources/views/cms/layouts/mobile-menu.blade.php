@@ -26,12 +26,6 @@
                         </div>
                     </a>
                     <ul class="@if (Route::is('order*') || Route::is('distribution*')) menu__sub-open @endif">
-                        {{-- <li>
-                            <a href="#" class="menu">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Pengisian Paket </div>
-                            </a>
-                        </li> --}}
                         <li>
                             <a href="{{ route('order.index') }}"
                                 class="menu {{ Route::is('order*') ? 'menu--active' : '' }}">
@@ -50,12 +44,12 @@
                 </li>
                 <li class="menu__devider my-6"></li>
                 <li>
-                    <a href="javascript:;" class="menu">
+                    <a href="javascript:;" class="menu @if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="file-text"></i> </div>
                         <div class="menu__title"> Laporan <i data-lucide="chevron-down" class="menu__sub-icon "></i></div>
                     </a>
-                    <ul class="">
-                        <li>
+                    <ul class="@if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment')) menu__sub-open @endif">
+                        {{-- <li>
                             <a href="javascript:;" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Setoran <i data-lucide="chevron-down" class="menu__sub-icon "></i>
@@ -81,23 +75,23 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> --}}
                         <li>
-                            <a href="#" class="menu menu--active">
+                            <a href="{{ route('totalDeposit') }}" class="menu {{ Route::is('totalDeposit') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Pembelian Barang </div>
+                                <div class="menu__title"> Total Setoran </div>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="menu menu--active">
+                            <a href="{{ route('rproductDetail') }}" class="menu{{ Route::is('rproductDetail') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Data Barang </div>
+                                <div class="menu__title"> Rincian Perpaket </div>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="menu menu--active">
+                            <a href="{{ route('instalment') }}" class="menu {{ Route::is('instalment') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> QTY Paket </div>
+                                <div class="menu__title"> Rincian Cicilan </div>
                             </a>
                         </li>
                     </ul>
