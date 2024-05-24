@@ -241,23 +241,11 @@
             <div class="box p-5 rounded-md mt-5">
                 <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                     <div class="font-medium text-base truncate">Detail Pembayaran</div>
-                    @hasrole('agent')
-                        @if ($order->status === 'accepted')
-                            @if ($order->payment->sortByDesc('created_at')->first())
-                                @if ($order->payment->sortByDesc('created_at')->first()->status == 'unpaid')
-                                    <a class="btn btn-primary shadow-md flex items-center ml-auto"
-                                        href="{{ route('payment.detail', ['payment' => $order->payment->sortByDesc('created_at')->first()]) }}">
-                                        Setor </a>
-                                    {{-- @else
-                                    <a class="btn btn-primary shadow-md flex items-center ml-auto" href="javascript:;"
-                                        data-tw-toggle="modal" data-tw-target="#payment-confirmation-modal">
-                                        Setor </a> --}}
-                                @endif
-                            @else
-                                <a class="btn btn-primary shadow-md flex items-center ml-auto" href="javascript:;"
-                                    data-tw-toggle="modal" data-tw-target="#payment-confirmation-modal">
-                                    Setor </a>
-                            @endif
+                    @hasrole('admin||super_admin')
+                        @if ($order->payment_status !== 'paid')
+                            <a class="btn btn-primary shadow-md flex items-center ml-auto" href="javascript:;"
+                                data-tw-toggle="modal" data-tw-target="#payment-confirmation-modal">
+                                Setor </a>
                         @endif
                     @endhasrole
                 </div>
@@ -296,23 +284,7 @@
                                 @enderror
                             </div>
 
-                            <div class="mt-3">
-                                <label for="image" class="form-label">Upload Bukti Pembayaran <span
-                                        class="text-danger">*</span></label>
-                                <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
-                                    <i data-lucide="image" class="w-4 h-4 mr-2"></i>
-                                    <span class="text-primary mr-1">Upload a file</span> or drag and drop
-                                    <input id="image" name="image" type="file"
-                                        class="w-full h-full top-0 left-0 absolute opacity-0"
-                                        onchange="previewFile(this)">
-                                </div>
-                                <div id="image-preview" class="hidden mt-2"></div>
-                                @error('image')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+
 
                             <div class="px-5 mt-3 pb-8 text-center">
                                 <button type="submit" class="btn btn-success w-24">Setor</button>

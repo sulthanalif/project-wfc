@@ -30,51 +30,7 @@ class PaymentController extends Controller
         }
     }
 
-    public function storePaymentImage(Request $request, Order $order)
-    {
-        // dd($request->all(), $order);
-        $validator = Validator::make($request->all(),[
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
-        ]);
 
-        if($validator->fails()) {
-            return back()->with('error', $validator->errors());
-        }
-
-        try {
-            DB::transaction(function () use ($request, $order) {
-            $existingPayment = $order->payment; // Check if payment exists
-
-            $imageName = null; // Initialize image name to null
-
-            if ($request->hasFile('image')) { // Check if a new image is uploaded
-                $imageName = 'payment_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-                $path = 'images/payment/' . $order->agent_id . '/';
-
-                // Delete existing image if present
-                if ($existingPayment && Storage::disk('public')->exists($path . $existingPayment->image)) {
-                    Storage::disk('public')->delete($path . $existingPayment->image);
-                }
-
-                Storage::disk('public')->put($path . $imageName, $request->file('image')->getContent());
-            }
-
-            // Update or create payment record
-            $payment = $existingPayment ? $existingPayment : new Payment();
-            $payment->order_id = $order->id;
-            $payment->image = $imageName;
-            $payment->save();
-        });
-
-        return redirect()->route('order.show', $order)->with('success', 'Bukti pembayaran telah diubah');
-        } catch (\Throwable $th) {
-            $data = [
-                'message' => $th->getMessage(),
-                'status' => 400
-            ];
-            return view('cms.error', compact('data'));
-        }
-    }
 
     public function changePaymentStatus(Request $request, Payment $payment)
     {
@@ -118,7 +74,6 @@ class PaymentController extends Controller
         // ]);
         $validator = Validator::make($request->all(), [
             'pay' => ['required', 'numeric'],
-            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
         ]);
 
         if($validator->fails()) {
@@ -127,27 +82,27 @@ class PaymentController extends Controller
 
         try {
             DB::transaction(function () use ($request, $order) {
-                $existingPayment = $order->payment;
-                if ($existingPayment->count() < 1){
+                $existingPayment = $order->payment->sortByDesc('created_at')->first();
+
+
+                $payment = new Payment([
+                    'order_id' => $order->id,
+                    'pay' => $request->pay,
+                    'remaining_payment' => $existingPayment ? $existingPayment->remaining_payment - $request->pay : $order->total_price - $request->pay
+                ]);
+
+
+                if ($payment->save()) {
                     $order->payment_status = 'pending';
                     $order->save();
                 }
 
 
-                //nambah image
-                $imageName = 'payment_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-                $path = 'images/payment/' . $order->agent_id . '/';
-                Storage::disk('public')->put($path . $imageName, $request->file('image')->getContent());
+                if ($payment->remaining_payment == 0) {
+                    $order->payment_status = 'paid';
+                    $order->save();
+                }
 
-                $existingPaymentSuccess = $order->payment->sortByDesc('created_at')->where('status', 'success')->first();
-
-                $payment = new Payment();
-                $payment->order_id = $order->id;
-                $payment->pay = $request->pay;
-                $payment->remaining_payment = $existingPaymentSuccess ? $existingPaymentSuccess->remaining_payment - $request->pay  : $order->total_price - $request->pay;
-                $payment->status = 'pending';
-                $payment->image = $imageName;
-                $payment->save();
 
             });
             return redirect()->route('order.show', $order)->with('success' , 'Pembayaran berhasil ditambahkan');
@@ -160,50 +115,22 @@ class PaymentController extends Controller
         }
     }
 
-    public function accPayment(Payment $payment, Order $order)
-    {
-        try {
-            DB::transaction(function () use ($payment, $order) {
-                $payment->status = 'success';
-                $payment->save();
-
-                if ($payment->remaining_payment == 0) {
-                    $order->payment_status = 'paid';
-                    $order->save();
-                }
-            });
-            return redirect()->route('order.show', $order)->with('success', 'Pembayaran Diterima');
-        } catch (\Throwable $th) {
-            $data = [
-                'message' => $th->getMessage(),
-                'status' => 400
-            ];
-            return view('cms.error', compact('data'));
-        }
-    }
-
-    public function rejectPayment(Payment $payment, Order $order)
-    {
-        try {
-            DB::transaction(function () use ($payment) {
-                $payment->status = 'reject';
-                $payment->save();
-            });
-            return redirect()->route('order.show', $order)->with('success', 'Pembayaran Diterima');
-        } catch (\Throwable $th) {
-            $data = [
-                'message' => $th->getMessage(),
-                'status' => 400
-            ];
-            return view('cms.error', compact('data'));
-        }
-    }
 
     public function destroy(Request $request, Payment $payment)
     {
         try {
             DB::transaction(function () use ($request, $payment) {
                 $payment->delete();
+
+                $order = Order::find($payment->order_id);
+                $countPayment = Payment::where('order_id', $payment->order_id)->count();
+                if ($countPayment == 0) {
+                    $order->payment_status = 'unpaid';
+                    $order->save();
+                } else {
+                    $order->payment_status = 'pending';
+                    $order->save();
+                }
             });
             return back()->with('success', 'Berhasil dihapus');
         } catch (\Throwable $th) {
@@ -215,4 +142,12 @@ class PaymentController extends Controller
         }
     }
 
+    public function check (Order $order)
+    {
+        $existingPayment = $order->payment->sortByDesc('created_at')->first();
+
+        return response()->json([
+            'check' => $existingPayment
+        ]);
+    }
 }

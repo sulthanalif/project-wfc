@@ -6,26 +6,25 @@ use App\Helpers\UUIDGenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Payment extends Model
+class SubProduct extends Model
 {
     use HasFactory, UUIDGenerator;
 
-    protected $table = 'payments';
+    protected $table = 'sub_products';
     public $incrementing = false;
-    protected $primaryKey = 'id';
     protected $keyType = 'string';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'order_id',
-        'pay',
-        'remaining_payment',
-        // 'image',
-        // 'description',
-        // 'status',
+        'product_id',
+        'name',
+        'unit',
+        'amount',
+        'price',
     ];
 
-    public function order()
+    public function product()
     {
-        return $this->belongsTo(Order::class, 'order_id');
+        return $this->belongsTo(Product::class);
     }
 }

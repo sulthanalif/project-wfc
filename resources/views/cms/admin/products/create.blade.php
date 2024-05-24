@@ -56,10 +56,10 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="stock" class="form-label">Stok Barang <span class="text-danger">*</span></label>
-                                <input id="stock" name="stock" type="number" class="form-control w-full"
-                                    placeholder="Masukkan Harga Barang" required>
-                                @error('stock')
+                                <label for="unit" class="form-label">Satuan <span class="text-danger">*</span></label>
+                                <input id="unit" name="unit" type="text" class="form-control w-full"
+                                    placeholder="Masukkan Satuan Barang" required>
+                                @error('unit')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

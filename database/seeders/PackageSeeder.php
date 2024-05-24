@@ -29,21 +29,21 @@ class PackageSeeder extends Seeder
                 'description' => 'ini Deskripsi PHL',
 
             ],
-            [
-                'name' => 'TaBaBa',
-                'description' => 'ini Deskripsi TaBaBa',
+            // [
+            //     'name' => 'TaBaBa',
+            //     'description' => 'ini Deskripsi TaBaBa',
 
-            ],
-            [
-                'name' => 'THR Smart Home',
-                'description' => 'ini Deskripsi THR Smart Home',
+            // ],
+            // [
+            //     'name' => 'THR Smart Home',
+            //     'description' => 'ini Deskripsi THR Smart Home',
 
-            ],
-            [
-                'name' => 'TMR',
-                'description' => 'ini Deskripsi TMR',
+            // ],
+            // [
+            //     'name' => 'TMR',
+            //     'description' => 'ini Deskripsi TMR',
 
-            ],
+            // ],
         ];
 
         foreach ($datas as $data) {

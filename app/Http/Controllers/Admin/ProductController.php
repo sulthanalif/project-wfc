@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\SubProduct;
 
 class ProductController extends Controller
 {
@@ -93,6 +94,7 @@ class ProductController extends Controller
             'name' => ['required', 'max:225', 'string'],
             'price' => ['required', 'numeric'],
             'stock' => ['required', 'numeric'],
+            'unit' => ['required', 'string'],
             'days' => [ 'string'],
             'description' => ['required', 'max:500', 'string'],
             'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
@@ -113,6 +115,7 @@ class ProductController extends Controller
                     'name' => $request->name,
                     'price' => $request->price,
                     'stock' => $request->stock,
+                    'unit' => $request->unit,
                     'days' => $request->days,
                     'total_price' => $request->price * $request->days
                 ]);
@@ -162,7 +165,8 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         if ($product) {
-            return view('cms.admin.products.detail', compact('product'));
+            $subProducts = $product->subProduct()->paginate(5);
+            return view('cms.admin.products.detail', compact('product', 'subProducts'));
         } else {
             return back()->with('error', 'Data Tidak Ditemukan!');
         }
@@ -191,6 +195,7 @@ class ProductController extends Controller
             'name' => ['required', 'max:225', 'string'],
             'price' => ['required', 'numeric'],
             'stock' => ['required', 'numeric'],
+            'unit' => ['required', 'string'],
             'days' => [ 'string'],
             'description' => ['required', 'max:500', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
@@ -217,6 +222,7 @@ class ProductController extends Controller
                         'name' => $request->name,
                         'price' => $request->price,
                         'stock' => $request->stock,
+                        'unit' => $request->unit,
                         'days' => $request->days,
                         'total_price' => $request->price * $request->days
                     ]);

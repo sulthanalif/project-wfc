@@ -3,19 +3,16 @@
 namespace App\Http\Controllers\Transaction;
 
 use App\Helpers\GenerateRandomString;
+use App\Helpers\ValidateRole;
 use App\Models\User;
 use App\Models\Order;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\UpdateOrderRequest;
 use App\Models\OrderDetail;
 use App\Models\Package;
 use App\Models\Product;
-use App\Models\ProductDetail;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -88,11 +85,14 @@ class OrderController extends Controller
         try {
             DB::transaction(function () use ($request, &$order) {
 
+
+
                 $order = new Order([
                     'agent_id' => $request->agent_id,
                     'order_number' => $request->order_number,
                     'total_price' => $request->total_price,
-                    'order_date' => $request->order_date ? $request->order_date : now()
+                    'order_date' => $request->order_date ? $request->order_date : now(),
+                    'status' =>  ValidateRole::check('super_admin||admin') ? 'accepted' : 'pending',
                 ]);
 
                 $order->save();
