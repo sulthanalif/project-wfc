@@ -22,7 +22,7 @@ class ReportInstalmentExport implements FromView
     public function view(): View
     {
         return view('cms.admin.export.instalment', [
-            'datas' => $this->datas,
+            'payments' => $this->datas,
             'stats' => $this->stats,
         ]);
     }

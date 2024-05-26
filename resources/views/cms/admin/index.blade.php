@@ -20,14 +20,11 @@
                                     <div class="flex">
                                         <i data-lucide="shopping-cart" class="report-box__icon text-primary"></i>
                                         <div class="ml-auto">
-                                            <div class="report-box__indicator bg-success tooltip cursor-pointer"
-                                                title="33% Higher than last month"> 33% <i data-lucide="chevron-up"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
+
                                         </div>
                                     </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">4.710</div>
-                                    <div class="text-base text-slate-500 mt-1">Item Sales</div>
+                                    <div class="text-3xl font-medium leading-8 mt-6">{{ $data['productSales'] }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Product Sales</div>
                                 </div>
                             </div>
                         </div>
@@ -36,14 +33,9 @@
                                 <div class="box p-5">
                                     <div class="flex">
                                         <i data-lucide="credit-card" class="report-box__icon text-pending"></i>
-                                        <div class="ml-auto">
-                                            <div class="report-box__indicator bg-danger tooltip cursor-pointer"
-                                                title="2% Lower than last month"> 2% <i data-lucide="chevron-down"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
-                                        </div>
+
                                     </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">3.721</div>
+                                    <div class="text-3xl font-medium leading-8 mt-6">{{ $data['newOrder'] }}</div>
                                     <div class="text-base text-slate-500 mt-1">New Orders</div>
                                 </div>
                             </div>
@@ -54,10 +46,7 @@
                                     <div class="flex">
                                         <i data-lucide="monitor" class="report-box__icon text-warning"></i>
                                         <div class="ml-auto">
-                                            <div class="report-box__indicator bg-success tooltip cursor-pointer"
-                                                title="12% Higher than last month"> 12% <i data-lucide="chevron-up"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
+
                                         </div>
                                     </div>
                                     <div class="text-3xl font-medium leading-8 mt-6">{{ $data['totalProduct'] }}</div>
@@ -71,10 +60,7 @@
                                     <div class="flex">
                                         <i data-lucide="user" class="report-box__icon text-success"></i>
                                         <div class="ml-auto">
-                                            <div class="report-box__indicator bg-success tooltip cursor-pointer"
-                                                title="22% Higher than last month"> 22% <i data-lucide="chevron-up"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
+
                                         </div>
                                     </div>
                                     <div class="text-3xl font-medium leading-8 mt-6">{{ $data['totalAgent'] }}</div>

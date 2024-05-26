@@ -21,7 +21,7 @@
                             <div class="report-box zoom-in">
                                 <div class="box p-5">
                                     <div class="flex">
-                                        <i data-lucide="credit-card" class="report-box__icon text-success"></i>
+                                        <i data-lucide="check" class="report-box__icon text-success"></i>
                                         {{-- <div class="ml-auto">
                                             <div class="report-box__indicator bg-danger tooltip cursor-pointer"
                                                 title="2% Lower than last month"> 2% <i data-lucide="chevron-down"
@@ -29,9 +29,25 @@
                                             </div>
                                         </div> --}}
                                     </div>
-                                    <div class="text-2xl font-bold leading-8 mt-6">Rp.
-                                        {{ number_format($stats['totalDeposit'], 0, ',', '.') }}</div>
-                                    <div class="text-base text-slate-500 mt-1">Total Pemasukan</div>
+                                    <div class="text-2xl font-bold leading-8 mt-6">Rp. {{ number_format($stats['pay'], 0, ',', '.') }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Total Terbayar</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                            <div class="report-box zoom-in">
+                                <div class="box p-5">
+                                    <div class="flex">
+                                        <i data-lucide="clock" class="report-box__icon text-warning"></i>
+                                        {{-- <div class="ml-auto">
+                                            <div class="report-box__indicator bg-danger tooltip cursor-pointer"
+                                                title="2% Lower than last month"> 2% <i data-lucide="chevron-down"
+                                                    class="w-4 h-4 ml-0.5"></i>
+                                            </div>
+                                        </div> --}}
+                                    </div>
+                                    <div class="text-2xl font-bold leading-8 mt-6">Rp. {{ number_format($stats['remaining_pay'], 0, ',', '.') }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Total Belum Terbayar</div>
                                 </div>
                             </div>
                         </div>
@@ -47,27 +63,39 @@
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">NAMA AGEN</th>
-                        <th class="text-center whitespace-nowrap">PEMBELIAN</th>
+                        <th class="text-center whitespace-nowrap">NOMER ORDER</th>
+                        <th class="text-center whitespace-nowrap">JUMLAH</th>
+                        {{-- <th class="text-center whitespace-nowrap">KASIR</th> --}}
+                        <th class="text-center whitespace-nowrap">WAKTU</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!$paginationData)
+                    @if (!$payments)
                         <tr>
                             <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
-                        @foreach ($paginationData['data'] as $agent)
+                        @foreach ($payments as $payment)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
 
                                 <td>
-                                    <p class="text-slate-500 flex items-center mr-3"> {{ $agent['agent_name'] }} </p>
+                                    <p class="text-center mr-3">
+                                        {{ $payment->order->agent->agentProfile->name }} </p>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 text-center"> Rp.
-                                        {{ number_format($agent['total_deposit'], 0, ',', '.') }} </p>
+                                    <p class="text-slate-500 text-center mr-3"> {{ $payment->order->order_number }}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 flex text-center"> Rp.
+                                        {{ number_format($payment->pay, 0, ',', '.') }} </p>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 text-center items-center mr-3"> {{ $payment->created_at }}
+                                    </p>
                                 </td>
 
                             </tr>

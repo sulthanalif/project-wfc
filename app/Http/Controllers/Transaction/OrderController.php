@@ -22,12 +22,8 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
-        $roleUser = $user->roles->first();
-        $roleName = $roleUser->name;
-
-        if ($roleName == 'agent') {
-            $orders = Order::where('agent_id', $user->id)->orderByDesc('created_at')->paginate(10);
+        if (ValidateRole::check('agent')) {
+            $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->paginate(10);
 
             return view('cms.transactions.index', compact('orders'));
         } else {

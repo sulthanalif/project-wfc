@@ -7,6 +7,7 @@
         <h2 class="text-lg font-medium mr-auto">
             Detail Barang
         </h2>
+        <a href="{{ route('product.index') }}" class="btn btn-primary w-24 mr-1">Kembali</a>
     </div>
 
     <div class="intro-y box px-5 pt-5 mt-5">
@@ -70,8 +71,8 @@
                     <div class="flex flex-col items-center justify-center border-b pb-2">
                         <h1 class="font-bold text-xl">Sub Barang</h1>
                         <span class="text-muted flex flex-row items-center">
-                            <a href="javascript:;" data-tw-toggle="modal"
-                            data-tw-target="#create-confirmation-modal" class="btn-sm btn-primary">Tambah</a>
+                            <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#create-confirmation-modal"
+                                class="btn-sm btn-primary">Tambah</a>
                         </span>
                         <div class="mt-3">
                             <table class="table table-report -mt-2">
@@ -88,22 +89,27 @@
                                 <tbody>
                                     @if ($subProducts->count() <= 0)
                                         <tr>
-                                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Tidak Ada Sub Barang Pada Product Ini!</td>
+                                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Tidak Ada
+                                                Sub Barang Pada Product Ini!</td>
                                         </tr>
                                     @else
                                         @foreach ($subProducts as $sub)
                                             <tr class="intro-x">
                                                 <td>
-                                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                                    <p class="font-medium whitespace-nowrap text-center">
+                                                        {{ $loop->iteration }}</p>
                                                 </td>
                                                 <td>
-                                                    <p class="text-slate-500 flex items-center mr-3">{{ $sub->name }} </p>
+                                                    <p class="text-slate-500 flex items-center mr-3">{{ $sub->name }}
+                                                    </p>
                                                 </td>
                                                 <td>
-                                                    <p class="text-slate-500 flex items-center mr-3">{{ $sub->amount }} </p>
+                                                    <p class="text-slate-500 flex items-center mr-3">{{ $sub->amount }}
+                                                    </p>
                                                 </td>
                                                 <td>
-                                                    <p class="text-slate-500 flex items-center mr-3">{{ $sub->unit }} </p>
+                                                    <p class="text-slate-500 flex items-center mr-3">{{ $sub->unit }}
+                                                    </p>
                                                 </td>
                                                 <td>
                                                     <p class="text-slate-500 flex items-center mr-3">Rp.
@@ -112,22 +118,24 @@
 
                                                 <td class="table-report__action w-56">
                                                     <div class="flex justify-center items-center">
-                                                        <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                                            data-tw-target="#delete-confirmation-modal{{ $sub->id }}"> <i
-                                                                data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                                        <a class="flex items-center text-danger" href="javascript:;"
+                                                            data-tw-toggle="modal"
+                                                            data-tw-target="#delete-confirmation-modal{{ $sub->id }}">
+                                                            <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
                                                     </div>
                                                 </td>
                                             </tr>
 
 
                                             <!-- BEGIN: Delete Confirmation Modal -->
-                                            <div id="delete-confirmation-modal{{ $sub->id }}" class="modal" tabindex="-1"
-                                                aria-hidden="true">
+                                            <div id="delete-confirmation-modal{{ $sub->id }}" class="modal"
+                                                tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-body p-0">
                                                             <div class="p-5 text-center">
-                                                                <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                                <i data-lucide="x-circle"
+                                                                    class="w-16 h-16 text-danger mx-auto mt-3"></i>
                                                                 <div class="text-3xl mt-5">Apakah anda yakin?</div>
                                                                 <div class="text-slate-500 mt-2">
                                                                     Apakah anda yakin untuk menghapus data ini?
@@ -136,10 +144,13 @@
                                                                 </div>
                                                             </div>
                                                             <div class="px-5 pb-8 text-center">
-                                                                <form action="{{ route('subProduct.destroy', [$product , $sub]) }}" method="post">
+                                                                <form
+                                                                    action="{{ route('subProduct.destroy', [$product, $sub]) }}"
+                                                                    method="post">
                                                                     @csrf
                                                                     @method('delete')
-                                                                    <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                                                    <button type="submit"
+                                                                        class="btn btn-danger w-24">Hapus</button>
                                                                     <button type="button" data-tw-dismiss="modal"
                                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
                                                                 </form>
@@ -161,8 +172,7 @@
     </div>
 
     <!-- BEGIN: create Confirmation Modal -->
-    <div id="create-confirmation-modal" class="modal" tabindex="-1"
-        aria-hidden="true">
+    <div id="create-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body p-0">
@@ -172,10 +182,11 @@
 
                     </div>
                     <div class="px-5 pb-8 text-start">
-                        <form action="{{ route('subProduct.store', $product ) }}" method="post">
+                        <form action="{{ route('subProduct.store', $product) }}" method="post">
                             @csrf
                             <div>
-                                <label for="name" class="form-label">Nama Barang <span class="text-danger">*</span></label>
+                                <label for="name" class="form-label">Nama Barang <span
+                                        class="text-danger">*</span></label>
                                 <input id="name" name="name" type="text" class="form-control w-full"
                                     placeholder="Masukkan Nama Barang" required>
                                 @error('name')
@@ -185,7 +196,8 @@
                                 @enderror
                             </div>
                             <div class="mt-2">
-                                <label for="amount" class="form-label">Jumlah Barang <span class="text-danger">*</span></label>
+                                <label for="amount" class="form-label">Jumlah Barang <span
+                                        class="text-danger">*</span></label>
                                 <input id="amount" name="amount" type="number" class="form-control w-full"
                                     placeholder="Masukkan Jumlah Barang" required>
                                 @error('amount')
@@ -195,7 +207,8 @@
                                 @enderror
                             </div>
                             <div class="mt-2">
-                                <label for="unit" class="form-label">Satuan Barang <span class="text-danger">*</span></label>
+                                <label for="unit" class="form-label">Satuan Barang <span
+                                        class="text-danger">*</span></label>
                                 <input id="unit" name="unit" type="text" class="form-control w-full"
                                     placeholder="Masukkan Satuan Barang" required>
                                 @error('unit')
@@ -205,7 +218,8 @@
                                 @enderror
                             </div>
                             <div class="mt-2">
-                                <label for="price" class="form-label">Harga Barang <span class="text-danger">*</span></label>
+                                <label for="price" class="form-label">Harga Barang <span
+                                        class="text-danger">*</span></label>
                                 <input id="price" name="price" type="number" class="form-control w-full"
                                     placeholder="Masukkan Harga Barang" required>
                                 @error('price')
@@ -216,8 +230,8 @@
                             </div>
                             <div class="mt-3">
                                 <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                            <button type="button" data-tw-dismiss="modal"
-                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                <button type="button" data-tw-dismiss="modal"
+                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
                             </div>
                         </form>
                     </div>

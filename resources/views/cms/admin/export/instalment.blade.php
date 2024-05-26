@@ -1,35 +1,51 @@
 <table class="table table-report -mt-2">
     <thead>
         <tr>
-            <th class="whitespace-nowrap">Total Setoran</th>
+            <th class="whitespace-nowrap">Total Terbayar</th>
+            <th class="whitespace-nowrap">Total Belum Terbayar</th>
         </tr>
     </thead>
     <tbody>
-                <tr class="intro-x">
-                    <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $stats['totalDeposit'] }} </p>
-                    </td>
-                </tr>  
+        <tr class="intro-x">
+            <td>
+                <p class="text-slate-500 flex items-center mr-3">{{ $stats['pay'] }} </p>
+            </td>
+            <td>
+                <p class="text-slate-500 flex items-center mr-3">{{ $stats['remaining_pay'] }} </p>
+            </td>
+        </tr>
     </tbody>
 </table>
 <table class="table table-report -mt-2">
     <thead>
         <tr>
-            <th class="whitespace-nowrap">NAMA AGEN</th>
-            <th class="whitespace-nowrap">SETORAN</th>
+            <th class="text-center whitespace-nowrap">Nama Agen</th>
+            <th class="text-center whitespace-nowrap">Nomer Order</th>
+            <th class="text-center whitespace-nowrap">Jumlah</th>
+            <th class="text-center whitespace-nowrap">Waktu</th>
         </tr>
     </thead>
     <tbody>
-            @foreach ($datas as $agent)
-                <tr class="intro-x">
-                   
-                    <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $agent['agent_name'] }} </p>
-                    </td>
-                    <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $agent['total_deposit'] }} </p>
-                    </td>      
-                </tr>  
-            @endforeach
+        @foreach ($payments as $payment)
+            <tr class="intro-x">
+
+                <td>
+                    <p class="text-center mr-3">
+                        {{ $payment->order->agent->agentProfile->name }} </p>
+                </td>
+                <td>
+                    <p class="text-slate-500 text-center mr-3"> {{ $payment->order->order_number }}
+                    </p>
+                </td>
+                <td>
+                    <p class="text-slate-500 flex text-center"> Rp.
+                        {{ number_format($payment->pay, 0, ',', '.') }} </p>
+                </td>
+                <td>
+                    <p class="text-slate-500 text-center items-center mr-3"> {{ $payment->created_at }}
+                    </p>
+                </td>
+            </tr>
+        @endforeach
     </tbody>
 </table>
