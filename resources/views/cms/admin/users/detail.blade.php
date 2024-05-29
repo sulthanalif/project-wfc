@@ -7,6 +7,7 @@
         <h2 class="text-lg font-medium mr-auto">
             Detail User
         </h2>
+        <a href="{{ route('user.index') }}" class="btn px-2 box mr-2"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
         @hasrole('super_admin')
             <a href="{{ route('user.edit', $user) }}" class="btn btn-primary"><i data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah
                 Detail</a>

@@ -29,8 +29,8 @@
                     <span class="text-white text-lg ml-3"> Paket Smart WFC </span>
                 </a>
                 <div class="my-auto">
-                    <img alt="Paket Smart WFC" class="-intro-x w-1/2 -mt-16"
-                        src="{{ asset('assets/cms/images/illustration.svg') }}">
+                    <img alt="Paket Smart WFC" class="-intro-x w-1/2 -mt-16 border border-white rounded-lg"
+                        src="{{ asset('assets/logo.png') }}">
                     <div class="-intro-x text-white font-medium text-4xl leading-tight mt-10">
                         Temukan Kebutuhan Anda
                         <br>

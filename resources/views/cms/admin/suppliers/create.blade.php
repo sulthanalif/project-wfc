@@ -48,7 +48,7 @@
                     </div>
                     <div class="text-left mt-5">
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
+                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
                 </form>
             </div>
