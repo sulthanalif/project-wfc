@@ -11,6 +11,23 @@ use Illuminate\Support\Facades\Validator;
 
 class SubProductController extends Controller
 {
+    public function index(Request $request)
+    {
+        $subProducts = Product::paginate(10);
+
+        return view('cms.admin.sub-products.index', compact('subProducts'));
+    }
+
+    public function create()
+    {
+        return view('cms.admin.sub-products.create');
+    }
+
+    public function show(SubProduct $subProduct)
+    {
+        return view('cms.admin.sub-products.detail', compact($subProduct));
+    }
+
     public function store(Request $request, Product $product)
     {
         // return response()->json('haii');
@@ -18,30 +35,63 @@ class SubProductController extends Controller
             // 'product_id' => 'required|string',
             'name' => 'required|string',
             'unit' => 'required|string',
-            'amount' => 'numeric|required',
             'price' => 'required|numeric'
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return view('cms.error', $validator->errors());
         }
 
         try {
             DB::transaction(function () use ($request, $product){
                 $subProduct = new SubProduct([
-                    'product_id' => $product->id,
                     'name' => $request->name,
                     'unit' => $request->unit,
-                    'amount' => $request->amount,
                     'price' => $request->price
                 ]);
                 $subProduct->save();
             });
 
-            return redirect()->route('product.show', $product)->with('success', 'Data BErhasil Ditambahkan!');
+            return redirect()->route('sub-product.index')->with('success', 'Data Berhasil Ditambahkan!');
         } catch (\Exception $error) {
             $data = [
                 'message' => $error->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
+    }
+
+    public function edit(SubProduct $subProduct)
+    {
+        return view('cms.admin.sub-products.edit', compact('subProduct'));
+    }
+
+    public function update(Request $request, SubProduct $subProduct)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'unit' => 'required|string',
+            'price' => 'required|numeric'
+
+        ]);
+
+        if ($validator->fails()) {
+            return view('cms.error', $validator->errors());
+        }
+
+        try {
+            DB::transaction(function () use ($request, $subProduct) {
+                $subProduct->update([
+                    'name' => $request->name,
+                    'unit' => $request->unit,
+                    'price' => $request->price
+                ]);
+            });
+            return redirect()->route('sub-product.index')->with('success', 'Data Berjasil Diubah!');
+        } catch (\Exception $e) {
+            $data = [
+                'message' => $e->getMessage(),
                 'status' => 400
             ];
             return view('cms.error', compact('data'));
@@ -54,7 +104,7 @@ class SubProductController extends Controller
             DB::transaction(function () use ($subProduct) {
                 $subProduct->delete();
             });
-            return redirect()->route('product.show', $product)->with('success', 'Data Berjasil Dihapus!');
+            return redirect()->route('sub-product.index')->with('success', 'Data Berjasil Dihapus!');
         } catch (\Exception $e) {
             $data = [
                 'message' => $e->getMessage(),
@@ -63,4 +113,5 @@ class SubProductController extends Controller
             return view('cms.error', compact('data'));
         }
     }
+
 }

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\ProductSubProduct;
 use App\Models\SubProduct;
 
 class ProductController extends Controller
@@ -93,7 +94,6 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
             'price' => ['required', 'numeric'],
-            'stock' => ['required', 'numeric'],
             'unit' => ['required', 'string'],
             'days' => [ 'string'],
             'description' => ['required', 'max:500', 'string'],
@@ -114,7 +114,6 @@ class ProductController extends Controller
                 $product = Product::create([
                     'name' => $request->name,
                     'price' => $request->price,
-                    'stock' => $request->stock,
                     'unit' => $request->unit,
                     'days' => $request->days,
                     'total_price' => $request->price * $request->days
@@ -172,6 +171,7 @@ class ProductController extends Controller
         }
     }
 
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -194,7 +194,6 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
             'price' => ['required', 'numeric'],
-            'stock' => ['required', 'numeric'],
             'unit' => ['required', 'string'],
             'days' => [ 'string'],
             'description' => ['required', 'max:500', 'string'],
@@ -221,7 +220,6 @@ class ProductController extends Controller
                     $update = $product->update([
                         'name' => $request->name,
                         'price' => $request->price,
-                        'stock' => $request->stock,
                         'unit' => $request->unit,
                         'days' => $request->days,
                         'total_price' => $request->price * $request->days
@@ -334,6 +332,51 @@ class ProductController extends Controller
             return redirect()->route('product.index', ['page' => $request->page])->with('success', 'Data Berhasil Dihapus');
         } else {
             return back()->with('error', 'Data Gagal Dihapus!');
+        }
+    }
+
+    public function addSubProduct(Request $request, Product $product)
+    {
+        $validator = Validator::make($request->all(), [
+            'amount' => ['required', 'numeric'],
+        ]);
+
+        if ($validator->fails()) {
+            return view('cms.error', $validator->errors());
+        }
+
+        try {
+            DB::transaction(function () use ($request, $product) {
+                $relasi = new ProductSubProduct([
+                    'product_id' => $product->id,
+                    'sub_product_id' => $request->sub_product_id,
+                    'amount' => $request->amount
+                ]);
+                $relasi->save();
+            });
+            return redirect()->route('product.show', $product)->with('success', 'Data Berhasil Ditambahkan');
+        } catch (\Exception $e) {
+            $data = [
+                'message' => $e->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
+    }
+
+    public function destroySub(ProductSubProduct $productSubProduct, Product $product)
+    {
+        try {
+            DB::transaction(function () use ($productSubProduct) {
+                $productSubProduct->delete();
+            });
+            return redirect()->route('product.show' , $product)->with('success', 'Data Berjasil Dihapus!');
+        } catch (\Throwable $e) {
+            $data = [
+                'message' => $e->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Package;
 use App\Models\Product;
 use App\Models\ProductDetail;
 use App\Models\ProductPackage;
+use App\Models\ProductSubProduct;
 use App\Models\SubProduct;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -41,7 +42,6 @@ class ProductPackageSeeder extends Seeder
         ]);
 
             $price = self::generateRandomNumbers(3000, 8000)[0];
-            $stock = self::generateRandomNumbers(100, 300)[0];
             $days = self::generateRandomNumbers(300, 400)[0];
             // $package = Package::create($data);
             $unit = "Pcs";
@@ -49,7 +49,6 @@ class ProductPackageSeeder extends Seeder
             $product1 = Product::create([
                 // 'package_id' => $package1->id,
                 'name' => 'Product ' . $package1->name . ' 1',
-                'stock' => $stock,
                 'unit' => $unit,
                 'price' => $price,
                 'days' => $days,
@@ -65,36 +64,37 @@ class ProductPackageSeeder extends Seeder
             //subproduct
             $dataSubs1 = [
                 [
-                    'product_id' => $product1->id,
                     'name' => 'Uang Hampers 500rb',
                     'unit' => 'Rupiah',
-                    'amount' => '500000',
                     'price' => '500000',
                 ],
                 [
-                    'product_id' => $product1->id,
                     'name' => 'Lidah Kucing Chashfood',
                     'unit' => 'Gram',
-                    'amount' => '250',
+                    'price' => '25000',
 
                 ],
                 [
-                    'product_id' => $product1->id,
                     'name' => 'Thumbprint by chashfood',
                     'unit' => 'Gram',
-                    'amount' => '250',
+                    'price' => '25000',
 
                 ],
             ];
             foreach ($dataSubs1 as $data) {
-                SubProduct::create($data);
+                $subProduct1 = SubProduct::create($data);
+
+                ProductSubProduct::create([
+                    'product_id' => $product1->id,
+                    'sub_product_id' => $subProduct1->id,
+                    'amount' => 1
+                ]);
             }
 
             $product2 = Product::create([
                 // 'package_id' => $package1->id,
                 'name' => 'Product ' . $package1->name . ' 2',
                 'unit' => $unit,
-                'stock' => $stock,
                 'price' => $price,
                 'days' => $days,
                 'total_price' => $price * $days
@@ -108,30 +108,33 @@ class ProductPackageSeeder extends Seeder
 
             $dataSubs2 = [
                 [
-                    'product_id' => $product2->id,
                     'name' => 'Uang Hampers',
                     'unit' => 'Rupiah',
-                    'amount' => '100000',
+                    'price' => '100000',
 
                 ],
                 [
-                    'product_id' => $product2->id,
                     'name' => 'Chasfood',
                     'unit' => 'Pcs',
-                    'amount' => '1',
+                    'price' => '1000',
 
                 ],
                 [
-                    'product_id' => $product2->id,
                     'name' => 'Box hampers',
                     'unit' => 'Pcs',
-                    'amount' => '1',
+                    'price' => '1567',
 
                 ],
             ];
 
             foreach ($dataSubs2 as $data) {
-                SubProduct::create($data);
+                $subProduct2 = SubProduct::create($data);
+
+                ProductSubProduct::create([
+                    'product_id' => $product2->id,
+                    'sub_product_id' => $subProduct2->id,
+                    'amount' => 1
+                ]);
             }
 
             ProductPackage::create([

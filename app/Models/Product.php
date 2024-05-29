@@ -17,7 +17,6 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'stock',
         'unit',
         'price',
         'days',
@@ -46,8 +45,9 @@ class Product extends Model
 
     public function subProduct()
     {
-        return $this->hasMany(SubProduct::class);
+        return $this->hasOne(ProductSubProduct::class);
     }
+
 
     public function supplierName()
     {

@@ -3,27 +3,30 @@
 namespace App\Models;
 
 use App\Helpers\UUIDGenerator;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class SubProduct extends Model
+class ProductSubProduct extends Model
 {
     use HasFactory, UUIDGenerator;
 
-    protected $table = 'sub_products';
+    protected $table = 'product_sub_products';
     public $incrementing = false;
     protected $keyType = 'string';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name',
-        'unit',
+        'product_id',
+        'sub_product_id',
         'amount',
-        'price',
     ];
 
     public function product()
     {
-        return $this->hasOne(ProductSubProduct::class);
+        return $this->belongsTo(Product::class);
+    }
+    public function subProduct()
+    {
+        return $this->belongsTo(SubProduct::class);
     }
 }
