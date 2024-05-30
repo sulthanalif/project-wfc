@@ -179,8 +179,13 @@
                                 <div class="row justify-content-end">
                                     <div class="col-lg-10 col-9">
                                         <div class="team-image">
-                                            <img src="{{ asset('assets/cms/images/profile.svg') }}" alt=""
-                                                class="img-fluid">
+                                            @if ($agent->agentProfile->photo == null)
+                                                <img src="{{ asset('assets/logo2.PNG') }}" alt="Gambar Produk"
+                                                    class="img-fluid">
+                                            @else
+                                                <img src="{{ route('getImage', ['path' => 'photos', 'imageName' => $agent->agentProfile->photo]) }}"
+                                                    alt="" class="img-fluid">
+                                            @endif
                                         </div>
                                         <div class="team-icon ">
                                             <div class="d-flex mt-2 align-items-center justify-content-center">

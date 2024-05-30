@@ -137,8 +137,12 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="text-center mb-2">
-                                                <img src="{{ asset('storage/images/product/' . $product->detail->image) }}"
-                                                    alt="" class="img-fluid">
+                                                @if ($product->detail->image === 'image.jpg')
+                                                    <img src="{{ asset('assets/logo2.PNG') }}" alt="Gambar Produk" class="img-fluid">
+                                                @else
+                                                <img src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}" alt=""
+                                                    class="img-fluid">
+                                                @endif
                                             </div>
                                             <div class="flex flex-row p-0 m-0">
                                                 <p>Supplier: <span class="text-muted">{{ $product->supplierName->name }}</span></p>

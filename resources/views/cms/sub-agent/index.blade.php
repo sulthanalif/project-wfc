@@ -10,13 +10,26 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin|agent')
                 <a href="{{ route('sub-agent.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Sub Agen</a>
-                <a href="{{ route('export.subAgent') }}" class="btn btn-primary shadow-md mr-2">Export</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
+                        <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="plus"></i>
+                        </span>
+                    </button>
+                    <div class="dropdown-menu w-40">
+                        <ul class="dropdown-content">
+                            <li>
+                                <a href="{{ route('export.subAgent') }}" class="dropdown-item"> <i data-lucide="log-out"
+                                        class="w-4 h-4 mr-2"></i> Export </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $subAgents->firstItem() }} hingga
                     {{ $subAgents->lastItem() }} dari {{ $subAgents->total() }} data</div>
             @endhasrole
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Search...">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
 

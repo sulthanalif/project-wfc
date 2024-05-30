@@ -15,7 +15,7 @@
             @endhasrole
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Search...">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
 

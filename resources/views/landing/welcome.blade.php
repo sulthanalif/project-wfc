@@ -181,8 +181,8 @@
                             Baca Selengkapnya <i class="mdi mdi-arrow-right"></i></a>
                     </div>
                 </div>
-                <div class="col-lg-6 ">
-                    <img src="{{ asset('assets/landing/images/img2.png') }}" alt="" class="img-fluid">
+                <div class="col-lg-6 text-center mt-3 mt-lg-0">
+                    <img src="{{ asset('assets/pemilik.jpg') }}" alt="" class="img-fluid img-thumbnail rounded" style="max-height: 500px">
                 </div>
             </div>
         </div>
@@ -217,8 +217,12 @@
                                     <div class="testi-box position-relative overflow-hidden">
                                         <div class="row align-items-center">
                                             <div class="col-md-5 text-center px-3">
-                                                <img src="{{ asset('storage/images/product/' . $product->detail->image) }}" alt=""
+                                                @if ($product->detail->image === 'image.jpg')
+                                                    <img src="{{ asset('assets/logo2.PNG') }}" alt="Gambar Produk" class="img-fluid">
+                                                @else
+                                                <img src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}" alt=""
                                                     class="img-fluid">
+                                                @endif
                                             </div>
                                             <div class="col-md-7">
                                                 <div class="p-4">

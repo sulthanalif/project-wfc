@@ -1,6 +1,30 @@
 <!-- BEGIN: Top Bar -->
 <div
     class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt-12 md:mt-0 -mx-3 sm:-mx-8 md:-mx-0 px-3 md:border-b-0 relative md:fixed md:inset-x-0 md:top-0 sm:px-8 md:px-10 md:pt-10 md:bg-gradient-to-b md:from-slate-100 md:to-transparent dark:md:from-darkmode-700">
+    @if (session('success'))
+        <div class="-intro-y z-50">
+            <div class="alert alert-outline-secondary alert-dismissible show flex items-center fixed top-2 right-0 bg-white p-4 rounded shadow-lg"
+                role="alert">
+                <span class="text-success flex">
+                    <i data-lucide="check-circle" class="w-6 h-6 mr-2"></i> {{ session('success') }}
+                </span>
+                <button type="button" class="btn-close" data-tw-dismiss="alert" aria-label="Close"> <i data-lucide="x"
+                        class="w-4 h-4"></i> </button>
+            </div>
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="-intro-y z-50">
+            <div class="alert alert-outline-secondary alert-dismissible show flex items-center fixed top-2 right-0 bg-white p-4 rounded shadow-lg"
+                role="alert">
+                <span class="text-danger flex">
+                    <i data-lucide="x-circle" class="w-6 h-6 mr-2"></i> {{ session('error') }}
+                </span>
+                <button type="button" class="btn-close" data-tw-dismiss="alert" aria-label="Close"> <i data-lucide="x"
+                        class="w-4 h-4"></i> </button>
+            </div>
+        </div>
+    @endif
     <div class="h-full flex items-center">
         <!-- BEGIN: Logo -->
         @if (auth()->user()->hasRole('super_admin|admin|finance_admin'))
