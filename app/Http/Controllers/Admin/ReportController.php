@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ReportInstalmentExport;
 use App\Exports\ReportTotalDepositExport;
 use App\Exports\ReportProductDetailExport;
+use App\Models\SubProduct;
 
 class ReportController extends Controller
 {
@@ -20,34 +21,34 @@ class ReportController extends Controller
         $agents = User::role('agent')->get();
         $datas = [];
 
-            foreach ($agents as $agent) {
-                $totalPriceOrder = 0;
-                $totalDeposit = 0;
+        foreach ($agents as $agent) {
+            $totalPriceOrder = 0;
+            $totalDeposit = 0;
 
-                //total price order
-                foreach ($agent->order as $order) {
-                    $totalPriceOrder += $order->total_price;
+            //total price order
+            foreach ($agent->order as $order) {
+                $totalPriceOrder += $order->total_price;
 
-                    //total deposit
-                    foreach ($order->payment as $payment) {
-                        $totalDeposit += $payment->pay;
-                    }
-                }
-
-                if ($totalPriceOrder > 0) {
-                    $datas[] = [
-                        'agent_name' => $agent->agentProfile->name,
-                        'total_price_order' => $totalPriceOrder,
-                        'total_deposit' => $totalDeposit,
-                        'total_remaining_payment' => $totalPriceOrder - $totalDeposit
-                    ];
+                //total deposit
+                foreach ($order->payment as $payment) {
+                    $totalDeposit += $payment->pay;
                 }
             }
-            if (is_array($datas)) {
-                $totalPriceOrderAll = array_sum(array_column($datas, 'total_price_order'));
-                $totalDepositAll = array_sum(array_column($datas, 'total_deposit'));
-                $totalRemainingAll = array_sum(array_column($datas, 'total_remaining_payment'));
-              }
+
+            if ($totalPriceOrder > 0) {
+                $datas[] = [
+                    'agent_name' => $agent->agentProfile->name,
+                    'total_price_order' => $totalPriceOrder,
+                    'total_deposit' => $totalDeposit,
+                    'total_remaining_payment' => $totalPriceOrder - $totalDeposit
+                ];
+            }
+        }
+        if (is_array($datas)) {
+            $totalPriceOrderAll = array_sum(array_column($datas, 'total_price_order'));
+            $totalDepositAll = array_sum(array_column($datas, 'total_deposit'));
+            $totalRemainingAll = array_sum(array_column($datas, 'total_remaining_payment'));
+        }
 
         $stats = [
             'totalPriceOrderAll' => $totalPriceOrderAll,
@@ -60,7 +61,7 @@ class ReportController extends Controller
 
         // untuk export, routenya harus "route('totalDeposit', ['export' => 1])"
         if ($request->get('export') == 1) {
-            return Excel::download(new ReportTotalDepositExport($datas, $stats), 'Laporan_Total_Setoran_'.now()->format('dmY').'.xlsx');
+            return Excel::download(new ReportTotalDepositExport($datas, $stats), 'Laporan_Total_Setoran_' . now()->format('dmY') . '.xlsx');
         }
 
         return view('cms.admin.reports.total-deposit', compact('stats', 'paginationData'));
@@ -87,7 +88,7 @@ class ReportController extends Controller
             }
 
             if ($totalPrice > 0) {
-                $datas [] = [
+                $datas[] = [
                     'agent_name' => $agent->agentProfile->name,
                     'total_product' => $totalProduct,
                     'total_price' => $totalPrice
@@ -106,7 +107,7 @@ class ReportController extends Controller
 
         // untuk export, routenya harus "route('productDetail', ['export' => 1])"
         if ($request->get('export') == 1) {
-            return Excel::download(new ReportProductDetailExport($datas, $stats), 'Laporan_Rincian_Perpaket_'.now()->format('dmY').'.xlsx');
+            return Excel::download(new ReportProductDetailExport($datas, $stats), 'Laporan_Rincian_Perpaket_' . now()->format('dmY') . '.xlsx');
         }
 
         $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
@@ -129,12 +130,12 @@ class ReportController extends Controller
         }
 
         $stats = [
-          'pay' => $pay,
-          'remaining_pay' => $remaining_pay
+            'pay' => $pay,
+            'remaining_pay' => $remaining_pay
         ];
 
         if ($request->get('export') == 1) {
-            return Excel::download(new ReportInstalmentExport($payments, $stats), 'Laporan_Rincian_Cicilan_'.now()->format('dmY').'.xlsx');
+            return Excel::download(new ReportInstalmentExport($payments, $stats), 'Laporan_Rincian_Cicilan_' . now()->format('dmY') . '.xlsx');
         }
 
         return view('cms.admin.reports.instalment', compact('stats', 'payments'));
@@ -143,6 +144,8 @@ class ReportController extends Controller
     }
 
 
+    public function requirement()
+    {
 
-
+    }
 }

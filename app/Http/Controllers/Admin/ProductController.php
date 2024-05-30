@@ -44,7 +44,7 @@ class ProductController extends Controller
 
     public function export()
     {
-        return Excel::download(new ProductExport, 'Product_Export_'.now().'.xlsx');
+        return Excel::download(new ProductExport, 'Product_Export_' . now() . '.xlsx');
     }
 
     public function import(Request $request)
@@ -53,7 +53,7 @@ class ProductController extends Controller
             'file' => 'required|mimes:xlsx,xls',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return back()->with('error', $validator->errors());
         }
 
@@ -65,8 +65,6 @@ class ProductController extends Controller
             Excel::import(new ProductImport, $file);
 
             return redirect()->route('product.index')->with('success', 'Data Berhasil Diimport');
-
-
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),
@@ -95,7 +93,7 @@ class ProductController extends Controller
             'name' => ['required', 'max:225', 'string'],
             'price' => ['required', 'numeric'],
             'unit' => ['required', 'string'],
-            'days' => [ 'string'],
+            'days' => ['string'],
             'description' => ['required', 'max:500', 'string'],
             'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'supplier_id' => ['nullable', 'string'],
@@ -144,7 +142,7 @@ class ProductController extends Controller
                 }
             });
             if ($product) {
-                return redirect()->route('product.index')->with('success' ,'Data Berhasil Ditambahkan!');
+                return redirect()->route('product.index')->with('success', 'Data Berhasil Ditambahkan!');
             } else {
                 return back()->with('error', 'Data Gagal Ditambahkan!');
             }
@@ -165,7 +163,8 @@ class ProductController extends Controller
     {
         if ($product) {
             $subProducts = $product->subProduct()->paginate(5);
-            return view('cms.admin.products.detail', compact('product', 'subProducts'));
+            $itemSubProduct = SubProduct::get();
+            return view('cms.admin.products.detail', compact('product', 'subProducts', 'itemSubProduct'));
         } else {
             return back()->with('error', 'Data Tidak Ditemukan!');
         }
@@ -195,7 +194,7 @@ class ProductController extends Controller
             'name' => ['required', 'max:225', 'string'],
             'price' => ['required', 'numeric'],
             'unit' => ['required', 'string'],
-            'days' => [ 'string'],
+            'days' => ['string'],
             'description' => ['required', 'max:500', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'supplier_id' => ['nullable', 'string'],
@@ -229,8 +228,6 @@ class ProductController extends Controller
                         'description' => $request->description,
                         'image' => $imageName
                     ]);
-
-
                 } else {
                     $update = $product->update([
                         'name' => $request->name,
@@ -248,7 +245,7 @@ class ProductController extends Controller
                 //supplier
                 if ($request->filled('supplier_id')) {
                     $productSupplier = ProductSupplier::where('product_id', $product->id)
-                    ->first();
+                        ->first();
 
                     if ($productSupplier) {
                         $productSupplier->update([
@@ -268,7 +265,7 @@ class ProductController extends Controller
                 //package
                 if ($request->filled('package_id')) {
                     $productPackage = ProductPackage::where('product_id', $product->id)
-                    ->first();
+                        ->first();
 
                     if ($productPackage) {
                         $productPackage->update([
@@ -286,7 +283,7 @@ class ProductController extends Controller
                 }
             });
             if ($update) {
-                return redirect()->route('product.index')->with('success' ,'Data Berhasil Diupbah!');
+                return redirect()->route('product.index')->with('success', 'Data Berhasil Diupbah!');
             } else {
                 return back()->with('error', 'Data Gagal Diupbah!');
             }
@@ -312,12 +309,12 @@ class ProductController extends Controller
         }
 
         $productSupplier = ProductSupplier::where('product_id', $product->id)
-                    ->first();
+            ->first();
 
         $productPackage = ProductPackage::where('product_id', $product->id)
-                    ->first();
+            ->first();
 
-        if ($productSupplier){
+        if ($productSupplier) {
             $product->supplier()->delete();
         }
 
@@ -364,14 +361,13 @@ class ProductController extends Controller
         }
     }
 
-    public function destroySub(ProductSubProduct $productSubProduct, Product $product)
+    public function destroySub(Product $product, ProductSubProduct $productSubProduct)
     {
         try {
-            DB::transaction(function () use ($productSubProduct) {
-                $productSubProduct->delete();
-            });
-            return redirect()->route('product.show' , $product)->with('success', 'Data Berjasil Dihapus!');
-        } catch (\Throwable $e) {
+            $productSubProduct->delete();
+
+            return redirect()->route('product.show', $product)->with('success', 'Data Berjasil Dihapus!');
+        } catch (\Exception $e) {
             $data = [
                 'message' => $e->getMessage(),
                 'status' => 400

@@ -45,7 +45,7 @@ class Product extends Model
 
     public function subProduct()
     {
-        return $this->hasOne(ProductSubProduct::class);
+        return $this->hasMany(ProductSubProduct::class);
     }
 
 

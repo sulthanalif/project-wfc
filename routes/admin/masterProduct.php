@@ -10,5 +10,5 @@ Route::resource('product', ProductController::class);
 Route::post('/product/{product}/sub-product', [ProductController::class, 'addSubProduct'])->name('product.addSubProduct');
 
 //hapus sub product
-Route::delete('/product/{product}/sub-product/{subProduct}', [ProductController::class, 'destroySub'])->name('product.destroySub');
+Route::delete('/product/{product}/sub-product/{productSubProduct}', [ProductController::class, 'destroySub'])->name('product.destroySub');
 
