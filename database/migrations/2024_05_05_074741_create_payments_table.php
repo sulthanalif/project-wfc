@@ -16,6 +16,8 @@ return new class extends Migration
             $table->uuid('order_id')->constrained('orders')->onDelete('cascade');
             $table->decimal('pay', 15, 2);
             $table->decimal('remaining_payment', 15, 2);
+            $table->string('method');
+            $table->string('installment');
             // $table->string('image')->nullable();
             // $table->string('description')->nullable();
             // $table->string('status')->default('pending');

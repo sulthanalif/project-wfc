@@ -71,6 +71,7 @@ class PaymentController extends Controller
         // ]);
         $validator = Validator::make($request->all(), [
             'pay' => ['required', 'numeric'],
+            'method' => ['required', 'string'],
         ]);
 
         if($validator->fails()) {
@@ -85,7 +86,9 @@ class PaymentController extends Controller
                 $payment = new Payment([
                     'order_id' => $order->id,
                     'pay' => $request->pay,
-                    'remaining_payment' => $existingPayment ? $existingPayment->remaining_payment - $request->pay : $order->total_price - $request->pay
+                    'remaining_payment' => $existingPayment ? $existingPayment->remaining_payment - $request->pay : $order->total_price - $request->pay,
+                    'method' => $request->method,
+                    'installment' => $existingPayment ? $existingPayment->installment + 1 : 1
                 ]);
 
 

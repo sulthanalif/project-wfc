@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use App\Exports\InvoiceExport;
 use App\Helpers\GenerateRandomString;
 use App\Helpers\ValidateRole;
 use App\Models\User;
@@ -14,6 +15,7 @@ use App\Models\OrderDetail;
 use App\Models\Package;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
@@ -32,6 +34,8 @@ class OrderController extends Controller
             return view('cms.transactions.index', compact('orders'));
         }
     }
+
+
 
     /**
      * Show the form for creating a new resource.

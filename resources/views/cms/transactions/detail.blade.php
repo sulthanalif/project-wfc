@@ -283,6 +283,18 @@
                                     </span>
                                 @enderror
                             </div>
+                            <div class="mt-3">
+                                <label for="method" class="form-label">Metode Pembayaran <span class="text-danger">*</span></label>
+                                <select class="form-select mt-2 sm:mr-2" id="method" name="method" required>
+                                    <option value="Tunai">Tunai</option>
+                                    <option value="Transfer">Transfer</option>
+                                </select>
+                                @error('method')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
 
 
 

@@ -19,9 +19,8 @@ class Payment extends Model
         'order_id',
         'pay',
         'remaining_payment',
-        // 'image',
-        // 'description',
-        // 'status',
+        'method',
+        'installment'
     ];
 
     public function order()

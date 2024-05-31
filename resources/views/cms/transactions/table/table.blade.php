@@ -46,6 +46,8 @@
                         <td class="table-report__action">
                             <div class="flex justify-center items-center">
 
+                                    <a class="flex items-center mr-3 text-success" target="_blank" href="{{ route('getInvoice', ['order'=> $order, 'payment' => $payment]) }}">
+                                        <i data-lucide="printer" class="w-4 h-4 mr-1"></i> Cetak </a>
                                     <a class="flex items-center mr-3 text-danger" href="javascript:;"
                                         data-tw-toggle="modal"
                                         data-tw-target="#delete-confirmation-modal{{ $payment->id }}">

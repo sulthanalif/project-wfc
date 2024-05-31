@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\DistributionController;
 // use App\Models\Administration;
 use App\Http\Controllers\Transaction\PaymentController;
 use App\Http\Controllers\Admin\DashboardAdminController;
+use App\Http\Controllers\Transaction\ExportInvoiceController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 // use App\Http\Controllers\Auth\AuthController;
@@ -100,6 +101,9 @@ Route::group(['middleware' => 'auth',], function () {
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin'], function () {
             require __DIR__ . '/transaction/payment.php';
             require __DIR__ . '/transaction/status.php';
+
+            //export
+            Route::get('/invoice/{order}/{payment}', [ExportInvoiceController::class, 'getInvoice'])->name('getInvoice');
         });
 
 
