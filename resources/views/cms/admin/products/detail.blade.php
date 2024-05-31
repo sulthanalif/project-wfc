@@ -64,10 +64,10 @@
                 </div>
             </div>
         </div>
-        <div class="mt-5">
-           @include('cms.admin.products.sub-product')
-        </div>
     </div>
 
+    <div class="intro-y mt-5">
+        @include('cms.admin.products.sub-product')
+     </div>
 
 @endsection

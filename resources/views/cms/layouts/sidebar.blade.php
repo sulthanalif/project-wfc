@@ -96,9 +96,9 @@
             @hasrole('super_admin|admin')
                 <li>
                     <a href="javascript:;" class="side-menu @if (Route::is('user*') ||
-                            Route::is('catalog*') ||
                             Route::is('package*') ||
                             Route::is('product*') ||
+                            Route::is('sub-product*') ||
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
                             Route::is('getAdministration')) side-menu--active @endif">
@@ -109,12 +109,19 @@
                         </div>
                     </a>
                     <ul class="@if (Route::is('user*') ||
-                            Route::is('catalog*') ||
                             Route::is('package*') ||
                             Route::is('product*') ||
+                            Route::is('sub-product*') ||
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
                             Route::is('getAdministration')) side-menu__sub-open @endif">
+                        <li>
+                            <a href="{{ route('sub-product.index') }}"
+                                class="side-menu {{ Route::is('sub-product*') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Sub Produk </div>
+                            </a>
+                        </li>
                         <li>
                             <a href="{{ route('product.index') }}"
                                 class="side-menu {{ Route::is('product*') ? 'side-menu--active' : '' }}">
@@ -129,13 +136,6 @@
                                 <div class="side-menu__title"> Paket </div>
                             </a>
                         </li>
-                        {{-- <li>
-                            <a href="{{ route('catalog.index') }}"
-                                class="side-menu {{ Route::is('catalog*') ? 'side-menu--active' : '' }}">
-                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="side-menu__title"> Katalog </div>
-                            </a>
-                        </li> --}}
                         <li>
                             <a href="{{ route('supplier.index') }}"
                                 class="side-menu {{ Route::is('supplier*') ? 'side-menu--active' : '' }}">

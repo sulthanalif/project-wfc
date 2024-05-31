@@ -23,7 +23,7 @@
                         @if ($subProducts->count() <= 0)
                             <tr>
                                 <td colspan="6" class="font-medium whitespace-nowrap text-center">Tidak Ada
-                                    Sub Barang Pada Product Ini!</td>
+                                    Sub Barang Pada Produk Ini!</td>
                             </tr>
                         @else
                             @foreach ($subProducts as $sub)

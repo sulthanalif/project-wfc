@@ -13,7 +13,7 @@ class SubProductController extends Controller
 {
     public function index(Request $request)
     {
-        $subProducts = Product::paginate(10);
+        $subProducts = SubProduct::paginate(10);
 
         return view('cms.admin.sub-products.index', compact('subProducts'));
     }
@@ -88,7 +88,7 @@ class SubProductController extends Controller
                     'price' => $request->price
                 ]);
             });
-            return redirect()->route('sub-product.index')->with('success', 'Data Berjasil Diubah!');
+            return redirect()->route('sub-product.index')->with('success', 'Data Berhasil Diubah!');
         } catch (\Exception $e) {
             $data = [
                 'message' => $e->getMessage(),
@@ -104,7 +104,7 @@ class SubProductController extends Controller
             DB::transaction(function () use ($subProduct) {
                 $subProduct->delete();
             });
-            return redirect()->route('sub-product.index')->with('success', 'Data Berjasil Dihapus!');
+            return redirect()->route('sub-product.index')->with('success', 'Data Berhasil Dihapus!');
         } catch (\Exception $e) {
             $data = [
                 'message' => $e->getMessage(),
