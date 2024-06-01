@@ -18,7 +18,7 @@ class SubProduct extends Model
     protected $fillable = [
         'name',
         'unit',
-        'amount',
+        // 'amount',
         'price',
     ];
 
