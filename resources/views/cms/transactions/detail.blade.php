@@ -10,12 +10,6 @@
         <a href="{{ route('order.index') }}" class="btn btn-primary w-24 mr-1">Kembali</a>
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <div class="intro-y grid grid-cols-11 gap-5 mt-5">
         <div class="col-span-12 lg:col-span-4 2xl:col-span-3">
             <div class="box p-5 rounded-md">

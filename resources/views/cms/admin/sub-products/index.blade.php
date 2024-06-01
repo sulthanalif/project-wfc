@@ -1,40 +1,43 @@
 @extends('cms.layouts.app', [
-    'title' => 'Barang',
+    'title' => 'Sub Barang',
 ])
 
 @section('content')
     <h2 class="intro-y text-lg font-medium mt-10">
-        Barang
+        Sub Barang
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            <a href="{{ route('product.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Barang</a>
-            <div class="dropdown">
-                <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
-                    <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="plus"></i>
-                    </span>
-                </button>
-                <div class="dropdown-menu w-40">
-                    <ul class="dropdown-content">
-                        <li>
-                            <a href="{{ route('export.product') }}" class="dropdown-item"> <i data-lucide="download"
-                                    class="w-4 h-4 mr-2"></i> Export </a>
-                        </li>
-                        <li>
-                            <a href="javascript:;" class="dropdown-item" data-tw-toggle="modal"
-                                data-tw-target="#import-confirmation-modal"> <i data-lucide="upload"
-                                    class="w-4 h-4 mr-2"></i> Import </a>
-                        </li>
-                    </ul>
+            @hasrole('super_admin|admin')
+                <a href="{{ route('sub-product.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Sub Barang</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
+                        <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="plus"></i>
+                        </span>
+                    </button>
+                    <div class="dropdown-menu w-40">
+                        <ul class="dropdown-content">
+                            <li>
+                                <a href="" class="dropdown-item"> <i data-lucide="download"
+                                        class="w-4 h-4 mr-2"></i> Export </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" class="dropdown-item" data-tw-toggle="modal"
+                                    data-tw-target="#import-confirmation-modal"> <i data-lucide="upload"
+                                        class="w-4 h-4 mr-2"></i> Import </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $products->firstItem() }} hingga
-                {{ $products->lastItem() }} dari {{ $products->total() }} data</div>
-            <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $subProducts->firstItem() }} hingga
+                    {{ $subProducts->lastItem() }} dari {{ $subProducts->total() }} data</div>
+            @endhasrole
+            <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
+
             </div>
         </div>
         <!-- BEGIN: Data List -->
@@ -43,64 +46,55 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA BARANG</th>
-                        <th class="whitespace-nowrap">HARGA</th>
-                        <th class="whitespace-nowrap">FOTO</th>
-                        <th class="text-center whitespace-nowrap">AKSI</th>
+                        <th class="text-center whitespace-nowrap">NAMA SUB BARANG</th>
+                        <th class="text-center whitespace-nowrap">SATUAN</th>
+                        <th class="text-center whitespace-nowrap">HARGA</th>
+                        @hasrole('super_admin|admin')
+                            <th class="text-center whitespace-nowrap">AKSI</th>
+                        @endhasrole
                     </tr>
                 </thead>
                 <tbody>
-                    @if ($products->isEmpty())
+                    @if ($subProducts->isEmpty())
                         <tr>
-                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
-                        @foreach ($products as $product)
+                        @foreach ($subProducts as $subProduct)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td>
-                                    <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('product.show', $product) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $product->name }} </a>
+                                    <p class="whitespace-nowrap">{{ $subProduct->name }}</p>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 flex items-center mr-3">Rp.
-                                        {{ number_format($product->price, 0, ',', '.') }}/hari </p>
+                                    <p class="text-center">
+                                        {{ $subProduct->unit }}
+                                    </p>
                                 </td>
-                                <td class="w-40">
-                                    <div class="flex">
-                                        <div class="w-10 h-10 image-fit zoom-in">
-                                            @if ($product->detail->image == null)
-                                                -
-                                            @else
-                                                @if ($product->detail->image == 'image.jpg')
-                                                    <img alt="PAKET SMART WFC" class="rounded-full"
-                                                        src="{{ asset('assets/logo2.PNG') }}">
-                                                @else
-                                                    <img alt="PAKET SMART WFC" class="tooltip rounded-full"
-                                                        src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
-                                                        title="@if ($product->created_at == $product->updated_at) Diupload {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }} @else Diupdate {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y, H:m:i') }} @endif">
-                                                @endif
-                                            @endif
+                                <td>
+                                    <p class="text-center">
+                                        Rp. {{ number_format($subProduct->price, 0, ',', '.') }}
+                                    </p>
+                                </td>
+                                @hasrole('super_admin|admin')
+                                    <td class="table-report__action w-56">
+                                        <div class="flex justify-center items-center">
+                                            <a class="flex items-center mr-3" href="{{ route('sub-product.edit', $subProduct) }}"> <i
+                                                    data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
+                                            <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#delete-confirmation-modal{{ $subProduct->id }}"> <i
+                                                    data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="table-report__action w-56">
-                                    <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="{{ route('product.edit', $product) }}"> <i
-                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
-                                        <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal{{ $product->id }}"> <i
-                                                data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                    </div>
-                                </td>
+                                    </td>
+                                @endhasrole
                             </tr>
 
 
+
                             <!-- BEGIN: Delete Confirmation Modal -->
-                            <div id="delete-confirmation-modal{{ $product->id }}" class="modal" tabindex="-1"
+                            <div id="delete-confirmation-modal{{ $subProduct->id }}" class="modal" tabindex="-1"
                                 aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -115,11 +109,11 @@
                                                 </div>
                                             </div>
                                             <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('product.destroy', $product) }}" method="post">
+                                                <form action="{{ route('sub-product.destroy', $subProduct) }}" method="post">
                                                     @csrf
                                                     @method('delete')
                                                     <input type="hidden" name="page"
-                                                        value="{{ $products->currentPage() }}">
+                                                        value="{{ $subProducts->currentPage() }}">
                                                     <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -136,9 +130,10 @@
             </table>
         </div>
         <!-- END: Data List -->
+
         <!-- BEGIN: Pagination -->
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $products->links('cms.layouts.paginate') }}
+            {{ $subProducts->links('cms.layouts.paginate') }}
         </div>
         <!-- END: Pagination -->
     </div>
@@ -148,12 +143,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body p-0">
-                    <form action="{{ route('import.product') }}" method="post" enctype="multipart/form-data">
+                    <form action="" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="p-5 text-center">
                             <div class="modal-header">
                                 <h2 class="font-medium text-base mr-auto">Import Data</h2> <a
-                                    href="{{ route('download.file', ['file' => 'format-produk.xlsx']) }}"
+                                    href="{{ route('download.file', ['file' => 'format-subProduk.xlsx']) }}"
                                     class="btn btn-outline-secondary"> <i data-lucide="download"
                                         class="w-4 h-4 mr-2"></i> Download Format </a>
                             </div>

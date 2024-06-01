@@ -57,10 +57,12 @@
                                             class="text-danger">*</span></label>
                                     <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
                                         <i data-lucide="image" class="w-4 h-4 mr-2"></i>
-                                        <span class="text-primary mr-1">Upload a file</span> or drag and drop
+                                        <span id="fileName">
+                                            <span class="text-primary mr-1">Upload a file</span> or drag and drop
+                                        </span>
                                         <input id="image" name="image" type="file"
                                             class="w-full h-full top-0 left-0 absolute opacity-0"
-                                            onchange="previewFile(this)">
+                                            onchange="previewFile(this); updateFileName(this)">
                                     </div>
                                     <div id="image-preview" class="hidden mt-2"></div>
                                     @error('image')
@@ -83,18 +85,18 @@
                                         <div>
                                             <label for="rt" class="form-label">RT <span
                                                     class="text-danger">*</span></label>
-                                            <input id="rt" name="rt" type="number"
-                                                class="form-control w-full" placeholder="Masukkan Nomor RT"
-                                                value="{{ $user->agentProfile->rt }}" required>
+                                            <input id="rt" name="rt" type="number" class="form-control w-full"
+                                                placeholder="Masukkan Nomor RT" value="{{ $user->agentProfile->rt }}"
+                                                required>
                                         </div>
                                     </div>
                                     <div class="col-span-6 mt-3">
                                         <div>
                                             <label for="rw" class="form-label">RW <span
                                                     class="text-danger">*</span></label>
-                                            <input id="rw" name="rw" type="number"
-                                                class="form-control w-full" placeholder="Masukkan Nomor RW"
-                                                value="{{ $user->agentProfile->rw }}" required>
+                                            <input id="rw" name="rw" type="number" class="form-control w-full"
+                                                placeholder="Masukkan Nomor RW" value="{{ $user->agentProfile->rw }}"
+                                                required>
                                         </div>
                                     </div>
                                 </div>
@@ -235,16 +237,16 @@
             if (!provinceId) return;
 
             fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(regency => {
-                    const option = document.createElement('option');
-                    option.value = regency.id;
-                    option.textContent = regency.name;
-                    regencyOption.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(regency => {
+                        const option = document.createElement('option');
+                        option.value = regency.id;
+                        option.textContent = regency.name;
+                        regencyOption.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
         }
 
         function handleRegencyChange(event) {
@@ -256,16 +258,16 @@
             if (!regencyId) return;
 
             fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regencyId}.json`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(district => {
-                    const option = document.createElement('option');
-                    option.value = district.id;
-                    option.textContent = district.name;
-                    districtOption.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.id;
+                        option.textContent = district.name;
+                        districtOption.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
         }
 
         function handleDistrictChange(event) {
@@ -277,16 +279,16 @@
             if (!district) return;
 
             fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${district}.json`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(village => {
-                    const option = document.createElement('option');
-                    option.value = village.id;
-                    option.textContent = village.name;
-                    villageOption.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(village => {
+                        const option = document.createElement('option');
+                        option.value = village.id;
+                        option.textContent = village.name;
+                        villageOption.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
         }
     </script>
 @endpush

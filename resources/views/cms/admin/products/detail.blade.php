@@ -3,71 +3,55 @@
 ])
 
 @section('content')
-    <div class="intro-y flex items-center mt-8">
+    <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
         <h2 class="text-lg font-medium mr-auto">
             Detail Barang
         </h2>
         <a href="{{ route('product.index') }}" class="btn btn-primary w-24 mr-1">Kembali</a>
     </div>
 
-    <div class="intro-y box px-5 pt-5 mt-5">
-        <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
-            <div class="flex flex-1 px-5 items-center justify-center">
-                @if ($product->detail->image == 'image.jpg')
-                    <img alt="PAKET SMART WFC" class=" img-fluid rounded-md" src="{{ asset('assets/logo2.PNG') }}">
-                @else
-                    <img alt="PAKET SMART WFC" class=" img-fluid rounded-md"
-                        src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}">
-                @endif
-            </div>
-            <div
-                class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
-                <div class="text-slate-600 dark:text-slate-500">
-                    <div class="flex flex-col items-center justify-center border-b pb-2">
-                        <h1 class="font-bold text-xl">{{ $product->name }}</h1>
-                        <span class="text-muted flex flex-row items-center">
-                            @if ($product->created_at == $product->updated_at)
-                                <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Dibuat
-                                {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }}
-                            @else
-                                <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Diupdate
-                                {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y, H:m:i') }}
-                            @endif
-                        </span>
+    <div class="intro-y grid grid-cols-11 gap-5 mt-5">
+        <div class="col-span-12 lg:col-span-4 2xl:col-span-3">
+            <div class="box">
+                <div class="p-5">
+                    <div
+                        class="h-40 2xl:h-56 image-fit rounded-md overflow-hidden before:block before:absolute before:w-full before:h-full before:top-0 before:left-0 before:z-10 before:bg-gradient-to-t before:from-black before:to-black/10">
+                        @if ($product->detail->image == 'image.jpg')
+                            <img alt="PAKET SMART WFC" class=" img-fluid rounded-md" src="{{ asset('assets/logo2.PNG') }}">
+                        @else
+                            <img alt="PAKET SMART WFC" class=" img-fluid rounded-md"
+                                src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}">
+                        @endif
+                        <div class="absolute bottom-0 text-white px-5 pb-6 z-10">
+                            <a href="javascript:;" class="block font-medium text-base product-name" data-tw-toggle="modal"
+                                data-tw-target="#image-modal">{{ $product->name }}</a>
+                            <span class="text-white/90 text-xs mt-3">Paket {{ $product->packageName->name }}</span>
+                            <!-- Image Modal -->
+                            <div id="image-modal" class="modal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content"> <a data-tw-dismiss="modal" href="javascript:;"> <i data-lucide="x" class="w-8 h-8 text-slate-400"></i> </a>
+                                        <div class="modal-body p-0 flex justify-center items-center">
+                                            <img src="@if ($product->detail->image == 'image.jpg') {{ asset('assets/logo2.PNG') }} @else {{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }} @endif"
+                                                alt="Product Image" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-12 gap-0 mt-2">
-                        <div class="col-span-4 lg:col-span-3 intro-y">
-                            <p>Supplier</p>
-                            <p>Paket</p>
-                            <p>Harga</p>
-                            <p>Jangka Waktu</p>
-                            <p>Satuan</p>
-                            <p>Deskripsi</p>
-                        </div>
-                        <div class="col-span-1 intro-y">
-                            <p>:</p>
-                            <p>:</p>
-                            <p>:</p>
-                            <p>:</p>
-                            <p>:</p>
-                            <p>:</p>
-                        </div>
-                        <div class="col-span-6 lg:col-span-10 intro-y">
-                            <p>{{ $product->supplierName->name }}</p>
-                            <p>{{ $product->packageName->name }}</p>
-                            <p>Rp. {{ number_format($product->price, 0, ',', '.') }}/hari</p>
-                            <p>{{ $product->days }} hari</p>
-                            <p>{{ $product->unit }}</p>
-                            <p>{!! $product->detail->description !!}</p>
-                        </div>
+                    <div class="text-slate-600 dark:text-slate-500 mt-5">
+                        <div class="flex items-center"> <i data-lucide="dollar-sign" class="w-4 h-4 mr-2"></i> Harga: Rp.
+                            {{ number_format($product->price, 0, ',', '.') }}/hari </div>
+                        <div class="flex items-center mt-2"> <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Jangka Waktu:
+                            {{ $product->days }} hari </div>
+                        <div class="flex items-center mt-2"> <i data-lucide="file-text" class="w-4 h-4 mr-2"></i> Deskripsi:
+                            {!! $product->detail->description !!} </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="mt-5">
-           @include('cms.admin.products.sub-product')
+        <div class="col-span-12 lg:col-span-7 2xl:col-span-8">
+            @include('cms.admin.products.sub-product')
         </div>
     </div>
-
-
 @endsection
