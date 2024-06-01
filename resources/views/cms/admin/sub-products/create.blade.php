@@ -1,11 +1,11 @@
 @extends('cms.layouts.app', [
-    'title' => 'Tambah Sub Produk',
+    'title' => 'Tambah Sub Barang',
 ])
 
 @section('content')
     <div class="intro-y flex items-center mt-8">
         <h2 class="text-lg font-medium mr-auto">
-            Tambah Sub Produk
+            Tambah Sub Barang
         </h2>
     </div>
 
@@ -16,9 +16,9 @@
                 <form action="{{ route('sub-product.store') }}" method="post">
                     @csrf
                     <div>
-                        <label for="name" class="form-label">Nama Sub Produk <span class="text-danger">*</span></label>
+                        <label for="name" class="form-label">Nama Sub Barang <span class="text-danger">*</span></label>
                         <input id="name" name="name" type="text" class="form-control w-full"
-                            placeholder="Masukkan Nama Sub Produk" required>
+                            placeholder="Masukkan Nama Sub Barang" required>
                     </div>
                     <div class="mt-3">
                         <label for="unit" class="form-label">Satuan <span class="text-danger">*</span></label>

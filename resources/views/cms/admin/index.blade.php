@@ -18,7 +18,7 @@
                             <div class="report-box zoom-in">
                                 <div class="box p-5">
                                     <div class="flex">
-                                        <i data-lucide="shopping-cart" class="report-box__icon text-primary"></i>
+                                        <i data-lucide="credit-card" class="report-box__icon text-primary"></i>
                                         <div class="ml-auto">
 
                                         </div>
@@ -32,7 +32,7 @@
                             <div class="report-box zoom-in">
                                 <div class="box p-5">
                                     <div class="flex">
-                                        <i data-lucide="credit-card" class="report-box__icon text-pending"></i>
+                                        <i data-lucide="shopping-cart" class="report-box__icon text-pending"></i>
 
                                     </div>
                                     <div class="text-3xl font-medium leading-8 mt-6">{{ $data['newOrder'] }}</div>

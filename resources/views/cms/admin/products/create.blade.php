@@ -57,7 +57,7 @@
                                     </span>
                                 @enderror
                             </div>
-                            <div class="mt-3">
+                            {{-- <div class="mt-3">
                                 <label for="supplier_id" class="form-label">Supplier <span class="text-danger">(Jangan ubah jika
                                         tidak ada Supplier)</span></label>
                                 <select class="form-select mt-2 sm:mr-2" id="supplier_id" name="supplier_id">
@@ -66,7 +66,7 @@
                                         <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
                             <div class="mt-3">
                                 <label for="package_id" class="form-label">Paket <span class="text-danger">(Jangan ubah jika
                                         tidak masuk Paket)</span></label>
