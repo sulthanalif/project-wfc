@@ -83,9 +83,11 @@
                                         <div class="flex justify-center items-center">
                                             <a class="flex items-center mr-3" href="{{ route('sub-product.edit', $subProduct) }}"> <i
                                                     data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
-                                            <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#delete-confirmation-modal{{ $subProduct->id }}"> <i
-                                                    data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                                    @if ($subProduct->product->isEmpty())
+                                                    <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
+                                                        data-tw-target="#delete-confirmation-modal{{ $subProduct->id }}"> <i
+                                                            data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                                    @endif
                                         </div>
                                     </td>
                                 @endhasrole

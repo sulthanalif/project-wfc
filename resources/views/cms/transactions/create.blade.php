@@ -23,7 +23,7 @@
                     @hasrole('super_admin|admin')
                         <div class="mt-3">
                             <label for="agent_id" class="form-label">Dari Agent <span class="text-danger">*</span></label>
-                            <select class="form-select mt-2 sm:mr-2" id="agent_id" name="agent_id" required>
+                            <select class="tom-select mt-2 sm:mr-2" id="agent_id" name="agent_id" required>
                                 <option value="">Pilih...</option>
                                 @foreach ($agents as $agent)
                                     <option value="{{ $agent->id }}">{{ $agent->agentProfile->name }}</option>
@@ -42,8 +42,8 @@
 
                     <div class="mt-3">
                         <label for="package_id" class="form-label">Pilih Paket <span class="text-danger">*</span></label>
-                        <select class="form-select mt-2 sm:mr-2" id="package_id" name="package_id" required>
-                            <option>Pilih...</option>
+                        <select class="tom-select mt-2 sm:mr-2" id="package_id" name="package_id" required>
+                            <option value="">Pilih...</option>
                             @foreach ($packages as $package)
                                 <option value="{{ $package->id }}">{{ $package->name }}</option>
                             @endforeach
@@ -88,7 +88,7 @@
                         <input type="hidden" name="total_price" value="0">
                         <input type="hidden" name="products" id="productData" value="">
                         <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Simpan</button>
-                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
+                        <a href="{{ route('order.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
                 </form>
             </div>
@@ -133,7 +133,7 @@
 
         function populateProducts(packageId) {
             productSelect = document.getElementById('product_id_item');
-            productSelect.innerHTML = '<option>Pilih...</option>';
+            productSelect.innerHTML = '<option disabled>Pilih Item...</option>';
 
             @foreach ($packages as $package)
                 if ('{{ $package->id }}' == packageId) {
@@ -141,7 +141,7 @@
                         var option = document.createElement('option');
                         option.value = '{{ $product->product->id }}';
                         option.textContent =
-                            '{{ $product->product->name }} - Rp. {{ number_format($product->product->total_price, 0, ',', '.') }}';
+                            '{{ $product->product->name }} - Rp. {{ number_format($product->product->price, 0, ',', '.') }}/hari';
                         option.dataset.harga = '{{ $product->product->total_price }}';
                         productSelect.appendChild(option);
                     @endforeach

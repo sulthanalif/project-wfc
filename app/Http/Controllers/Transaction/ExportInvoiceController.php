@@ -23,8 +23,13 @@ class ExportInvoiceController extends Controller
         return $pdf->stream('invoice.pdf');
     }
 
-    public function cekView()
+    public function cekView(Order $order, Payment $payment)
     {
-        return view('cms.transactions.export.invoice');
+        $data = [
+            'title'=> 'Faktur Pembayaran Angsuran',
+            'order' => $order,
+            'payment' => $payment
+        ];
+        return view('cms.transactions.export.invoice', $data);
     }
 }

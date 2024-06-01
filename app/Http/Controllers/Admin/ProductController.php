@@ -366,7 +366,7 @@ class ProductController extends Controller
         try {
             $productSubProduct->delete();
 
-            return redirect()->route('product.show', $product)->with('success', 'Data Berjasil Dihapus!');
+            return redirect()->route('product.show', $product)->with('success', 'Data Berhasil Dihapus!');
         } catch (\Exception $e) {
             $data = [
                 'message' => $e->getMessage(),
