@@ -120,6 +120,7 @@ Route::group(['middleware' => 'auth',], function () {
             Route::get('/agent', [DashboardController::class, 'index'])->name('dashboard-agent');
             require __DIR__ . '/agent/profile.php';
             require __DIR__ . '/agent/changeEmailPass.php';
+            require __DIR__ . '/agent/report.php';
         });
 
         require __DIR__ . '/agent/administration.php';
