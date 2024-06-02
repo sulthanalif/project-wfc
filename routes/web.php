@@ -102,8 +102,10 @@ Route::group(['middleware' => 'auth',], function () {
             require __DIR__ . '/transaction/payment.php';
             require __DIR__ . '/transaction/status.php';
 
-            //export
+            //export pdf invoice payment
             Route::get('/invoice/{order}/{payment}', [ExportInvoiceController::class, 'getInvoice'])->name('getInvoice');
+            //export pdf invoice order
+            Route::get('/invoice/{order}', [ExportInvoiceController::class, 'getInvoiceOrder'])->name('getInvoiceOrder');
         });
 
 

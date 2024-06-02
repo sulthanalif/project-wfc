@@ -110,7 +110,7 @@
                         <td class="col-6">
                             Angsuran ke: {{ $payment->installment }}
                             <br>
-                            No Faktur: INVS990T02062024-3
+                            No Faktur: {{ $payment->invoice_number }}
                             <br>
                             Total Tagihan: Rp. {{ number_format($order->total_price, 0, ',', '.') }}
                         </td>

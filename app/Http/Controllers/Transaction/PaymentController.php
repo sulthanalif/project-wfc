@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\GenerateRandomString;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
@@ -65,10 +66,7 @@ class PaymentController extends Controller
 
     public function storePayment(Request $request, Order $order)
     {
-        // return response()->json([
-        //     'request' => $request->all(),
-        //     'order' => $order
-        // ]);
+
         $validator = Validator::make($request->all(), [
             'pay' => ['required', 'numeric'],
             'method' => ['required', 'string'],
@@ -81,10 +79,13 @@ class PaymentController extends Controller
         try {
             DB::transaction(function () use ($request, $order) {
                 $existingPayment = $order->payment->sortByDesc('created_at')->first();
+                $paymentCount = Payment::where('order_id', $order->id)->count();
+                $invoiceNumber = 'INV'.GenerateRandomString::make(5) . ($paymentCount + 1) . now()->format('dmY');
 
 
                 $payment = new Payment([
                     'order_id' => $order->id,
+                    'invoice_number' => $invoiceNumber,
                     'pay' => $request->pay,
                     'remaining_payment' => $existingPayment ? $existingPayment->remaining_payment - $request->pay : $order->total_price - $request->pay,
                     'method' => $request->method,

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('order_id')->constrained('orders')->onDelete('cascade');
+            $table->string('invoice_number');
             $table->decimal('pay', 15, 2);
             $table->decimal('remaining_payment', 15, 2);
             $table->string('method');

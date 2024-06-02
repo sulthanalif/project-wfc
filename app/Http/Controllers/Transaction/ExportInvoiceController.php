@@ -23,6 +23,16 @@ class ExportInvoiceController extends Controller
         return $pdf->stream('invoice.pdf');
     }
 
+    public function getInvoiceOrder(Order $order)
+    {
+        $data = [
+            'title'=> 'Invoice',
+            'order' => $order
+        ];
+        $pdf = Pdf::loadView('cms.transactions.export.invoice-order', $data);
+        return $pdf->stream('invoice-order.pdf');
+    }
+
     public function cekView(Order $order, Payment $payment)
     {
         $data = [
