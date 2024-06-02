@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\SubProduct;
+use Illuminate\Http\Request;
+use App\Exports\SubProductExport;
+use App\Imports\SubProductImport;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 
 class SubProductController extends Controller
@@ -16,6 +19,37 @@ class SubProductController extends Controller
         $subProducts = SubProduct::paginate(10);
 
         return view('cms.admin.sub-products.index', compact('subProducts'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new SubProductExport, 'Sub_Product_Export_'. now()->format('Ymd'). '.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+
+            Excel::import(new SubProductImport, $file);
+
+            return redirect()->route('sub-product.index')->with('success', 'Data Berhasil Diimport');
+        } catch (\Exception $e) {
+            $data = [
+                'message' => $e->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
     }
 
     public function create()

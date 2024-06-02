@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\SubProduct;
 use Illuminate\Http\Request;
 use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ReportInstalmentExport;
+use App\Exports\ReportRequirementExport;
 use App\Exports\ReportTotalDepositExport;
 use App\Exports\ReportProductDetailExport;
-use App\Models\SubProduct;
 
 class ReportController extends Controller
 {
@@ -201,9 +202,9 @@ class ReportController extends Controller
             'totalPriceAll' => $totalPriceAll,
         ];
 
-        // untuk export, routenya harus "route('productDetail', ['export' => 1])"
+        // untuk export, routenya harus "route('requirement', ['export' => 1])"
         if ($request->get('export') == 1) {
-            return Excel::download(new ReportProductDetailExport($datasubs, $stats), 'Laporan_Rincian_SubProduct_' . now()->format('dmY') . '.xlsx');
+            return Excel::download(new ReportRequirementExport($datasubs, $stats), 'Laporan_Rincian_SubProduct_' . now()->format('dmY') . '.xlsx');
         }
 
         $paginationData = PaginationHelper::paginate($datasubs, 10, 'requirement');

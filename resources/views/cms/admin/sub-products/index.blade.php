@@ -18,7 +18,7 @@
                     <div class="dropdown-menu w-40">
                         <ul class="dropdown-content">
                             <li>
-                                <a href="" class="dropdown-item"> <i data-lucide="download"
+                                <a href="{{ route('export.sub-product') }}" class="dropdown-item"> <i data-lucide="download"
                                         class="w-4 h-4 mr-2"></i> Export </a>
                             </li>
                             <li>
@@ -145,7 +145,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body p-0">
-                    <form action="" method="post" enctype="multipart/form-data">
+                    <form action="{{route('import.sub-product')}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="p-5 text-center">
                             <div class="modal-header">
