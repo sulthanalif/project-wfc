@@ -36,43 +36,15 @@
                     </li>
                 </ul>
             </li>
-            <li class="side-nav__devider my-6"></li>
+            {{-- <li class="side-nav__devider my-4"></li> --}}
             <li>
-                <a href="javascript:;" class="side-menu @if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment')) side-menu--active @endif">
+                <a href="javascript:;" class="side-menu @if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment') || Route::is('requirement')) side-menu--active @endif">
                     <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
                     <div class="side-menu__title"> Laporan
                         <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                     </div>
                 </a>
-                <ul class="@if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment')) side-menu__sub-open @endif">
-                    {{-- <li>
-                        <a href="javascript:;" class="side-menu">
-                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Setoran <i data-lucide="chevron-down"
-                                    class="side-menu__sub-icon "></i>
-                            </div>
-                        </a>
-                        <ul class="">
-                            <li>
-                                <a href="#" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-lucide="zap"></i> </div>
-                                    <div class="side-menu__title">Total Cicilan</div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-lucide="zap"></i> </div>
-                                    <div class="side-menu__title">Rincian Cicilan</div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-lucide="zap"></i> </div>
-                                    <div class="side-menu__title">Rincian Perpaket</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li> --}}
+                <ul class="@if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment') || Route::is('requirement')) side-menu__sub-open @endif">
                     <li>
                         <a href="{{ route('totalDeposit') }}" class="side-menu {{ Route::is('totalDeposit') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
@@ -89,6 +61,12 @@
                         <a href="{{ route('instalment') }}" class="side-menu {{ Route::is('instalment') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Rincian Cicilan </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('requirement') }}" class="side-menu {{ Route::is('requirement') ? 'side-menu--active' : '' }}">
+                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                            <div class="side-menu__title"> Rincian Sub Produk </div>
                         </a>
                     </li>
                 </ul>
@@ -207,7 +185,7 @@
                         </div>
                     </a>
                 </li>
-                <li class="side-nav__devider my-6"></li>
+                {{-- <li class="side-nav__devider my-6"></li>
                 <li>
                     <a href="javascript:;" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
@@ -228,7 +206,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
                 <li>
                     <a href="{{ route('sub-agent.index') }}"
                         class="side-menu {{ Route::is('sub-agent*') ? 'side-menu--active' : '' }}">

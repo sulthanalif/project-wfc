@@ -144,7 +144,7 @@ class ReportController extends Controller
     }
 
 
-    public function requirement()
+    public function requirement(Request $request)
     {
         $orders = Order::get();
         $datas = [];
@@ -191,7 +191,24 @@ class ReportController extends Controller
             }
         }
 
+        if (is_array($datasubs)) {
+            $totalSubProductAll = array_sum(array_column($datasubs, 'qty'));
+            $totalPriceAll = array_sum(array_column($datasubs, 'price'));
+        }
 
-        return response()->json(compact('datas', 'datasubs'));
+        $stats = [
+            'totalSubProductAll' => $totalSubProductAll,
+            'totalPriceAll' => $totalPriceAll,
+        ];
+
+        // untuk export, routenya harus "route('productDetail', ['export' => 1])"
+        if ($request->get('export') == 1) {
+            return Excel::download(new ReportProductDetailExport($datasubs, $stats), 'Laporan_Rincian_SubProduct_' . now()->format('dmY') . '.xlsx');
+        }
+
+        $paginationData = PaginationHelper::paginate($datasubs, 10, 'requirement');
+
+        return view('cms.admin.reports.requirement', compact('stats', 'paginationData'));
+        // return response()->json(compact('datas', 'datasubs'));
     }
 }

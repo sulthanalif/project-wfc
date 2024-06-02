@@ -42,13 +42,13 @@
                         </li>
                     </ul>
                 </li>
-                <li class="menu__devider my-6"></li>
+                <li class="menu__devider my-4"></li>
                 <li>
-                    <a href="javascript:;" class="menu @if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment')) menu--active @endif">
+                    <a href="javascript:;" class="menu @if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment') || Route::is('requirement')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="file-text"></i> </div>
                         <div class="menu__title"> Laporan <i data-lucide="chevron-down" class="menu__sub-icon "></i></div>
                     </a>
-                    <ul class="@if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment')) menu__sub-open @endif">
+                    <ul class="@if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment') || Route::is('requirement')) menu__sub-open @endif">
                         {{-- <li>
                             <a href="javascript:;" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
@@ -92,6 +92,12 @@
                             <a href="{{ route('instalment') }}" class="menu {{ Route::is('instalment') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Rincian Cicilan </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('requirement') }}" class="menu {{ Route::is('requirement') ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Rincian Sub Produk </div>
                             </a>
                         </li>
                     </ul>

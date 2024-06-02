@@ -12,9 +12,6 @@
                         <h2 class="text-lg font-medium truncate mr-5">
                             Laporan Total Deposit
                         </h2>
-                        <a href="{{ route('totalDeposit', ['export' => 1]) }}"
-                            class="ml-auto flex items-center btn btn-primary shadow-md"> <i data-lucide="file"
-                                class="w-4 h-4 mr-3"></i> Export </a>
                     </div>
                     <div class="grid grid-cols-12 gap-6 mt-5">
                         <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
@@ -22,12 +19,6 @@
                                 <div class="box p-5">
                                     <div class="flex">
                                         <i data-lucide="credit-card" class="report-box__icon text-primary"></i>
-                                        {{-- <div class="ml-auto">
-                                            <div class="report-box__indicator bg-success tooltip cursor-pointer"
-                                                title="33% Higher than last month"> 33% <i data-lucide="chevron-up"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
-                                        </div> --}}
                                     </div>
                                     <div class="text-2xl font-bold leading-8 mt-6">Rp.
                                         {{ number_format($stats['totalPriceOrderAll'], 0, ',', '.') }}</div>
@@ -40,12 +31,6 @@
                                 <div class="box p-5">
                                     <div class="flex">
                                         <i data-lucide="credit-card" class="report-box__icon text-pending"></i>
-                                        {{-- <div class="ml-auto">
-                                            <div class="report-box__indicator bg-danger tooltip cursor-pointer"
-                                                title="2% Lower than last month"> 2% <i data-lucide="chevron-down"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
-                                        </div> --}}
                                     </div>
                                     <div class="text-2xl font-bold leading-8 mt-6">Rp.
                                         {{ number_format($stats['totalDepositAll'], 0, ',', '.') }}</div>
@@ -58,12 +43,6 @@
                                 <div class="box p-5">
                                     <div class="flex">
                                         <i data-lucide="credit-card" class="report-box__icon text-warning"></i>
-                                        {{-- <div class="ml-auto">
-                                            <div class="report-box__indicator bg-success tooltip cursor-pointer"
-                                                title="12% Higher than last month"> 12% <i data-lucide="chevron-up"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
-                                        </div> --}}
                                     </div>
                                     <div class="text-2xl font-bold leading-8 mt-6">Rp.
                                         {{ number_format($stats['totalRemainingAll'], 0, ',', '.') }}</div>
@@ -74,6 +53,18 @@
                     </div>
                 </div>
                 <!-- END: Laporan Total Deposit -->
+            </div>
+        </div>
+        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
+            <a href="{{ route('totalDeposit', ['export' => 1]) }}"
+                class="btn btn-primary shadow-md mr-2"> <i data-lucide="file"
+                    class="w-4 h-4 mr-3"></i> Export </a>
+            <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
+                <div class="w-56 relative text-slate-500">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
+                    <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
+                </div>
+
             </div>
         </div>
         <!-- BEGIN: Data List -->
@@ -134,11 +125,4 @@
         </div> --}}
         <!-- END: Pagination -->
     </div>
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible show flex items-center mb-2" role="alert">
-            <i data-lucide="alert-octagon" class="w-6 h-6 mr-2"></i> {{ session('error') }}
-            <button type="button" class="btn-close text-white" data-tw-dismiss="alert" aria-label="Close"> <i
-                    data-lucide="x" class="w-4 h-4"></i> </button>
-        </div>
-    @endif
 @endsection

@@ -293,7 +293,7 @@
 
 
                             <div class="px-5 mt-3 pb-8 text-center">
-                                <button type="submit" class="btn btn-success w-24">Setor</button>
+                                <button type="submit" class="btn btn-primary w-24">Setor</button>
                                 <button type="button" data-tw-dismiss="modal"
                                     class="btn btn-outline-secondary w-24 ml-1">Batal</button>
                             </div>
