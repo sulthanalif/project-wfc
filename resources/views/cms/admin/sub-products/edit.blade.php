@@ -29,6 +29,9 @@
                             <option value="Pcs" {{ isset($subProduct->unit) && $subProduct->unit === 'Pcs' ? 'selected' : '' }}>Pcs</option>
                             <option value="Kg" {{ isset($subProduct->unit) && $subProduct->unit === 'Kg' ? 'selected' : '' }}>Kg</option>
                             <option value="Gram" {{ isset($subProduct->unit) && $subProduct->unit === 'Gram' ? 'selected' : '' }}>Gram</option>
+                            <option value="Liter" {{ isset($subProduct->unit) && $subProduct->unit === 'Liter' ? 'selected' : '' }}>Liter</option>
+                            <option value="Box" {{ isset($subProduct->unit) && $subProduct->unit === 'Box' ? 'selected' : '' }}>Box</option>
+                            <option value="Toples" {{ isset($subProduct->unit) && $subProduct->unit === 'Toples' ? 'selected' : '' }}>Toples</option>
                         </select>
                     </div>
                     <div class="mt-3">

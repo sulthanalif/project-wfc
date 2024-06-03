@@ -185,6 +185,7 @@ class ReportController extends Controller
                             'id' => $sub->subProduct->id,
                             'name' => $sub->subProduct->name,
                             'qty' => $detail->qty * $sub->amount,
+                            'unit' => $sub->subProduct->unit,
                             'price' => ($detail->qty * $sub->amount) * $sub->subProduct->price
                         ];
                     }

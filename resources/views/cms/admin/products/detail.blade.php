@@ -16,7 +16,7 @@
                 <div class="p-5">
                     <div
                         class="h-40 2xl:h-56 image-fit rounded-md overflow-hidden before:block before:absolute before:w-full before:h-full before:top-0 before:left-0 before:z-10 before:bg-gradient-to-t before:from-black before:to-black/10">
-                        @if ($product->detail->image == 'image.jpg')
+                        @if ($product->detail->image == 'image.jpg' || $product->detail->image == null)
                             <img alt="PAKET SMART WFC" class=" img-fluid rounded-md" src="{{ asset('assets/logo2.PNG') }}">
                         @else
                             <img alt="PAKET SMART WFC" class=" img-fluid rounded-md"
@@ -31,7 +31,7 @@
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content"> <a data-tw-dismiss="modal" href="javascript:;"> <i data-lucide="x" class="w-8 h-8 text-slate-400"></i> </a>
                                         <div class="modal-body p-0 flex justify-center items-center">
-                                            <img src="@if ($product->detail->image == 'image.jpg') {{ asset('assets/logo2.PNG') }} @else {{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }} @endif"
+                                            <img src="@if ($product->detail->image == 'image.jpg' || $product->detail->image == null) {{ asset('assets/logo2.PNG') }} @else {{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }} @endif"
                                                 alt="Product Image" class="img-fluid">
                                         </div>
                                     </div>

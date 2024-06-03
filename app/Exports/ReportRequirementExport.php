@@ -12,19 +12,19 @@ class ReportRequirementExport implements FromView
 {
     use Exportable;
 
-    private $datas;
+    private $datasubs;
     private $stats;
 
-    public function __construct($datas, $stats)
+    public function __construct($datasubs, $stats)
     {
-        $this->datas = $datas;
+        $this->datasubs = $datasubs;
         $this->stats = $stats;
     }
 
     public function view(): View
     {
         return view('cms.admin.export.requirement', [
-            'payments' => $this->datas,
+            'datasubs' => $this->datasubs,
             'stats' => $this->stats,
         ]);
     }

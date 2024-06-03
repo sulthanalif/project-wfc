@@ -62,6 +62,7 @@
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">NAMA SUB PRODUK</th>
                         <th class="text-center whitespace-nowrap">JUMLAH</th>
+                        <th class="text-center whitespace-nowrap">SATUAN</th>
                         <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
                     </tr>
                 </thead>
@@ -82,6 +83,9 @@
                                 </td>
                                 <td>
                                     <p class="text-slate-500 text-center">{{ $sub['qty'] }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 text-center">{{ $sub['unit'] }}</p>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 text-center"> Rp.

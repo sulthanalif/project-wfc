@@ -105,27 +105,32 @@
                 @else
                     @foreach ($products as $product)
                         <div class="col-6 col-lg-3 col-md-6 mb-5">
-                            <a href="#detailModal" class="text-primary" data-bs-toggle="modal">
+                            <a href="#detailModal{{ $product->id }}" class="text-primary" data-bs-toggle="modal">
                                 <div class="service-box">
                                     <div class="team-box text-start">
                                         <div class="row justify-content-end">
                                             <div class="col-lg-10 col-9">
-                                                <div class="team-image">
-                                                    <img src="{{ asset('storage/images/product/' . $product->detail->image) }}"
-                                                        alt="" class="img-fluid">
+                                                <div class="team-image ps-3">
+                                                    @if ($product->detail->image === 'image.jpg' || $product->detail->image == null)
+                                                        <img src="{{ asset('assets/logo2.PNG') }}" alt="Gambar Produk"
+                                                            class="img-fluid">
+                                                    @else
+                                                        <img src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
+                                                            alt="" class="img-fluid">
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="team-info position-absolute">
                                             <p class="h6 fw-bold">{{ $product->name }} <span
                                                     class="f-14 text-muted fw-normal">/
-                                                    {{ $product->packagerName->name }}</span></p>
+                                                    {{ $product->packageName->name }}</span></p>
                                         </div>
                                     </div>
                                 </div>
                             </a>
 
-                            <div class="modal fade bd-example-modal-lg" id="detailModal" data-keyboard="false"
+                            <div class="modal fade bd-example-modal-lg" id="detailModal{{ $product->id }}" data-keyboard="false"
                                 tabindex="-1" aria-hidden="true">
                                 <div
                                     class="modal-dialog modal-dialog-centered modal-dialog modal-lg modal-dialog-scrollable">
@@ -137,20 +142,25 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="text-center mb-2">
-                                                @if ($product->detail->image === 'image.jpg')
-                                                    <img src="{{ asset('assets/logo2.PNG') }}" alt="Gambar Produk" class="img-fluid">
+                                                @if ($product->detail->image === 'image.jpg' || $product->detail->image == null)
+                                                    <img src="{{ asset('assets/logo2.PNG') }}" alt="Gambar Produk"
+                                                        class="img-fluid">
                                                 @else
-                                                <img src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}" alt=""
-                                                    class="img-fluid">
+                                                    <img src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
+                                                        alt="" class="img-fluid">
                                                 @endif
                                             </div>
                                             <div class="flex flex-row p-0 m-0">
-                                                <p>Supplier: <span class="text-muted">{{ $product->supplierName->name }}</span></p>
-                                                <p>Paket: <span class="text-muted">{{ $product->packagerName->name }}</span></p>
+                                                <p>Paket: <span
+                                                        class="text-muted">{{ $product->packageName->name }}</span>
+                                                </p>
                                                 <p>Harga: <span class="text-muted">Rp.
-                                                    {{ number_format($product->price, 0, ',', '.') }}/hari</span></p>
-                                                <p>Jangka Waktu: <span class="text-muted">{{ $product->days }} hari</span></p>
-                                                <p>Deskripsi: <span class="text-muted">{!! $product->detail->description !!}</span></p>
+                                                        {{ number_format($product->price, 0, ',', '.') }}/hari</span>
+                                                </p>
+                                                <p>Jangka Waktu: <span class="text-muted">{{ $product->days }}
+                                                        hari</span></p>
+                                                <p>Deskripsi: <span class="text-muted">{!! $product->detail->description !!}</span>
+                                                </p>
                                             </div>
                                         </div>
                                     </div>

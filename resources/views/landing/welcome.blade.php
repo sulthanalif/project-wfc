@@ -48,8 +48,8 @@
 
             <!-- LOGO -->
             <a class="navbar-brand logo text-uppercase" href="{{ route('landing-page') }}">
-                <img src="{{ asset('assets/logo.PNG') }}" class="logo-light" alt="" height="50">
-                <img src="{{ asset('assets/logo.PNG') }}" class="logo-dark" alt="" height="50">
+                <img src="{{ asset('assets/logo.png') }}" class="logo-light" alt="" height="50">
+                <img src="{{ asset('assets/logo.png') }}" class="logo-dark" alt="" height="50">
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
@@ -182,7 +182,8 @@
                     </div>
                 </div>
                 <div class="col-lg-6 text-center mt-3 mt-lg-0">
-                    <img src="{{ asset('assets/pemilik.jpg') }}" alt="" class="img-fluid img-thumbnail rounded" style="max-height: 500px">
+                    <img src="{{ asset('assets/pemilik.jpg') }}" alt=""
+                        class="img-fluid img-thumbnail rounded" style="max-height: 500px">
                 </div>
             </div>
         </div>
@@ -217,24 +218,27 @@
                                     <div class="testi-box position-relative overflow-hidden">
                                         <div class="row align-items-center">
                                             <div class="col-md-5 text-center px-3">
-                                                @if ($product->detail->image === 'image.jpg')
-                                                    <img src="{{ asset('assets/logo2.PNG') }}" alt="Gambar Produk" class="img-fluid">
+                                                @if ($product->detail->image === 'image.jpg' || $product->detail->image == null)
+                                                    <img src="{{ asset('assets/logo2.PNG') }}" alt="Gambar Produk"
+                                                        class="img-fluid">
                                                 @else
-                                                <img src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}" alt=""
-                                                    class="img-fluid">
+                                                    <img src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
+                                                        alt="" class="img-fluid">
                                                 @endif
                                             </div>
                                             <div class="col-md-7">
                                                 <div class="p-4">
                                                     <div class="">
                                                         <h5 class="fw-bold f-24">{{ $product->name }}</h5>
-                                                        <p class="text-muted">{{ Str::limit(strip_tags($product->detail->description), 250) }}
+                                                        <p class="text-muted">
+                                                            {{ Str::limit(strip_tags($product->detail->description), 250) }}
                                                         </p>
                                                     </div>
                                                     <div class="d-flex align-items-center mt-3">
                                                         <div class="date">
                                                             <p class="text-muted mb-0 f-14">Rp.
-                                                                {{ number_format($product->price, 0, ',', '.') }}/hari <span>({{ $product->days }} hari)</span></p>
+                                                                {{ number_format($product->price, 0, ',', '.') }}/hari
+                                                                <span>({{ $product->days }} hari)</span></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -261,9 +265,8 @@
                 <div class="col-lg-8">
                     <div class="title text-center mb-5">
                         <h6 class="mb-0 fw-bold text-primary">Galeri</h6>
-                        <h2 class="f-40">Show our App Screenshots!</h2>
-                        <p class="text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor eos <br>
-                            inventore omnis aliquid rerum alias molestias.</p>
+                        <h2 class="f-40">Highlight Of Collection!</h2>
+                        <p class="text-muted">Berikut adalah momen kegiatan yang telah dilakukan.</p>
                     </div>
                 </div>
             </div>
@@ -271,35 +274,35 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="swiper-container">
-                        <div class="fream-phone ">
+                        {{-- <div class="fream-phone ">
                             <img src="{{ asset('assets/landing/images/testi/phone-fream.png') }}" alt=""
                                 class="img-fluid">
-                        </div>
+                        </div> --}}
 
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide border-radius">
-                                <img src="{{ asset('assets/landing/images/testi/ss/s-1.png') }}" alt=""
-                                    class="img-fluid">
+                            <div class="swiper-slide border-radius cust-slide">
+                                <img src="{{ asset('assets/landing/images/galeri/1.jpeg') }}" alt="">
                             </div>
-                            <div class="swiper-slide border-radius">
-                                <img src="{{ asset('assets/landing/images/testi/ss/s-1.png') }}" alt=""
-                                    class="img-fluid">
+                            <div class="swiper-slide border-radius cust-slide">
+                                <img src="{{ asset('assets/landing/images/galeri/2.jpeg') }}" alt="">
                             </div>
-                            <div class="swiper-slide border-radius">
-                                <img src="{{ asset('assets/landing/images/testi/ss/s-1.png') }}" alt=""
-                                    class="img-fluid">
+                            <div class="swiper-slide border-radius cust-slide">
+                                <img src="{{ asset('assets/landing/images/galeri/3.jpeg') }}" alt="">
                             </div>
-                            <div class="swiper-slide border-radius">
-                                <img src="{{ asset('assets/landing/images/testi/ss/s-1.png') }}" alt=""
-                                    class="img-fluid">
+                            <div class="swiper-slide border-radius cust-slide">
+                                <img src="{{ asset('assets/landing/images/galeri/4.jpeg') }}" alt="">
                             </div>
-                            <div class="swiper-slide border-radius">
-                                <img src="{{ asset('assets/landing/images/testi/ss/s-1.png') }}" alt=""
-                                    class="img-fluid">
+                            <div class="swiper-slide border-radius cust-slide">
+                                <img src="{{ asset('assets/landing/images/galeri/5.jpeg') }}" alt="">
                             </div>
-                            <div class="swiper-slide border-radius">
-                                <img src="{{ asset('assets/landing/images/testi/ss/s-1.png') }}" alt=""
-                                    class="img-fluid">
+                            <div class="swiper-slide border-radius cust-slide">
+                                <img src="{{ asset('assets/landing/images/galeri/6.jpeg') }}" alt="">
+                            </div>
+                            <div class="swiper-slide border-radius cust-slide">
+                                <img src="{{ asset('assets/landing/images/galeri/7.jpeg') }}" alt="">
+                            </div>
+                            <div class="swiper-slide border-radius cust-slide">
+                                <img src="{{ asset('assets/landing/images/galeri/8.jpeg') }}" alt="">
                             </div>
                         </div>
 
@@ -351,7 +354,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h5 class="mb-1">Email</h5>
-                                        <p class="f-14 mb-0 text-muted">Email: FredVWeaver@rhyta.com</p>
+                                        <p class="f-14 mb-0 text-muted">Email: paketsmartwfc@gmail.com</p>
                                     </div>
                                 </div>
                             </div>

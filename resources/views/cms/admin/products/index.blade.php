@@ -72,10 +72,7 @@
                                 <td class="w-40">
                                     <div class="flex">
                                         <div class="w-10 h-10 image-fit zoom-in">
-                                            @if ($product->detail->image == null)
-                                                -
-                                            @else
-                                                @if ($product->detail->image == 'image.jpg')
+                                                @if ($product->detail->image == 'image.jpg' || $product->detail->image == null)
                                                     <img alt="PAKET SMART WFC" class="rounded-full"
                                                         src="{{ asset('assets/logo2.PNG') }}">
                                                 @else
@@ -83,7 +80,6 @@
                                                         src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
                                                         title="@if ($product->created_at == $product->updated_at) Diupload {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }} @else Diupdate {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y, H:m:i') }} @endif">
                                                 @endif
-                                            @endif
                                         </div>
                                     </div>
                                 </td>

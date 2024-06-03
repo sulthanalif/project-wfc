@@ -28,6 +28,9 @@
                             <option value="Pcs">Pcs</option>
                             <option value="Kg">Kg</option>
                             <option value="Gram">Gram</option>
+                            <option value="Liter">Liter</option>
+                            <option value="Box">Box</option>
+                            <option value="Toples">Toples</option>
                         </select>
                     </div>
                     <div class="mt-3">
