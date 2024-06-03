@@ -25,7 +25,7 @@
             <div class="hidden xl:flex flex-col min-h-screen">
                 <a href="{{ url('/') }}" class="-intro-x flex items-center pt-5">
                     <img alt="Paket Smart WFC" class="w-6"
-                        src="{{ asset('assets/logo2.PNG') }}">
+                        src="{{ asset('assets/logo2.png') }}">
                     <span class="text-white text-lg ml-3"> Paket Smart WFC </span>
                 </a>
                 <div class="my-auto">
@@ -37,7 +37,7 @@
                         Dengan Mudah.
                     </div>
                     <div class="-intro-x mt-5 text-lg text-white text-opacity-70 dark:text-slate-400">
-                        Alur kerja fleksibel, mudah untuk siapapun, maju bersama 
+                        Alur kerja fleksibel, mudah untuk siapapun, maju bersama
                         <br>
                         dan mampu menjangkau relasi baru.
                     </div>
