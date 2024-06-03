@@ -5,29 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderDetail extends Model
+class DistributionDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'order_details';
+    protected $table = 'distribution_details';
     public $incrementing = false;
-    protected $primaryKey;
     protected $keyType = 'string';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'order_id',
+        'distribution_id',
         'product_id',
-        'sub_agent_id',
-        'sub_price',
         'qty',
     ];
 
-    public function order()
+    public function distribution()
     {
-        return $this->belongsTo(Order::class, 'order_id');
+        return $this->belongsTo(Distribution::class);
     }
+
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class);
     }
 }

@@ -9,7 +9,7 @@
 
     <title>Paket Smart WFC</title>
 
-    <link href="{{ asset('assets/logo2.PNG') }}" rel="shortcut icon">
+    <link href="{{ asset('assets/logo2.png') }}" rel="shortcut icon">
 
     <!-- Bootstrap css -->
     <link rel="stylesheet" href="{{ asset('assets/landing/css/bootstrap.min.css') }}" type="text/css"

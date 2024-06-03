@@ -28,4 +28,9 @@ class Distribution extends Model
     {
         return $this->belongsTo(Order::class);
     }
+
+    public function detail()
+    {
+        return $this->hasMany(DistributionDetail::class);
+    }
 }

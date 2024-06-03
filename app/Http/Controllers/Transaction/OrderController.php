@@ -109,6 +109,7 @@ class OrderController extends Controller
                     // Membuat OrderDetail untuk setiap produk
                     OrderDetail::create([
                         'order_id' => $order->id,
+                        'sub_agent_id' => $product['subAgentId'],
                         // 'name' => $productDetail->name,
                         'product_id' => $product['productId'],
                         // 'price' => $productDetail->price,

@@ -48,6 +48,11 @@ class Product extends Model
         return $this->hasMany(ProductSubProduct::class);
     }
 
+    public function productDistribution()
+    {
+        return $this->hasMany(DistributionDetail::class);
+    }
+
 
     public function supplierName()
     {

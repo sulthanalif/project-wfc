@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Order;
 use App\Models\Distribution;
 use Illuminate\Http\Request;
+use App\Models\DistributionDetail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Helpers\GenerateRandomString;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Validator;
 
 class DistributionController extends Controller
 {
@@ -70,6 +71,17 @@ class DistributionController extends Controller
                     'order_id' => $request->order_id
                 ]);
                 $distribution->save();
+
+                $products = json_decode($request->product_id);
+
+                foreach ($products as $product) {
+                    $distributionDetail = new DistributionDetail([
+                        'distribution_id' => $distribution->id,
+                        'product_id' => $product['product_id'],
+                        'qty' => $product['qty']
+                    ]);
+                    $distributionDetail->save();
+                }
             });
             return redirect()->route('distribution.index')->with('success', 'Data Berhasil Ditambah');
         } catch (\Throwable $th) {

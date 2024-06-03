@@ -11,7 +11,7 @@
 
     <title>Paket Smart WFC</title>
 
-    <link href="{{ asset('assets/logo2.PNG') }}" rel="shortcut icon">
+    <link href="{{ asset('assets/logo2.png') }}" rel="shortcut icon">
     <!-- BEGIN: CSS Assets-->
     <link rel="stylesheet" href="{{ asset('assets/cms/css/app.css') }}" />
     <!-- END: CSS Assets-->
@@ -53,7 +53,7 @@
                 }
             });
         }
-        
+
         function formatRupiah(angka, prefix) {
             var number_string = angka.replace(/[^,\d]/g, '').toString(),
                 split = number_string.split(','),
