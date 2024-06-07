@@ -30,4 +30,9 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
+
+    public function subAgent()
+    {
+        return $this->belongsTo(SubAgent::class, 'sub_agent_id');
+    }
 }
