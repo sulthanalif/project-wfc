@@ -21,8 +21,9 @@ use App\Http\Controllers\Admin\DistributionController;
 // use App\Models\Administration;
 use App\Http\Controllers\Transaction\PaymentController;
 use App\Http\Controllers\Admin\DashboardAdminController;
-use App\Http\Controllers\Transaction\ExportInvoiceController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\Admin\ExportDeliveryOrderController;
+use App\Http\Controllers\Transaction\ExportInvoiceController;
 
 // use App\Http\Controllers\Auth\AuthController;
 // use App\Http\Controllers\DashboardController;
@@ -72,8 +73,9 @@ Route::group(['middleware' => 'auth',], function () {
 
         //distribution
         Route::resource('distribution', DistributionController::class);
-        // Route::group(['prefix' => 'distribution'], function () {
-        // });
+        Route::group(['prefix' => 'distribution'], function () {
+            Route::get('/export/{distribution}', [ExportDeliveryOrderController::class, 'getDeliveryOrder'])->name('export.deliveryOrder');
+        });
     });
         //master
         Route::group(['prefix' => 'master' ,'middleware' => 'role:admin|super_admin'], function () {

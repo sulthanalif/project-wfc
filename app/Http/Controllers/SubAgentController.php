@@ -53,7 +53,7 @@ class SubAgentController extends Controller
             return view('cms.sub-agent.create');
         } else {
             //untuk pilihan sub agent dari mana
-            $agents = User::role('agent')->get();
+            $agents = User::role('agent')->where('active', 1)->get();
 
             return view('cms.sub-agent.create', compact('agents'));
         }
