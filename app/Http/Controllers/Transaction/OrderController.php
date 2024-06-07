@@ -53,6 +53,7 @@ class OrderController extends Controller
 
         if ($roleName == 'agent') {
             return view('cms.transactions.create', [
+                'agents' => User::role('agent')->where('active', 1)->get(),
                 'orderNumber' => $orderNumber,
                 'packages' => $packages
             ]);
@@ -109,6 +110,7 @@ class OrderController extends Controller
                     // Membuat OrderDetail untuk setiap produk
                     OrderDetail::create([
                         'order_id' => $order->id,
+                        // 'sub_agent_id' => $request->sub_agent_item,
                         'sub_agent_id' => $product['subAgentId'],
                         // 'name' => $productDetail->name,
                         'product_id' => $product['productId'],
@@ -117,7 +119,6 @@ class OrderController extends Controller
                         'qty' => $product['qty']
                     ]);
                 }
-
             });
             if ($order) {
                 return redirect()->route('order.index')->with('success', 'Pesanan Telah Dibuat');
@@ -163,12 +164,12 @@ class OrderController extends Controller
 
     public function accOrder(Order $order)
     {
-        if($order) {
+        if ($order) {
             $update = $order->update([
                 'status' => 'accepted'
             ]);
 
-            if($update) {
+            if ($update) {
                 return redirect()->route('order.index')->with('success', 'Order Berhasil diterima');
             } else {
                 return back()->with('error', 'Kesalahan');
@@ -180,13 +181,13 @@ class OrderController extends Controller
 
     public function changeOrderStatus(Request $request, Order $order)
     {
-        if($order) {
+        if ($order) {
             $update = $order->update([
                 'status' => $request->status,
                 'description' => $request->description
             ]);
 
-            if($update) {
+            if ($update) {
                 return redirect()->route('order.index')->with('success', 'Order Status Berhasil Diubah');
             } else {
                 return back()->with('error', 'Kesalahan');
@@ -206,7 +207,7 @@ class OrderController extends Controller
                 'total_unpaid' => Order::where('payment_status', '!=', 'paid')->count(),
             ];
 
-            return response()->json($stats,200);
+            return response()->json($stats, 200);
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),

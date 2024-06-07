@@ -87,7 +87,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function subAgent ()
     {
-        return $this->hasMany(SubAgent::class);
+        return $this->hasMany(SubAgent::class, 'agent_id');
     }
 
     public function order()

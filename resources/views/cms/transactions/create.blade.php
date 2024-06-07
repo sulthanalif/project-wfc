@@ -31,13 +31,13 @@
                             </select>
                         </div>
                         <div class="mt-3">
-                            <label for="order_date" class="form-label">Tanggal Pesanan <span class="text-danger">*</span></label>
-                            <input id="order_date" name="order_date" type="date"
-                            class="form-control w-full">
+                            <label for="order_date" class="form-label">Tanggal Pesanan <span
+                                    class="text-danger">*</span></label>
+                            <input id="order_date" name="order_date" type="date" class="form-control w-full">
                         </div>
                     @endhasrole
                     @hasrole('agent')
-                        <input type="hidden" name="agent_id" value="{{ auth()->user()->id }}">
+                        <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
                     @endhasrole
 
                     <div class="mt-3">
@@ -67,6 +67,7 @@
                                         <th>Harga</th>
                                         <th>Jumlah</th>
                                         <th>Sub Total</th>
+                                        <th>Sub Agent</th>
                                         <th>#</th>
                                     </tr>
                                 </thead>
@@ -83,6 +84,13 @@
                             </table>
                         </div>
                     </div>
+
+                    {{-- <div class="mt-3" id="sub_agent_fields" style="display: none;">
+                        <label for="sub_agent_item" class="form-label">Pilih Sub Agent <span
+                                class="text-danger">*</span></label>
+                        <select class="form-select mt-2 sm:mr-2" id="sub_agent_item" name="sub_agent_item" required>
+                        </select>
+                    </div> --}}
 
                     <div class="text-left mt-5">
                         <input type="hidden" name="total_price" value="0">
@@ -115,9 +123,57 @@
         document.addEventListener('DOMContentLoaded', () => {
             productSelect = document.getElementById('package_id');
             productSelect.addEventListener('change', handlePackageChange);
+            // const agentSelect = document.getElementById('agent_id');
+            // agentSelect.addEventListener('change', handleAgentChange);
         });
 
         // Functions
+        // function handleAgentChange(event) {
+        //     const agentId = event.target.value;
+        //     const agentFields = document.getElementById('sub_agent_fields');
+
+        //     if (agentId) {
+        //         agentFields.style.display = 'block';
+        //         populateSubAgents(agentId);
+        //     } else {
+        //         agentFields.style.display = 'none';
+        //         clearSubAgentSelection();
+        //     }
+        // }
+
+        // function populateSubAgents(agentId) {
+        //     const subAgentSelect = document.getElementById('sub_agent_item');
+        //     subAgentSelect.innerHTML = '<option disabled selected>Pilih Sub Agent...</option>';
+
+        //     // Assuming the agents data is embedded directly in the script
+        //     const agents = [
+        //         @foreach ($agents as $agent)
+        //             {
+        //                 id: '{{ $agent->id }}',
+        //                 subAgents: [
+        //                     @foreach ($agent->subAgent as $subAgent)
+        //                         {
+        //                             id: '{{ $subAgent->id }}',
+        //                             name: '{{ $subAgent->name }}',
+        //                             phone_number: '{{ $subAgent->phone_number }}'
+        //                         },
+        //                     @endforeach
+        //                 ]
+        //             },
+        //         @endforeach
+        //     ];
+
+        //     const selectedAgent = agents.find(agent => agent.id === agentId);
+        //     if (selectedAgent) {
+        //         selectedAgent.subAgents.forEach(subAgent => {
+        //             const option = document.createElement('option');
+        //             option.value = subAgent.id;
+        //             option.textContent = `${subAgent.name} - ${subAgent.phone_number}`;
+        //             subAgentSelect.appendChild(option);
+        //         });
+        //     }
+        // }
+
         function handlePackageChange(event) {
             const packageId = event.target.value;
             const productFields = document.getElementById('product_fields');
@@ -162,24 +218,30 @@
             const itemPrice = parseInt(selectedOption.dataset.harga);
             const itemQuantity = 1;
 
-            const existingRow = $('.transaksiItem td:nth-child(2)').filter(function() {
-                return $(this).text() === itemName;
-            }).closest('tr');
+            // const existingRow = $('.transaksiItem td:nth-child(2)').filter(function() {
+            //     return $(this).text() === itemName;
+            // }).closest('tr');
 
-            if (existingRow.length > 0) {
-                const input = existingRow.find('.quantityInput');
-                const newQuantity = parseInt(input.val()) + 1;
-                input.val(newQuantity);
-                const priceChange = itemPrice * 1;
-                updateQty(input[0], priceChange);
-            } else {
-                const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
-                $('.transaksiItem').append(newRow);
+            // if (existingRow.length > 0) {
+            //     const input = existingRow.find('.quantityInput');
+            //     const newQuantity = parseInt(input.val()) + 1;
+            //     input.val(newQuantity);
+            //     const priceChange = itemPrice * 1;
+            //     updateQty(input[0], priceChange);
+            // } else {
+            //     const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
+            //     $('.transaksiItem').append(newRow);
 
-                updateTotals(itemPrice);
-                qty += itemQuantity;
-                $('.qty').html(qty.toString());
-            }
+            //     updateTotals(itemPrice);
+            //     qty += itemQuantity;
+            //     $('.qty').html(qty.toString());
+            // }
+            const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
+            $('.transaksiItem').append(newRow);
+
+            updateTotals(itemPrice);
+            qty += itemQuantity;
+            $('.qty').html(qty.toString());
         }
 
         function createTableRow(id, name, price, quantity) {
@@ -191,10 +253,55 @@
                 <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
                 <td class="text-center"><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}" id="product-qty"></td>
                 <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
+                <td id="sub_agent_fields">
+                    <select class="tom-select sub_agent_item" name="sub_agent_item">
+                        <option disabled selected>Pilih Sub Agent...</option>
+                    </select>
+                </td>
                 <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button></td>
                 </tr>`;
 
-            return row;
+            const tableRow = $(row);
+            setTimeout(() => {
+                const agentId = $('#agent_id').val();
+                if (agentId) {
+                    populateSubAgentsInRow(agentId, tableRow.find('.sub_agent_item'));
+                }
+            }, 0);
+
+            return tableRow;
+        }
+
+        function populateSubAgentsInRow(agentId, subAgentSelect) {
+            subAgentSelect.html('<option disabled selected>Pilih Sub Agent...</option>');
+
+            // Assuming the agents data is embedded directly in the script
+            const agents = [
+                @foreach ($agents as $agent)
+                    {
+                        id: '{{ $agent->id }}',
+                        subAgents: [
+                            @foreach ($agent->subAgent as $subAgent)
+                                {
+                                    id: '{{ $subAgent->id }}',
+                                    name: '{{ $subAgent->name }}',
+                                    phone_number: '{{ $subAgent->phone_number }}'
+                                },
+                            @endforeach
+                        ]
+                    },
+                @endforeach
+            ];
+
+            const selectedAgent = agents.find(agent => agent.id === agentId);
+            if (selectedAgent) {
+                selectedAgent.subAgents.forEach(subAgent => {
+                    const option = document.createElement('option');
+                    option.value = subAgent.id;
+                    option.textContent = `${subAgent.name} - ${subAgent.phone_number}`;
+                    subAgentSelect.append(option);
+                });
+            }
         }
 
         function updateTotals(priceChange, quantityChange = 0) {
@@ -265,6 +372,11 @@
             productSelect.selectedIndex = 0;
         }
 
+        function clearSubAgentSelection() {
+            const subAgentSelect = document.getElementById('sub_agent_item');
+            subAgentSelect.innerHTML = '<option disabled selected>Pilih Sub Agent...</option>';
+        }
+
         function formatRupiah(number) {
             const formatter = new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -279,11 +391,13 @@
                 const productId = $(this).find('#product-id').val();
                 const subTotal = parseInt($(this).find('td:nth-child(5)').text().replace(/[^0-9,-]/g, ''));
                 const qty = $(this).find('#product-qty').val();
+                const subAgentId = $(this).find('.sub_agent_item').val();
 
                 productData.push({
                     productId: productId,
                     subTotal: subTotal,
-                    qty: qty
+                    qty: qty,
+                    subAgentId: subAgentId
                 });
             });
 
