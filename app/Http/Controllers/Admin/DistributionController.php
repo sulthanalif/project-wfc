@@ -29,18 +29,12 @@ class DistributionController extends Controller
      */
     public function create()
     {
-        $orders = Order::whereIn('status', ['accepted', 'stop'])->get();
-        $datas = [];
-        foreach ($orders as $order) {
-            $cek = Distribution::where('order_id', $order->id)->first();
-            if (!$cek) {
-                $datas [] = $order;
-            }
-        }
+        $datas = Order::whereIn('status', ['accepted', 'stop'])->wherein('delivery_status', ['pending'])->get();
+        $distributions = Distribution::get();
 
         $distributionNumber = 'D-'.GenerateRandomString::make(8) . now()->format('dmY');
 
-        return view('cms.admin.distributions.create', compact('datas', 'distributionNumber'));
+        return view('cms.admin.distributions.create', compact('datas', 'distributions', 'distributionNumber'));
         // return response()->json($datas);
     }
 
@@ -49,6 +43,12 @@ class DistributionController extends Controller
      */
     public function store(Request $request)
     {
+        // $products = json_decode($request->all(), true);
+        // $datas = [];
+        // foreach ($products as $product) {
+        //     $datas [] = $product['product_id'];
+        // }
+        // return response()->json($request->all());
         $validator = Validator::make($request->all(), [
             'distribution_number' => ['required', 'string'],
             'date' => ['required', 'date'],
@@ -72,15 +72,17 @@ class DistributionController extends Controller
                 ]);
                 $distribution->save();
 
-                $products = json_decode($request->product_id);
+                $products = json_decode($request->products, true);
 
-                foreach ($products as $product) {
-                    $distributionDetail = new DistributionDetail([
-                        'distribution_id' => $distribution->id,
-                        'product_id' => $product['product_id'],
-                        'qty' => $product['qty']
-                    ]);
-                    $distributionDetail->save();
+                if(is_array($products)) {
+                    foreach ($products as $product) {
+                        $distributionDetail = new DistributionDetail([
+                            'distribution_id' => $distribution->id,
+                            'order_detail_id' => $product['productId'],
+                            'qty' => $product['qty']
+                        ]);
+                        $distributionDetail->save();
+                    }
                 }
             });
             return redirect()->route('distribution.index')->with('success', 'Data Berhasil Ditambah');
@@ -156,6 +158,7 @@ class DistributionController extends Controller
     {
         try {
             DB::transaction(function () use ($distribution) {
+                $distribution->detail()->delete();
                 $distribution->delete();
             });
             return redirect()->route('distribution.index')->with('success', 'Data Berhasil Dihapus');

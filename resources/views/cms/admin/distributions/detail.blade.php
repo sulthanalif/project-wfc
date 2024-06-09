@@ -104,16 +104,16 @@
                         <thead>
                             <tr>
                                 <th class="whitespace-nowrap text-center !py-5">Produk</th>
-                                <th class="whitespace-nowrap text-center">Harga per Item</th>
+                                {{-- <th class="whitespace-nowrap text-center">Harga per Item</th> --}}
                                 <th class="whitespace-nowrap text-center">Qty</th>
-                                <th class="whitespace-nowrap text-center">Total</th>
+                                {{-- <th class="whitespace-nowrap text-center">Total</th> --}}
                             </tr>
                         </thead>
                         <tbody>
                             @php
                                 $total_qty = 0;
                             @endphp
-                            @foreach ($distribution->order->detail as $item)
+                            @foreach ($distribution->detail as $item)
                                 <tr>
                                     <td class="!py-4">
                                         <div class="flex items-center">
@@ -161,10 +161,10 @@
                                             @endhasrole
                                         </div>
                                     </td>
-                                    <td class="text-center">Rp. {{ number_format($item->product->price, 0, ',', '.') }}
-                                    </td>
+                                    {{-- <td class="text-center">Rp. {{ number_format($item->product->price, 0, ',', '.') }}
+                                    </td> --}}
                                     <td class="text-center">{{ $item->qty }}</td>
-                                    <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}</td>
+                                    {{-- <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}</td> --}}
                                 </tr>
                                 @php
                                     $total_qty += $item->qty;
@@ -173,9 +173,9 @@
                         </tbody>
                         <tfoot>
                             <tr class="text-center">
-                                <th colspan="2">TOTAL PESANAN</th>
+                                <th colspan="1">TOTAL</th>
                                 <th>{{ $total_qty }}</th>
-                                <th>Rp. {{ number_format($distribution->order->total_price, 0, ',', '.') }}</th>
+                                {{-- <th>Rp. {{ number_format($distribution->order->total_price, 0, ',', '.') }}</th> --}}
                             </tr>
                         </tfoot>
                     </table>

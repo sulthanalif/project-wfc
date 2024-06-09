@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Helpers\UUIDGenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderDetail extends Model
 {
-    use HasFactory;
+    use HasFactory, UUIDGenerator;
 
     protected $table = 'order_details';
     public $incrementing = false;
-    protected $primaryKey;
+    protected $primaryKey = 'id';
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -33,6 +34,11 @@ class OrderDetail extends Model
 
     public function subAgent()
     {
-        return $this->belongsTo(SubAgent::class, 'sub_agent_id');
+        return $this->belongsTo(SubAgent::class);
+    }
+
+    public function distributionDetail()
+    {
+        return $this->hasMany(DistributionDetail::class, 'order_detail_id');
     }
 }

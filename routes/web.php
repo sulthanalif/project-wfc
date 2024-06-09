@@ -23,6 +23,7 @@ use App\Http\Controllers\Transaction\PaymentController;
 use App\Http\Controllers\Admin\DashboardAdminController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Admin\ExportDeliveryOrderController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\Transaction\ExportInvoiceController;
 
 // use App\Http\Controllers\Auth\AuthController;
@@ -99,6 +100,7 @@ Route::group(['middleware' => 'auth',], function () {
         //Transaction
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin|agent'], function () {
             Route::resource('order', OrderController::class);
+            Route::get('/test', [TestController::class, 'index']);
         });
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin'], function () {
             require __DIR__ . '/transaction/payment.php';

@@ -13,7 +13,8 @@
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
             <div class="intro-y box p-5">
-                <form action="{{ route('distribution.store') }}" method="post" enctype="multipart/form-data" id="distributionForm">
+                <form action="{{ route('distribution.store') }}" method="post" enctype="multipart/form-data"
+                    id="distributionForm">
                     @csrf
                     <div class="grid grid-cols-12 gap-3">
                         <div class="col-span-12 lg:col-span-6">
@@ -102,6 +103,7 @@
                     </div>
 
                     <div class="text-left mt-5">
+                        <input type="hidden" name="products" id="productData" value="">
                         <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Simpan</button>
                         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
@@ -146,10 +148,16 @@
                 if ('{{ $order->id }}' == orderId) {
                     @foreach ($order->detail as $products)
                         var option = document.createElement('option');
-                        option.value = '{{ $products->product->id }}';
+                        option.value = '{{ $products->id}}';
                         option.textContent =
-                            "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} - {{ $products->qty }}";
-                        option.dataset.qty = '{{ $products->qty }}';
+                            @php
+                                $qty = 0;
+                                foreach ($products->distributionDetail as $distributionDetail) {
+                                    $qty += $distributionDetail->qty;
+                                }
+                            @endphp
+                            "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} - {{ $products->qty - $qty }}";
+                        option.dataset.qty = '{{ $products->qty - $qty }}';
                         option.dataset.subAgentId = '{{ $products->sub_agent_id }}'
                         productSelect.appendChild(option);
                     @endforeach
@@ -168,6 +176,7 @@
 
             const newRow = createTableRow(itemId, itemSubAgent, itemSubAgentId, itemName, itemQuantity);
             document.getElementById('product-item').appendChild(newRow);
+            // console.log(newRow);
         }
 
         function createTableRow(id, subAgent, subAgentId, name, quantity) {

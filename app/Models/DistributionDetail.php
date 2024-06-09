@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Helpers\UUIDGenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DistributionDetail extends Model
 {
-    use HasFactory;
+    use HasFactory, UUIDGenerator;
 
     protected $table = 'distribution_details';
     public $incrementing = false;
@@ -16,7 +17,7 @@ class DistributionDetail extends Model
 
     protected $fillable = [
         'distribution_id',
-        'product_id',
+        'order_detail_id',
         'qty',
     ];
 
@@ -25,8 +26,8 @@ class DistributionDetail extends Model
         return $this->belongsTo(Distribution::class);
     }
 
-    public function product()
+    public function orderDetail()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(OrderDetail::class, 'order_detail_id');
     }
 }

@@ -27,7 +27,7 @@ class SubAgent extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function orders()
+    public function orderDetail()
     {
         return $this->hasMany(OrderDetail::class);
     }

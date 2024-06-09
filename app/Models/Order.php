@@ -22,6 +22,7 @@ class Order extends Model
         'order_date',
         'status',
         'payment_status',
+        'delivery_status',
         'description',
     ];
 

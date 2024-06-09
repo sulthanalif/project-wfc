@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('distribution_details', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('distribution_id')->constrained('distributions')->onDelete('cascade');
-            $table->uuid('product_id')->constrained('products')->onDelete('cascade');
+            $table->uuid('order_detail_id')->constrained('order_details')->onDelete('cascade');
             $table->string('qty');
             $table->timestamps();
         });

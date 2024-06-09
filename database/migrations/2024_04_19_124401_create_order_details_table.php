@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('order_details', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->uuid('order_id')->constrained('orders')->onDelete('cascade');
             $table->uuid('product_id')->constrained('products')->onDelete('cascade');
             $table->uuid('sub_agent_id')->constrained('sub_agents')->onDelete('cascade')->nullable();
