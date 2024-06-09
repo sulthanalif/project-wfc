@@ -125,6 +125,21 @@ class DistributionController extends Controller
             DB::transaction(function () use ($distribution) {
                 $distribution->detail()->delete();
                 $distribution->delete();
+
+                $order = Order::find($distribution->order_id);
+                $orderDetails = $order->detail->toArray() ?? [];
+                $qty = array_sum(array_column($orderDetails, 'qty'));
+
+                $totalQty = 0;
+                $distribution = Distribution::where('order_id', $order->id)->get();
+                foreach ($distribution as $item) {
+                    $totalQty += $item->detail->sum('qty');
+                }
+
+                if ($qty - $totalQty  !== 0) {
+                    $order->delivery_status = 'pending';
+                    $order->save();
+                }
             });
             return redirect()->route('distribution.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Throwable $th) {
