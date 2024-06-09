@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Distribution;
 use Illuminate\Http\Request;
 use App\Models\DistributionDetail;
@@ -30,11 +31,11 @@ class DistributionController extends Controller
     public function create()
     {
         $datas = Order::whereIn('status', ['accepted', 'stop'])->wherein('delivery_status', ['pending'])->get();
-        $distributions = Distribution::get();
 
-        $distributionNumber = 'D-'.GenerateRandomString::make(8) . now()->format('dmY');
 
-        return view('cms.admin.distributions.create', compact('datas', 'distributions', 'distributionNumber'));
+        $distributionNumber = 'D-' . GenerateRandomString::make(8) . now()->format('dmY');
+
+        return view('cms.admin.distributions.create', compact('datas', 'distributionNumber'));
         // return response()->json($datas);
     }
 
@@ -43,12 +44,6 @@ class DistributionController extends Controller
      */
     public function store(Request $request)
     {
-        // $products = json_decode($request->all(), true);
-        // $datas = [];
-        // foreach ($products as $product) {
-        //     $datas [] = $product['product_id'];
-        // }
-        // return response()->json($request->all());
         $validator = Validator::make($request->all(), [
             'distribution_number' => ['required', 'string'],
             'date' => ['required', 'date'],
@@ -74,7 +69,7 @@ class DistributionController extends Controller
 
                 $products = json_decode($request->products, true);
 
-                if(is_array($products)) {
+                if (is_array($products)) {
                     foreach ($products as $product) {
                         $distributionDetail = new DistributionDetail([
                             'distribution_id' => $distribution->id,
@@ -82,6 +77,21 @@ class DistributionController extends Controller
                             'qty' => $product['qty']
                         ]);
                         $distributionDetail->save();
+                    }
+
+                    $order = Order::find($request->order_id);
+                    $orderDetails = $order->detail->toArray() ?? [];
+                    $qty = array_sum(array_column($orderDetails, 'qty'));
+
+                    $totalQty = 0;
+                    $distribution = Distribution::where('order_id', $order->id)->get();
+                    foreach ($distribution as $item) {
+                        $totalQty += $item->detail->sum('qty');
+                    }
+
+                    if ($qty - $totalQty  == 0) {
+                        $order->delivery_status = 'success';
+                        $order->save();
                     }
                 }
             });
@@ -105,51 +115,6 @@ class DistributionController extends Controller
         // return response()->json(compact('datas'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Distribution $distribution)
-    {
-        $orders = Order::where(['status' => 'accepted', 'payment_status' => 'paid'])->get();
-        return view('cms.admin.distributions.edit', compact('distribution', 'orders'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Distribution $distribution)
-    {
-        $validator = Validator::make($request->all(), [
-            'distribution_number' => ['required', 'string'],
-            'date' => ['required', 'date'],
-            'police_number' => ['required', 'string'],
-            'driver' => ['required', 'string'],
-            'order_id' => ['required']
-        ]);
-
-        if ($validator->fails()) {
-            return back()->with('error', $validator->errors());
-        }
-
-        try {
-            DB::transaction(function () use ($request, $distribution) {
-                $distribution->update([
-                    'distribution_number' => $request->distribution_number,
-                    'date' => $request->date,
-                    'police_number' => $request->police_number,
-                    'driver' => $request->driver,
-                    'order_id' => $request->order_id
-                ]);
-            });
-            return redirect()->route('distribution.index')->with('success', 'Data Berhasil Diubah');
-        } catch (\Throwable $th) {
-            $data = [
-                'message' => $th->getMessage(),
-                'status' => 400
-            ];
-            return view('cms.error', compact('data'));
-        }
-    }
 
     /**
      * Remove the specified resource from storage.

@@ -142,25 +142,7 @@ class OrderController extends Controller
         return view('cms.transactions.detail', compact('order'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order)
-    {
-        $user = Auth::user();
-        $roleUser = $user->roles->first();
-        $roleName = $roleUser->name;
 
-        if ($roleName == "agent") {
-            $data = [
-                'message' => 'Anda Tidak Diizinkan Untuk Ini!',
-                'status' => 400
-            ];
-            return view('cms.error', compact('data'));
-        } else {
-            return view('cms.transactions.edit', $order);
-        }
-    }
 
     public function accOrder(Order $order)
     {

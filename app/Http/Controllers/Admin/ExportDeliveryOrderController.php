@@ -17,7 +17,7 @@ class ExportDeliveryOrderController extends Controller
             'distribution' => $distribution
         ];
 
-        $pdf = Pdf::loadView('cms.admin.distribution.export.distribution-order', $data);
+        $pdf = Pdf::loadView('cms.admin.distributions.export.distribution-order', $data);
         return $pdf->stream('distribution-order-'. $distribution->distribution_number .'.pdf');
     }
 }

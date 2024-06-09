@@ -99,7 +99,7 @@ Route::group(['middleware' => 'auth',], function () {
 
         //Transaction
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin|agent'], function () {
-            Route::resource('order', OrderController::class);
+            require __DIR__ . '/transaction/order.php';
             Route::get('/test', [TestController::class, 'index']);
         });
         Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin'], function () {
