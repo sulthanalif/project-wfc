@@ -15,7 +15,7 @@
                 <div class="dropdown-menu w-40">
                     <ul class="dropdown-content">
                         <li>
-                            <a href="" class="dropdown-item"> <i data-lucide="file" class="w-4 h-4 mr-2"></i> Cetak Surat </a>
+                            <a href="{{ route('export.deliveryOrder', ['distribution'=> $distribution]) }}" class="dropdown-item" target="_blank"> <i data-lucide="file" class="w-4 h-4 mr-2"></i> Cetak Surat </a>
                         </li>
                     </ul>
                 </div>
@@ -117,7 +117,7 @@
                             @foreach ($distribution->detail as $item)
                                 <tr>
                                     <td>
-                                        {{ $item->orderDetail->subAgent->name }}
+                                        {{ $item->orderDetail->sub_agent_id ? $item->orderDetail->subAgent->name : $distribution->order->agent->agentProfile->name }}
                                     </td>
                                     <td class="!py-4">
                                         <div class="flex items-center justify-center">

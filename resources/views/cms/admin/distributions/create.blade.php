@@ -164,17 +164,23 @@
             @foreach ($datas as $order)
                 if ('{{ $order->id }}' == orderId) {
                     @foreach ($order->detail as $products)
+                        @php
+                            $qty = 0;
+                            foreach ($products->distributionDetail as $distributionDetail) {
+                                $qty += $distributionDetail->qty;
+                            }
+                        @endphp
+
                         var option = document.createElement('option');
                         option.value = '{{ $products->id }}';
                         option.textContent =
-                            @php
-                                $qty = 0;
-                                foreach ($products->distributionDetail as $distributionDetail) {
-                                    $qty += $distributionDetail->qty;
-                                }
-                            @endphp "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} - {{ $products->qty - $qty }}";
+                            "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} - {{ $products->qty - $qty }}";
                         option.dataset.qty = '{{ $products->qty - $qty }}';
-                        option.dataset.subAgentId = '{{ $products->sub_agent_id }}'
+
+                        @if ($products->qty - $qty == 0)
+                            option.disabled = true;
+                        @endif
+
                         productSelect.appendChild(option);
                     @endforeach
                 }
@@ -188,24 +194,28 @@
             const itemSubAgent = selectedOption.textContent.trim().split(' - ')[0];
             const itemName = selectedOption.textContent.trim().split(' - ')[1];
             const itemQuantity = parseInt(selectedOption.dataset.qty);
-            const itemSubAgentId = selectedOption.dataset.subAgentId;
 
-            const newRow = createTableRow(itemId, itemSubAgent, itemSubAgentId, itemName, itemQuantity);
+            const newRow = createTableRow(itemId, itemSubAgent, itemName, itemQuantity);
             document.getElementById('product-item').appendChild(newRow);
             // console.log(newRow);
         }
 
-        function createTableRow(id, subAgent, subAgentId, name, quantity) {
+        function createTableRow(id, subAgent, name, quantity) {
             const row = document.createElement('tr');
             row.innerHTML = `<tr>
                 <input value="${id}" id="product-id" name="product-id" type="hidden">
-                <input value="${subAgentId}" id="sub-agent-id" name="sub-agent-id" type="hidden">
                 <td>${subAgent}</td>
                 <td>${name}</td>
                 <td class="text-center"><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}" id="product-qty" max="${quantity}"></td>
                 <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button></td>
                 </tr>`;
             return row;
+        }
+
+        function removeItem(button) {
+            const row = $(button).closest('tr');
+
+            row.remove();
         }
 
         function clearProductSelection() {
@@ -217,12 +227,10 @@
             $('#product-item tr').each(function() {
                 const productId = $(this).find('#product-id').val();
                 const qty = $(this).find('#product-qty').val();
-                const subAgentId = $(this).find('#sub-agent-id').val();
 
                 productData.push({
                     productId: productId,
-                    qty: qty,
-                    subAgentId: subAgentId
+                    qty: qty
                 });
             });
 

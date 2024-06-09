@@ -97,7 +97,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if ($order->payment_status === 'success')
+                                    @if ($order->delivery_status === 'success')
                                         <div class="flex items-center justify-center text-success"> <i
                                                 data-lucide="check-square" class="w-4 h-4 mr-2"></i> Diantarkan </div>
                                     @else
