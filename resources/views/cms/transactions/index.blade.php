@@ -34,6 +34,7 @@
                         <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
                         <th class="text-center whitespace-nowrap">PEMBAYARAN</th>
+                        <th class="text-center whitespace-nowrap">PENGIRIMAN</th>
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
@@ -95,6 +96,15 @@
                                                 class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
                                     @endif
                                 </td>
+                                <td>
+                                    @if ($order->payment_status === 'success')
+                                        <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> Diantarkan </div>
+                                    @else
+                                        <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
+                                                class="w-4 h-4 mr-2"></i> Belum Diantarkan </div>
+                                    @endif
+                                </td>
                                 @hasrole('super_admin|admin')
                                     @if ($order->payment_status == 'paid')
                                         <td class="table-report__action w-56">
@@ -102,7 +112,7 @@
                                                     data-lucide="check-square" class="w-4 h-4 mr-2"></i> </div>
                                         </td>
                                     @else
-                                        <td class="table-report__action w-56">
+                                        <td class="table-report__action w-50">
                                             <div class="flex justify-center items-center">
                                                 <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
                                                     data-tw-target="#change-confirmation-modal{{ $order->id }}">

@@ -44,8 +44,25 @@
                                 <select class="tom-select" id="order_id" name="order_id">
                                     <option disabled selected>Pilih Pesanan...</option>
                                     @foreach ($datas as $order)
-                                        <option value="{{ $order->id }}">{{ $order->order_number }} -
-                                            {{ $order->agent->agentProfile->name }}</option>
+                                        @php
+                                            $totalOrderQty = 0;
+                                            $totalDistributionQty = 0;
+                                        @endphp
+                                        @foreach ($order->detail as $orderDetail)
+                                            @php
+                                                $totalOrderQty += $orderDetail->qty;
+                                            @endphp
+                                            @foreach ($orderDetail->distributionDetail as $distributionDetail)
+                                                @php
+                                                    $totalDistributionQty += $distributionDetail->qty;
+                                                @endphp
+                                            @endforeach
+                                        @endforeach
+
+                                        @if ($totalOrderQty != $totalDistributionQty)
+                                            <option value="{{ $order->id }}">{{ $order->order_number }} -
+                                                {{ $order->agent->agentProfile->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -148,15 +165,14 @@
                 if ('{{ $order->id }}' == orderId) {
                     @foreach ($order->detail as $products)
                         var option = document.createElement('option');
-                        option.value = '{{ $products->id}}';
+                        option.value = '{{ $products->id }}';
                         option.textContent =
                             @php
                                 $qty = 0;
                                 foreach ($products->distributionDetail as $distributionDetail) {
                                     $qty += $distributionDetail->qty;
                                 }
-                            @endphp
-                            "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} - {{ $products->qty - $qty }}";
+                            @endphp "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} - {{ $products->qty - $qty }}";
                         option.dataset.qty = '{{ $products->qty - $qty }}';
                         option.dataset.subAgentId = '{{ $products->sub_agent_id }}'
                         productSelect.appendChild(option);

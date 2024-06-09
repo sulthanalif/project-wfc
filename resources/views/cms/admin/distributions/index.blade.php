@@ -24,10 +24,10 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NOMER DISTRIBUSI</th>
+                        <th class="whitespace-nowrap">NOMOR PENGIRIMAN</th>
                         <th class="whitespace-nowrap">TANGAL</th>
                         <th class="whitespace-nowrap">DRIVER</th>
-                        <th class="whitespace-nowrap">NOMER ORDER</th>
+                        <th class="whitespace-nowrap">NOMOR PESANAN</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
                 </thead>
@@ -59,8 +59,8 @@
 
                                 <td class="table-report__action w-56">
                                     <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="{{ route('distribution.edit', $distribution) }}"> <i
-                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
+                                        {{-- <a class="flex items-center mr-3" href="{{ route('distribution.edit', $distribution) }}"> <i
+                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a> --}}
                                         <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
                                             data-tw-target="#delete-confirmation-modal{{ $distribution->id }}"> <i
                                                 data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>

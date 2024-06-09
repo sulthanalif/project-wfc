@@ -81,7 +81,7 @@
                         <span class="bg-warning/20 text-warning rounded px-2 ml-1">Pending</span>
                     @endif
                 </div>
-                <div class="flex items-center mt-3"> <i data-lucide="clock" class="w-4 h-4 text-slate-500 mr-2"></i>
+                <div class="flex items-center mt-3"> <i data-lucide="file-text" class="w-4 h-4 text-slate-500 mr-2"></i>
                     Keterangan:
                     @if ($order->status === 'reject')
                         <p class="ml-1">{{ $order->description }}</p>
@@ -176,7 +176,7 @@
                                                         <div class="w-10 h-10 image-fit zoom-in">
                                                             <img alt="PAKET SMART WFC"
                                                                 class="rounded-lg border-2 border-white shadow-md"
-                                                                src="{{ asset('assets/logo2.PNG') }}">
+                                                                src="{{ asset('assets/logo2.png') }}">
                                                         </div>
                                                     @else
                                                         <div class="w-10 h-10 image-fit zoom-in">

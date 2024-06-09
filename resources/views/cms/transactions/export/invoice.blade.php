@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,56 +19,87 @@
             border: 1px solid #ccc;
         }
 
-        /* .header {
+        .text-center {
             text-align: center;
-            margin-bottom: 20px;
         }
 
-        .header h1 {
-            font-size: 24px;
-            margin: 0;
-        }
-
-        .header p {
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .table-border {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table-border th, .table-border td {
-            border: 1px solid #ccc;
-            padding: 5px;
+        .text-start {
             text-align: left;
         }
 
-        .table-border th {
-            background-color: #f2f2f2;
-        }
-
-        .footer {
+        .text-end {
             text-align: right;
-            margin-top: 20px;
         }
 
-        .footer p {
-            font-size: 12px;
-            margin: 0;
+        .fw-bold {
+            font-weight: bold;
         }
 
-        .tanda-tangan {
-            float: left;
-            width: 30%;
-            margin-top: 20px;
+        .fst-italic {
+            font-style: italic;
         }
 
-        .tanda-tangan td {
-            height: 100px;
+        .lh-sm {
+            line-height: 1.25;
+        }
+
+        .lh-md {
+            line-height: 1.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #f8f8f8;
+        }
+
+        .table-borderless th, .table-borderless td {
+            border: none;
+        }
+
+        .table-dark th {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .text-center {
             text-align: center;
-        } */
+        }
+
+        .px-5 {
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .text-bold {
+            font-weight: bold;
+        }
+
+        .fh-cat {
+            font-size: 12px;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
 
@@ -79,13 +109,13 @@
             <h3 class="fw-bold">FAKTUR PEMBAYARAN ANGSURAN</h3>
             <table class="table table-borderless">
                 <thead>
-                    <th class="h5 fw-bold text-start">CV. WIDA NUGRAHA</th>
-                    <th class="h5 fw-bold text-end">PAKET SMART WFC</th>
+                    <td class="fw-bold text-start">CV. WIDA NUGRAHA</td>
+                    <td class="fw-bold text-end">PAKET SMART WFC</td>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="text-start">Jl. Cipareuag No. 5, Sukadana<br>Kec. Cimanggung, Kab. Sumedang, Jawa
-                            Barat 45364<br>Telp. 081262760289</td>
+                        <td class="text-start">Jl. Cipareuag No. 5, Sukadana<br>Kec. Cimanggung, Kab. Sumedang, <br>
+                            Jawa Barat 45364<br>Telp. 081262760289</td>
                         <td class="text-end">WhatsApp Admin Paket : <br>
                             <a href="https://wa.me/6282319961011">0823 1996 1011</a> ,
                             <a href="https://wa.me/6282218799050">0822 1879 9050</a>
@@ -154,26 +184,23 @@
         </section>
 
         <footer>
-            <table>
+            <table class="table-borderless">
                 <tr>
                     <td class="text-center px-5">Petugas <br> <br> <br></td>
                     <td class="text-center px-5">Agen <br> <br> <br></td>
-                    <td class="fw-bold fst-italic px-5">(Simpan sebagai bukti pembayaran yang sah)<br> <br> <br></td>
+                    <td class="fw-bold fst-italic px-5 fh-cat">(Simpan sebagai bukti pembayaran yang sah)<br> <br> <br></td>
                 </tr>
                 <tr>
                     <td class="text-center"><span style="border-bottom: 1px solid black;">(
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</span>
                     </td>
                     <td class="text-center"><span style="border-bottom: 1px solid black;">(
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</span>
                     </td>
                 </tr>
             </table>
         </footer>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>

@@ -52,7 +52,7 @@
                             Pesanan: <span class="underline decoration-dotted ml-1">{{ $distribution->order->order_number }}</span> </div>
                         <div class="flex items-center mt-3"> <i data-lucide="calendar" class="w-4 h-4 text-slate-500 mr-2"></i>
                             Waktu Pesanan: {{ $distribution->order->order_date }} </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="clock" class="w-4 h-4 text-slate-500 mr-2"></i> Status
+                        <div class="flex items-center mt-3"> <i data-lucide="pie-chart" class="w-4 h-4 text-slate-500 mr-2"></i> Status
                             Pesanan:
                             @if ($distribution->order->status === 'accepted')
                                 <span class="bg-success/20 text-success rounded px-2 ml-1">Diterima</span>
@@ -66,7 +66,7 @@
                                 <span class="bg-warning/20 text-warning rounded px-2 ml-1">Pending</span>
                             @endif
                         </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="clock" class="w-4 h-4 text-slate-500 mr-2"></i>
+                        <div class="flex items-center mt-3"> <i data-lucide="file-text" class="w-4 h-4 text-slate-500 mr-2"></i>
                             Keterangan:
                             @if ($distribution->order->status === 'reject')
                                 <p class="ml-1">{{ $order->description }}</p>
@@ -97,13 +97,14 @@
         <div class="col-span-12">
             <div class="box p-5 rounded-md">
                 <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                    <div class="font-medium text-base truncate">Detail Produk Pesanan</div>
+                    <div class="font-medium text-base truncate">Detail Produk Distribusi</div>
                 </div>
                 <div class="overflow-auto lg:overflow-visible -mt-3">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th class="whitespace-nowrap text-center !py-5">Produk</th>
+                                <th class="whitespace-nowrap text-center">Sub Agent</th>
+                                <th class="whitespace-nowrap text-center">Produk</th>
                                 {{-- <th class="whitespace-nowrap text-center">Harga per Item</th> --}}
                                 <th class="whitespace-nowrap text-center">Qty</th>
                                 {{-- <th class="whitespace-nowrap text-center">Total</th> --}}
@@ -115,17 +116,20 @@
                             @endphp
                             @foreach ($distribution->detail as $item)
                                 <tr>
+                                    <td>
+                                        {{ $item->orderDetail->subAgent->name }}
+                                    </td>
                                     <td class="!py-4">
-                                        <div class="flex items-center">
+                                        <div class="flex items-center justify-center">
                                             @hasrole('admin|super_admin|finance_admin')
-                                                @if ($item->product->detail->image == null)
+                                                @if ($item->orderDetail->product->detail->image == null)
                                                     -
                                                 @else
-                                                    @if ($item->product->detail->image == 'image.jpg')
+                                                    @if ($item->orderDetail->product->detail->image == 'image.jpg')
                                                         <div class="w-10 h-10 image-fit zoom-in">
                                                             <img alt="PAKET SMART WFC"
                                                                 class="rounded-lg border-2 border-white shadow-md"
-                                                                src="{{ asset('assets/logo2.PNG') }}">
+                                                                src="{{ asset('assets/logo2.png') }}">
                                                         </div>
                                                     @else
                                                         <div class="w-10 h-10 image-fit zoom-in">
@@ -135,8 +139,8 @@
                                                         </div>
                                                     @endif
                                                 @endif
-                                                <a href="{{ route('product.show', $item->product_id) }}"
-                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}</a>
+                                                <a href="{{ route('product.show', $item->orderDetail->product_id) }}"
+                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->orderDetail->product->name }}</a>
                                             @endhasrole
                                             @hasrole('agent')
                                                 @if ($item->product->detail->image == null)
@@ -173,7 +177,7 @@
                         </tbody>
                         <tfoot>
                             <tr class="text-center">
-                                <th colspan="1">TOTAL</th>
+                                <th colspan="2">TOTAL</th>
                                 <th>{{ $total_qty }}</th>
                                 {{-- <th>Rp. {{ number_format($distribution->order->total_price, 0, ',', '.') }}</th> --}}
                             </tr>
