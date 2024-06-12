@@ -52,6 +52,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => ['required', 'captcha']
         ]);
     }
 
@@ -63,10 +64,11 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // dd($data);
         $user = User::create([
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'active' => '0'
+            'active' => '0',
         ]);
 
         $user->agentProfile()->create([

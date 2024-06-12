@@ -41,6 +41,10 @@
                 <input id="password-confirm" type="password" class="intro-x login__input form-control py-3 px-4 block mt-4"
                     name="password_confirmation" required autocomplete="new-password" placeholder="Password Confirmation">
             </div>
+            <div class="form-group mb-3 mt-3">
+                {!! NoCaptcha::renderJs() !!}
+                {!! NoCaptcha::display() !!}
+            </div>
             <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
                 <button class="btn btn-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top" type="submit">Daftar</button>
                 <a href="{{ route('login') }}"
