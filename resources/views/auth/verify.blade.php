@@ -21,6 +21,10 @@
                 @csrf
                 <button type="submit" class="btn btn-primary align-baseline">{{ __('Klik disini') }}</button>.
             </form>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none mt-5">
+                @csrf
+                <button type="submit" class="btn btn-danger align-baseline">{{ __('Logout') }}</button>
+            </form>
         </div>
     </div>
 @endsection
