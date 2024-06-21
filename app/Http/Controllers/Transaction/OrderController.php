@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Transaction;
 
 use App\Exports\InvoiceExport;
 use App\Helpers\GenerateRandomString;
+use App\Helpers\GetProduct;
 use App\Helpers\ValidateRole;
 use App\Models\User;
 use App\Models\Order;
@@ -139,6 +140,9 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        
+        // $product= GetProduct::detail('Product PHL 1');
+        // return response()->json($product);
         return view('cms.transactions.detail', compact('order'));
     }
 

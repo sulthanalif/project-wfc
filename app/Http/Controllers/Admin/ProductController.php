@@ -98,6 +98,7 @@ class ProductController extends Controller
             'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'supplier_id' => ['nullable', 'string'],
             'package_id' => ['nullable', 'string'],
+            'is_safe_point' => ['nullable', 'boolean'],
         ]);
 
         if ($validator->fails()) {
@@ -114,7 +115,8 @@ class ProductController extends Controller
                     'price' => $request->price,
                     'unit' => $request->unit,
                     'days' => $request->days,
-                    'total_price' => $request->price * $request->days
+                    'total_price' => $request->price * $request->days,
+                    'is_safe_point' => $request->is_safe_point,
                 ]);
 
                 ProductDetail::create([
@@ -199,6 +201,7 @@ class ProductController extends Controller
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'supplier_id' => ['nullable', 'string'],
             'package_id' => ['nullable', 'string'],
+            'is_safe_point' => ['nullable', 'boolean'],
         ]);
 
         if ($validator->fails()) {
@@ -221,7 +224,8 @@ class ProductController extends Controller
                         'price' => $request->price,
                         'unit' => $request->unit,
                         'days' => $request->days,
-                        'total_price' => $request->price * $request->days
+                        'total_price' => $request->price * $request->days,
+                        'is_safe_point' => $request->is_safe_point,
                     ]);
 
                     $product->detail()->update([

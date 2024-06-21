@@ -158,6 +158,7 @@
                                 <th class="whitespace-nowrap text-center">Harga per Item</th>
                                 <th class="whitespace-nowrap text-center">Qty</th>
                                 <th class="whitespace-nowrap text-center">Total</th>
+                                <th class="whitespace-nowrap text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -187,7 +188,7 @@
                                                     @endif
                                                 @endif
                                                 <a href="{{ route('product.show', $item->product_id) }}"
-                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}</a>
+                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }} {{ $item->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</a>
                                             @endhasrole
                                             @hasrole('agent')
                                                 @if ($item->product->detail->image == null)
@@ -208,7 +209,7 @@
                                                     @endif
                                                 @endif
                                                 <span
-                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}</span>
+                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }} {{ $item->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</span>
                                             @endhasrole
                                         </div>
                                     </td>
@@ -216,6 +217,13 @@
                                     </td>
                                     <td class="text-center">{{ $item->qty }}</td>
                                     <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}</td>
+                                    @hasrole('admin|super_admin')
+                                    <td class="text-center">
+                                        <a href="javascript:;" class="btn btn-primary btn-sm"
+                                        data-tw-toggle="modal" data-tw-target="#detail-confirmation-modal{{ $item->id }}">Edit</a>
+                                    </td>
+                                    @include('cms.transactions.modal.detail-modal')
+                                    @endhasrole
                                 </tr>
                                 @php
                                     $total_qty += $item->qty;

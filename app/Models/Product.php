@@ -20,7 +20,8 @@ class Product extends Model
         'unit',
         'price',
         'days',
-        'total_price'
+        'total_price',
+        'is_safe_point'
     ];
 
     public function supplier()

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('price', 15, 2);
             $table->integer('days')->nullable();
             $table->decimal('total_price', 15, 2)->nullable();
+            $table->boolean('is_safe_point')->default(false);
             $table->timestamps();
         });
     }

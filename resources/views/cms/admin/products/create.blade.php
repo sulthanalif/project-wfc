@@ -77,6 +77,19 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="mt-3">
+                                <label for="is_safe_point" class="form-label">Titik Aman <span class="text-danger">*</span></label>
+                                <div class="mt-2 flex">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="is_safe_point" value="1" class="form-check-input mr-2" >
+                                        <span class="text-sm">Ya</span>
+                                    </label>
+                                    <label class="ml-5 flex items-center">
+                                        <input type="radio" name="is_safe_point" value="0" class="form-check-input mr-2" checked>
+                                        <span class="text-sm">Tidak</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-span-12 lg:col-span-6 intro-y mt-3 lg:mt-0">
                             <div>

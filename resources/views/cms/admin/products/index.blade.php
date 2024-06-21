@@ -63,7 +63,9 @@
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"
                                         href="{{ route('product.show', $product) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $product->name }} </a>
+                                            class="w-4 h-4 mr-2"></i> {{ $product->name }}
+                                            {{ $product->is_safe_point == 1 ? '(Titik Aman)' : '' }}
+                                        </a>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 flex items-center mr-3">Rp.
