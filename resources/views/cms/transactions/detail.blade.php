@@ -297,6 +297,26 @@
                                     </span>
                                 @enderror
                             </div>
+                            <div class="mt-3">
+                                <label for="date" class="form-label">Tanggal <span
+                                        class="text-danger">*</span></label>
+                                <input id="date" name="date" type="date" class="form-control w-full" required>
+                                @error('date')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="mt-3">
+                                <label for="note" class="form-label">Keterangan <span class="text-danger">*</span></label>
+                                <textarea class="form-control" placeholder="Masukkan Keterangan.." name="note" id="note" cols="30" rows="5"></textarea>
+                                @error('note')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
 
 
 
@@ -318,6 +338,12 @@
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
 
     <script>
+        const currentDate = '{{ now()->format('Y-m-d') }}'; // Blade templating to get current date
+        const dateInput = document.getElementById('date');
+
+        dateInput.value = currentDate;
+
+
         function previewFile(input) {
             const file = input.files[0];
             const preview = document.getElementById('image-preview');

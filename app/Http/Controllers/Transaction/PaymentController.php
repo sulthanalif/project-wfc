@@ -14,19 +14,7 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
-    {
-        $user = Auth::user();
-        $roleUser = $user->roles->first();
-        $roleName = $roleUser->name;
-
-        if ($roleName !== 'agent'){
-            return view('');
-        }
-    }
+    
 
 
 
@@ -66,10 +54,13 @@ class PaymentController extends Controller
 
     public function storePayment(Request $request, Order $order)
     {
+        // return response()->json($request->all());
 
         $validator = Validator::make($request->all(), [
             'pay' => ['required', 'numeric'],
             'method' => ['required', 'string'],
+            'note' => ['nullable', 'string'],
+            'date' => ['required', 'date'],
         ]);
 
         if($validator->fails()) {
@@ -89,7 +80,9 @@ class PaymentController extends Controller
                     'pay' => $request->pay,
                     'remaining_payment' => $existingPayment ? $existingPayment->remaining_payment - $request->pay : $order->total_price - $request->pay,
                     'method' => $request->method,
-                    'installment' => $existingPayment ? $existingPayment->installment + 1 : 1
+                    'installment' => $existingPayment ? $existingPayment->installment + 1 : 1,
+                    'note' => $request->note,
+                    'date' => $request->date
                 ]);
 
 

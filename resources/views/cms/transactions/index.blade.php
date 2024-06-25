@@ -31,7 +31,7 @@
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">DARI AGEN</th>
                         @endhasrole
-                        <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
+                        <th class="text-center whitespace-nowrap" width="30%">TOTAL HARGA</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
                         <th class="text-center whitespace-nowrap">PEMBAYARAN</th>
                         <th class="text-center whitespace-nowrap">PENGIRIMAN</th>
@@ -43,7 +43,7 @@
                 <tbody>
                     @if ($orders->isEmpty())
                         <tr>
-                            <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="8" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
                         @foreach ($orders as $order)
@@ -61,7 +61,7 @@
                                         {{ $order->agent->agentProfile->name }}
                                     </td>
                                 @endhasrole
-                                <td>
+                                <td class="text-center">
                                     <p>
                                         Rp. {{ number_format($order->total_price, 0, ',', '.') }}
                                     </p>

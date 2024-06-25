@@ -21,7 +21,9 @@ class Payment extends Model
         'pay',
         'remaining_payment',
         'method',
-        'installment'
+        'installment',
+        'note',
+        'date',
     ];
 
     public function order()

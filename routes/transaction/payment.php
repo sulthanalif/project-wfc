@@ -10,3 +10,4 @@ Route::post('/payment/{order}', [PaymentController::class, 'storePayment'])->nam
 Route::delete('/payment/{payment}', [PaymentController::class, 'destroy'])->name('payment.destroy');
 
 Route::get('/payment/check/{order}', [PaymentController::class, 'check'])->name('payment.check');
+// Route::get('/payment/check/{order}/{payment}', [PaymentController::class, 'cekView'])->name('payment.checkview');

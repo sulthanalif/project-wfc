@@ -110,6 +110,11 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
+        const currentDate = '{{ now()->format('Y-m-d') }}'; // Blade templating to get current date
+        const dateInput = document.getElementById('order_date');
+
+        dateInput.value = currentDate;
+
         // Constants
         const INITIAL_PRICE = 0;
         const INITIAL_QUANTITY = 0;

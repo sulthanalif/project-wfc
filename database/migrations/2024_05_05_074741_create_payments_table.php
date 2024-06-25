@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('method');
             $table->string('installment');
             // $table->string('image')->nullable();
-            // $table->string('description')->nullable();
+            $table->text('note')->nullable();
+            $table->date('date');
             // $table->string('status')->default('pending');
             $table->timestamps();
         });

@@ -153,30 +153,32 @@
             <table class="table table-bordered">
                 <thead class="table-dark text-center">
                     <th>No.</th>
-                    <th>Tanggal Pembayaran</th>
-                    <th>Keterangan</th>
+                    <th>Tanggal</th>
+                    <th>Metode</th>
+                    <th width="30%">Keterangan</th>
                     <th>Nominal</th>
                 </thead>
                 <tbody class="text-center">
                     <tr>
                         <td>{{ $payment->installment }}</td>
-                        <td>{{ \Carbon\Carbon::parse($payment->created_at)->format('d M Y, H:m:i') }}</td>
-                        <td>TUNAI</td>
+                        <td>{{ \Carbon\Carbon::parse($payment->date)->format('d M Y') }}</td>
+                        <td>{{ strtoupper($payment->method) }}</td>
+                        <td>{{ $payment->note ?? '-' }}</td>
                         <td>Rp. {{ number_format($payment->pay, 0, ',', '.') }}</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan=3 class="fw-bold">JUMLAH ANGSURAN</td>
+                        <td colspan=4 class="fw-bold">JUMLAH ANGSURAN</td>
                         <td class="text-center">Rp. {{ number_format($payment->pay, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
-                        <td colspan=3 class="fw-bold">TOTAL DIANGSUR</td>
+                        <td colspan=4 class="fw-bold">TOTAL DIANGSUR</td>
                         <td class="text-center">Rp. {{ number_format(array_sum(array_column($order->payment->toArray(), 'pay')), 0, ',', '.') }}
                         </td>
                     </tr>
                     <tr>
-                        <td colspan=3 class="fw-bold">SISA TAGIHAN</td>
+                        <td colspan=4 class="fw-bold">SISA TAGIHAN</td>
                         <td class="text-center">Rp. {{ number_format($payment->remaining_payment, 0, ',', '.') }}</td>
                     </tr>
                 </tfoot>

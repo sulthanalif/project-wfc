@@ -109,6 +109,7 @@ Route::group(['middleware' => 'auth',], function () {
 
             //export pdf invoice payment
             Route::get('/invoice/{order}/{payment}', [ExportInvoiceController::class, 'getInvoice'])->name('getInvoice');
+            
             //export pdf invoice order
             Route::get('/invoice/{order}', [ExportInvoiceController::class, 'getInvoiceOrder'])->name('getInvoiceOrder');
         });
