@@ -10,5 +10,4 @@ Route::get('/order/{order}', [OrderController::class, 'show'])->name('order.show
 Route::post('/order', [OrderController::class, 'store'])->name('order.store');
 Route::delete('/order/{order}', [OrderController::class, 'destroy'])->name('order.destroy');
 
-//edit detail
-Route::post('.order/{detail}/detail', [DetailOrderController::class, 'editDetail'])->name('order.editDetail');
+

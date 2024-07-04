@@ -196,7 +196,6 @@ class UserController extends Controller
             'name' => ['required', 'max:225', 'string'],
             // 'email' => ['required', 'max:25', 'unique:users,email'],
             'password' => ['nullable', 'string'],
-            'role' => ['required', 'string'],
             'phone_number' => 'string',
             'rt' => 'string',
             'rw'=> 'string',
@@ -335,6 +334,38 @@ class UserController extends Controller
             return view('cms.admin.users.agent', compact('agents'));
         } else {
             return back()->with('error', 'Data Tidak Ditemukan!');
+        }
+    }
+
+    public function changeRole(Request $request, User $user)
+    {
+        $validator = Validator::make($request->all(),[
+            'role' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            DB::transaction(function () use ($request, $user) {
+                $roleUser = $user->roles->first();
+                $roleName = $roleUser->name;
+
+                //remove role
+                $user->removeRole($roleName);
+
+                //add role
+                $user->assignRole($request->role);
+            });
+
+            return back()->with('success', 'Role Berhasil Diubah');
+        } catch (\Exception $e) {
+            $data = [
+                'message' => $e->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
     }
 }

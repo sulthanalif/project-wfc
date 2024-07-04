@@ -9,3 +9,6 @@ Route::put('user/{user}/status', [UserController::class, 'changeStatus'])->name(
 
 //getAdmin
 Route::get('/user-admin', [UserController::class, 'getAdmin'])->name('get.admin');
+
+//change role user
+Route::post('/user/role/{user}', [UserController::class, 'changeRole'])->name('user.role');

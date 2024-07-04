@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HomeController;
 // use App\Http\Controllers\AgentProfileController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
 use App\Http\Controllers\Auth\LoginController;
@@ -17,13 +18,13 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\AdministrationController;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Transaction\OrderController;
-use App\Http\Controllers\Admin\DistributionController;
 // use App\Models\Administration;
+use App\Http\Controllers\Admin\DistributionController;
 use App\Http\Controllers\Transaction\PaymentController;
 use App\Http\Controllers\Admin\DashboardAdminController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\Transaction\DetailOrderController;
 use App\Http\Controllers\Admin\ExportDeliveryOrderController;
-use App\Http\Controllers\TestController;
 use App\Http\Controllers\Transaction\ExportInvoiceController;
 
 // use App\Http\Controllers\Auth\AuthController;
@@ -78,49 +79,49 @@ Route::group(['middleware' => 'auth',], function () {
             Route::get('/export/{distribution}', [ExportDeliveryOrderController::class, 'getDeliveryOrder'])->name('export.deliveryOrder');
         });
     });
-        //master
-        Route::group(['prefix' => 'master' ,'middleware' => 'role:admin|super_admin'], function () {
-            require __DIR__ . '/admin/masterUser.php';
-            require __DIR__ . '/admin/masterCatalog.php';
-            require __DIR__ . '/admin/masterPackage.php';
-            require __DIR__ . '/admin/masterProduct.php';
-            require __DIR__ . '/admin/masterSubProduct.php';
-            require __DIR__ . '/admin/masterSupplier.php';
-            require __DIR__ . '/admin/masterReview.php';
+    //master
+    Route::group(['prefix' => 'master', 'middleware' => 'role:admin|super_admin'], function () {
+        require __DIR__ . '/admin/masterUser.php';
+        require __DIR__ . '/admin/masterCatalog.php';
+        require __DIR__ . '/admin/masterPackage.php';
+        require __DIR__ . '/admin/masterProduct.php';
+        require __DIR__ . '/admin/masterSubProduct.php';
+        require __DIR__ . '/admin/masterSupplier.php';
+        require __DIR__ . '/admin/masterReview.php';
 
-            Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
+        Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
+    });
 
+    //finance_admin, super_admin
+    Route::group(['middleware' => 'role:finance_admin|super_admin'], function () {
+    });
 
-        });
+    //Transaction
+    Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|agent'], function () {
+        require __DIR__ . '/transaction/order.php';
+        Route::get('/test', [TestController::class, 'index']);
+    });
+    Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin'], function () {
+        require __DIR__ . '/transaction/payment.php';
+        require __DIR__ . '/transaction/status.php';
 
-        //finance_admin, super_admin
-        Route::group(['middleware' => 'role:finance_admin|super_admin'], function () {
+        //order detail
+        Route::post('.order/{detail}/detail', [DetailOrderController::class, 'editDetail'])->name('order.editDetail');
 
-        });
+        //export pdf invoice payment
+        Route::get('/invoice/{order}/{payment}', [ExportInvoiceController::class, 'getInvoice'])->name('getInvoice');
 
-        //Transaction
-        Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin|agent'], function () {
-            require __DIR__ . '/transaction/order.php';
-            Route::get('/test', [TestController::class, 'index']);
-        });
-        Route::group(['prefix' => 'transaction' ,'middleware' => 'role:admin|super_admin'], function () {
-            require __DIR__ . '/transaction/payment.php';
-            require __DIR__ . '/transaction/status.php';
-
-            //export pdf invoice payment
-            Route::get('/invoice/{order}/{payment}', [ExportInvoiceController::class, 'getInvoice'])->name('getInvoice');
-            
-            //export pdf invoice order
-            Route::get('/invoice/{order}', [ExportInvoiceController::class, 'getInvoiceOrder'])->name('getInvoiceOrder');
-        });
-
-
+        //export pdf invoice order
+        Route::get('/invoice/{order}', [ExportInvoiceController::class, 'getInvoiceOrder'])->name('getInvoiceOrder');
+    });
 
 
-        Route::group(['prefix' => 'master', 'middleware' => 'role:admin|super_admin|agent'], function () {
-            //kelola sub agent
-            Route::resource('sub-agent', SubAgentController::class);
-        });
+
+
+    Route::group(['prefix' => 'master', 'middleware' => 'role:admin|super_admin|agent'], function () {
+        //kelola sub agent
+        Route::resource('sub-agent', SubAgentController::class);
+    });
 
     //agent
     Route::group(['middleware' => ['role:agent', 'verified']], function () {
@@ -136,5 +137,3 @@ Route::group(['middleware' => 'auth',], function () {
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-

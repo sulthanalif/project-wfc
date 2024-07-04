@@ -333,7 +333,7 @@
             </div>
             <div id="cakses" class="tab-pane" role="tabpanel" aria-labelledby="cakses-tab">
                 <div class="grid grid-cols-12 gap-6">
-                    <!-- BEGIN: Change Email -->
+                    <!-- BEGIN: Change Role -->
                     <div class="intro-y box col-span-12 lg:col-span-6">
                         <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                             @if (session('status'))
@@ -344,7 +344,7 @@
                                     </div>
                                 </div>
                             @endif
-                            <form method="POST" action="{{ route('password.email') }}" class="w-full">
+                            <form method="POST" action="{{ route('user.role', auth()->user()->id) }}" class="w-full">
                                 @csrf
                                 <div class="intro-x mt-8">
                                     <select class="form-select mt-2 sm:mr-2" id="role" name="role" required>
@@ -375,7 +375,7 @@
                             </form>
                         </div>
                     </div>
-                    <!-- END: Change Email -->
+                    <!-- END: Change Role -->
                 </div>
             </div>
         @endhasrole

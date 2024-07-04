@@ -30,9 +30,18 @@ class DetailOrderController extends Controller
                 $order = Order::find($detail->order_id);
                 $payments = Payment::where('order_id', $order->id)->orderBy('created_at', 'asc')->get();
 
-                $detail->product_id = $request->product_id;
+                $product_safe_point = Product::where('name', 'like', '%', $product->name, '%')->where('is_safe_point', 1)->first();
+
+                $newOrderDetail = new $order->detail;
+                $newOrderDetail->order_id = $order->id;
+                $newOrderDetail-> product_id = $product_safe_point->id;
+                $newOrderDetail->sub_agent_id = $detail->sub_agent_id;
+                $newOrderDetail->sub_price = ($product_safe_point->price * $product_safe_point->days) * $request->qty;
+                $newOrderDetail->save();
+
+
                 $detail->sub_price = ($product->price * $product->days) * $request->qty;
-                $detail->qty = $request->qty;
+                $detail->qty = $detail->qty - $request->qty;
                 $detail->save();
 
                 $order->total_price = $order->detail->sum('sub_price');
@@ -57,5 +66,25 @@ class DetailOrderController extends Controller
     {
         $result = Product::where('name', 'like', '%' . $product . '%')->get();
 
+    }
+
+    public function safePoint(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'detail_id' => 'required',
+            'qty' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()){
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            DB::transaction(function () use ($request) {
+                
+            });
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }
