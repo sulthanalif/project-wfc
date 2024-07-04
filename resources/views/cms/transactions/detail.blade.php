@@ -15,53 +15,6 @@
             <div class="box p-5 rounded-md">
                 <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                     <div class="font-medium text-base truncate">Detail Transaksi</div>
-                    {{-- @hasrole('admin|super_admin') --}}
-                    {{-- <a href="javascript:;" class="flex items-center ml-auto text-primary" data-tw-toggle="modal"
-                            data-tw-target="#change-confirmation-modal{{ $order->id }}"> <i data-lucide="edit"
-                                class="w-4 h-4 mr-2"></i> Ubah Status </a> --}}
-                    <!-- BEGIN: Change Confirmation Modal -->
-                    {{-- <div id="change-confirmation-modal{{ $order->id }}" class="modal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-body p-0">
-                                        <div class="p-5 text-center">
-                                            <i data-lucide="alert-circle" class="w-16 h-16 text-warning mx-auto mt-3"></i>
-                                            <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                            <div class="text-slate-500 mt-2">
-                                                Apakah anda yakin untuk mengubah status pesanan ini?
-                                                <br>
-                                                Proses tidak akan bisa diulangi.
-                                            </div>
-                                        </div>
-                                        <div class="px-5 pb-8 text-center">
-                                            <form action="{{ route('order.changeOrderStatus', $order) }}" method="post">
-                                                @csrf
-                                                <div class="mb-3">
-                                                    <select class="form-select mt-2 sm:mr-2" id="status" name="status"
-                                                        required>
-                                                        <option value="accepted"
-                                                            {{ $order->status == 'accepted' ? 'selected' : '' }}>Diterima
-                                                        </option>
-                                                        <option value="stop" {{ $order->status == 'stop' ? 'selected' : '' }}>
-                                                            Mundur</option>
-                                                        <option value="reject"
-                                                            {{ $order->status == 'reject' ? 'selected' : '' }}>Ditolak</option>
-                                                        <option value="canceled"
-                                                            {{ $order->status == 'canceled' ? 'selected' : '' }}>Dibatalkan
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                                <button type="submit" class="btn btn-warning w-24">Ubah</button>
-                                                <button type="button" data-tw-dismiss="modal"
-                                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
-                    <!-- END: Change Confirmation Modal -->
-                    {{-- @endhasrole --}}
                 </div>
                 <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i> Nomor
                     Pesanan: <span class="underline decoration-dotted ml-1">{{ $order->order_number }}</span> </div>
