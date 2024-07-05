@@ -99,31 +99,30 @@
         <div class="intro-x dropdown w-8 h-8">
             <div class="dropdown-toggle w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in scale-110"
                 role="button" aria-expanded="false" data-tw-toggle="dropdown">
-                <img alt="Profile" src="{{ asset('assets/cms/images/profile.svg') }}">
+                @if (auth()->user()->hasRole('agent'))
+                    @if (auth()->user()->agentProfile->photo == null)
+                        <img alt="Profile" src="{{ asset('assets/cms/images/profile.svg') }}">
+                    @else
+                        <img alt="Profile"
+                            src="{{ route('getImage', ['path' => 'photos', 'imageName' => auth()->user()->agentProfile->photo]) }}">
+                    @endif
+                @else
+                    <img alt="Profile" src="{{ asset('assets/cms/images/profile.svg') }}">
+                @endif
             </div>
             <div class="dropdown-menu w-56">
                 <ul
                     class="dropdown-content bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
                     <li class="p-2">
-                        @if (auth()->user()->hasRole('super_admin'))
-                            <div class="font-medium">Super Admin</div>
+                        @hasrole('super_admin|admin|finance_admin')
+                            <div class="font-medium">{{ optional(auth()->user()->adminProfile)->name }}</div>
                             <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">{{ auth()->user()->email }}
                             </div>
-                        @endif
-                        @if (auth()->user()->hasRole('admin'))
-                            <div class="font-medium">Admin</div>
-                            <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">{{ auth()->user()->email }}
-                            </div>
-                        @endif
-                        @if (auth()->user()->hasRole('finance_admin'))
-                            <div class="font-medium">Admin Keuangan</div>
-                            <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">{{ auth()->user()->email }}
-                            </div>
-                        @endif
-                        @if (auth()->user()->hasRole('agent'))
+                        @endhasrole
+                        @hasrole('agent')
                             <div class="font-medium">{{ optional(auth()->user()->agentProfile)->name }}</div>
-                            <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">Agen</div>
-                        @endif
+                            <div class="text-xs text-white/60 mt-0.5 dark:text-slate-500">{{ auth()->user()->email }}</div>
+                        @endhasrole
                     </li>
                     <li>
                         <hr class="dropdown-divider border-white/[0.08]">
@@ -140,10 +139,6 @@
                             </li>
                         @endif
                     @endhasrole
-                    {{-- <li>
-                    <a href="" class="dropdown-item hover:bg-white/5"> <i data-lucide="lock"
-                            class="w-4 h-4 mr-2"></i> Reset Password </a>
-                </li> --}}
                     <li>
                         <a href="{{ route('logout') }}" class="dropdown-item hover:bg-white/5"
                             onclick="event.preventDefault();

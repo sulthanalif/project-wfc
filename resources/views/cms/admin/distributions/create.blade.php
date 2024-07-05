@@ -174,7 +174,7 @@
                         var option = document.createElement('option');
                         option.value = '{{ $products->id }}';
                         option.textContent =
-                            "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} - {{ $products->qty - $qty }}";
+                            "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} {{ $products->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - {{ $products->qty - $qty }}";
                         option.dataset.qty = '{{ $products->qty - $qty }}';
 
                         @if ($products->qty - $qty == 0)

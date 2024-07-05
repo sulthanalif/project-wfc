@@ -202,7 +202,7 @@
                         var option = document.createElement('option');
                         option.value = '{{ $product->product->id }}';
                         option.textContent =
-                            '{{ $product->product->name }} - Rp. {{ number_format($product->product->price, 0, ',', '.') }}/hari';
+                            "{{ $product->product->name }} {{ $product->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - Rp. {{ number_format($product->product->price, 0, ',', '.') }}/hari";
                         option.dataset.harga = '{{ $product->product->total_price }}';
                         productSelect.appendChild(option);
                     @endforeach

@@ -135,12 +135,12 @@
                                                         <div class="w-10 h-10 image-fit zoom-in">
                                                             <img alt="PAKET SMART WFC"
                                                                 class="rounded-lg border-2 border-white shadow-md"
-                                                                src="{{ route('getImage', ['path' => 'product', 'imageName' => $item->product->detail->image]) }}">
+                                                                src="{{ route('getImage', ['path' => 'product', 'imageName' => $item->orderDetail->product->detail->image]) }}">
                                                         </div>
                                                     @endif
                                                 @endif
                                                 <a href="{{ route('product.show', $item->orderDetail->product_id) }}"
-                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->orderDetail->product->name }}</a>
+                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->orderDetail->product->name }} {{ $item->orderDetail->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</a>
                                             @endhasrole
                                             @hasrole('agent')
                                                 @if ($item->product->detail->image == null)
@@ -150,18 +150,18 @@
                                                         <div class="w-10 h-10 image-fit zoom-in">
                                                             <img alt="PAKET SMART WFC"
                                                                 class="rounded-lg border-2 border-white shadow-md"
-                                                                src="{{ asset('assets/logo2.PNG') }}">
+                                                                src="{{ asset('assets/logo2.png') }}">
                                                         </div>
                                                     @else
                                                         <div class="w-10 h-10 image-fit zoom-in">
                                                             <img alt="PAKET SMART WFC"
                                                                 class="rounded-lg border-2 border-white shadow-md"
-                                                                src="{{ route('getImage', ['path' => 'product', 'imageName' => $item->product->detail->image]) }}">
+                                                                src="{{ route('getImage', ['path' => 'product', 'imageName' => $item->orderDetail->product->detail->image]) }}">
                                                         </div>
                                                     @endif
                                                 @endif
                                                 <span
-                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}</span>
+                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }} {{ $item->orderDetail->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</span>
                                             @endhasrole
                                         </div>
                                     </td>

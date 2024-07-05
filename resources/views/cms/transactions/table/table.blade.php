@@ -6,7 +6,7 @@
             <th class="text-center">JUMLAH BAYAR</th>
             {{-- <th class="text-center">BUKTI</th>
             <th class="text-center">STATUS</th> --}}
-            {{-- <th class="text-center">KETERANGAN</th> --}}
+            <th class="text-center">KETERANGAN</th>
             @hasrole('finance_admin|super_admin')
                 <th class="text-center ">AKSI</th>
             @endhasrole
@@ -16,11 +16,11 @@
         @if ($order->payment->isEmpty())
             <tr>
                 @hasrole('finance_admin|super_admin')
-                <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                @else
-                <td colspan="3" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                    <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                 @endhasrole
-
+                @hasrole('admin|agent')
+                    <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                @endhasrole
             </tr>
         @else
             @foreach ($order->payment as $payment)
@@ -28,30 +28,28 @@
                     <td>
                         <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                     </td>
-                    <td>
-                        {{ \Carbon\Carbon::parse($payment->created_at)->format('d M Y, H:m:i') }}
+                    <td class="text-center">
+                        {{-- {{ \Carbon\Carbon::parse($payment->created_at)->format('d M Y, H:m:i') }} --}}
+                        {{ \Carbon\Carbon::parse($payment->date)->format('d M Y') }}
                     </td>
-                    <td>
+                    <td class="text-center">
                         <p>
                             Rp. {{ number_format($payment->pay, 0, ',', '.') }}
                         </p>
                     </td>
-
-
-
-
-
-
+                    <td>
+                        <p>{{ $payment->note }}</p>
+                    </td>
                     @hasrole('finance_admin|super_admin')
                         <td class="table-report__action">
                             <div class="flex justify-center items-center">
 
-                                    <a class="flex items-center mr-3 text-success" target="_blank" href="{{ route('getInvoice', ['order'=> $order, 'payment' => $payment]) }}">
-                                        <i data-lucide="printer" class="w-4 h-4 mr-1"></i> Cetak </a>
-                                    <a class="flex items-center mr-3 text-danger" href="javascript:;"
-                                        data-tw-toggle="modal"
-                                        data-tw-target="#delete-confirmation-modal{{ $payment->id }}">
-                                        <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                <a class="flex items-center mr-3 text-success" target="_blank"
+                                    href="{{ route('getInvoice', ['order' => $order, 'payment' => $payment]) }}">
+                                    <i data-lucide="printer" class="w-4 h-4 mr-1"></i> Cetak </a>
+                                <a class="flex items-center mr-3 text-danger" href="javascript:;" data-tw-toggle="modal"
+                                    data-tw-target="#delete-confirmation-modal{{ $payment->id }}">
+                                    <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
 
                                 {{-- <a class="flex items-center text-success" href="javascript:;" data-tw-toggle="modal"
                                     data-tw-target="#delete-confirmation-modal{{ $order->id }}">
@@ -63,8 +61,7 @@
 
 
                 <!-- BEGIN: Delete Confirmation Modal -->
-                <div id="delete-confirmation-modal{{ $payment->id }}" class="modal" tabindex="-1"
-                    aria-hidden="true">
+                <div id="delete-confirmation-modal{{ $payment->id }}" class="modal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-body p-0">
@@ -97,8 +94,8 @@
     @if ($order->payment->first())
         <tfoot>
             <tr>
-                <th colspan="2" align="center">SISA PEMBAYARAN</th>
-                <th>
+                <th colspan="2" class="text-center">SISA PEMBAYARAN</th>
+                <th class="text-center">
                     Rp.
                     {{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '.') }}
                 </th>
@@ -106,7 +103,3 @@
         </tfoot>
     @endif
 </table>
-
-@push('custom-scripts')
-
-@endpush

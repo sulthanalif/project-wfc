@@ -11,94 +11,70 @@
     </div>
 
     <div class="intro-y grid grid-cols-11 gap-5 mt-5">
-        <div class="col-span-12 lg:col-span-4 2xl:col-span-3">
-            <div class="box p-5 rounded-md">
-                <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                    <div class="font-medium text-base truncate">Detail Transaksi</div>
-                </div>
-                <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i> Nomor
-                    Pesanan: <span class="underline decoration-dotted ml-1">{{ $order->order_number }}</span> </div>
-                <div class="flex items-center mt-3"> <i data-lucide="calendar" class="w-4 h-4 text-slate-500 mr-2"></i>
-                    Waktu Pesanan: {{ $order->order_date }} </div>
-                <div class="flex items-center mt-3"> <i data-lucide="clock" class="w-4 h-4 text-slate-500 mr-2"></i> Status
-                    Pesanan:
-                    @if ($order->status === 'accepted')
-                        <span class="bg-success/20 text-success rounded px-2 ml-1">Diterima</span>
-                    @elseif ($order->status === 'stop')
-                        <span class="bg-success/20 text-success rounded px-2 ml-1">Mundur</span>
-                    @elseif ($order->status === 'reject')
-                        <span class="bg-danger text-white rounded px-2 ml-1">Ditolak</span>
-                    @elseif ($order->status === 'canceled')
-                        <span class="bg-danger text-white rounded px-2 ml-1">Dibatalkan</span>
-                    @else
-                        <span class="bg-warning/20 text-warning rounded px-2 ml-1">Pending</span>
-                    @endif
-                </div>
-                <div class="flex items-center mt-3"> <i data-lucide="file-text" class="w-4 h-4 text-slate-500 mr-2"></i>
-                    Keterangan:
-                    @if ($order->status === 'reject')
-                        <p class="ml-1">{{ $order->description }}</p>
-                    @else
-                        <p class="ml-1">-</p>
-                    @endif
-                </div>
-            </div>
-            @hasrole('admin|super_admin|finance_admin')
-                <div class="box p-5 rounded-md mt-5">
-                    <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                        <div class="font-medium text-base truncate">Detail Agen</div>
-                        <a href="{{ route('user.show', $order->agent) }}" class="flex items-center ml-auto text-primary"> <i
-                                data-lucide="eye" class="w-4 h-4 mr-2"></i> Lihat Profil </a>
+        <div class="col-span-12">
+            <div class="grid grid-cols-12 gap-5">
+                <div class="col-span-12 lg:col-span-6">
+                    <div class="box p-5 rounded-md">
+                        <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
+                            <div class="font-medium text-base truncate">Detail Transaksi</div>
+                        </div>
+                        <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Nomor
+                            Pesanan: <span class="underline decoration-dotted ml-1">{{ $order->order_number }}</span> </div>
+                        <div class="flex items-center mt-3"> <i data-lucide="calendar"
+                                class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Waktu Pesanan: {{ $order->order_date }} </div>
+                        <div class="flex items-center mt-3"> <i data-lucide="clock" class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Status
+                            Pesanan:
+                            @if ($order->status === 'accepted')
+                                <span class="bg-success/20 text-success rounded px-2 ml-1">Diterima</span>
+                            @elseif ($order->status === 'stop')
+                                <span class="bg-success/20 text-success rounded px-2 ml-1">Mundur</span>
+                            @elseif ($order->status === 'reject')
+                                <span class="bg-danger text-white rounded px-2 ml-1">Ditolak</span>
+                            @elseif ($order->status === 'canceled')
+                                <span class="bg-danger text-white rounded px-2 ml-1">Dibatalkan</span>
+                            @else
+                                <span class="bg-warning/20 text-warning rounded px-2 ml-1">Pending</span>
+                            @endif
+                        </div>
+                        <div class="flex items-center mt-3"> <i data-lucide="file-text"
+                                class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Keterangan:
+                            @if ($order->status === 'reject')
+                                <p class="ml-1">{{ $order->description }}</p>
+                            @else
+                                <p class="ml-1">-</p>
+                            @endif
+                        </div>
                     </div>
-                    <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i> Nama:
-                        <span class="underline decoration-dotted ml-1">{{ $order->agent->agentProfile->name }}</span>
+                </div>
+                @hasrole('admin|super_admin|finance_admin')
+                    <div class="col-span-12 lg:col-span-6">
+                        <div class="box p-5 rounded-md">
+                            <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
+                                <div class="font-medium text-base truncate">Detail Agen</div>
+                                <a href="{{ route('user.show', $order->agent) }}"
+                                    class="flex items-center ml-auto text-primary"> <i data-lucide="eye"
+                                        class="w-4 h-4 mr-2"></i> Lihat Profil </a>
+                            </div>
+                            <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i>
+                                Nama:
+                                <span class="underline decoration-dotted ml-1">{{ $order->agent->agentProfile->name }}</span>
+                            </div>
+                            <div class="flex items-center mt-3"> <i data-lucide="calendar"
+                                    class="w-4 h-4 text-slate-500 mr-2"></i>
+                                Nomor Telepon: {{ $order->agent->agentProfile->phone_number }} </div>
+                            <div class="flex items-center mt-3"> <i data-lucide="map-pin"
+                                    class="w-4 h-4 text-slate-500 mr-2"></i>
+                                Alamat: {{ $order->agent->agentProfile->address }} </div>
+                        </div>
                     </div>
-                    <div class="flex items-center mt-3"> <i data-lucide="calendar" class="w-4 h-4 text-slate-500 mr-2"></i>
-                        Nomor Telepon: {{ $order->agent->agentProfile->phone_number }} </div>
-                    <div class="flex items-center mt-3"> <i data-lucide="map-pin" class="w-4 h-4 text-slate-500 mr-2"></i>
-                        Alamat: {{ $order->agent->agentProfile->address }} </div>
-                </div>
-            @endhasrole
-            {{-- <div class="box p-5 rounded-md mt-5">
-                <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                    <div class="font-medium text-base truncate">Payment Details</div>
-                </div>
-                <div class="flex items-center">
-                    <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i> Payment Method:
-                    <div class="ml-auto">Direct bank transfer</div>
-                </div>
-                <div class="flex items-center mt-3">
-                    <i data-lucide="credit-card" class="w-4 h-4 text-slate-500 mr-2"></i> Total Price (2 items):
-                    <div class="ml-auto">$12,500.00</div>
-                </div>
-                <div class="flex items-center mt-3">
-                    <i data-lucide="credit-card" class="w-4 h-4 text-slate-500 mr-2"></i> Total Shipping Cost (800 gr):
-                    <div class="ml-auto">$1,500.00</div>
-                </div>
-                <div class="flex items-center mt-3">
-                    <i data-lucide="credit-card" class="w-4 h-4 text-slate-500 mr-2"></i> Shipping Insurance:
-                    <div class="ml-auto">$600.00</div>
-                </div>
-                <div class="flex items-center border-t border-slate-200/60 dark:border-darkmode-400 pt-5 mt-5 font-medium">
-                    <i data-lucide="credit-card" class="w-4 h-4 text-slate-500 mr-2"></i> Grand Total:
-                    <div class="ml-auto">$15,000.00</div>
-                </div>
+                @endhasrole
             </div>
-            <div class="box p-5 rounded-md mt-5">
-                <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                    <div class="font-medium text-base truncate">Shipping Information</div>
-                    <a href="" class="flex items-center ml-auto text-primary"> <i data-lucide="map-pin"
-                            class="w-4 h-4 mr-2"></i> Tracking Info </a>
-                </div>
-                <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i> Courier:
-                    Left4code Express </div>
-                <div class="flex items-center mt-3"> <i data-lucide="calendar" class="w-4 h-4 text-slate-500 mr-2"></i>
-                    Tracking Number: 003005580322 <i data-lucide="copy" class="w-4 h-4 text-slate-500 ml-2"></i> </div>
-                <div class="flex items-center mt-3"> <i data-lucide="map-pin" class="w-4 h-4 text-slate-500 mr-2"></i>
-                    Address: 260 W. Storm Street New York, NY 10025. </div>
-            </div> --}}
         </div>
-        <div class="col-span-12 lg:col-span-7 2xl:col-span-8">
+        <div class="col-span-12">
             <div class="box p-5 rounded-md">
                 <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                     <div class="font-medium text-base truncate">Detail Produk Pesanan</div>
@@ -107,11 +83,14 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                <th class="whitespace-nowrap text-center">Sub Agent</th>
                                 <th class="whitespace-nowrap text-center !py-5">Produk</th>
                                 <th class="whitespace-nowrap text-center">Harga per Item</th>
                                 <th class="whitespace-nowrap text-center">Qty</th>
                                 <th class="whitespace-nowrap text-center">Total</th>
-                                <th class="whitespace-nowrap text-center">Aksi</th>
+                                @hasrole('admin||super_admin')
+                                    <th class="whitespace-nowrap text-center">Aksi</th>
+                                @endhasrole
                             </tr>
                         </thead>
                         <tbody>
@@ -120,6 +99,7 @@
                             @endphp
                             @foreach ($order->detail as $item)
                                 <tr>
+                                    <td>{{ $item->subAgent->name ?? $order->agent->agentProfile->name }}</td>
                                     <td class="!py-4">
                                         <div class="flex items-center">
                                             @hasrole('admin|super_admin|finance_admin')
@@ -141,7 +121,8 @@
                                                     @endif
                                                 @endif
                                                 <a href="{{ route('product.show', $item->product_id) }}"
-                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }} {{ $item->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</a>
+                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}
+                                                    {{ $item->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</a>
                                             @endhasrole
                                             @hasrole('agent')
                                                 @if ($item->product->detail->image == null)
@@ -161,21 +142,23 @@
                                                         </div>
                                                     @endif
                                                 @endif
-                                                <span
-                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }} {{ $item->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</span>
+                                                <span class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}
+                                                    {{ $item->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</span>
                                             @endhasrole
                                         </div>
                                     </td>
-                                    <td class="text-center">Rp. {{ number_format($item->product->price, 0, ',', '.') }}
+                                    <td class="text-center">Rp.
+                                        {{ number_format($item->product->total_price, 0, ',', '.') }}
                                     </td>
                                     <td class="text-center">{{ $item->qty }}</td>
                                     <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}</td>
                                     @hasrole('admin|super_admin')
-                                    <td class="text-center">
-                                        <a href="javascript:;" class="btn btn-primary btn-sm"
-                                        data-tw-toggle="modal" data-tw-target="#detail-confirmation-modal{{ $item->id }}">Edit</a>
-                                    </td>
-                                    @include('cms.transactions.modal.detail-modal')
+                                        <td class="text-center">
+                                            <a href="javascript:;" class="btn btn-primary btn-sm" data-tw-toggle="modal"
+                                                data-tw-target="#detail-confirmation-modal{{ $item->id }}"><i
+                                                    data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah</a>
+                                        </td>
+                                        @include('cms.transactions.modal.detail-modal')
                                     @endhasrole
                                 </tr>
                                 @php
@@ -185,7 +168,7 @@
                         </tbody>
                         <tfoot>
                             <tr class="text-center">
-                                <th colspan="2">TOTAL PESANAN</th>
+                                <th colspan="3">TOTAL PESANAN</th>
                                 <th>{{ $total_qty }}</th>
                                 <th>Rp. {{ number_format($order->total_price, 0, ',', '.') }}</th>
                             </tr>
@@ -216,11 +199,10 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body p-0">
-                    <div class="p-5 text-center">
-                        {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
+                    <div class="p-5">
                         <form action="{{ route('storePayment', $order) }}" method="post" enctype="multipart/form-data">
                             @csrf
-                            <div class="mt-3">
+                            <div class="mt-3 text-center">
                                 <label class="form-label">Total Pembayaran</label>
                                 <span class="font-bold"> Rp.
                                     {{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '.') }}</span>
@@ -239,7 +221,8 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="method" class="form-label">Metode Pembayaran <span class="text-danger">*</span></label>
+                                <label for="method" class="form-label">Metode Pembayaran <span
+                                        class="text-danger">*</span></label>
                                 <select class="form-select mt-2 sm:mr-2" id="method" name="method" required>
                                     <option value="Tunai">Tunai</option>
                                     <option value="Transfer">Transfer</option>
@@ -253,7 +236,8 @@
                             <div class="mt-3">
                                 <label for="date" class="form-label">Tanggal <span
                                         class="text-danger">*</span></label>
-                                <input id="date" name="date" type="date" class="form-control w-full" required>
+                                <input id="date" name="date" type="date" class="form-control w-full"
+                                    required>
                                 @error('date')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -262,17 +246,15 @@
                             </div>
 
                             <div class="mt-3">
-                                <label for="note" class="form-label">Keterangan <span class="text-danger">*</span></label>
-                                <textarea class="form-control" placeholder="Masukkan Keterangan.." name="note" id="note" cols="30" rows="5"></textarea>
+                                <label for="note" class="form-label">Keterangan <span
+                                        class="text-danger">*</span></label>
+                                <textarea id="note" name="note" class="editor"> </textarea>
                                 @error('note')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
-
-
-
                             <div class="px-5 mt-3 pb-8 text-center">
                                 <button type="submit" class="btn btn-primary w-24">Setor</button>
                                 <button type="button" data-tw-dismiss="modal"
