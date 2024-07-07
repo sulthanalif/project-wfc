@@ -40,15 +40,18 @@
                 class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
                 <div class="font-medium text-center lg:text-left lg:mt-3">Detail Kontak</div>
                 <div class="flex flex-col justify-center items-center lg:items-start mt-4">
-                    <div class="truncate sm:whitespace-normal flex items-center"> <i data-lucide="mail"
-                            class="w-4 h-4 mr-2"></i> {{ $agent->email }} </div>
-                    <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="phone"
-                            class="w-4 h-4 mr-2"></i>
+                    <div class="flex items-center"> <i data-lucide="mail" class="w-4 h-4 mr-2"></i> {{ $agent->email }}
+                    </div>
+                    <div class="flex items-center mt-3"> <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
                         {{ $agent->agentProfile->phone_number ? $agent->agentProfile->phone_number : 'Nomer HP Belum Diisi' }}
                     </div>
-                    <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="map-pin"
-                            class="w-4 h-4 mr-2"></i>
-                        {{ $agent->agentProfile->address == null ? 'Harap isi alamat!' : $agent->agentProfile->address }}
+                    <div class="flex items-center mt-3">
+                        <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i>
+                        @if ($agent->agentProfile->address !== null)
+                            <span id="formatted-address"></span>
+                        @else
+                            <span>Alamat Belum Diisi</span>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -200,3 +203,77 @@
         </div>
     </div>
 @endsection
+
+@push('custom-scripts')
+    <script>
+        const dataAddress = "{{ $agent->agentProfile->address }}";
+        const dataRt = "{{ $agent->agentProfile->rt }}";
+        const dataRw = "{{ $agent->agentProfile->rw }}";
+        const dataVillage = "{{ $agent->agentProfile->village }}";
+        const dataDistrict = "{{ $agent->agentProfile->district }}";
+        const dataRegency = "{{ $agent->agentProfile->regency }}";
+        const dataProvince = "{{ $agent->agentProfile->province }}";
+
+        let provinceName = '';
+        let regencyName = '';
+        let districtName = '';
+        let villageName = '';
+
+        const formatAddress = () => {
+            const addressDisplay = document.getElementById('formatted-address');
+            const formattedAddress =
+                `${dataAddress}, RT ${dataRt}/RW ${dataRw}, ${villageName}, ${districtName}, ${regencyName}, ${provinceName}`;
+            addressDisplay.textContent = formattedAddress;
+        };
+
+        const fetchProvinces = () => {
+            return fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
+                .then(response => response.json())
+                .then(data => {
+                    const province = data.find(province => province.id === dataProvince);
+                    if (province) {
+                        provinceName = province.name;
+                    }
+                });
+        };
+
+        const fetchRegencies = () => {
+            return fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${dataProvince}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const regency = data.find(regency => regency.id === dataRegency);
+                    if (regency) {
+                        regencyName = regency.name;
+                    }
+                });
+        };
+
+        const fetchDistricts = () => {
+            return fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${dataRegency}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const district = data.find(district => district.id === dataDistrict);
+                    if (district) {
+                        districtName = district.name;
+                    }
+                });
+        };
+
+        const fetchVillages = () => {
+            return fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${dataDistrict}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const village = data.find(village => village.id === dataVillage);
+                    if (village) {
+                        villageName = village.name;
+                    }
+                });
+        };
+
+        Promise.all([fetchProvinces(), fetchRegencies(), fetchDistricts(), fetchVillages()])
+            .then(() => {
+                formatAddress();
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+@endpush

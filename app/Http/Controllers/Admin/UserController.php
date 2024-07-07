@@ -28,13 +28,13 @@ class UserController extends Controller
     {
         $users = User::paginate(10);
 
-       // Tampilkan data ke view.
-       return view('cms.admin.users.index', compact('users' ));
+        // Tampilkan data ke view.
+        return view('cms.admin.users.index', compact('users'));
     }
 
     public function export()
     {
-        return Excel::download(new AgentExport, 'Agent_export_'.now().'.xlsx');
+        return Excel::download(new AgentExport, 'Agent_export_' . now() . '.xlsx');
     }
 
 
@@ -45,7 +45,7 @@ class UserController extends Controller
             'file' => 'required|mimes:xlsx,xls',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return back()->with('error', $validator->errors());
         }
 
@@ -57,8 +57,6 @@ class UserController extends Controller
             Excel::import(new AgentImport, $file);
 
             return redirect()->route('user.index')->with('success', 'Data Berhasil Diimport');
-
-
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),
@@ -91,17 +89,17 @@ class UserController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
-            // 'email' => ['required', 'max:225', 'unique:users,email'],
+            'email' => ['required', 'max:225', 'unique:users,email'],
             'password' => ['required'],
             'role' => ['required', 'string'],
             // 'address' => 'required|string',
-            'phone_number' => 'string',
-            'rt' => 'string',
-            'rw'=> 'string',
-            'village'=> 'string',
-            'district'=> 'string',
-            'regency'=> 'string',
-            'province'=> 'string',
+            // 'phone_number' => 'string',
+            // 'rt' => 'string',
+            // 'rw' => 'string',
+            // 'village' => 'string',
+            // 'district' => 'string',
+            // 'regency' => 'string',
+            // 'province' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -116,15 +114,18 @@ class UserController extends Controller
                     'active' => 0,
                 ]);
 
-                ($request->role) ? $user->assignRole($request->role) : 'Guest' ;
-                if($request->role !== "agent"){
+                ($request->role) ? $user->assignRole($request->role) : 'Guest';
+                if ($request->role !== "agent") {
                     $user->email_verified_at = now();
                     $user->adminProfile()->create([
                         'name' => $request->name
                     ]);
                 } else {
-                    $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
-                    Storage::disk('public')->put('photos/' .$user->id. '/' . $photoName, $request->file('photo')->getContent());
+                    $photoName = null;
+                    if ($request->hasFile('photo')) {
+                        $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
+                        Storage::disk('public')->put('photos/' . $user->id . '/' . $photoName, $request->file('photo')->getContent());
+                    }
 
                     $user->agentProfile()->create([
                         'name' => $request->name,
@@ -132,11 +133,11 @@ class UserController extends Controller
                         // 'address' => $request,
                         'phone_number' => $request->phone_number,
                         'rt' => $request->rt,
-                        'rw'=> $request->rw,
-                        'village'=> $request->village,
-                        'district'=> $request->district,
-                        'regency'=> $request->regency,
-                        'province'=> $request->province,
+                        'rw' => $request->rw,
+                        'village' => $request->village,
+                        'district' => $request->district,
+                        'regency' => $request->regency,
+                        'province' => $request->province,
                     ]);
                 }
             });
@@ -152,8 +153,6 @@ class UserController extends Controller
             ];
             return view('cms.error', compact('data'));
         }
-
-
     }
 
     /**
@@ -198,11 +197,11 @@ class UserController extends Controller
             'password' => ['nullable', 'string'],
             'phone_number' => 'string',
             'rt' => 'string',
-            'rw'=> 'string',
-            'village'=> 'string',
-            'district'=> 'string',
-            'regency'=> 'string',
-            'province'=> 'string',
+            'rw' => 'string',
+            'village' => 'string',
+            'district' => 'string',
+            'regency' => 'string',
+            'province' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -232,36 +231,33 @@ class UserController extends Controller
 
                 ($request->role) ? $user->assignRole($request->role) : '';
 
-                if($request->role == "agent"){
+                if ($request->role == "agent") {
                     if ($request->hasFile('photo')) {
-                        if ($user->agentProfile->photo && file_exists(storage_path('app/public/photos/'.$user->id. '/'. $user->agentProfile->photo))) {
+                        if ($user->agentProfile->photo && file_exists(storage_path('app/public/photos/' . $user->id . '/' . $user->agentProfile->photo))) {
                             unlink(storage_path('app/public/photos/' . $user->agentProfile->photo));
                         }
 
                         $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
-                        Storage::disk('public')->put('photos/' .$user->id. '/' . $photoName, $request->file('photo')->getContent());
+                        Storage::disk('public')->put('photos/' . $user->id . '/' . $photoName, $request->file('photo')->getContent());
 
                         $user->agentProfile()->update([
                             'name' => $request->name,
                             'photo' => $photoName,
                             'phone_number' => $request->phone_number,
                             'rt' => $request->rt,
-                            'rw'=> $request->rw,
-                            'village'=> $request->village,
-                            'district'=> $request->district,
-                            'regency'=> $request->regency,
-                            'province'=> $request->province,
+                            'rw' => $request->rw,
+                            'village' => $request->village,
+                            'district' => $request->district,
+                            'regency' => $request->regency,
+                            'province' => $request->province,
                         ]);
                     } else {
-
                     }
-
                 } else {
                     $user->adminProfile()->update([
                         'name' => $request->name
                     ]);
                 }
-
             });
             if (!$update) {
                 return back()->with('error', 'Data Tidak Berhasil Diubah!');
@@ -275,8 +271,6 @@ class UserController extends Controller
             ];
             return view('cms.error', compact('data'));
         }
-
-
     }
 
     public function changeStatus(Request $request, User $user)
@@ -285,7 +279,7 @@ class UserController extends Controller
         $user->active = ($user->active == 1 ? 0 : 1);
         $user->save();
 
-        return redirect()->route('user.index')->with('success', 'Data Berhasil '. ($user->active == 1 ? 'Diaktifkan' : 'Dinonaktifkan') );
+        return redirect()->route('user.index')->with('success', 'Data Berhasil ' . ($user->active == 1 ? 'Diaktifkan' : 'Dinonaktifkan'));
     }
 
     /**
@@ -308,8 +302,8 @@ class UserController extends Controller
             $delete = $user->delete();
         }
 
-        if ($delete){
-            return redirect()->route('user.index' ,['page' => $request->page])->with('success', 'User deleted successfully.');
+        if ($delete) {
+            return redirect()->route('user.index', ['page' => $request->page])->with('success', 'User deleted successfully.');
         } else {
             return back()->with('error', 'Data Tidak Bisa Dihapus!');
         }
@@ -339,7 +333,7 @@ class UserController extends Controller
 
     public function changeRole(Request $request, User $user)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'role' => 'required|string'
         ]);
 

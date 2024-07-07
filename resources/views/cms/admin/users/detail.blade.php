@@ -56,7 +56,11 @@
                         </div>
                         <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="map-pin"
                                 class="w-4 h-4 mr-2"></i>
-                            {{ $user->agentProfile->address ? $user->agentProfile->address : 'Alamat Belum Diisi' }}
+                            @if ($user->agentProfile->address !== null)
+                                <span id="formatted-address"></span>
+                            @else
+                                <span>Alamat Belum Diisi</span>
+                            @endif
                         </div>
                     @endif
 
@@ -202,7 +206,7 @@
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                                                 <img alt="KTP" class=" img-fluid rounded-md"
-                                                    src="{{ asset('assets/logo2.PNG') }}">
+                                                    src="{{ asset('assets/logo2.png') }}">
                                             </div>
                                         </div>
                                         <div
@@ -210,7 +214,7 @@
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                                                 <img alt="KK" class=" img-fluid rounded-md"
-                                                    src="{{ asset('assets/logo2.PNG') }}">
+                                                    src="{{ asset('assets/logo2.png') }}">
                                             </div>
                                         </div>
                                         <div
@@ -218,7 +222,7 @@
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                                                 <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
-                                                    src="{{ asset('assets/logo2.PNG') }}">
+                                                    src="{{ asset('assets/logo2.png') }}">
                                             </div>
                                         </div>
                                     </div>
@@ -230,7 +234,7 @@
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                                                 <img alt="KTP" class=" img-fluid rounded-md"
-                                                    src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->ktp) }}">
+                                                    src="{{ route('getImage', ['path' => 'administration/' . $user->id, 'imageName' => $user->administration->ktp]) }}">
                                             </div>
                                         </div>
                                         <div
@@ -238,7 +242,7 @@
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                                                 <img alt="KK" class=" img-fluid rounded-md"
-                                                    src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->kk) }}">
+                                                    src="{{ route('getImage', ['path' => 'administration/' . $user->id, 'imageName' => $user->administration->kk]) }}">
                                             </div>
                                         </div>
                                         <div
@@ -246,7 +250,7 @@
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                                                 <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
-                                                    src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->sPerjanjian) }}">
+                                                    src="{{ route('getImage', ['path' => 'administration/' . $user->id, 'imageName' => $user->administration->sPerjanjian]) }}">
                                             </div>
                                         </div>
                                     </div>
@@ -381,3 +385,77 @@
         @endhasrole
     </div>
 @endsection
+
+@push('custom-scripts')
+    <script>
+        const dataAddress = "{{ $user->agentProfile->address }}";
+        const dataRt = "{{ $user->agentProfile->rt }}";
+        const dataRw = "{{ $user->agentProfile->rw }}";
+        const dataVillage = "{{ $user->agentProfile->village }}";
+        const dataDistrict = "{{ $user->agentProfile->district }}";
+        const dataRegency = "{{ $user->agentProfile->regency }}";
+        const dataProvince = "{{ $user->agentProfile->province }}";
+
+        let provinceName = '';
+        let regencyName = '';
+        let districtName = '';
+        let villageName = '';
+
+        const formatAddress = () => {
+            const addressDisplay = document.getElementById('formatted-address');
+            const formattedAddress =
+                `${dataAddress}, RT ${dataRt}/RW ${dataRw}, ${villageName}, ${districtName}, ${regencyName}, ${provinceName}`;
+            addressDisplay.textContent = formattedAddress;
+        };
+
+        const fetchProvinces = () => {
+            return fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
+                .then(response => response.json())
+                .then(data => {
+                    const province = data.find(province => province.id === dataProvince);
+                    if (province) {
+                        provinceName = province.name;
+                    }
+                });
+        };
+
+        const fetchRegencies = () => {
+            return fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${dataProvince}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const regency = data.find(regency => regency.id === dataRegency);
+                    if (regency) {
+                        regencyName = regency.name;
+                    }
+                });
+        };
+
+        const fetchDistricts = () => {
+            return fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${dataRegency}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const district = data.find(district => district.id === dataDistrict);
+                    if (district) {
+                        districtName = district.name;
+                    }
+                });
+        };
+
+        const fetchVillages = () => {
+            return fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${dataDistrict}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const village = data.find(village => village.id === dataVillage);
+                    if (village) {
+                        villageName = village.name;
+                    }
+                });
+        };
+
+        Promise.all([fetchProvinces(), fetchRegencies(), fetchDistricts(), fetchVillages()])
+            .then(() => {
+                formatAddress();
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+@endpush

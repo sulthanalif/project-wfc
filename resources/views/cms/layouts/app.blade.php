@@ -38,45 +38,52 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=[" your-google-map-api"]&libraries=places"></script>
     <script src="{{ asset('assets/cms/js/app.js') }}"></script>
     <script>
-        const filter = document.getElementById("filter");
-        const items = document.querySelectorAll("tbody tr");
-
-        filter.addEventListener("input", (e) => filterData(e.target.value));
-
-        function filterData(search) {
-            items.forEach((item) => {
-                if (item.innerText.toLowerCase().includes(search.toLowerCase())) {
-                    item.classList.remove('hidden');
-                } else {
-                    item.classList.add('hidden');
-
-                }
-            });
-        }
-
-        function formatRupiah(angka, prefix) {
-            var number_string = angka.replace(/[^,\d]/g, '').toString(),
-                split = number_string.split(','),
-                sisa = split[0].length % 3,
-                rupiah = split[0].substr(0, sisa),
-                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-            // tambahkan titik jika yang di input sudah menjadi angka ribuan
-            if (ribuan) {
-                separator = sisa ? '.' : '';
-                rupiah += separator + ribuan.join('.');
+        document.addEventListener('DOMContentLoaded', () => {
+            const filter = document.getElementById("filter");
+            const items = document.querySelectorAll("tbody tr");
+    
+            if (filter) {
+                filter.addEventListener("input", (e) => filterData(e.target.value));
             }
-
-            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-            return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
-        }
-
+    
+            function filterData(search) {
+                items.forEach((item) => {
+                    if (item.innerText.toLowerCase().includes(search.toLowerCase())) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+            }
+    
+            function formatRupiah(angka, prefix) {
+                var number_string = angka.replace(/[^,\d]/g, '').toString(),
+                    split = number_string.split(','),
+                    sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa),
+                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+    
+                // tambahkan titik jika yang di input sudah menjadi angka ribuan
+                if (ribuan) {
+                    separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+    
+                rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+                return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+            }
+    
+        });
+        
         function updateFileName(input) {
             const fileName = input.value.split('\\').pop(); // Extract filename from path
             const fileSpan = document.getElementById('fileName');
-            fileSpan.textContent = fileName || 'No file chosen'; // Set text to filename or 'No file chosen'
+            if (fileSpan) {
+                fileSpan.textContent = fileName || 'No file chosen'; // Set text to filename or 'No file chosen'
+            }
         }
     </script>
+    
     @stack('custom-scripts')
     <!-- END: JS Assets-->
 </body>

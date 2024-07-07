@@ -7,14 +7,12 @@
         <h2 class="text-lg font-medium mr-auto">
             Berkas Administrasi {{ $user->agentProfile->name }}
         </h2>
+        <a href="{{ route('user.index') }}" class="btn px-2 box mr-2"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
         @if ($user->roles->first()->name === 'agent')
             @if ($user->administration !== null)
                 <a class="btn btn-primary" href="javascript:;" data-tw-toggle="modal"
                     data-tw-target="#upstat-confirmation-modal{{ $user->id }}"> <i data-lucide="edit"
                         class="w-4 h-4 mr-1"></i> {{ $user->active == 0 ? 'Approve' : 'Non aktif' }} </a>
-                        <button data-tw-merge class="transition duration-200 border shadow-sm inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed bg-secondary/70 border-secondary/70 text-slate-500 dark:border-darkmode-400 dark:bg-darkmode-400 dark:text-slate-300 [&:hover:not(:disabled)]:bg-slate-100 [&:hover:not(:disabled)]:border-slate-100 [&:hover:not(:disabled)]:dark:border-darkmode-300/80 [&:hover:not(:disabled)]:dark:bg-darkmode-300/80 mb-2 mr-1 mb-2 mr-1"><i data-tw-merge data-lucide="hard-drive" class="stroke-1.5 w-5 h-5 h-5 w-5 h-5 w-5"></i></button>
-            @else
-                <a href="{{ url()->previous() }}" class="btn btn-dark">Kembali</a>
             @endif
         @endif
     </div>
@@ -76,7 +74,7 @@
                         <div class="flex flex-col items-center justify-center">
                             <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                             <img alt="KTP" class=" img-fluid rounded-md"
-                                src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->ktp) }}">
+                                src="{{ route('getImage', ['path' => 'administration/' . $user->id , 'imageName' => $user->administration->ktp]) }}">
                         </div>
                     </div>
                     <div
@@ -84,7 +82,7 @@
                         <div class="flex flex-col items-center justify-center">
                             <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                             <img alt="KK" class=" img-fluid rounded-md"
-                                src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->kk) }}">
+                                src="{{ route('getImage', ['path' => 'administration/' . $user->id , 'imageName' => $user->administration->kk]) }}">
                         </div>
                     </div>
                     <div
@@ -92,7 +90,7 @@
                         <div class="flex flex-col items-center justify-center">
                             <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                             <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
-                                src="{{ asset('storage/images/administration/' . $user->id . '/' . $user->administration->sPerjanjian) }}">
+                                src="{{ route('getImage', ['path' => 'administration/' . $user->id , 'imageName' => $user->administration->sPerjanjian]) }}">
                         </div>
                     </div>
                 </div>

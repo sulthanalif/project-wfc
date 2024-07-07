@@ -9,14 +9,6 @@
         </h2>
     </div>
 
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible show flex items-center mb-2" role="alert">
-            <i data-lucide="alert-octagon" class="w-6 h-6 mr-2"></i> {{ session('error') }}
-            <button type="button" class="btn-close text-white" data-tw-dismiss="alert" aria-label="Close"> <i data-lucide="x"
-                    class="w-4 h-4"></i> </button>
-        </div>
-    @endif
-
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
@@ -62,7 +54,7 @@
                                         </span>
                                         <input id="image" name="image" type="file"
                                             class="w-full h-full top-0 left-0 absolute opacity-0"
-                                            onchange="previewFile(this); updateFileName(this)">
+                                            onchange="previewFile(this); updateFileName(this)" required>
                                     </div>
                                     <div id="image-preview" class="hidden mt-2"></div>
                                     @error('image')
@@ -149,7 +141,7 @@
                     </div>
                     <div class="text-left mt-5">
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
+                        <a href="{{ route('user.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
                 </form>
             </div>
@@ -203,92 +195,125 @@
             }
         }
 
-        fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
-            .then(response => response.json())
-            .then(data => {
-                const provinceOption = document.getElementById('province');
+        const dataVillage = "{{ $user->agentProfile->village }}";
+        const dataDistrict = "{{ $user->agentProfile->district }}";
+        const dataRegency = "{{ $user->agentProfile->regency }}";
+        const dataProvince = "{{ $user->agentProfile->province }}";
 
-                data.forEach(province => {
-                    const option = document.createElement('option');
-                    option.value = province.id;
-                    option.textContent = province.name;
-                    provinceOption.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
-
-        // Event listeners
         document.addEventListener('DOMContentLoaded', () => {
-            provinceSelect = document.getElementById('province');
+            const provinceSelect = document.getElementById('province');
+            const regencySelect = document.getElementById('regency');
+            const districtSelect = document.getElementById('district');
+            const villageSelect = document.getElementById('village');
+
+            // Fetch provinces
+            fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.id;
+                        option.textContent = province.name;
+                        if (province.id == dataProvince) {
+                            option.selected = true;
+                        }
+                        provinceSelect.appendChild(option);
+                    });
+                    // Trigger change event to load regencies
+                    handleProvinceChange({
+                        target: {
+                            value: dataProvince
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching provinces:', error));
+
+            // Event listeners
             provinceSelect.addEventListener('change', handleProvinceChange);
-            regencySelect = document.getElementById('regency');
             regencySelect.addEventListener('change', handleRegencyChange);
-            districtSelect = document.getElementById('district');
             districtSelect.addEventListener('change', handleDistrictChange);
+
+            // Functions
+            function handleProvinceChange(event) {
+                const provinceId = event.target.value;
+                regencySelect.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
+                districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                villageSelect.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
+
+                if (!provinceId) return;
+
+                fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(regency => {
+                            const option = document.createElement('option');
+                            option.value = regency.id;
+                            option.textContent = regency.name;
+                            if (regency.id == dataRegency) {
+                                option.selected = true;
+                            }
+                            regencySelect.appendChild(option);
+                        });
+                        // Trigger change event to load districts
+                        handleRegencyChange({
+                            target: {
+                                value: dataRegency
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error fetching regencies:', error));
+            }
+
+            function handleRegencyChange(event) {
+                const regencyId = event.target.value;
+                districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                villageSelect.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
+
+                if (!regencyId) return;
+
+                fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regencyId}.json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(district => {
+                            const option = document.createElement('option');
+                            option.value = district.id;
+                            option.textContent = district.name;
+                            if (district.id == dataDistrict) {
+                                option.selected = true;
+                            }
+                            districtSelect.appendChild(option);
+                        });
+                        // Trigger change event to load villages
+                        handleDistrictChange({
+                            target: {
+                                value: dataDistrict
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error fetching districts:', error));
+            }
+
+            function handleDistrictChange(event) {
+                const districtId = event.target.value;
+                villageSelect.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
+
+                if (!districtId) return;
+
+                fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${districtId}.json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(village => {
+                            const option = document.createElement('option');
+                            option.value = village.id;
+                            option.textContent = village.name;
+                            if (village.id == dataVillage) {
+                                option.selected = true;
+                            }
+                            villageSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching villages:', error));
+            }
         });
-
-        // Functions
-        function handleProvinceChange(event) {
-            const provinceId = event.target.value;
-            const regencyOption = document.getElementById('regency');
-
-            regencyOption.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
-
-            if (!provinceId) return;
-
-            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(regency => {
-                        const option = document.createElement('option');
-                        option.value = regency.id;
-                        option.textContent = regency.name;
-                        regencyOption.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-
-        function handleRegencyChange(event) {
-            const regencyId = event.target.value;
-            const districtOption = document.getElementById('district');
-
-            districtOption.innerHTML = '<option value="">Pilih Kecamatan</option>';
-
-            if (!regencyId) return;
-
-            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regencyId}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(district => {
-                        const option = document.createElement('option');
-                        option.value = district.id;
-                        option.textContent = district.name;
-                        districtOption.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-
-        function handleDistrictChange(event) {
-            const district = event.target.value;
-            const villageOption = document.getElementById('village');
-
-            villageOption.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
-
-            if (!district) return;
-
-            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${district}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(village => {
-                        const option = document.createElement('option');
-                        option.value = village.id;
-                        option.textContent = village.name;
-                        villageOption.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
     </script>
 @endpush
