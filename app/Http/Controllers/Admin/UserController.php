@@ -196,6 +196,8 @@ class UserController extends Controller
             // 'email' => ['required', 'max:25', 'unique:users,email'],
             'password' => ['nullable', 'string'],
             'phone_number' => 'string',
+            'address' => 'string',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'rt' => 'string',
             'rw' => 'string',
             'village' => 'string',
@@ -210,28 +212,7 @@ class UserController extends Controller
 
         try {
             DB::transaction(function () use ($request, $user, &$update) {
-                // if ($request->password) {
-                //     $user->update([
-                //         'email' => $request->email,
-                //         'password' => Hash::make($request->password),
-                //     ]);
-                // } else {
-                //     $user->update([
-                //         'email' => $request->email
-                //     ]);
-                // }
-
-
-                if ($request->filled('password')) {
-                    $user->update([
-                        // 'email' => $request->email,
-                        'password' => Hash::make($request->password),
-                    ]);
-                }
-
-                ($request->role) ? $user->assignRole($request->role) : '';
-
-                if ($request->role == "agent") {
+                if ($user->roles->first()->name == "agent") {
                     if ($request->hasFile('photo')) {
                         if ($user->agentProfile->photo && file_exists(storage_path('app/public/photos/' . $user->id . '/' . $user->agentProfile->photo))) {
                             unlink(storage_path('app/public/photos/' . $user->agentProfile->photo));
@@ -244,6 +225,7 @@ class UserController extends Controller
                             'name' => $request->name,
                             'photo' => $photoName,
                             'phone_number' => $request->phone_number,
+                            'address' => $request->address,
                             'rt' => $request->rt,
                             'rw' => $request->rw,
                             'village' => $request->village,
@@ -252,6 +234,19 @@ class UserController extends Controller
                             'province' => $request->province,
                         ]);
                     } else {
+
+                        $user->agentProfile()->update([
+                            'name' => $request->name,
+                            // 'photo' => $photoName,
+                            'phone_number' => $request->phone_number,
+                            'address' => $request->address,
+                            'rt' => $request->rt,
+                            'rw' => $request->rw,
+                            'village' => $request->village,
+                            'district' => $request->district,
+                            'regency' => $request->regency,
+                            'province' => $request->province,
+                        ]);
                     }
                 } else {
                     $user->adminProfile()->update([
@@ -259,12 +254,8 @@ class UserController extends Controller
                     ]);
                 }
             });
-            if (!$update) {
-                return back()->with('error', 'Data Tidak Berhasil Diubah!');
-            } else {
-                return redirect()->route('user.index')->with('success', 'Data Berhasil Diubah');
-            }
-        } catch (\Throwable $th) {
+            return redirect()->route('user.show', $user)->with('success', 'Data Berhasil Diupdate');
+        } catch (\Exception $th) {
             $data = [
                 'message' => $th->getMessage(),
                 'status' => 400

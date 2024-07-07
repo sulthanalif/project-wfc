@@ -9,5 +9,5 @@ Route::post('/email/checking', [UpdateEmailPasswordController::class, 'checkEmai
 Route::put('/email/{user}', [UpdateEmailPasswordController::class, 'updateEmail'])->name('email.update');
 
 //password
-Route::get('/password', [UpdateEmailPasswordController::class, 'changePassword'])->name('password.change');
-Route::put('/password/{user}', [UpdateEmailPasswordController::class, 'updatePassword'])->name('password.update');
+Route::get('/password', [UpdateEmailPasswordController::class, 'changePassword'])->name('admin.password.change');
+Route::put('/password/{user}', [UpdateEmailPasswordController::class, 'updatePassword'])->name('admin.password.update');
