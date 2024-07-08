@@ -14,7 +14,8 @@
                 <div id="form-validation" class="p-5">
                     <div class="preview">
                         <!-- BEGIN: Validation Form -->
-                        <form method="POST" action="{{ route('users.profile.update', ['id' => auth()->user()->id]) }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('users.profile.update', ['id' => auth()->user()->id]) }}"
+                            enctype="multipart/form-data">
                             @method('PUT')
                             @csrf
                             <div class="grid grid-cols-12 gap-3">
@@ -44,9 +45,15 @@
                                             </span>
                                             <input id="photo" name="photo" type="file"
                                                 class="w-full h-full top-0 left-0 absolute opacity-0"
-                                                onchange="previewFile(this); updateFileName(this)" required>
+                                                onchange="previewFile(this); updateFileName(this)">
                                         </div>
                                         <div id="image-preview" class="hidden mt-2"></div>
+                                        @if (isset($agent->agentProfile->photo))
+                                            <div class="mt-2" id="existing-image-preview">
+                                                <img src="{{ route('getImage', ['path' => 'photos/' . $agent->id, 'imageName' => $agent->agentProfile->photo]) }}"
+                                                    class="w-auto h-40 object-fit-cover rounded">
+                                            </div>
+                                        @endif
                                         @error('photo')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -129,7 +136,8 @@
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary mt-5 mr-1">Simpan</button>
-                            <a href="{{ route('users.profile', ['id' => auth()->user()->id]) }}" class="btn btn-outline-secondary mt-5">Kembali</a>
+                            <a href="{{ route('users.profile', ['id' => auth()->user()->id]) }}"
+                                class="btn btn-outline-secondary mt-5">Kembali</a>
                         </form>
                     </div>
                 </div>
@@ -149,9 +157,9 @@
                 // Check file size (2MB limit)
                 if (file.size > 2 * 1024 * 1024) {
                     alert("Ukuran gambar lebih dari 2MB. Silahkan pilih gambar yang lebih kecil");
-                    preview.innerHTML = '';
-                    preview.classList.add('hidden');
-                    input.value = '';
+                    preview.innerHTML = ''; // Clear any existing preview
+                    preview.classList.add('hidden'); // Hide the preview container
+                    input.value = ''; // Clear the file input value
                     return;
                 }
 
@@ -160,9 +168,9 @@
                 const extension = file.name.split('.').pop().toLowerCase();
                 if (!allowedExtensions.includes(extension)) {
                     alert("Hanya file dengan tipe (jpg, jpeg, png) yang diperbolehkan!!");
-                    preview.innerHTML = '';
-                    preview.classList.add('hidden');
-                    input.value = '';
+                    preview.innerHTML = ''; // Clear any existing preview
+                    preview.classList.add('hidden'); // Hide the preview container
+                    input.value = ''; // Clear the file input value
                     return;
                 }
 
@@ -171,9 +179,10 @@
                 reader.onload = function(e) {
                     const img = document.createElement('img');
                     img.src = e.target.result;
-                    img.classList.add('w-auto', 'h-40', 'object-cover', 'rounded');
-                    preview.innerHTML = '';
-                    preview.classList.remove('hidden');
+                    img.classList.add('w-auto', 'h-40', 'object-cover', 'rounded'); // Adjust size and styles as needed
+                    document.getElementById('existing-image-preview').innerHTML = '';
+                    preview.innerHTML = ''; // Clear previous previews
+                    preview.classList.remove('hidden'); // Show the preview container
                     preview.appendChild(img);
                 };
 

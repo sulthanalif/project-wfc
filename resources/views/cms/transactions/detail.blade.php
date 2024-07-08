@@ -104,7 +104,11 @@
                                         <div class="flex items-center">
                                             @hasrole('admin|super_admin|finance_admin')
                                                 @if ($item->product->detail->image == null)
-                                                    -
+                                                    <div class="w-10 h-10 image-fit zoom-in">
+                                                        <img alt="PAKET SMART WFC"
+                                                            class="rounded-lg border-2 border-white shadow-md"
+                                                            src="{{ asset('assets/logo2.png') }}">
+                                                    </div>
                                                 @else
                                                     @if ($item->product->detail->image == 'image.jpg')
                                                         <div class="w-10 h-10 image-fit zoom-in">
@@ -126,13 +130,17 @@
                                             @endhasrole
                                             @hasrole('agent')
                                                 @if ($item->product->detail->image == null)
-                                                    -
+                                                    <div class="w-10 h-10 image-fit zoom-in">
+                                                        <img alt="PAKET SMART WFC"
+                                                            class="rounded-lg border-2 border-white shadow-md"
+                                                            src="{{ asset('assets/logo2.png') }}">
+                                                    </div>
                                                 @else
                                                     @if ($item->product->detail->image == 'image.jpg')
                                                         <div class="w-10 h-10 image-fit zoom-in">
                                                             <img alt="PAKET SMART WFC"
                                                                 class="rounded-lg border-2 border-white shadow-md"
-                                                                src="{{ asset('assets/logo2.PNG') }}">
+                                                                src="{{ asset('assets/logo2.png') }}">
                                                         </div>
                                                     @else
                                                         <div class="w-10 h-10 image-fit zoom-in">

@@ -54,7 +54,7 @@
                                         </span>
                                         <input id="photo" name="photo" type="file"
                                             class="w-full h-full top-0 left-0 absolute opacity-0"
-                                            onchange="previewFile(this); updateFileName(this)" required>
+                                            onchange="previewFile(this); updateFileName(this)">
                                     </div>
                                     <div id="image-preview" class="hidden mt-2"></div>
                                     @if (isset($user->agentProfile->photo))

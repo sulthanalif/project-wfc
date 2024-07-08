@@ -53,8 +53,8 @@ class OrderController extends Controller
         $roleName = $roleUser->name;
 
         if ($roleName == 'agent') {
-            return view('cms.transactions.create', [
-                'agents' => User::role('agent')->where('active', 1)->get(),
+            return view('cms.transactions.agent.create', [
+                'agents' => $user,
                 'orderNumber' => $orderNumber,
                 'packages' => $packages
             ]);

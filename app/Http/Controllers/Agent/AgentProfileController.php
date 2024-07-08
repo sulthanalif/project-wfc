@@ -47,14 +47,14 @@ class AgentProfileController extends Controller
             'address' => 'string',
             'phone_number' => 'string',
             'rt' => 'string',
-            'rw'=> 'string',
-            'village'=> 'string',
-            'district'=> 'string',
-            'regency'=> 'string',
-            'province'=> 'string',
+            'rw' => 'string',
+            'village' => 'string',
+            'district' => 'string',
+            'regency' => 'string',
+            'province' => 'string',
         ]);
 
-        if($validasi->fails()){
+        if ($validasi->fails()) {
             return back()->with('error', $validasi->errors());
         }
 
@@ -64,43 +64,43 @@ class AgentProfileController extends Controller
             DB::transaction(function () use ($request, $agent, &$update) {
                 if ($request->hasFile('photo')) {
                     // Delete old photo
-                    if ($agent->agentProfile->photo && file_exists(storage_path('app/public/images/photos/'.$agent->id. '/'. $agent->agentProfile->photo))) {
+                    if ($agent->agentProfile->photo && file_exists(storage_path('app/public/images/photos/' . $agent->id . '/' . $agent->agentProfile->photo))) {
                         unlink(storage_path('app/public/images/photos/' . $agent->id . '/' . $agent->agentProfile->photo));
-                      }
+                    }
 
                     $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
-                    Storage::disk('public')->put('images/photos/' .$agent->id. '/' . $photoName, $request->file('photo')->getContent());
+                    Storage::disk('public')->put('images/photos/' . $agent->id . '/' . $photoName, $request->file('photo')->getContent());
 
                     // $photoName = 'photo_'.time() . '.' . $request->file('photo')->getClientOriginalExtension();
                     // $request->file('photo')->storeAs('public/photos/'.$agent->id. '/', $photoName);
 
                     $update = $agent->agentProfile->update([
                         'name' => $request->name,
-                        // 'photo' => $photoName,
+                        'photo' => $photoName,
                         'phone_number' => $request->phone_number,
                         'address' => $request->address,
                         'rt' => $request->rt,
-                        'rw'=> $request->rw,
-                        'village'=> $request->village,
-                        'district'=> $request->district,
-                        'regency'=> $request->regency,
-                        'province'=> $request->province,
+                        'rw' => $request->rw,
+                        'village' => $request->village,
+                        'district' => $request->district,
+                        'regency' => $request->regency,
+                        'province' => $request->province,
                     ]);
                 } else {
                     $update = $agent->agentProfile->update($request->except('photo'));
                 }
             });
-            if(!$update) {
+            if (!$update) {
                 return back()->with('error', 'Data Tidak Berhasil Diubah!');
             } else {
-                return view('cms.profile.index', compact('agent'))->with('success', 'Data Berhasil Diubah');
+                return redirect()->route('users.profile', $agent)->with('success', 'Data Berhasil Diubah');
             }
-        } catch (\Throwable $th) {
-            return response()->json([
+        } catch (\Exception $th) {
+            $data = [
                 'message' => $th->getMessage(),
-            ], 400);
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
     }
-
-
 }
