@@ -13,7 +13,7 @@
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
             <div class="intro-y box p-5">
-                <form action="{{ route('user.update', $user) }}" method="post">
+                <form action="{{ route('user.update', $user) }}" method="post" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
                     <div class="grid grid-cols-12 gap-3">
@@ -45,19 +45,19 @@
                                         value="{{ $user->agentProfile->phone_number }}" required>
                                 </div>
                                 <div class="mt-3">
-                                    <label for="image" class="form-label">Upload Foto <span
+                                    <label for="photo" class="form-label">Upload Foto <span
                                             class="text-danger">*</span></label>
                                     <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
                                         <i data-lucide="image" class="w-4 h-4 mr-2"></i>
                                         <span id="fileName">
                                             <span class="text-primary mr-1">Upload a file</span> or drag and drop
                                         </span>
-                                        <input id="image" name="image" type="file"
+                                        <input id="photo" name="photo" type="file"
                                             class="w-full h-full top-0 left-0 absolute opacity-0"
                                             onchange="previewFile(this); updateFileName(this)" required>
                                     </div>
                                     <div id="image-preview" class="hidden mt-2"></div>
-                                    @error('image')
+                                    @error('photo')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
