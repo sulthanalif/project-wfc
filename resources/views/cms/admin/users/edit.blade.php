@@ -57,6 +57,12 @@
                                             onchange="previewFile(this); updateFileName(this)" required>
                                     </div>
                                     <div id="image-preview" class="hidden mt-2"></div>
+                                    @if (isset($user->agentProfile->photo))
+                                        <div class="mt-2" id="existing-image-preview">
+                                            <img src="{{ route('getImage', ['path' => 'photos/' . $user->id, 'imageName' => $user->agentProfile->photo]) }}"
+                                                class="w-auto h-40 object-fit-cover rounded">
+                                        </div>
+                                    @endif
                                     @error('photo')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -160,9 +166,9 @@
                 // Check file size (2MB limit)
                 if (file.size > 2 * 1024 * 1024) {
                     alert("Ukuran gambar lebih dari 2MB. Silahkan pilih gambar yang lebih kecil");
-                    preview.innerHTML = '';
-                    preview.classList.add('hidden');
-                    input.value = '';
+                    preview.innerHTML = ''; // Clear any existing preview
+                    preview.classList.add('hidden'); // Hide the preview container
+                    input.value = ''; // Clear the file input value
                     return;
                 }
 
@@ -171,9 +177,9 @@
                 const extension = file.name.split('.').pop().toLowerCase();
                 if (!allowedExtensions.includes(extension)) {
                     alert("Hanya file dengan tipe (jpg, jpeg, png) yang diperbolehkan!!");
-                    preview.innerHTML = '';
-                    preview.classList.add('hidden');
-                    input.value = '';
+                    preview.innerHTML = ''; // Clear any existing preview
+                    preview.classList.add('hidden'); // Hide the preview container
+                    input.value = ''; // Clear the file input value
                     return;
                 }
 
@@ -182,16 +188,17 @@
                 reader.onload = function(e) {
                     const img = document.createElement('img');
                     img.src = e.target.result;
-                    img.classList.add('w-auto', 'h-40', 'object-cover', 'rounded');
-                    preview.innerHTML = '';
-                    preview.classList.remove('hidden');
+                    img.classList.add('w-auto', 'h-40', 'object-cover', 'rounded'); // Adjust size and styles as needed
+                    document.getElementById('existing-image-preview').innerHTML = '';
+                    preview.innerHTML = ''; // Clear previous previews
+                    preview.classList.remove('hidden'); // Show the preview container
                     preview.appendChild(img);
                 };
 
                 reader.readAsDataURL(file);
             } else {
-                preview.innerHTML = '';
-                preview.classList.add('hidden');
+                preview.innerHTML = ''; // Clear any existing preview
+                preview.classList.add('hidden'); // Hide the preview container
             }
         }
 

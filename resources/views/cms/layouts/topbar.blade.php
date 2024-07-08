@@ -100,12 +100,8 @@
             <div class="dropdown-toggle w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in scale-110"
                 role="button" aria-expanded="false" data-tw-toggle="dropdown">
                 @if (auth()->user()->hasRole('agent'))
-                    @if (auth()->user()->agentProfile->photo == null)
-                        <img alt="Profile" src="{{ asset('assets/cms/images/profile.svg') }}">
-                    @else
-                        <img alt="Profile"
-                            src="{{ route('getImage', ['path' => 'photos', 'imageName' => auth()->user()->agentProfile->photo]) }}">
-                    @endif
+                    <img alt="Profile"
+                        src="{{ auth()->user()->agentProfile->photo ? route('getImage', ['path' => 'photos/' . auth()->user()->id, 'imageName' => auth()->user()->agentProfile->photo]) : asset('assets/cms/images/profile.svg') }}">
                 @else
                     <img alt="Profile" src="{{ asset('assets/cms/images/profile.svg') }}">
                 @endif

@@ -68,7 +68,7 @@
                                     <div class="flex items-center">
                                         <div class="w-9 h-9 image-fit zoom-in">
                                             <img alt="PAKET SMART EFC" class="rounded-lg border-white shadow-md tooltip"
-                                                src="{{ asset('assets/cms/images/profile.svg') }}"
+                                                src="{{ empty($user->agentProfile->photo) ? asset('assets/cms/images/profile.svg') : route('getImage', ['path' => 'photos/' . $user->id, 'imageName' => $user->agentProfile->photo]) }}"
                                                 title="{{ empty($user->agentProfile->phone_number) ? 'Nomer HP Belum Diisi' : $user->agentProfile->phone_number }}">
                                         </div>
                                         <div class="ml-4">
