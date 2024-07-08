@@ -8,7 +8,7 @@
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            @hasrole('super_admin|agent')
+            @hasrole('super_admin|admin|agent')
                 <a href="{{ route('order.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Pesanan</a>
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $orders->firstItem() }} hingga
                     {{ $orders->lastItem() }} dari {{ $orders->total() }} data</div>

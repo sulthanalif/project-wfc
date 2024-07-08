@@ -20,7 +20,8 @@
                     <div class="grid grid-cols-12 gap-4">
                         <div class="col-span-12 lg:col-span-6 intro-y">
                             <div>
-                                <label for="name" class="form-label">Nama Barang <span class="text-danger">*</span></label>
+                                <label for="name" class="form-label">Nama Barang <span
+                                        class="text-danger">*</span></label>
                                 <input id="name" name="name" type="text" class="form-control w-full"
                                     placeholder="Masukkan Nama Barang" required value="{{ $product->name }}">
                                 @error('name')
@@ -30,9 +31,11 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="price" class="form-label">Harga Barang/hari <span class="text-danger">*</span></label>
+                                <label for="price" class="form-label">Harga Barang/hari <span
+                                        class="text-danger">*</span></label>
                                 <input id="price" name="price" type="number" class="form-control w-full"
-                                    placeholder="Masukkan Harga Barang" required value="{{ number_format($product->price, 0, ',', '') }}">
+                                    placeholder="Masukkan Harga Barang" required
+                                    value="{{ number_format($product->price, 0, ',', '') }}">
                                 @error('price')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -40,7 +43,8 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="days" class="form-label">Jangka Waktu (hari) <span class="text-danger">*</span></label>
+                                <label for="days" class="form-label">Jangka Waktu (hari) <span
+                                        class="text-danger">*</span></label>
                                 <input id="days" name="days" type="number" class="form-control w-full"
                                     placeholder="Masukkan Jangka Waktu" required value="{{ $product->days }}">
                                 @error('days')
@@ -77,11 +81,40 @@
                                 <select class="form-select mt-2 sm:mr-2" id="package_id" name="package_id">
                                     <option value="">Pilih...</option>
                                     @foreach ($packages as $package)
-                                    <option value="{{ $package->id }}"
-                                        {{ $package->name == $product->packageName->name ? 'selected' : '' }}>
-                                        {{ $package->name }}</option>
+                                        <option value="{{ $package->id }}"
+                                            {{ $package->name == $product->packageName->name ? 'selected' : '' }}>
+                                            {{ $package->name }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="mt-3">
+                                <label for="is_safe_point" class="form-label">Titik Aman <span
+                                        class="text-danger">*</span></label>
+                                <div class="mt-2 flex">
+                                    @if ($product->is_safe_point == 1)
+                                        <label class="flex items-center">
+                                            <input type="radio" name="is_safe_point" value="1"
+                                                class="form-check-input mr-2" checked>
+                                            <span class="text-sm">Ya</span>
+                                        </label>
+                                        <label class="ml-5 flex items-center">
+                                            <input type="radio" name="is_safe_point" value="0"
+                                                class="form-check-input mr-2">
+                                            <span class="text-sm">Tidak</span>
+                                        </label>
+                                    @else
+                                        <label class="flex items-center">
+                                            <input type="radio" name="is_safe_point" value="1"
+                                                class="form-check-input mr-2">
+                                            <span class="text-sm">Ya</span>
+                                        </label>
+                                        <label class="ml-5 flex items-center">
+                                            <input type="radio" name="is_safe_point" value="0"
+                                                class="form-check-input mr-2" checked>
+                                            <span class="text-sm">Tidak</span>
+                                        </label>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                         <div class="col-span-12 lg:col-span-6 intro-y mt-3 lg:mt-0">
@@ -99,14 +132,16 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="image" class="form-label">Upload Foto <span class="text-danger">(Jangan ubah jika tidak ingin diganti)</span></label>
+                                <label for="image" class="form-label">Upload Foto <span class="text-danger">(Jangan
+                                        ubah jika tidak ingin diganti)</span></label>
                                 <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
                                     <i data-lucide="image" class="w-4 h-4 mr-2"></i>
                                     <span id="fileName">
                                         <span class="text-primary mr-1">Upload a file</span> or drag and drop
                                     </span>
                                     <input id="image" name="image" type="file"
-                                        class="w-full h-full top-0 left-0 absolute opacity-0" onchange="previewFile(this); updateFileName(this)">
+                                        class="w-full h-full top-0 left-0 absolute opacity-0"
+                                        onchange="previewFile(this); updateFileName(this)">
                                 </div>
                                 <div id="image-preview" class="hidden mt-2"></div>
                                 @if (isset($product->detail->image))
@@ -127,7 +162,7 @@
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
                         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
-                    </form>
+                </form>
             </div>
 
         </div>

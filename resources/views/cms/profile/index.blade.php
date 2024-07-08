@@ -1,32 +1,32 @@
 @extends('cms.layouts.app', ['title' => 'Detail Profil'])
 
 @section('content')
-    @if (session('success'))
-        <div id="success-notification-content" class="toastify-content flex" role="alert">
-            <i class="text-success" data-lucide="check-circle"></i>
-            <div class="ml-4 mr-4">
-                <div class="font-medium">Profil berhasil diubah!</div>
-                {{-- <div class="text-slate-500 mt-1"> Please check your e-mail for further info! </div> --}}
-            </div>
-        </div>
-    @endif
     <div class="intro-y flex items-center mt-8">
         <h2 class="text-lg font-medium mr-auto">
             Detail Profil
         </h2>
-        <a href="{{ route('users.profile.edit', ['id' => auth()->user()->id]) }}" class="btn btn-primary"><i
-                data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah Profil</a>
+        <a href="{{ route('users.profile.edit', ['id' => auth()->user()->id]) }}" class="btn btn-primary"><i data-lucide="edit"
+                class="w-4 h-4 mr-2"></i> Ubah Profil</a>
     </div>
     <!-- BEGIN: Profile Info -->
     <div class="intro-y box px-5 pt-5 mt-5">
         <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
             <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 flex-none lg:w-32 lg:h-32 image-fit relative">
-                    <img alt="Profile" class="rounded-full" src="{{ asset('assets/cms/images/profile.svg') }}">
-                    <div
-                        class="absolute mb-1 mr-1 flex items-center justify-center bottom-0 right-0 bg-primary rounded-full p-2">
-                        <i class="w-4 h-4 text-white" data-lucide="camera"></i>
-                    </div>
+                    @if ($agent->agentProfile->photo == null)
+                        <img alt="Profile" class="rounded-full" src="{{ asset('assets/cms/images/profile.svg') }}">
+                        <div
+                            class="absolute mb-1 mr-1 flex items-center justify-center bottom-0 right-0 bg-primary rounded-full p-2">
+                            <i class="w-4 h-4 text-white" data-lucide="camera"></i>
+                        </div>
+                    @else
+                        <img alt="Profile" class="rounded-full"
+                            src="{{ route('getImage', ['path' => 'photos', 'imageName' => $agent->agentProfile->photo]) }}">
+                        <div
+                            class="absolute mb-1 mr-1 flex items-center justify-center bottom-0 right-0 bg-primary rounded-full p-2">
+                            <i class="w-4 h-4 text-white" data-lucide="camera"></i>
+                        </div>
+                    @endif
                 </div>
                 <div class="ml-5">
                     <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">

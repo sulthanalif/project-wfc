@@ -85,13 +85,6 @@
                         </div>
                     </div>
 
-                    {{-- <div class="mt-3" id="sub_agent_fields" style="display: none;">
-                        <label for="sub_agent_item" class="form-label">Pilih Sub Agent <span
-                                class="text-danger">*</span></label>
-                        <select class="form-select mt-2 sm:mr-2" id="sub_agent_item" name="sub_agent_item" required>
-                        </select>
-                    </div> --}}
-
                     <div class="text-left mt-5">
                         <input type="hidden" name="total_price" value="0">
                         <input type="hidden" name="products" id="productData" value="">
@@ -128,56 +121,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             productSelect = document.getElementById('package_id');
             productSelect.addEventListener('change', handlePackageChange);
-            // const agentSelect = document.getElementById('agent_id');
-            // agentSelect.addEventListener('change', handleAgentChange);
         });
-
-        // Functions
-        // function handleAgentChange(event) {
-        //     const agentId = event.target.value;
-        //     const agentFields = document.getElementById('sub_agent_fields');
-
-        //     if (agentId) {
-        //         agentFields.style.display = 'block';
-        //         populateSubAgents(agentId);
-        //     } else {
-        //         agentFields.style.display = 'none';
-        //         clearSubAgentSelection();
-        //     }
-        // }
-
-        // function populateSubAgents(agentId) {
-        //     const subAgentSelect = document.getElementById('sub_agent_item');
-        //     subAgentSelect.innerHTML = '<option disabled selected>Pilih Sub Agent...</option>';
-
-        //     // Assuming the agents data is embedded directly in the script
-        //     const agents = [
-        //         @foreach ($agents as $agent)
-        //             {
-        //                 id: '{{ $agent->id }}',
-        //                 subAgents: [
-        //                     @foreach ($agent->subAgent as $subAgent)
-        //                         {
-        //                             id: '{{ $subAgent->id }}',
-        //                             name: '{{ $subAgent->name }}',
-        //                             phone_number: '{{ $subAgent->phone_number }}'
-        //                         },
-        //                     @endforeach
-        //                 ]
-        //             },
-        //         @endforeach
-        //     ];
-
-        //     const selectedAgent = agents.find(agent => agent.id === agentId);
-        //     if (selectedAgent) {
-        //         selectedAgent.subAgents.forEach(subAgent => {
-        //             const option = document.createElement('option');
-        //             option.value = subAgent.id;
-        //             option.textContent = `${subAgent.name} - ${subAgent.phone_number}`;
-        //             subAgentSelect.appendChild(option);
-        //         });
-        //     }
-        // }
 
         function handlePackageChange(event) {
             const packageId = event.target.value;
@@ -222,25 +166,6 @@
             const itemName = selectedOption.textContent.trim().split(' - ')[0];
             const itemPrice = parseInt(selectedOption.dataset.harga);
             const itemQuantity = 1;
-
-            // const existingRow = $('.transaksiItem td:nth-child(2)').filter(function() {
-            //     return $(this).text() === itemName;
-            // }).closest('tr');
-
-            // if (existingRow.length > 0) {
-            //     const input = existingRow.find('.quantityInput');
-            //     const newQuantity = parseInt(input.val()) + 1;
-            //     input.val(newQuantity);
-            //     const priceChange = itemPrice * 1;
-            //     updateQty(input[0], priceChange);
-            // } else {
-            //     const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
-            //     $('.transaksiItem').append(newRow);
-
-            //     updateTotals(itemPrice);
-            //     qty += itemQuantity;
-            //     $('.qty').html(qty.toString());
-            // }
             const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
             $('.transaksiItem').append(newRow);
 
