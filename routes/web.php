@@ -17,8 +17,9 @@ use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\AdministrationController;
 use App\Http\Controllers\Agent\DashboardController;
-use App\Http\Controllers\Transaction\OrderController;
+use App\Http\Controllers\Mail\NotificationController;
 // use App\Models\Administration;
+use App\Http\Controllers\Transaction\OrderController;
 use App\Http\Controllers\Admin\DistributionController;
 use App\Http\Controllers\Transaction\PaymentController;
 use App\Http\Controllers\Admin\DashboardAdminController;
@@ -51,6 +52,11 @@ Route::get('storage/images/{path}/{imageName}', [GetImageController::class, 'dis
 
 
 Auth::routes(['verify' => true]);
+
+Route::get('/sendmail', [NotificationController::class, 'sendEmail'])->name('sendmail');
+Route::get('/testview', function () {
+    return view('mail.notification-approve-user');
+});
 
 Route::group(['middleware' => 'auth',], function () {
     Route::get('/agent', [DashboardController::class, 'noActive'])->name('nonactive');

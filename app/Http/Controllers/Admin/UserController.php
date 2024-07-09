@@ -11,8 +11,10 @@ use Illuminate\Http\Request;
 // use Maatwebsite\Excel\Excel;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Mail\NotificationApproveUser;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -269,6 +271,10 @@ class UserController extends Controller
 
         $user->active = ($user->active == 1 ? 0 : 1);
         $user->save();
+
+        if ($user->active == 1) {
+            Mail::to($user->email)->send(new NotificationApproveUser);
+        }
 
         return redirect()->route('user.index')->with('success', 'Data Berhasil ' . ($user->active == 1 ? 'Diaktifkan' : 'Dinonaktifkan'));
     }
