@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\GenerateRandomString;
+use App\Mail\NotificationPayment;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
-    
+
 
 
 
@@ -97,7 +99,7 @@ class PaymentController extends Controller
                     $order->save();
                 }
 
-
+                Mail::to($order->agent->email)->send(new NotificationPayment($payment));
             });
             return redirect()->route('order.show', $order)->with('success' , 'Pembayaran berhasil ditambahkan');
         } catch (\Throwable $th) {

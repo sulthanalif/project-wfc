@@ -10,7 +10,9 @@ use App\Models\DistributionDetail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Helpers\GenerateRandomString;
+use App\Mail\NotificationDistribution;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class DistributionController extends Controller
@@ -94,7 +96,11 @@ class DistributionController extends Controller
                         $order->save();
                     }
                 }
+
+
+                Mail::to($order->agent->email)->send(new NotificationDistribution($order->distribution));
             });
+
             return redirect()->route('distribution.index')->with('success', 'Data Berhasil Ditambah');
         } catch (\Throwable $th) {
             $data = [

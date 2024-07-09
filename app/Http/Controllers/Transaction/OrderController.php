@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers\Transaction;
 
-use App\Exports\InvoiceExport;
-use App\Helpers\GenerateRandomString;
-use App\Helpers\GetProduct;
-use App\Helpers\ValidateRole;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Package;
+use App\Models\Product;
+use App\Helpers\GetProduct;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use App\Helpers\ValidateRole;
+use App\Exports\InvoiceExport;
+use App\Mail\NotificationAccOrder;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\OrderDetail;
-use App\Models\Package;
-use App\Models\Product;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Helpers\GenerateRandomString;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
@@ -140,7 +142,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        
+
         // $product= GetProduct::detail('Product PHL 1');
         // return response()->json($product);
         return view('cms.transactions.detail', compact('order'));
@@ -174,6 +176,8 @@ class OrderController extends Controller
             ]);
 
             if ($update) {
+                Mail::to($order->agent->email)->send(new NotificationAccOrder($order));
+
                 return redirect()->route('order.index')->with('success', 'Order Status Berhasil Diubah');
             } else {
                 return back()->with('error', 'Kesalahan');

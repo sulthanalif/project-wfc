@@ -55,7 +55,7 @@ Auth::routes(['verify' => true]);
 
 Route::get('/sendmail', [NotificationController::class, 'sendEmail'])->name('sendmail');
 Route::get('/testview', function () {
-    return view('mail.notification-approve-user');
+    return view('mail.notification-acc-order');
 });
 
 Route::group(['middleware' => 'auth',], function () {
@@ -105,7 +105,7 @@ Route::group(['middleware' => 'auth',], function () {
     //Transaction
     Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|agent'], function () {
         require __DIR__ . '/transaction/order.php';
-        Route::get('/test', [TestController::class, 'index']);
+        // Route::get('/test', [TestController::class, 'index']);
     });
     Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin'], function () {
         require __DIR__ . '/transaction/payment.php';
