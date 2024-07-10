@@ -19,15 +19,9 @@
                                 <div class="box p-5">
                                     <div class="flex">
                                         <i data-lucide="shopping-cart" class="report-box__icon text-primary"></i>
-                                        <div class="ml-auto">
-                                            <div class="report-box__indicator bg-success tooltip cursor-pointer"
-                                                title="33% Higher than last month"> 33% <i data-lucide="chevron-up"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
-                                        </div>
                                     </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">4.710</div>
-                                    <div class="text-base text-slate-500 mt-1">Item Sales</div>
+                                    <div class="text-2xl font-medium leading-8 mt-6">{{ $stats['totalOrder'] }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Total Pesanan</div>
                                 </div>
                             </div>
                         </div>
@@ -35,16 +29,10 @@
                             <div class="report-box zoom-in">
                                 <div class="box p-5">
                                     <div class="flex">
-                                        <i data-lucide="credit-card" class="report-box__icon text-pending"></i>
-                                        <div class="ml-auto">
-                                            <div class="report-box__indicator bg-danger tooltip cursor-pointer"
-                                                title="2% Lower than last month"> 2% <i data-lucide="chevron-down"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
-                                        </div>
+                                        <i data-lucide="credit-card" class="report-box__icon text-success"></i>
                                     </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">3.721</div>
-                                    <div class="text-base text-slate-500 mt-1">New Orders</div>
+                                    <div class="text-2xl font-medium leading-8 mt-6">Rp. {{ number_format($stats['totalDeposit'], 0, ',', '.') }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Total Pembayaran</div>
                                 </div>
                             </div>
                         </div>
@@ -52,16 +40,10 @@
                             <div class="report-box zoom-in">
                                 <div class="box p-5">
                                     <div class="flex">
-                                        <i data-lucide="monitor" class="report-box__icon text-warning"></i>
-                                        <div class="ml-auto">
-                                            <div class="report-box__indicator bg-success tooltip cursor-pointer"
-                                                title="12% Higher than last month"> 12% <i data-lucide="chevron-up"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
-                                        </div>
+                                        <i data-lucide="credit-card" class="report-box__icon text-danger"></i>
                                     </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">2.149</div>
-                                    <div class="text-base text-slate-500 mt-1">Total Products</div>
+                                    <div class="text-2xl font-medium leading-8 mt-6">Rp. {{ number_format($stats['totalRemaining'], 0, ',', '.') }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Sisa Pembayaran</div>
                                 </div>
                             </div>
                         </div>
@@ -69,16 +51,10 @@
                             <div class="report-box zoom-in">
                                 <div class="box p-5">
                                     <div class="flex">
-                                        <i data-lucide="user" class="report-box__icon text-success"></i>
-                                        <div class="ml-auto">
-                                            <div class="report-box__indicator bg-success tooltip cursor-pointer"
-                                                title="22% Higher than last month"> 22% <i data-lucide="chevron-up"
-                                                    class="w-4 h-4 ml-0.5"></i>
-                                            </div>
-                                        </div>
+                                        <i data-lucide="user" class="report-box__icon text-info"></i>
                                     </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">152.040</div>
-                                    <div class="text-base text-slate-500 mt-1">Unique Visitor</div>
+                                    <div class="text-2xl font-medium leading-8 mt-6">{{ $stats['totalSubAgent'] }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Sub Agent</div>
                                 </div>
                             </div>
                         </div>

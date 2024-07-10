@@ -52,9 +52,9 @@ class DashboardController extends Controller
             'totalSubAgent' => $subAgents
         ];
 
-        return response()->json([
-            'stats' => $stats
-        ]);
+        // return response()->json([
+        //     'stats' => $stats
+        // ]);
 
         return view('cms.agen.index', compact('stats'));
     }
