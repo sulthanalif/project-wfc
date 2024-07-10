@@ -187,7 +187,7 @@
             <div class="box p-5 rounded-md mt-5">
                 <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                     <div class="font-medium text-base truncate">Detail Pembayaran</div>
-                    @hasrole('admin||super_admin')
+                    @hasrole('admin|super_admin')
                         @if ($order->payment_status !== 'paid')
                             <a class="btn btn-primary shadow-md flex items-center ml-auto" href="javascript:;"
                                 data-tw-toggle="modal" data-tw-target="#payment-confirmation-modal">
