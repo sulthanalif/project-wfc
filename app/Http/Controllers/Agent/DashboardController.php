@@ -29,14 +29,14 @@ class DashboardController extends Controller
             }
         }
 
-        if ($totalPriceOrder > 0) {
-            $datas[] = [
-                'agent_name' => $agent->agentProfile->name,
-                'total_price_order' => $totalPriceOrder,
-                'total_deposit' => $totalDeposit,
-                'total_remaining_payment' => $totalPriceOrder - $totalDeposit
-            ];
-        }
+
+        $datas[] = [
+            'agent_name' => $agent->agentProfile->name,
+            'total_price_order' => $totalPriceOrder,
+            'total_deposit' => $totalDeposit,
+            'total_remaining_payment' => $totalPriceOrder - $totalDeposit
+        ];
+
 
         if (is_array($datas)) {
             $totalPriceOrderAll = array_sum(array_column($datas, 'total_price_order'));
