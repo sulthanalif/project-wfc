@@ -46,7 +46,7 @@ class DashboardController extends Controller
 
         $stats = [
             'totalOrder' => $myOrders,
-            'totalPriceOrde' => $totalPriceOrderAll,
+            'totalPriceOrder' => $totalPriceOrderAll,
             'totalDeposit' => $totalDepositAll,
             'totalRemaining' => $totalRemainingAll,
             'totalSubAgent' => $subAgents
