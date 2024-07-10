@@ -20,7 +20,8 @@
                         <input id="order_number" name="order_number" value="{{ $orderNumber }}" type="text"
                             class="form-control w-full" placeholder="Masukkan Nama Lengkap Sub Agent" readonly>
                     </div>
-                    <input type="text" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
+
+                    <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
 
                     <div class="mt-3">
                         <label for="package_id" class="form-label">Pilih Paket <span class="text-danger">*</span></label>

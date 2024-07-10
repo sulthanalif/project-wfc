@@ -38,7 +38,7 @@
                         </p>
                     </td>
                     <td>
-                        <p>{{ $payment->note }}</p>
+                        <p>{!! $payment->note ?? '' !!}</p>
                     </td>
                     @hasrole('finance_admin|super_admin')
                         <td class="table-report__action">
