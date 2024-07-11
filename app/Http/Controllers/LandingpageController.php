@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Header;
+use App\Models\Contact;
 use App\Models\Package;
 use App\Models\Product;
-use App\Models\User;
+use App\Models\Profile;
 use Illuminate\Http\Request;
 
 class LandingpageController extends Controller
@@ -12,8 +15,12 @@ class LandingpageController extends Controller
     public function index()
     {
         $products = Product::paginate(5);
+        $header = Header::first();
+        $profile = Profile::first();
+        $contact = Contact::first();
 
-        return view('landing.welcome', compact('products'));
+
+        return view('landing.welcome', compact('products', 'header', 'profile', 'contact'));
     }
 
     public function profile()

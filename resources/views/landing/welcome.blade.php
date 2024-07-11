@@ -61,17 +61,17 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6">
                         {{-- <img src="{{ asset('assets/landing/images/img1.png') }}" alt="" class="img-fluid"> --}}
-                        <img src="{{ asset('assets/logo2.png') }}" class="img-fluid ms-5" style="width: 300px">
+                        <img src="{{ empty($header->image) ? asset('assets/logo2.png') : route('getImage', ['path' => 'images/header/', 'imageName' => $header->image]) }}" class="img-fluid ms-5" style="width: 300px">
+
                     </div>
                     <div class="col-lg-6 ">
-                        <h1 class="display-4 fw-bold">Paket Smart WFC</h1>
-                        <h4>Temukan Kebutuhan Anda dengan Mudah.</h4>
-                        <p class="text-muted mt-4">Alur kerja fleksibel, mudah untuk siapapun, maju bersama dan mampu
-                            menjangkau relasi baru.</p>
+                        <h1 class="display-4 fw-bold">{{ $header->title }}</h1>
+                        <h4>{{ $header->sub_title }}</h4>
+                        <p class="text-muted mt-4">{!! $header->description !!}</p>
 
                         <div class="d-flex mt-4">
-                            <a href="#profil" class="btn btn-outline-primary">
-                                Lihat Selengkapnya</a>
+                            <a href="{{ $header->button_url }}" class="btn btn-outline-primary">
+                                {{ $header->button_title }}</a>
                         </div>
                     </div>
 
@@ -131,14 +131,12 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 ">
                     <h6 class="mb-0 fw-bold text-primary">Profil</h6>
-                    <h1 class="display-5 fw-bold">Paket Smart WFC</h1>
-                    <p class="text-muted mt-4">Paket Smart WFC berdiri sejak tahun 2019, dan alhamdulillah ditahun ini
-                        total agent kami hampir 100 agent yang terbagi di berbagai kota, seperti di Sumedang, Bandung,
-                        Ciamis, Tasikmalaya, Cianjur, Depok...</p>
+                    <h1 class="display-5 fw-bold">{{ $profile->title }}</h1>
+                    <p class="text-muted mt-4">{{ $profile->text }}</p>
 
                     <div class="d-flex mt-4">
                         <a href="{{ route('company-profile') }}" class="btn btn-outline-primary">
-                            Baca Selengkapnya <i class="mdi mdi-arrow-right"></i></a>
+                            {{ $profile->button_title }} <i class="mdi mdi-arrow-right"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-6 text-center mt-3 mt-lg-0">
@@ -285,8 +283,8 @@
                 <div class="col-lg-6">
                     <div class="title text-center mb-5">
                         <h6 class="mb-0 fw-bold text-primary">Kontak Kami</h6>
-                        <h2 class="f-40">Ayo Hubungi Kami!</h2>
-                        <p class="text-muted">Dapatkan informasi lebih lanjut dan bantuan dari tim kami.</p>
+                        <h2 class="f-40">{{ $contact->title }}</h2>
+                        <p class="text-muted">{{ $contact->sub_title }}</p>
 
                     </div>
                 </div>
@@ -303,8 +301,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h5 class="mb-1">Lokasi</h5>
-                                        <p class="f-14 mb-0 text-muted">Jl. Cipareuag No. 5, Cihanjuang, Cimanggung,
-                                            Sumedang</p>
+                                        <p class="f-14 mb-0 text-muted">{{ $contact->address }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -315,7 +312,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h5 class="mb-1">Email</h5>
-                                        <p class="f-14 mb-0 text-muted">Email: paketsmartwfc@gmail.com</p>
+                                        <p class="f-14 mb-0 text-muted">Email: {{ $contact->email }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -326,7 +323,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h5 class="mb-1">Phone</h5>
-                                        <p class="f-14 mb-0 text-muted">Whatsapp: 0822-1879-9050</p>
+                                        <p class="f-14 mb-0 text-muted">Whatsapp: {{ $contact->phone_number }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -340,7 +337,7 @@
                         <div class="position-relative">
                             <div class="contact-map">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.4626033254904!2d107.81037477442035!3d-6.954630468087016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68c521f856593f%3A0xda1dc7320ea63c2b!2sCV.%20Wida%20Nugraha!5e0!3m2!1sen!2sid!4v1712995312675!5m2!1sen!2sid"
+                                    src="{{ $contact->map_link }}"
                                     width="550" height="450" style="border:0;" allowfullscreen="" loading="lazy"
                                     referrerpolicy="no-referrer-when-downgrade"></iframe>
                             </div>

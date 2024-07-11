@@ -94,6 +94,7 @@ Route::group(['middleware' => 'auth',], function () {
         require __DIR__ . '/admin/masterSubProduct.php';
         require __DIR__ . '/admin/masterSupplier.php';
         require __DIR__ . '/admin/masterReview.php';
+        require __DIR__ . '/admin/masterLandingPage.php';
 
         Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
     });
