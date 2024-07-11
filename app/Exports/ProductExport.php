@@ -23,7 +23,7 @@ class ProductExport implements FromCollection, WithHeadings
                 'price' => $product->price,
                 'days' => $product->days,
                 'total_price' => $product->total_price,
-                'desctription' =>$product->detail->description,
+                'description' =>$product->detail->description,
                 'created_at' => $product->created_at,
                 'updated_at' => $product->updated_at,
             ];
@@ -43,7 +43,7 @@ class ProductExport implements FromCollection, WithHeadings
             'price',
             'days',
             'total_price',
-            'descrtiption',
+            'description',
             'created_at',
             'updated_at',
         ];
