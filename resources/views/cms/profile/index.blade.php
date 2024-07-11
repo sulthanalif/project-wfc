@@ -58,7 +58,7 @@
     <div class="intro-y tab-content mt-5">
         <div id="berkas" class="tab-pane active" role="tabpanel" aria-labelledby="berkas-tab">
             <div class="grid grid-cols-12 gap-6">
-                <!-- BEGIN: Sub Agen -->
+                <!-- BEGIN: Berkas -->
                 <div class="intro-y box col-span-12">
                     <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                         <h2 class="font-medium text-base mr-auto">
@@ -99,7 +99,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                                             <img alt="KTP" class=" img-fluid rounded-md"
-                                                src="{{ asset('assets/logo2.PNG') }}">
+                                                src="{{ asset('assets/logo2.png') }}">
                                         </div>
                                     </div>
                                     <div
@@ -107,7 +107,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                                             <img alt="KK" class=" img-fluid rounded-md"
-                                                src="{{ asset('assets/logo2.PNG') }}">
+                                                src="{{ asset('assets/logo2.png') }}">
                                         </div>
                                     </div>
                                     <div
@@ -115,7 +115,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                                             <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
-                                                src="{{ asset('assets/logo2.PNG') }}">
+                                                src="{{ asset('assets/logo2.png') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -127,7 +127,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                                             <img alt="KTP" class=" img-fluid rounded-md"
-                                                src="{{ asset('storage/images/administration/' . $agent->id . '/' . $agent->administration->ktp) }}">
+                                                src="{{ route('getImage', ['path' => 'administration/' . $agent->id, 'imageName' => $agent->administration->ktp]) }}">
                                         </div>
                                     </div>
                                     <div
@@ -135,7 +135,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                                             <img alt="KK" class=" img-fluid rounded-md"
-                                                src="{{ asset('storage/images/administration/' . $agent->id . '/' . $agent->administration->kk) }}">
+                                                src="{{ route('getImage', ['path' => 'administration/' . $agent->id, 'imageName' => $agent->administration->kk]) }}">
                                         </div>
                                     </div>
                                     <div
@@ -143,7 +143,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                                             <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
-                                                src="{{ asset('storage/images/administration/' . $agent->id . '/' . $agent->administration->sPerjanjian) }}">
+                                                src="{{ route('getImage', ['path' => 'administration/' . $agent->id, 'imageName' => $agent->administration->sPerjanjian]) }}">
                                         </div>
                                     </div>
                                 </div>
@@ -151,7 +151,7 @@
                         @endif
                     </div>
                 </div>
-                <!-- END: Sub Agen -->
+                <!-- END: Berkas -->
             </div>
         </div>
         <div id="cp" class="tab-pane" role="tabpanel" aria-labelledby="cp-tab">

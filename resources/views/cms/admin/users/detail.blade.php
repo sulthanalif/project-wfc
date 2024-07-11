@@ -19,7 +19,7 @@
             <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 flex-none lg:w-32 lg:h-32 image-fit relative">
                     <img alt="Profile" class="rounded-full"
-                        src="{{ $user->agentProfile->photo ? route('getImage', ['path' => 'photos/' . $user->id, 'imageName' => $user->agentProfile->photo]) : asset('assets/cms/images/profile.svg') }}">
+                        src="{{ empty($user->agentProfile->photo) ? asset('assets/cms/images/profile.svg') : route('getImage', ['path' => 'photos/' . $user->id, 'imageName' => $user->agentProfile->photo]) }}">
                     <div
                         class="absolute mb-1 mr-1 flex items-center justify-center bottom-0 right-0 bg-primary rounded-full p-2">
                         <i class="w-4 h-4 text-white" data-lucide="camera"></i>
