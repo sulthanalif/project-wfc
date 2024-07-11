@@ -219,9 +219,10 @@
                 .then(data => {
                     data.forEach(province => {
                         const option = document.createElement('option');
-                        option.value = province.id;
+                        option.value = province.name;
                         option.textContent = province.name;
-                        if (province.id == dataProvince) {
+                        option.dataset.id = province.id;
+                        if (province.name == dataProvince) {
                             option.selected = true;
                         }
                         provinceSelect.appendChild(option);
@@ -242,7 +243,8 @@
 
             // Functions
             function handleProvinceChange(event) {
-                const provinceId = event.target.value;
+                const selectedProvince = provinceSelect.selectedOptions[0];
+                const provinceId = selectedProvince.dataset.id;
                 regencySelect.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
                 districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
                 villageSelect.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
@@ -254,9 +256,10 @@
                     .then(data => {
                         data.forEach(regency => {
                             const option = document.createElement('option');
-                            option.value = regency.id;
+                            option.value = regency.name;
                             option.textContent = regency.name;
-                            if (regency.id == dataRegency) {
+                            option.dataset.id = regency.id;
+                            if (regency.name == dataRegency) {
                                 option.selected = true;
                             }
                             regencySelect.appendChild(option);
@@ -272,7 +275,8 @@
             }
 
             function handleRegencyChange(event) {
-                const regencyId = event.target.value;
+                const selectedRegency = regencySelect.selectedOptions[0];
+                const regencyId = selectedRegency.dataset.id;
                 districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
                 villageSelect.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
 
@@ -283,9 +287,10 @@
                     .then(data => {
                         data.forEach(district => {
                             const option = document.createElement('option');
-                            option.value = district.id;
+                            option.value = district.name;
                             option.textContent = district.name;
-                            if (district.id == dataDistrict) {
+                            option.dataset.id = district.id;
+                            if (district.name == dataDistrict) {
                                 option.selected = true;
                             }
                             districtSelect.appendChild(option);
@@ -301,7 +306,8 @@
             }
 
             function handleDistrictChange(event) {
-                const districtId = event.target.value;
+                const selectedDistrict = districtSelect.selectedOptions[0];
+                const districtId = selectedDistrict.dataset.id;
                 villageSelect.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
 
                 if (!districtId) return;
@@ -311,9 +317,10 @@
                     .then(data => {
                         data.forEach(village => {
                             const option = document.createElement('option');
-                            option.value = village.id;
+                            option.value = village.name;
                             option.textContent = village.name;
-                            if (village.id == dataVillage) {
+                            option.dataset.id = village.id;
+                            if (village.name == dataVillage) {
                                 option.selected = true;
                             }
                             villageSelect.appendChild(option);

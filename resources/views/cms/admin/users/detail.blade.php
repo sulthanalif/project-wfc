@@ -57,11 +57,7 @@
                         </div>
                         <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="map-pin"
                                 class="w-4 h-4 mr-2"></i>
-                            @if ($user->agentProfile->address !== null)
-                                <span id="formatted-address"></span>
-                            @else
-                                <span>Alamat Belum Diisi</span>
-                            @endif
+                            <p>{{ $user->agentProfile->address ? $user->agentProfile->address . " RT " . $user->agentProfile->rt . " / RW " . $user->agentProfile->rw . ", " . $user->agentProfile->village . ", " . $user->agentProfile->district . ", " . $user->agentProfile->regency . ", " . $user->agentProfile->province : 'Alamat Belum Diisi' }}</p>
                         </div>
                     @endif
 
@@ -386,77 +382,3 @@
         @endhasrole
     </div>
 @endsection
-
-@push('custom-scripts')
-    <script>
-        const dataAddress = "{{ $user->agentProfile->address }}";
-        const dataRt = "{{ $user->agentProfile->rt }}";
-        const dataRw = "{{ $user->agentProfile->rw }}";
-        const dataVillage = "{{ $user->agentProfile->village }}";
-        const dataDistrict = "{{ $user->agentProfile->district }}";
-        const dataRegency = "{{ $user->agentProfile->regency }}";
-        const dataProvince = "{{ $user->agentProfile->province }}";
-
-        let provinceName = '';
-        let regencyName = '';
-        let districtName = '';
-        let villageName = '';
-
-        const formatAddress = () => {
-            const addressDisplay = document.getElementById('formatted-address');
-            const formattedAddress =
-                `${dataAddress}, RT ${dataRt}/RW ${dataRw}, ${villageName}, ${districtName}, ${regencyName}, ${provinceName}`;
-            addressDisplay.textContent = formattedAddress;
-        };
-
-        const fetchProvinces = () => {
-            return fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
-                .then(response => response.json())
-                .then(data => {
-                    const province = data.find(province => province.id === dataProvince);
-                    if (province) {
-                        provinceName = province.name;
-                    }
-                });
-        };
-
-        const fetchRegencies = () => {
-            return fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${dataProvince}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    const regency = data.find(regency => regency.id === dataRegency);
-                    if (regency) {
-                        regencyName = regency.name;
-                    }
-                });
-        };
-
-        const fetchDistricts = () => {
-            return fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${dataRegency}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    const district = data.find(district => district.id === dataDistrict);
-                    if (district) {
-                        districtName = district.name;
-                    }
-                });
-        };
-
-        const fetchVillages = () => {
-            return fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${dataDistrict}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    const village = data.find(village => village.id === dataVillage);
-                    if (village) {
-                        villageName = village.name;
-                    }
-                });
-        };
-
-        Promise.all([fetchProvinces(), fetchRegencies(), fetchDistricts(), fetchVillages()])
-            .then(() => {
-                formatAddress();
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    </script>
-@endpush
