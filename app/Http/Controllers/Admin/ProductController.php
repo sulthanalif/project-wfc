@@ -28,15 +28,6 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // $datas = Product::with('packageName')->get();
-        // $array = [];
-        // foreach ($datas as $data) {
-        //     $array [] = [
-        //         'package' => $data->packageName->name
-        //     ];
-        // }
-        // dd($array);
-
         $products = Product::paginate(10);
 
         return view('cms.admin.products.index', compact('products'));

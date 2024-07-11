@@ -23,7 +23,6 @@ class ProductImport implements ToModel, WithHeadingRow
 
         $product = new Product([
             'name' => $row['name'],
-            'stock' => $row['stock'],
             'price' => $row['price'],
             'days'  => $row['days'],
             'total_price' => $row['total_price']
