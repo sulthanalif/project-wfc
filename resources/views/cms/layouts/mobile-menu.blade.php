@@ -209,27 +209,6 @@
                     </li>
                     <li class="menu__devider my-6"></li>
                     <li>
-                        <a href="javascript:;" class="menu">
-                            <div class="menu__icon"> <i data-lucide="file-text"></i> </div>
-                            <div class="menu__title"> Laporan <i data-lucide="chevron-down" class="menu__sub-icon "></i>
-                            </div>
-                        </a>
-                        <ul class="">
-                            <li>
-                                <a href="#" class="menu">
-                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Jumlah Paket </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="menu">
-                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Setoran </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
                         <a href="{{ route('sub-agent.index') }}"
                             class="menu {{ Route::is('sub-agent*') ? 'menu--active' : '' }}">
                             <div class="menu__icon"> <i data-lucide="users"></i> </div>

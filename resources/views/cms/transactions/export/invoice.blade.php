@@ -163,7 +163,7 @@
                         <td>{{ $payment->installment }}</td>
                         <td>{{ \Carbon\Carbon::parse($payment->date)->format('d M Y') }}</td>
                         <td>{{ strtoupper($payment->method) }}</td>
-                        <td>{{ $payment->note ?? '-' }}</td>
+                        <td>{!! $payment->note ?? '-' !!}</td>
                         <td>Rp. {{ number_format($payment->pay, 0, ',', '.') }}</td>
                     </tr>
                 </tbody>

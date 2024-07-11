@@ -7,7 +7,7 @@
             {{-- <th class="text-center">BUKTI</th>
             <th class="text-center">STATUS</th> --}}
             <th class="text-center">KETERANGAN</th>
-            @hasrole('finance_admin|super_admin')
+            @hasrole('finance_admin|super_admin|admin')
                 <th class="text-center ">AKSI</th>
             @endhasrole
         </tr>
@@ -15,10 +15,10 @@
     <tbody>
         @if ($order->payment->isEmpty())
             <tr>
-                @hasrole('finance_admin|super_admin')
+                @hasrole('finance_admin|super_admin|admin')
                     <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                 @endhasrole
-                @hasrole('admin|agent')
+                @hasrole('agent')
                     <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                 @endhasrole
             </tr>
