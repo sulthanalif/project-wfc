@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Administration;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Administration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class AdministrationController extends Controller
@@ -44,9 +45,13 @@ class AdministrationController extends Controller
 
         try {
             DB::transaction(function () use ($request, &$upload) {
-                $imageNameKTP = 'administration_'.time(). '_ktp' . '.' . $request->file('ktp')->getClientOriginalExtension();
-                $imageNameKK = 'administration_'.time(). '_kk' . '.' . $request->file('kk')->getClientOriginalExtension();
-                $imageNameSPerjanjian = 'administration_'.time(). '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
+                $imageNameKTP = 'administration_'.Auth::user()->id. '_ktp' . '.' . $request->file('ktp')->getClientOriginalExtension();
+                $imageNameKK = 'administration_'.Auth::user()->id. '_kk' . '.' . $request->file('kk')->getClientOriginalExtension();
+                $imageNameSPerjanjian = 'administration_'.Auth::user()->id. '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
+
+                Storage::disk('public')->put('images/administration/'. $imageNameKTP, $request->file('ktp')->getContent());
+                Storage::disk('public')->put('images/administration/'. $imageNameKK, $request->file('kk')->getContent());
+                Storage::disk('public')->put('images/administration/'. $imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
 
                 $upload = Administration::create([
                     'user_id' => Auth::user()->id,
@@ -55,16 +60,17 @@ class AdministrationController extends Controller
                     'sPerjanjian' => $imageNameSPerjanjian
                 ]);
 
-                $request->file('ktp')->storeAs('public/images/administration/'. Auth::user()->id .'/', $imageNameKTP);
-                $request->file('kk')->storeAs('public/images/administration/'. Auth::user()->id .'/', $imageNameKK);
-                $request->file('sPerjanjian')->storeAs('public/images/administration/'. Auth::user()->id .'/', $imageNameSPerjanjian);
+                // $request->file('ktp')->storeAs('public/images/administration/'. Auth::user()->id .'/', $imageNameKTP);
+                // $request->file('kk')->storeAs('public/images/administration/'. Auth::user()->id .'/', $imageNameKK);
+                // $request->file('sPerjanjian')->storeAs('public/images/administration/'. Auth::user()->id .'/', $imageNameSPerjanjian);
+
             });
             if ($upload) {
                 return redirect()->route('waiting')->with('success', 'Data Sukses Diunggah!');
             } else {
                 return back()->with('error', 'Data Gagal Diunggah!');
             }
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             $data = [
                 'message' => $th->getMessage(),
                 'status' => 400

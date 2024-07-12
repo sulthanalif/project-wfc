@@ -74,7 +74,7 @@
                         <div class="flex flex-col items-center justify-center">
                             <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                             <img alt="KTP" class=" img-fluid rounded-md"
-                                src="{{ route('getImage', ['path' => 'administration/' . $user->id , 'imageName' => $user->administration->ktp]) }}">
+                                src="{{ route('getImage', ['path' => 'administration' , 'imageName' => $user->administration->ktp]) }}">
                         </div>
                     </div>
                     <div
@@ -82,7 +82,7 @@
                         <div class="flex flex-col items-center justify-center">
                             <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                             <img alt="KK" class=" img-fluid rounded-md"
-                                src="{{ route('getImage', ['path' => 'administration/' . $user->id , 'imageName' => $user->administration->kk]) }}">
+                                src="{{ route('getImage', ['path' => 'administration' , 'imageName' => $user->administration->kk]) }}">
                         </div>
                     </div>
                     <div
@@ -90,7 +90,7 @@
                         <div class="flex flex-col items-center justify-center">
                             <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                             <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
-                                src="{{ route('getImage', ['path' => 'administration/' . $user->id , 'imageName' => $user->administration->sPerjanjian]) }}">
+                                src="{{ route('getImage', ['path' => 'administration' , 'imageName' => $user->administration->sPerjanjian]) }}">
                         </div>
                     </div>
                 </div>
