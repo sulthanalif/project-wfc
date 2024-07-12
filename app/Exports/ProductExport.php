@@ -20,9 +20,11 @@ class ProductExport implements FromCollection, WithHeadings
                 'package_name' => $product->packageName->name,
                 'name' => $product->name,
                 'price' => $product->price,
+                'unit' => $product->unit,
                 'days' => $product->days,
                 'total_price' => $product->total_price,
                 'description' =>$product->detail->description,
+                'is_safe_point' => $product->is_safe_point ? '1' : '0',
                 'created_at' => $product->created_at,
                 'updated_at' => $product->updated_at,
             ];
@@ -39,9 +41,11 @@ class ProductExport implements FromCollection, WithHeadings
             'package_name',
             'name',
             'price',
+            'unit',
             'days',
             'total_price',
             'description',
+            'is_safe_point',
             'created_at',
             'updated_at',
         ];

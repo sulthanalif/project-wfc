@@ -31,6 +31,7 @@ class AgentImport implements ToModel, WithHeadingRow
             'user_id' => $agent->id,
             'name'=> $row['name'],
             'phone_number' => $row['phone_number'],
+            'address' => $row['address'],
             'rt'=> $row['rt'],
             'rw'=> $row['rw'],
             'village'=> $row['village'],

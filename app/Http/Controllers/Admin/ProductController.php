@@ -183,6 +183,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        // return response()->json($request->all());
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
             'price' => ['required', 'numeric'],
@@ -229,7 +230,8 @@ class ProductController extends Controller
                         'price' => $request->price,
                         'stock' => $request->stock,
                         'days' => $request->days,
-                        'total_price' => $request->price * $request->days
+                        'total_price' => $request->price * $request->days,
+                        'is_safe_point' => $request->is_safe_point,
                     ]);
 
                     $product->detail()->update([

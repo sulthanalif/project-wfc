@@ -88,20 +88,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-
+        // return response()->json($request->all());
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
             'email' => ['required', 'max:225', 'unique:users,email'],
             'password' => ['required'],
             'role' => ['required', 'string'],
-            // 'address' => 'required|string',
-            // 'phone_number' => 'string',
-            // 'rt' => 'string',
-            // 'rw' => 'string',
-            // 'village' => 'string',
-            // 'district' => 'string',
-            // 'regency' => 'string',
-            // 'province' => 'string',
+            'address' => 'string',
+            'phone_number' => 'string',
+            'rt' => 'string',
+            'rw' => 'string',
+            'village' => 'string',
+            'district' => 'string',
+            'regency' => 'string',
+            'province' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -132,7 +132,7 @@ class UserController extends Controller
                     $user->agentProfile()->create([
                         'name' => $request->name,
                         'photo' => $photoName,
-                        // 'address' => $request,
+                        'address' => $request->address,
                         'phone_number' => $request->phone_number,
                         'rt' => $request->rt,
                         'rw' => $request->rw,
