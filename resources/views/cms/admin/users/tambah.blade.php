@@ -117,7 +117,8 @@
                                         <span class="text-primary mr-1">Upload a file</span> or drag and drop
                                     </span>
                                     <input id="image" name="image" type="file"
-                                        class="w-full h-full top-0 left-0 absolute opacity-0" onchange="previewFile(this); updateFileName(this)">
+                                        class="w-full h-full top-0 left-0 absolute opacity-0"
+                                        onchange="previewFile(this); updateFileName(this)">
                                 </div>
                                 <div id="image-preview" class="hidden mt-2"></div>
                                 @error('image')
@@ -160,8 +161,9 @@
 
                 data.forEach(province => {
                     const option = document.createElement('option');
-                    option.value = province.id;
+                    option.value = province.name;
                     option.textContent = province.name;
+                    option.dataset.id = province.id;
                     provinceOption.appendChild(option);
                 });
             })
@@ -179,7 +181,8 @@
 
         // Functions
         function handleProvinceChange(event) {
-            const provinceId = event.target.value;
+            const selectedProvince = provinceSelect.selectedOptions[0];
+            const provinceId = selectedProvince.dataset.id;
             const regencyOption = document.getElementById('regency');
 
             regencyOption.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
@@ -191,8 +194,9 @@
                 .then(data => {
                     data.forEach(regency => {
                         const option = document.createElement('option');
-                        option.value = regency.id;
+                        option.value = regency.name;
                         option.textContent = regency.name;
+                        option.dataset.id = regency.id;
                         regencyOption.appendChild(option);
                     });
                 })
@@ -200,7 +204,8 @@
         }
 
         function handleRegencyChange(event) {
-            const regencyId = event.target.value;
+            const selectedRegency = regencySelect.selectedOptions[0];
+            const regencyId = selectedRegency.dataset.id;
             const districtOption = document.getElementById('district');
 
             districtOption.innerHTML = '<option value="">Pilih Kecamatan</option>';
@@ -212,8 +217,9 @@
                 .then(data => {
                     data.forEach(district => {
                         const option = document.createElement('option');
-                        option.value = district.id;
+                        option.value = district.name;
                         option.textContent = district.name;
+                        option.dataset.id = district.id;
                         districtOption.appendChild(option);
                     });
                 })
@@ -221,20 +227,22 @@
         }
 
         function handleDistrictChange(event) {
-            const district = event.target.value;
+            const selectedDistrict = districtSelect.selectedOptions[0];
+            const districtId = selectedDistrict.dataset.id;
             const villageOption = document.getElementById('village');
 
             villageOption.innerHTML = '<option value="">Pilih Desa/Kelurahan</option>';
 
             if (!district) return;
 
-            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${district}.json`)
+            fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${districtId}.json`)
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(village => {
                         const option = document.createElement('option');
-                        option.value = village.id;
+                        option.value = village.name;
                         option.textContent = village.name;
+                        option.dataset.id = village.id;
                         villageOption.appendChild(option);
                     });
                 })
