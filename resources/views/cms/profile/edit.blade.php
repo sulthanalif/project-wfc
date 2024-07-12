@@ -50,7 +50,7 @@
                                         <div id="image-preview" class="hidden mt-2"></div>
                                         @if (isset($agent->agentProfile->photo))
                                             <div class="mt-2" id="existing-image-preview">
-                                                <img src="{{ route('getImage', ['path' => 'photos/' . $agent->id, 'imageName' => $agent->agentProfile->photo]) }}"
+                                                <img src="{{ route('getImage', ['path' => 'photos', 'imageName' => $agent->agentProfile->photo]) }}"
                                                     class="w-auto h-40 object-fit-cover rounded">
                                             </div>
                                         @endif

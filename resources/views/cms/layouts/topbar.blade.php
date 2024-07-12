@@ -101,7 +101,7 @@
                 role="button" aria-expanded="false" data-tw-toggle="dropdown">
                 @if (auth()->user()->hasRole('agent'))
                     <img alt="Profile"
-                        src="{{ auth()->user()->agentProfile->photo ? route('getImage', ['path' => 'photos/' . auth()->user()->id, 'imageName' => auth()->user()->agentProfile->photo]) : asset('assets/cms/images/profile.svg') }}">
+                        src="{{ auth()->user()->agentProfile->photo ? route('getImage', ['path' => 'photos', 'imageName' => auth()->user()->agentProfile->photo]) : asset('assets/cms/images/profile.svg') }}">
                 @else
                     <img alt="Profile" src="{{ asset('assets/cms/images/profile.svg') }}">
                 @endif
