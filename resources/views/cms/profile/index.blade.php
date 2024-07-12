@@ -14,7 +14,7 @@
             <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 flex-none lg:w-32 lg:h-32 image-fit relative">
                     <img alt="Profile" class="rounded-full"
-                        src="{{ $agent->agentProfile->photo ? route('getImage', ['path' => 'photos/' . $agent->id, 'imageName' => $agent->agentProfile->photo]) : asset('assets/cms/images/profile.svg') }}">
+                        src="{{ $agent->agentProfile->photo ? route('getImage', ['path' => 'photos', 'imageName' => $agent->agentProfile->photo]) : asset('assets/cms/images/profile.svg') }}">
                     <div
                         class="absolute mb-1 mr-1 flex items-center justify-center bottom-0 right-0 bg-primary rounded-full p-2">
                         <i class="w-4 h-4 text-white" data-lucide="camera"></i>
@@ -127,7 +127,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                                             <img alt="KTP" class=" img-fluid rounded-md"
-                                                src="{{ route('getImage', ['path' => 'administration/' . $agent->id, 'imageName' => $agent->administration->ktp]) }}">
+                                                src="{{ route('getImage', ['path' => 'administration', 'imageName' => $agent->administration->ktp]) }}">
                                         </div>
                                     </div>
                                     <div
@@ -135,7 +135,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                                             <img alt="KK" class=" img-fluid rounded-md"
-                                                src="{{ route('getImage', ['path' => 'administration/' . $agent->id, 'imageName' => $agent->administration->kk]) }}">
+                                                src="{{ route('getImage', ['path' => 'administration', 'imageName' => $agent->administration->kk]) }}">
                                         </div>
                                     </div>
                                     <div
@@ -143,7 +143,7 @@
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                                             <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
-                                                src="{{ route('getImage', ['path' => 'administration/' . $agent->id, 'imageName' => $agent->administration->sPerjanjian]) }}">
+                                                src="{{ route('getImage', ['path' => 'administration', 'imageName' => $agent->administration->sPerjanjian]) }}">
                                         </div>
                                     </div>
                                 </div>

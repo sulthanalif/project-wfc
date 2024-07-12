@@ -126,7 +126,7 @@ class UserController extends Controller
                     $photoName = null;
                     if ($request->hasFile('photo')) {
                         $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
-                        Storage::disk('public')->put('images/photos/' . $user->id . '/' . $photoName, $request->file('photo')->getContent());
+                        Storage::disk('public')->put('images/photos/' . $photoName, $request->file('photo')->getContent());
                     }
 
                     $user->agentProfile()->create([
@@ -216,12 +216,12 @@ class UserController extends Controller
             DB::transaction(function () use ($request, $user, &$update) {
                 if ($user->roles->first()->name == "agent") {
                     if ($request->hasFile('photo')) {
-                        if ($user->agentProfile->photo && file_exists(storage_path('app/public/images/photos/' . $user->id . '/' . $user->agentProfile->photo))) {
-                            unlink(storage_path('app/public/images/photos/' . $user->id . '/' . $user->agentProfile->photo));
+                        if ($user->agentProfile->photo && file_exists(storage_path('app/public/images/photos/' . $user->agentProfile->photo))) {
+                            unlink(storage_path('app/public/images/photos/' . $user->agentProfile->photo));
                         }
 
                         $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
-                        Storage::disk('public')->put('images/photos/' . $user->id . '/' . $photoName, $request->file('photo')->getContent());
+                        Storage::disk('public')->put('images/photos/' . $photoName, $request->file('photo')->getContent());
 
                         $user->agentProfile()->update([
                             'name' => $request->name,

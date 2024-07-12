@@ -64,12 +64,12 @@ class AgentProfileController extends Controller
             DB::transaction(function () use ($request, $agent, &$update) {
                 if ($request->hasFile('photo')) {
                     // Delete old photo
-                    if ($agent->agentProfile->photo && file_exists(storage_path('app/public/images/photos/' . $agent->id . '/' . $agent->agentProfile->photo))) {
-                        unlink(storage_path('app/public/images/photos/' . $agent->id . '/' . $agent->agentProfile->photo));
+                    if ($agent->agentProfile->photo && file_exists(storage_path('app/public/images/photos/' . $agent->agentProfile->photo))) {
+                        unlink(storage_path('app/public/images/photos/' . $agent->agentProfile->photo));
                     }
 
                     $photoName = 'photo_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
-                    Storage::disk('public')->put('images/photos/' . $agent->id . '/' . $photoName, $request->file('photo')->getContent());
+                    Storage::disk('public')->put('images/photos/' . $photoName, $request->file('photo')->getContent());
 
                     // $photoName = 'photo_'.time() . '.' . $request->file('photo')->getClientOriginalExtension();
                     // $request->file('photo')->storeAs('public/photos/'.$agent->id. '/', $photoName);
