@@ -17,7 +17,7 @@ class SupplierController extends Controller
      */
     public function index(Request $request)
     {
-        $suppliers = Supplier::paginate(10);
+        $suppliers = Supplier::latest()->paginate(10);
 
         return view('cms.admin.suppliers.index', compact('suppliers'));
     }

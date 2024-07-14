@@ -21,6 +21,7 @@ class Payment extends Model
         'pay',
         'remaining_payment',
         'method',
+        'bank',
         'installment',
         'note',
         'date',

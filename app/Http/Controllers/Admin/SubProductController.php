@@ -16,7 +16,7 @@ class SubProductController extends Controller
 {
     public function index(Request $request)
     {
-        $subProducts = SubProduct::paginate(10);
+        $subProducts = SubProduct::latest()->paginate(10);
 
         return view('cms.admin.sub-products.index', compact('subProducts'));
     }

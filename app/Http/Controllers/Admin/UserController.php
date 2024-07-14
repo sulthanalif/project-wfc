@@ -28,7 +28,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::paginate(10);
+        $users = User::latest()->paginate(10);
 
         // Tampilkan data ke view.
         return view('cms.admin.users.index', compact('users'));

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('pay', 15, 2);
             $table->decimal('remaining_payment', 15, 2);
             $table->string('method');
+            $table->string('bank')->nullable();
             $table->string('installment');
             // $table->string('image')->nullable();
             $table->text('note')->nullable();

@@ -26,7 +26,7 @@ class PackageController extends Controller
      */
     public function index(Request $request)
     {
-        $packages = Package::paginate(10);
+        $packages = Package::latest()->paginate(10);
 
         return view('cms.admin.pakets.index', compact('packages'));
     }
