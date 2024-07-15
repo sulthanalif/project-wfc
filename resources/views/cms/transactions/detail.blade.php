@@ -242,6 +242,20 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
+                                <label for="bank" class="form-label">Bank <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select mt-2 sm:mr-2" id="bank" name="bank" required>
+                                    <option value="">Pilih...</option>
+                                    <option value="BRI">BRI</option>
+                                    <option value="BCA">BCA</option>
+                                </select>
+                                @error('bank')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="mt-3">
                                 <label for="date" class="form-label">Tanggal <span
                                         class="text-danger">*</span></label>
                                 <input id="date" name="date" type="date" class="form-control w-full"
