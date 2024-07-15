@@ -15,7 +15,7 @@ class HeaderController extends Controller
     {
         $header = Header::first();
         return view('cms.admin.landingpage.header', [
-            'headers' => $header,
+            'header' => $header,
         ]);
     }
 
@@ -36,7 +36,8 @@ class HeaderController extends Controller
 
         try {
             DB::transaction(function () use ($request, $header) {
-                // Delete old image
+                if ($request->hasFile('image')) {
+                    // Delete old image
                 if ($header->image && file_exists(storage_path('app/public/images/landingpage/' . $header->image))) {
                     unlink(storage_path('app/public/images/landingpage/' . $header->image));
                 }
@@ -53,6 +54,15 @@ class HeaderController extends Controller
                     'buttonTitle' => $request->buttonTitle,
                     'buttonUrl' => $request->buttonUrl,
                 ]);
+                } else {
+                    $header->update([
+                        'title' => $request->title,
+                        'subTitle' => $request->subTitle,
+                        'description' => $request->description,
+                        'buttonTitle' => $request->buttonTitle,
+                        'buttonUrl' => $request->buttonUrl,
+                    ]);
+                }
             });
             return redirect()->back()->with('success', 'Header updated successfully');
         } catch (\Exception $e) {

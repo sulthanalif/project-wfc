@@ -292,6 +292,7 @@ class UserController extends Controller
         $roleName = $roleUser->name;
 
         if ($roleName == 'agent') {
+            $user->subAgent()->delete();
             $user->agentProfile()->delete();
             $delete = $user->delete();
         } else {

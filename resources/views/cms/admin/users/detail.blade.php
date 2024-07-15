@@ -345,7 +345,7 @@
                                     </div>
                                 </div>
                             @endif
-                            <form method="POST" action="{{ route('user.role', auth()->user()->id) }}" class="w-full">
+                            <form method="POST" action="{{ route('user.role', $user->id) }}" class="w-full">
                                 @csrf
                                 <div class="intro-x mt-8">
                                     <select class="form-select mt-2 sm:mr-2" id="role" name="role" required>

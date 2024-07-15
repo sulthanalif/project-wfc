@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ContactController extends Controller
 {
-    public function index(Contact $contact)
+    public function index()
     {
-        return view('admin.landingpage.contact', compact('contact'));
+        $contact = Contact::first();
+        return view('cms.admin.landingpage.contact', [
+            'contact' => $contact
+        ]);
     }
 
     public function update(Request $request, Contact $contact)

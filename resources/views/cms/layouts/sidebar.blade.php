@@ -137,6 +137,34 @@
                         </li>
                     </ul>
                 </li>
+                <li>
+                    <a href="javascript:;" class="side-menu @if (Route::is('landingpage*')) side-menu--active @endif">
+                        <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                        <div class="side-menu__title"> Landing Page
+                            <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                        </div>
+                    </a>
+                    <ul class="@if (Route::is('landingpage*')) side-menu__sub-open @endif">
+                        <li>
+                            <a href="{{ route('landingpage.header') }}" class="side-menu {{ Route::is('landingpage.header') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Header </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('landingpage.profile') }}" class="side-menu {{ Route::is('landingpage.profile') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Profile </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('landingpage.contact') }}" class="side-menu {{ Route::is('landingpage.contact') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Contact </div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             @endhasrole
         </ul>
     @endhasrole
