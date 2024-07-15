@@ -60,26 +60,18 @@
                 <div class="col-lg-8">
                     <div class="title text-center mb-5">
                         <h6 class="mb-0 fw-bold text-primary">Sejarah</h6>
-                        <h2 class="f-40">Sejarah Singkat Perusahaan</h2>
+                        <h2 class="f-40">{{ $detailProfile->titleHistory }}</h2>
                     </div>
                 </div>
             </div>
             <div class="row align-items-center">
                 <div class="col-lg-6 ">
-                    <p class="text-muted mt-4">Paket Smart WFC berdiri sejak tahun 2019, dan alhamdulillah ditahun ini
-                        total agent kami hampir 100 agent yang terbagi di berbagai kota, seperti di Sumedang, Bandung,
-                        Ciamis, Tasikmalaya, Cianjur, Depok.</p>
-                    <p class="text-muted">
-                        Alhamdulillah karena antusiasnya yang sangat besar hingga selalu ada ribuan peserta yang
-                        terdaftar. Alur kerja yang sangat fleksibel, bisa untuk siapapun yang ingin berkembang, maju
-                        bersama dan mampu menggandeng relasi baru.
-                    </p>
-                    <p class="text-muted">
-                        Cara untuk bergabung bersama kami pun cukup mudah dan ada beberapa syarat yang wajib dipenuhi.
+                    <p class="text-muted mt-4">
+                        {!! $detailProfile->bodyHistory !!}
                     </p>
                 </div>
                 <div class="col-lg-6 text-center">
-                    <img src="{{ asset('assets/logo.png') }}" alt="" class="img-fluid">
+                    <img src="{{ empty($detailProfile->image) ? asset('assets/logo.png') : route('getImage', ['path' => 'landingpage', 'imageName' => $detailProfile->image]) }}" alt="" class="img-fluid">
                 </div>
             </div>
         </div>
@@ -93,23 +85,21 @@
                 <div class="col-lg-8">
                     <div class="title text-center mb-5">
                         <h6 class="mb-0 fw-bold text-primary">Visi Misi</h6>
-                        <h2 class="f-40">Visi Misi Perusahaan</h2>
+                        <h2 class="f-40">{{ $detailProfile->titleVM }}</h2>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-6 text-center">
                     <h3 class="fw-bold">Visi Perusahaan</h3>
-                    <p class="text-muted fst-italic">"Menjadi pusat penyediaan kebutuhan Hari Raya yang amanah, mudah
-                        dan murah"</p>
+                    <p class="text-muted fst-italic">"{{ $detailProfile->vision }}"</p>
                 </div>
                 <div class="col-lg-6 text-center">
                     <h3 class="fw-bold">Misi Perusahaan</h3>
                     <ul class="text-muted text-start">
-                        <li>Kepuasan pelanggan adalah tujuan kami</li>
-                        <li>Membangun dan mengembangkan kerjasama kemitraan yang amanah</li>
-                        <li>Mewujudkan dan memfasilitasi masyarakat akan kebutuhan hari raya</li>
-                        <li>Terus mengembangkan jaringan dan relasi</li>
+                        @foreach ($detailProfile->mission as $mission )
+                        <li>{{ $mission->content }}</li>
+                        @endforeach
                     </ul>
                 </div>
             </div>

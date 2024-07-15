@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             //landingpage
             HeaderSeeder::class,
             ProfileSeeder::class,
+            DetailProfileSeeder::class,
             ContactSeeder::class,
 
             RoleAndPermissionSeeder::class,

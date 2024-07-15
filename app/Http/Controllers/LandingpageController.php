@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\DetailProfile;
 use App\Models\Header;
 use App\Models\Package;
 use App\Models\Product;
@@ -31,6 +32,7 @@ class LandingpageController extends Controller
     public function profile()
     {
         $users = User::all();
+        $detailProfile = DetailProfile::first();
         $agentUsers = [];
 
         foreach ($users as $user) {
@@ -39,7 +41,7 @@ class LandingpageController extends Controller
             }
         }
 
-        return view('landing.pages.profile', compact('agentUsers'));
+        return view('landing.pages.profile', compact('agentUsers', 'detailProfile'));
     }
 
     public function catalogs()
