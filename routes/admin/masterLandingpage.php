@@ -1,10 +1,12 @@
 <?php
 
-use App\Http\Controllers\Admin\Landingpage\ContactController;
-use App\Http\Controllers\Admin\Landingpage\DetailProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\Landingpage\HeaderController;
+use App\Http\Controllers\Admin\Landingpage\ContactController;
+use App\Http\Controllers\Admin\Landingpage\GalleryController;
 use App\Http\Controllers\Admin\Landingpage\ProfileController;
+use App\Http\Controllers\Admin\Landingpage\DetailProfileController;
 
 //header
 Route::get('/landing-page/header', [HeaderController::class, 'index'])->name('landingpage.header');
@@ -23,5 +25,14 @@ Route::delete('/landing-page/detail-profile/mission/{mission}', [DetailProfileCo
 //contact
 Route::get('/landing-page/contact', [ContactController::class, 'index'])->name('landingpage.contact');
 Route::put('/landing-page/contact/{contact}', [ContactController::class, 'update'])->name('landingpage.contact.update');
+
+//gallery
+Route::get('/landing-page/gallery', [GalleryController::class, 'index'])->name('landingpage.gallery');
+Route::put('/landing-page/gallery/{gallery}', [GalleryController::class, 'update'])->name('landingpage.gallery.update');
+Route::post('/landing-page/gallery/{gallery}/image', [GalleryController::class, 'addImage'])->name('landingpage.gallery.addImage');
+Route::delete('/landing-page/gallery/image/{image}', [GalleryController::class, 'deleteImage'])->name('landingpage.gallery.deleteImage');
+
+//review
+Route::resource('landing-page/review', ReviewController::class);
 
 
