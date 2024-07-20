@@ -101,6 +101,9 @@ Route::group(['middleware' => 'auth',], function () {
 
     //finance_admin, super_admin
     Route::group(['middleware' => 'role:finance_admin|super_admin'], function () {
+        Route::prefix('finance')->group(function () {
+            require __DIR__ . '/admin/finance.php';
+        });
     });
 
     //Transaction
