@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin\Landingpage;
 
 use App\Models\Gallery;
+use App\Models\GalleryImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\GalleryImage;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class GalleryController extends Controller
@@ -31,8 +32,8 @@ class GalleryController extends Controller
         try {
             DB::transaction(function () use ($request, $gallery) {
                 $gallery->update([
-                   'title' => $request->title,
-                   'subTitle' => $request->subTitle
+                    'title' => $request->title,
+                    'subTitle' => $request->subTitle
                 ]);
             });
             return redirect()->back()->with('success', 'Gallery updated successfully');
@@ -59,8 +60,12 @@ class GalleryController extends Controller
 
         try {
             DB::transaction(function () use ($request, $gallery) {
+                //sava image
+                $imageName = 'gallery_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
+                Storage::disk('public')->put('images/landingpage/' . $imageName, $request->file('image')->getContent());
+
                 $image = new GalleryImage();
-                $image->image = $request->image;
+                $image->image = $imageName;
                 $image->image_thumb = $request->image_thumb;
                 $image->gallery_id = $gallery->id;
                 $image->save();
@@ -80,6 +85,10 @@ class GalleryController extends Controller
     {
         try {
             DB::transaction(function () use ($image) {
+                // Delete old image
+                if ($image->image && file_exists(storage_path('app/public/images/landingpage/' . $image->image))) {
+                    unlink(storage_path('app/public/images/landingpage/' . $image->image));
+                }
                 $image->delete();
             });
             return redirect()->back()->with('success', 'Image deleted successfully');
@@ -92,5 +101,4 @@ class GalleryController extends Controller
             return view('cms.error', compact('data'));
         }
     }
-
 }
