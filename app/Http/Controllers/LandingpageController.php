@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contact;
-use App\Models\DetailProfile;
+use App\Models\User;
 use App\Models\Header;
+use App\Models\Contact;
+use App\Models\Gallery;
 use App\Models\Package;
 use App\Models\Product;
 use App\Models\Profile;
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\DetailProfile;
 
 class LandingpageController extends Controller
 {
@@ -19,12 +20,14 @@ class LandingpageController extends Controller
 
         $header = Header::first();
         $profile = Profile::first();
+        $gallery = Gallery::first();
         $contact = Contact::first();
 
         return view('landing.welcome', compact(
             'products',
             'header',
             'profile',
+            'gallery',
             'contact'
         ));
     }

@@ -13,7 +13,29 @@ class SpendingTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        SpendingType::create([
+        // SpendingType::create([
+        //     ['name' => 'Biaya Transportasi Pembelian'],
+        //     ['name' => 'Biaya Transportasi Penjualan'],
+        //     ['name' => 'Biaya Transportasi'],
+        //     ['name' => 'Belanja'],
+        //     ['name' => 'Biaya Listrik/Telepon'],
+        //     ['name' => 'Perlengkapan'],
+        //     ['name' => 'Peralatan'],
+        //     ['name' => 'Reward'],
+        //     ['name' => 'Gift'],
+        //     ['name' => 'Utang Bank'],
+        //     ['name' => 'Investasi'],
+        //     ['name' => 'Hutang'],
+        //     ['name' => 'Pembayaran Hutang'],
+        //     ['name' => 'Umroh'],
+        //     ['name' => 'Permodalan'],
+        //     ['name' => 'BRI Link/Bukalapak'],
+        //     ['name' => 'Pegadaian'],
+        //     ['name' => 'Kredit Amanah'],
+        //     ['name' => 'Biaya Event'],
+        //     ['name' => 'Biaya Lain-lain'],
+        // ]);
+        $spendingTypes = [
             ['name' => 'Biaya Transportasi Pembelian'],
             ['name' => 'Biaya Transportasi Penjualan'],
             ['name' => 'Biaya Transportasi'],
@@ -34,6 +56,11 @@ class SpendingTypeSeeder extends Seeder
             ['name' => 'Kredit Amanah'],
             ['name' => 'Biaya Event'],
             ['name' => 'Biaya Lain-lain'],
-        ]);
+        ];
+        
+        foreach ($spendingTypes as $type) {
+            SpendingType::create($type);
+        }
+        
     }
 }

@@ -92,7 +92,7 @@
             <div class="row">
                 <div class="col-lg-6 text-center">
                     <h3 class="fw-bold">Visi Perusahaan</h3>
-                    <p class="text-muted fst-italic">"{{ $detailProfile->vision }}"</p>
+                    <p class="text-muted fst-italic">{!! $detailProfile->vision !!}</p>
                 </div>
                 <div class="col-lg-6 text-center">
                     <h3 class="fw-bold">Misi Perusahaan</h3>

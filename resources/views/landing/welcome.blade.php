@@ -22,7 +22,7 @@
                         <a class="nav-link" href="#home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#profil">Profil</a>
+                        <a class="nav-link" href="#{{ $header->buttonUrl }}">Profil</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#katalog">Katalog</a>
@@ -61,15 +61,16 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6">
                         {{-- <img src="{{ asset('assets/landing/images/img1.png') }}" alt="" class="img-fluid"> --}}
-                        <img src="{{ empty($header->image) ? asset('assets/logo2.png') : route('getImage', ['path' => 'landingpage', 'imageName' => $header->image]) }}" class="img-fluid ms-5" style="width: 300px">
+                        <img src="{{ empty($header->image) ? asset('assets/logo2.png') : route('getImage', ['path' => 'landingpage', 'imageName' => $header->image]) }}"
+                            class="img-fluid ms-5" style="width: 300px">
                     </div>
                     <div class="col-lg-6 ">
                         <h1 class="display-4 fw-bold">{{ $header->title }}</h1>
                         <h4>{{ $header->subTitle }}</h4>
-                        <p class="text-muted mt-4">{{ $header->description }}</p>
+                        <p class="text-muted mt-4">{!! Str::limit($header->description, 100, '...') !!}</p>
 
                         <div class="d-flex mt-4">
-                            <a href="{{ $header->buttonUrl }}" class="btn btn-outline-primary">
+                            <a href="#{{ $header->buttonUrl }}" class="btn btn-outline-primary">
                                 {{ $header->buttonTitle }}</a>
                         </div>
                     </div>
@@ -125,14 +126,14 @@
     <!-- end home section -->
 
     <!-- service section -->
-    <section class="section service bg-light" id="profil">
+    <section class="section service bg-light" id="{{ $header->buttonUrl }}">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 ">
                     <h6 class="mb-0 fw-bold text-primary">Profil</h6>
                     <h1 class="display-5 fw-bold">{{ $profile->title }}</h1>
                     <p class="text-muted mt-4">
-                        {{ $profile->description }}
+                        {!! Str::limit($profile->description, 200, '...') !!}
                     </p>
 
                     <div class="d-flex mt-4">
@@ -141,8 +142,8 @@
                     </div>
                 </div>
                 <div class="col-lg-6 text-center mt-3 mt-lg-0">
-                    <img src="{{ empty($profile->image) ? asset('assets/pemilik.jpg') : route('getImage', ['path' => 'landingpage', 'imageName' => $profile->image]) }}" alt="" class="img-fluid img-thumbnail rounded"
-                        style="max-height: 500px">
+                    <img src="{{ empty($profile->image) ? asset('assets/pemilik.jpg') : route('getImage', ['path' => 'landingpage', 'imageName' => $profile->image]) }}"
+                        alt="" class="img-fluid img-thumbnail rounded" style="max-height: 500px">
                 </div>
             </div>
         </div>
@@ -225,8 +226,8 @@
                 <div class="col-lg-8">
                     <div class="title text-center mb-5">
                         <h6 class="mb-0 fw-bold text-primary">Galeri</h6>
-                        <h2 class="f-40">Highlight Of Collection!</h2>
-                        <p class="text-muted">Berikut adalah momen kegiatan yang telah dilakukan.</p>
+                        <h2 class="f-40">{{ $gallery->title }}</h2>
+                        <p class="text-muted">{{ $gallery->subTitle }}.</p>
                     </div>
                 </div>
             </div>
@@ -240,30 +241,17 @@
                         </div> --}}
 
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide border-radius cust-slide">
-                                <img src="{{ asset('assets/landing/images/galeri/1.jpeg') }}" alt="">
-                            </div>
-                            <div class="swiper-slide border-radius cust-slide">
-                                <img src="{{ asset('assets/landing/images/galeri/2.jpeg') }}" alt="">
-                            </div>
-                            <div class="swiper-slide border-radius cust-slide">
-                                <img src="{{ asset('assets/landing/images/galeri/3.jpeg') }}" alt="">
-                            </div>
-                            <div class="swiper-slide border-radius cust-slide">
-                                <img src="{{ asset('assets/landing/images/galeri/4.jpeg') }}" alt="">
-                            </div>
-                            <div class="swiper-slide border-radius cust-slide">
-                                <img src="{{ asset('assets/landing/images/galeri/5.jpeg') }}" alt="">
-                            </div>
-                            <div class="swiper-slide border-radius cust-slide">
-                                <img src="{{ asset('assets/landing/images/galeri/6.jpeg') }}" alt="">
-                            </div>
-                            <div class="swiper-slide border-radius cust-slide">
-                                <img src="{{ asset('assets/landing/images/galeri/7.jpeg') }}" alt="">
-                            </div>
-                            <div class="swiper-slide border-radius cust-slide">
-                                <img src="{{ asset('assets/landing/images/galeri/8.jpeg') }}" alt="">
-                            </div>
+                            @if ($gallery->images->isEmpty())
+                                <div class="swiper-slide border-radius cust-slide">
+                                    <img src="{{ asset('assets/logo2.png') }}" alt="">
+                                </div>
+                            @else
+                                @foreach ($gallery->images as $image)
+                                    <div class="swiper-slide border-radius cust-slide">
+                                        <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $gallery->image]) }} }}" alt="">
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
 
                         <!-- navigation buttons -->
@@ -303,7 +291,7 @@
                                     <div class="flex-grow-1 ms-3">
                                         <h5 class="mb-1">Lokasi</h5>
                                         <p class="f-14 mb-0 text-muted">
-                                            {{ $contact->address }}
+                                            {!! $contact->address !!}
                                         </p>
                                     </div>
                                 </div>
@@ -339,9 +327,8 @@
                     <div class="m-5">
                         <div class="position-relative">
                             <div class="contact-map">
-                                <iframe
-                                    src="{{ $contact->mapUrl }}"
-                                    width="550" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                                <iframe src="{!! $contact->mapUrl !!}" width="550" height="450" style="border:0;"
+                                    allowfullscreen="" loading="lazy"
                                     referrerpolicy="no-referrer-when-downgrade"></iframe>
                             </div>
                             <div class="map-shape"></div>

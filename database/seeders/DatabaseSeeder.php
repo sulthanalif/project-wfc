@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             HeaderSeeder::class,
             ProfileSeeder::class,
             DetailProfileSeeder::class,
+            GallerySeeder::class,
             ContactSeeder::class,
 
             RoleAndPermissionSeeder::class,

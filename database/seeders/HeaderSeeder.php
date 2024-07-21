@@ -19,7 +19,7 @@ class HeaderSeeder extends Seeder
             'description' => 'Alur kerja fleksibel, mudah untuk siapapun, maju bersama dan mampu menjangkau relasi baru.',
             'image' => '',
             'buttonTitle' => 'Lihat Selengkapnya',
-            'buttonUrl' => '#profile'
+            'buttonUrl' => 'profile'
         ]);
     }
 }
