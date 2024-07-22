@@ -138,6 +138,11 @@ class ReviewPageController extends Controller
 
     public function deleteReview(Review $review)
     {
+         // Delete old image
+         if ($review->image && file_exists(storage_path('app/public/images/landingpage/' . $review->image))) {
+            unlink(storage_path('app/public/images/landingpage/' . $review->image));
+        }
+
         $review->delete();
         return redirect()->back()->with('success', 'Review Deleted Successfully');
     }
