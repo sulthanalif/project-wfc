@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Landingpage\ContactController;
 use App\Http\Controllers\Admin\Landingpage\GalleryController;
 use App\Http\Controllers\Admin\Landingpage\ProfileController;
 use App\Http\Controllers\Admin\Landingpage\DetailProfileController;
+use App\Http\Controllers\Admin\Landingpage\ReviewPageController;
 
 //header
 Route::get('/landing-page/header', [HeaderController::class, 'index'])->name('landingpage.header');
@@ -33,6 +34,10 @@ Route::post('/landing-page/gallery/{gallery}/image', [GalleryController::class, 
 Route::delete('/landing-page/gallery/image/{image}', [GalleryController::class, 'deleteImage'])->name('landingpage.gallery.deleteImage');
 
 //review
-Route::resource('landing-page/review', ReviewController::class);
+Route::get('/landing-page/review', [ReviewPageController::class, 'index'])->name('landingpage.review');
+Route::put('/landing-page/review/{review}', [ReviewPageController::class, 'update'])->name('landingpage.review.update');
+Route::post('/landing-page/review/{review_page}/addReview', [ReviewPageController::class, 'addReview'])->name('landingpage.review.addReview');
+Route::put('/landing-page/review/updateReview/{review}', [ReviewPageController::class, 'updateReview'])->name('landingpage.review.updateReview');
+Route::delete('/landing-page/review/deleteReview/{review}', [ReviewPageController::class, 'deleteReview'])->name('landingpage.review.deleteReview');
 
 

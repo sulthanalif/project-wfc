@@ -16,10 +16,16 @@ class Review extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'review_page_id',
         'name',
         'as',
         'rating',
         'body',
         'image'
     ];
+
+    public function reviewPage()
+    {
+        return $this->belongsTo(ReviewPage::class);
+    }
 }

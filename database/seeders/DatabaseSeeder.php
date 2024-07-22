@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             DetailProfileSeeder::class,
             GallerySeeder::class,
             ContactSeeder::class,
+            ReviewPageSeeder::class,
 
             RoleAndPermissionSeeder::class,
             AdminSeeder::class,
