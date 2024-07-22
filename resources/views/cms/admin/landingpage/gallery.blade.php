@@ -31,10 +31,10 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label>Sub Judul <span class="text-danger">*</span></label>
+                                <label for="subTitle" class="form-label">Sub Judul <span class="text-danger">*</span></label>
                                 <input id="subTitle" name="subTitle" type="text" value="{{ $gallery->subTitle }}"
                                     class="form-control w-full" placeholder="Masukkan Sub Judul Galeri" required>
-                                @error('bodyHistory')
+                                @error('subTitle')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -78,8 +78,11 @@
                                             <tr>
                                                 <th scope="row">{{ $loop->iteration }}</th>
                                                 <td>
-                                                    <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $images->image]) }}" alt="">
-                                                    {{ $images->image_thumb }}
+                                                    <div class="w-10 h-10 image-fit zoom-in">
+                                                        <img alt="{{ $images->image_thumb }}" class="tooltip rounded-full"
+                                                            src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $images->image]) }}"
+                                                            title="{{ $images->image_thumb }}">
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <a class="flex items-center mr-3 text-danger" href="javascript:;"

@@ -179,6 +179,13 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="{{ route('landingpage.review') }}"
+                                    class="side-menu {{ Route::is('landingpage.review') ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="side-menu__title"> Review </div>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('landingpage.contact') }}"
                                     class="side-menu {{ Route::is('landingpage.contact') ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>

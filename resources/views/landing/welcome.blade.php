@@ -248,11 +248,11 @@
                             @else
                                 @foreach ($gallery->images as $image)
                                     <div class="swiper-slide border-radius cust-slide">
-                                        <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $gallery->image]) }} }}" alt="">
+                                        <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $image->image]) }}" alt="">
                                     </div>
                                 @endforeach
                             @endif
-                        </div>
+                        </div>                        
 
                         <!-- navigation buttons -->
                         <div class="swiper-pagination"></div>

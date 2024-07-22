@@ -14,8 +14,8 @@ class ReviewPageController extends Controller
 {
     public function index()
     {
-        $riview = ReviewPage::firts();
-        return view('cms.admin.landingpage.review', compact('riview'));
+        $review = ReviewPage::first();
+        return view('cms.admin.landingpage.review', compact('review'));
     }
 
     public function update(Request $request, ReviewPage $review)
