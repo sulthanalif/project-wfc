@@ -77,7 +77,10 @@
                                         @foreach ($gallery->images as $images)
                                             <tr>
                                                 <th scope="row">{{ $loop->iteration }}</th>
-                                                <td>{{ $images->content }}</td>
+                                                <td>
+                                                    <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $images->image]) }}" alt="">
+                                                    {{ $images->image_thumb }}
+                                                </td>
                                                 <td>
                                                     <a class="flex items-center mr-3 text-danger" href="javascript:;"
                                                         data-tw-toggle="modal"
@@ -155,6 +158,10 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                            </div>
+                            <div class="mt-3">
+                                <label for="image_thumb" class="form-label">Judul Gambar</label>
+                                <input type="text" class="form-control w-full" id="image_thumb" name="image_thumb" placeholder="Masukkan Judul Gambar..">
                             </div>
                             <div class="px-5 mt-3 pb-8 text-center">
                                 <button type="submit" class="btn btn-primary w-24">Simpan</button>

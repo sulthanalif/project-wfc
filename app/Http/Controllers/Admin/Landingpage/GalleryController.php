@@ -51,7 +51,7 @@ class GalleryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'image' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'image_thumb' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'image_thumb' => ['sometimes', 'string'],
         ]);
 
         if ($validator->fails()) {
