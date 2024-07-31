@@ -49,23 +49,6 @@
                             </div>
 
                             <div class="mt-3">
-                                <label for="kk" class="form-label">Upload Foto Kartu Keluarga <span
-                                        class="text-danger">*</span></label>
-                                <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
-                                    <i data-lucide="image" class="w-4 h-4 mr-2"></i>
-                                    <span class="text-primary mr-1">Upload a file</span> or drag and drop
-                                    <input id="kk" name="kk" type="file"
-                                        class="w-full h-full top-0 left-0 absolute opacity-0" onchange="previewFile(this)">
-                                </div>
-                                <div id="kk-preview" class="hidden mt-2"></div>
-                                @error('kk')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-
-                            <div class="mt-3">
                                 <label for="sPerjanjian" class="form-label">Upload Foto Surat Perjanjian <span
                                         class="text-danger">*</span></label>
                                 <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">

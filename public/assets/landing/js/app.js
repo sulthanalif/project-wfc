@@ -86,6 +86,32 @@ var slider = tns({
   }
 });
 
+var slider = tns({
+  container: '.product-slider',
+  loop: true,
+  autoplay: false,
+  mouseDrag: true,
+  controls: false,
+  navPosition: "bottom",
+  nav: true,
+  autoplayTimeout: 5000,
+  speed: 900,
+  center: false,
+  animateIn: "fadeIn",
+  animateOut: "fadeOut",
+  controlsText: ['&#8592;', '&#8594;'],
+  autoplayButtonOutput: false,
+  gutter: 30,
+  responsive: {
+
+    992: {
+      gutter: 30,
+      items: 1.2
+    },
+
+  }
+});
+
 
 // ********* swiper slider ** app Slider **
 

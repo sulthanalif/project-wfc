@@ -2246,6 +2246,34 @@ body[data-layout-mode="dark"] .features-box h6 {
     color: rgba(255, 255, 255, 0.7) !important;
 }
 
+.product .product-slider {
+    margin: 0 20px;
+}
+.product .product-slider .item .product-box {
+    border-radius: 20px;
+    box-shadow: 0 5px 13px rgba(60, 72, 88, 0.2);
+    margin: 20px 0;
+    cursor: grab;
+}
+.product .product-slider .item .product-box .social-icon i {
+    color: rgba(255, 255, 255, 0.5);
+}
+.product .tns-nav {
+    text-align: center;
+}
+.product .tns-nav button {
+    height: 12px;
+    width: 12px;
+    border-radius: 12px;
+    margin: 0 8px;
+    padding: 4px;
+    background-color: rgba(29, 22, 18, 0.3);
+    border: none;
+}
+.product .tns-nav .tns-nav-active {
+    background-color: #bc8f6e;
+}
+
 .testimonial .testi-slider {
     margin: 0 20px;
 }

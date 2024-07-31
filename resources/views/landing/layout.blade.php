@@ -146,7 +146,7 @@
                     <p class="mb-0 text-center text-muted">Copyright ©
                         <script>
                             document.write(new Date().getFullYear())
-                        </script> CV. WIDA NUGRAHA. All Right Reserved
+                        </script> Paket Smart WFC Jabar. All Right Reserved
                     </p>
                 </div>
             </div>

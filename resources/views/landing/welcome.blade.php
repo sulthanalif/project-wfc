@@ -150,8 +150,8 @@
     </section>
     <!-- end section -->
 
-    <!-- start testimonial -->
-    <section class="section testimonial" id="katalog">
+    <!-- start product -->
+    <section class="section product" id="katalog">
         <!-- start container -->
         <div class="container">
             <div class="row align-items-center">
@@ -165,17 +165,17 @@
                     </div>
                 </div>
                 <div class="col-lg-8">
-                    <div class="testi-slider" id="testi-slider">
+                    <div class="product-slider" id="product-slider">
                         @if ($products->isEmpty())
                             <div class="item">
-                                <div class="testi-box position-relative overflow-hidden">
+                                <div class="product-box position-relative overflow-hidden">
                                     <h4 class="text-center fw-bold p-5">Belum ada produk</h4>
                                 </div>
                             </div>
                         @else
                             @foreach ($products as $product)
                                 <div class="item">
-                                    <div class="testi-box position-relative overflow-hidden">
+                                    <div class="product-box position-relative overflow-hidden">
                                         <div class="row align-items-center">
                                             <div class="col-md-5 text-center px-3">
                                                 @if ($product->detail->image === 'image.jpg' || $product->detail->image == null)
@@ -183,14 +183,21 @@
                                                         class="img-fluid">
                                                 @else
                                                     <img src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
-                                                        alt="" class="img-fluid">
+                                                        alt="" class="img-fluid object-fit-contain"
+                                                        style="height: 200px">
                                                 @endif
                                             </div>
                                             <div class="col-md-7">
                                                 <div class="p-4">
                                                     <div class="">
-                                                        <h5 class="fw-bold f-24">{{ $product->name }}</h5>
-                                                        <p class="text-muted">
+                                                        <div class="border-bottom border-primary pb-1">
+                                                            <h5 class="fw-bold f-24 lh-sm">
+                                                                {{ $product->name }} <br>
+                                                                <span
+                                                                    class="text-muted fw-normal f-16">{{ $product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</span>
+                                                            </h5>
+                                                        </div>
+                                                        <p class="text-muted mt-2">
                                                             {{ Str::limit(strip_tags($product->detail->description), 250) }}
                                                         </p>
                                                     </div>
@@ -216,7 +223,7 @@
         </div>
         <!-- end container -->
     </section>
-    <!-- end testimonial -->
+    <!-- end product -->
 
     <!-- slider section -->
     <section class="section app-slider bg-light" id="app">
@@ -248,11 +255,12 @@
                             @else
                                 @foreach ($gallery->images as $image)
                                     <div class="swiper-slide border-radius cust-slide">
-                                        <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $image->image]) }}" alt="">
+                                        <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $image->image]) }}"
+                                            alt="">
                                     </div>
                                 @endforeach
                             @endif
-                        </div>                        
+                        </div>
 
                         <!-- navigation buttons -->
                         <div class="swiper-pagination"></div>
@@ -263,6 +271,89 @@
         </div>
     </section>
     <!-- end section -->
+
+    <!-- start testimonial -->
+    <section class="section testimonial">
+        <!-- start container -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="title text-center mb-5">
+                        <h6 class="mb-0 fw-bold text-primary">Review</h6>
+                        <h2 class="f-40">{{ $reviewPage->title }}</h2>
+                        <p class="text-muted">{{ $reviewPage->subTitle }}</p>
+                    </div>
+                </div>
+                <div class="col-lg-10">
+                    <div class="testi-slider" id="testi-slider">
+                        @if ($reviews->isEmpty())
+                            <div class="item">
+                                <div class="testi-box position-relative overflow-hidden">
+                                    <h4 class="text-center fw-bold p-5">Belum ada ulasan</h4>
+                                </div>
+                            </div>
+                        @else
+                            @foreach ($reviews as $review)
+                                <div class="item">
+                                    <div class="testi-box position-relative overflow-hidden">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-5 text-center px-3">
+                                                @if ($review->image === 'image.jpg' || $review->image == null)
+                                                    <img src="{{ asset('assets/logo2.png') }}" alt="Gambar Produk"
+                                                        class="img-fluid">
+                                                @else
+                                                    <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $review->image]) }}"
+                                                        alt="" class="img-fluid object-fit-contain"
+                                                        style="max-height: 200px">
+                                                @endif
+                                            </div>
+                                            <div class="col-md-7">
+                                                <div class="p-4">
+                                                    <div class="border-bottom border-primary pb-1">
+                                                        <h5 class="fw-bold f-24 lh-sm">
+                                                            {{ $review->name }} <br>
+                                                            <span
+                                                                class="text-muted fw-normal f-16">({{ $review->as }})</span>
+                                                        </h5>
+                                                    </div>
+                                                    <p class="text-muted mt-2">
+                                                        {{ $review->body }}
+                                                    </p>
+                                                    <div class="d-flex align-items-center mt-3">
+                                                        <div class="date">
+                                                            @if ($review->rating == 5)
+                                                                <img src="{{ asset('assets/landing/images/testi/rate-5.png') }}"
+                                                                    class="img-fluid w-50">
+                                                            @elseif ($review->rating == 4)
+                                                                <img src="{{ asset('assets/landing/images/testi/rate-4.png') }}"
+                                                                    class="img-fluid w-50">
+                                                            @elseif ($review->rating == 3)
+                                                                <img src="{{ asset('assets/landing/images/testi/rate-3.png') }}"
+                                                                    class="img-fluid w-50">
+                                                            @elseif ($review->rating == 2)
+                                                                <img src="{{ asset('assets/landing/images/testi/rate-2.png') }}"
+                                                                    class="img-fluid w-50">
+                                                            @elseif ($review->rating == 1)
+                                                                <img src="{{ asset('assets/landing/images/testi/rate-1.png') }}"
+                                                                    class="img-fluid w-50">
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end container -->
+    </section>
+
+    <!-- end testimonial -->
 
     <!-- contact section -->
     <section class="section contact overflow-hidden" id="kontak">

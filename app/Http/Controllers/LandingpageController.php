@@ -11,12 +11,16 @@ use App\Models\Product;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use App\Models\DetailProfile;
+use App\Models\Review;
+use App\Models\ReviewPage;
 
 class LandingpageController extends Controller
 {
     public function index()
     {
         $products = Product::paginate(5);
+        $reviewPage = ReviewPage::first();
+        $reviews = Review::all();
 
         $header = Header::first();
         $profile = Profile::first();
@@ -25,6 +29,8 @@ class LandingpageController extends Controller
 
         return view('landing.welcome', compact(
             'products',
+            'reviewPage',
+            'reviews',
             'header',
             'profile',
             'gallery',

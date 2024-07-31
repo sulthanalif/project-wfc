@@ -95,7 +95,7 @@
                                     class="modal-dialog modal-dialog-centered modal-dialog modal-lg modal-dialog-scrollable">
                                     <div class="modal-content hero-modal-0">
                                         <div class="modal-header">
-                                            <h5 class="modal-title">{{ $product->name }}</h5>
+                                            <h5 class="modal-title">{{ $product->name }} {{ $product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -118,6 +118,18 @@
                                                 <p>Jangka Waktu: <span class="text-muted">{{ $product->days }}
                                                         hari</span></p>
                                                 <p>Deskripsi: <span class="text-muted">{!! $product->detail->description !!}</span>
+                                                </p>
+                                                <p>
+                                                    Daftar Barang:
+                                                    <ul class="text-muted">
+                                                        @if ($product->subProduct->isNotEmpty())
+                                                            @foreach ($product->subProduct as $subProduct)
+                                                                <li>{{ $subProduct->subProduct->name }}</li>
+                                                            @endforeach
+                                                        @else
+                                                            <li>Tidak ada daftar barang</li>
+                                                        @endif
+                                                    </ul>
                                                 </p>
                                             </div>
                                         </div>
