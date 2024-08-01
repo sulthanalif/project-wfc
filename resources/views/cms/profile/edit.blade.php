@@ -62,7 +62,12 @@
                                     </div>
                                 </div>
                                 <div class="col-span-12 lg:col-span-6 mt-3 lg:mt-0" id="agent-fields">
-                                    <div>
+                                    <div class="mt-3 lg:mt-0">
+                                        <label for="ktp_address" class="form-label">Alamat KTP <span class="text-danger">* (Isi sesuai alamat yang ada di KTP)</span></label>
+                                        <input id="ktp_address" name="ktp_address" type="text" class="form-control w-full"
+                                            placeholder="Masukkan Detail Alamat KTP" value="{{ $user->agentProfile->ktp_address }}">
+                                    </div>
+                                    <div class="mt-3">
                                         <label for="address" class="form-label">Detail Alamat <span
                                                 class="text-danger">*</span></label>
                                         <input id="address" name="address" type="text" class="form-control w-full"

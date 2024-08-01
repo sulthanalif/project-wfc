@@ -37,6 +37,10 @@
                     <div class="flex items-center mt-3"> <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
                         {{ $agent->agentProfile->phone_number ? $agent->agentProfile->phone_number : 'Nomer HP Belum Diisi' }}
                     </div>
+                    <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="user"
+                            class="w-4 h-4 mr-2"></i>
+                        <p>{{ $agent->agentProfile->ktp_address ? $agent->agentProfile->ktp_address : 'Alamat KTP Belum Diisi' }}</p>
+                    </div>
                     <div class="flex items-center mt-3">
                         <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i>
                         <p>{{ $agent->agentProfile->address ? $agent->agentProfile->address . ' RT ' . $agent->agentProfile->rt . ' / RW ' . $agent->agentProfile->rw . ', ' . $agent->agentProfile->village . ', ' . $agent->agentProfile->district . ', ' . $agent->agentProfile->regency . ', ' . $agent->agentProfile->province : 'Alamat Belum Diisi' }}

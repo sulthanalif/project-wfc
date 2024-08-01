@@ -53,7 +53,12 @@
                                     placeholder="Masukkan Nomor Handphone" maxlength="13">
                             </div>
                             <div class="mt-3">
-                                <label for="address" class="form-label">Detail Alamat</label>
+                                <label for="ktp_address" class="form-label">Alamat KTP <span class="text-danger">(Isi sesuai alamat yang ada di KTP)</span></label>
+                                <input id="ktp_address" name="ktp_address" type="text" class="form-control w-full"
+                                    placeholder="Masukkan Detail Alamat KTP">
+                            </div>
+                            <div class="mt-3">
+                                <label for="address" class="form-label">Detail Alamat <span class="text-danger">(Isi sesuai alamat saat ini)</span></label>
                                 <input id="address" name="address" type="text" class="form-control w-full"
                                     placeholder="Masukkan Detail Alamat">
                             </div>
@@ -132,7 +137,7 @@
 
                     <div class="text-left mt-5">
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
+                        <a href="{{ route('user.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
                 </form>
             </div>

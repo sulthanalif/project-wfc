@@ -20,6 +20,7 @@ class AgentProfile extends Model
         'name',
         'photo',
         'phone_number',
+        'ktp_address',
         'address',
         'rt',
         'rw',

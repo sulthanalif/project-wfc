@@ -71,9 +71,14 @@
                                 </div>
                             </div>
                             <div class="col-span-12 lg:col-span-6 mt-3 lg:mt-0" id="agent-fields">
-                                <div>
+                                <div class="mt-3 lg:mt-0">
+                                    <label for="ktp_address" class="form-label">Alamat KTP <span class="text-danger">* (Isi sesuai alamat yang ada di KTP)</span></label>
+                                    <input id="ktp_address" name="ktp_address" type="text" class="form-control w-full"
+                                        placeholder="Masukkan Detail Alamat KTP" value="{{ $user->agentProfile->ktp_address }}">
+                                </div>
+                                <div class="mt-3">
                                     <label for="address" class="form-label">Detail Alamat <span
-                                            class="text-danger">*</span></label>
+                                            class="text-danger">* (Isi sesuai alamat saat ini)</span></label>
                                     <input id="address" name="address" type="text" class="form-control w-full"
                                         placeholder="Masukkan Detail Alamat" value="{{ $user->agentProfile->address }}"
                                         required>
@@ -147,7 +152,7 @@
                     </div>
                     <div class="text-left mt-5">
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                        <a href="{{ route('user.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
+                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
                 </form>
             </div>
@@ -202,10 +207,10 @@
             }
         }
 
-        const dataVillage = "{{ $user->agentProfile->village }}";
-        const dataDistrict = "{{ $user->agentProfile->district }}";
-        const dataRegency = "{{ $user->agentProfile->regency }}";
-        const dataProvince = "{{ $user->agentProfile->province }}";
+        const dataVillage = "{{ optional($user->agentProfile)->village }}";
+        const dataDistrict = "{{ optional($user->agentProfile)->district }}";
+        const dataRegency = "{{ optional($user->agentProfile)->regency }}";
+        const dataProvince = "{{ optional($user->agentProfile)->province }}";
 
         document.addEventListener('DOMContentLoaded', () => {
             const provinceSelect = document.getElementById('province');

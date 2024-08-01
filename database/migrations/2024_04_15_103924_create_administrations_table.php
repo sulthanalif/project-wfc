@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('user_id')->constrained('users')->onDelete('cascade');
             $table->string('ktp');
-            $table->string('kk');
+            // $table->string('kk');
             $table->string('sPerjanjian');
             // $table->string('stat')->default('0');
             $table->timestamps();

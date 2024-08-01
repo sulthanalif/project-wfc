@@ -18,7 +18,7 @@ class Administration extends Model
     protected $fillable = [
         'user_id',
         'ktp',
-        'kk',
+        // 'kk',
         'sPerjanjian',
 
     ];

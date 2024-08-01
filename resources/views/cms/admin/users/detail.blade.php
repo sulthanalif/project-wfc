@@ -55,6 +55,10 @@
                                 class="w-4 h-4 mr-2"></i>
                             {{ $user->agentProfile->phone_number ? $user->agentProfile->phone_number : 'Nomer HP Belum Diisi' }}
                         </div>
+                        <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="user"
+                                class="w-4 h-4 mr-2"></i>
+                            <p>{{ $user->agentProfile->ktp_address ? $user->agentProfile->ktp_address : 'Alamat KTP Belum Diisi' }}</p>
+                        </div>
                         <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i data-lucide="map-pin"
                                 class="w-4 h-4 mr-2"></i>
                             <p>{{ $user->agentProfile->address ? $user->agentProfile->address . " RT " . $user->agentProfile->rt . " / RW " . $user->agentProfile->rw . ", " . $user->agentProfile->village . ", " . $user->agentProfile->district . ", " . $user->agentProfile->regency . ", " . $user->agentProfile->province : 'Alamat Belum Diisi' }}</p>
@@ -173,21 +177,21 @@
                                 <div
                                     class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
                                     <div
-                                        class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
+                                        class="col-span-12 sm:col-span-6 xl:col-span-6 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                                             <span class="text-muted">Belum Ada Berkas</span>
                                         </div>
                                     </div>
-                                    <div
+                                    {{-- <div
                                         class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                                             <span class="text-muted">Belum Ada Berkas</span>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div
-                                        class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
+                                        class="col-span-12 sm:col-span-6 xl:col-span-6 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
                                         <div class="flex flex-col items-center justify-center">
                                             <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                                             <span class="text-muted">Belum Ada Berkas</span>
@@ -199,23 +203,23 @@
                                     <div
                                         class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
                                         <div
-                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
+                                            class="col-span-12 sm:col-span-6 xl:col-span-6 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                                                 <img alt="KTP" class=" img-fluid rounded-md"
                                                     src="{{ asset('assets/logo2.png') }}">
                                             </div>
                                         </div>
-                                        <div
+                                        {{-- <div
                                             class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                                                 <img alt="KK" class=" img-fluid rounded-md"
                                                     src="{{ asset('assets/logo2.png') }}">
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div
-                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
+                                            class="col-span-12 sm:col-span-6 xl:col-span-6 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                                                 <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"
@@ -227,23 +231,23 @@
                                     <div
                                         class="grid grid-cols-12 border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
                                         <div
-                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
+                                            class="col-span-12 sm:col-span-6 xl:col-span-6 px-5 items-center justify-center lg:justify-start mb-3 lg:mb-0">
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Kartu Tanda Penduduk</h1>
                                                 <img alt="KTP" class=" img-fluid rounded-md"
                                                     src="{{ route('getImage', ['path' => 'administration', 'imageName' => $user->administration->ktp]) }}">
                                             </div>
                                         </div>
-                                        <div
+                                        {{-- <div
                                             class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 border-b lg:border-b-0 pb-3 lg:pb-0 pt-3 lg:pt-0">
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Kartu Keluarga</h1>
                                                 <img alt="KK" class=" img-fluid rounded-md"
                                                     src="{{ route('getImage', ['path' => 'administration', 'imageName' => $user->administration->kk]) }}">
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div
-                                            class="col-span-12 sm:col-span-6 xl:col-span-4 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
+                                            class="col-span-12 sm:col-span-6 xl:col-span-6 px-5 items-center justify-center lg:justify-start mt-3 lg:mt-0">
                                             <div class="flex flex-col items-center justify-center">
                                                 <h1 class="font-bold text-xl mb-3">Surat Perjanjian</h1>
                                                 <img alt="SURAT PERJANJIAN" class=" img-fluid rounded-md"

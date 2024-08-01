@@ -35,7 +35,7 @@ class AdministrationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ktp' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'kk' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            // 'kk' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'sPerjanjian' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
@@ -46,17 +46,17 @@ class AdministrationController extends Controller
         try {
             DB::transaction(function () use ($request, &$upload) {
                 $imageNameKTP = 'administration_'.Auth::user()->id. '_ktp' . '.' . $request->file('ktp')->getClientOriginalExtension();
-                $imageNameKK = 'administration_'.Auth::user()->id. '_kk' . '.' . $request->file('kk')->getClientOriginalExtension();
+                // $imageNameKK = 'administration_'.Auth::user()->id. '_kk' . '.' . $request->file('kk')->getClientOriginalExtension();
                 $imageNameSPerjanjian = 'administration_'.Auth::user()->id. '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
 
                 Storage::disk('public')->put('images/administration/'. $imageNameKTP, $request->file('ktp')->getContent());
-                Storage::disk('public')->put('images/administration/'. $imageNameKK, $request->file('kk')->getContent());
+                // Storage::disk('public')->put('images/administration/'. $imageNameKK, $request->file('kk')->getContent());
                 Storage::disk('public')->put('images/administration/'. $imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
 
                 $upload = Administration::create([
                     'user_id' => Auth::user()->id,
                     'ktp' => $imageNameKTP,
-                    'kk' => $imageNameKK,
+                    // 'kk' => $imageNameKK,
                     'sPerjanjian' => $imageNameSPerjanjian
                 ]);
 
