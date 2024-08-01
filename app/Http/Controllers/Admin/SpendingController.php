@@ -16,7 +16,8 @@ class SpendingController extends Controller
     public function index(Request $request)
     {
         $spendings = Spending::latest()->paginate(10);
-        return view('cms.admin.finance.spending.index', compact('spendings'));
+        $totalSpending = Spending::sum('amount');
+        return view('cms.admin.finance.spending.index', compact('spendings', 'totalSpending'));
     }
 
     public function export()

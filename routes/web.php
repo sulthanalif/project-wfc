@@ -119,13 +119,13 @@ Route::group(['middleware' => 'auth',], function () {
     Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|agent'], function () {
         require __DIR__ . '/transaction/order.php';
         // Route::get('/test', [TestController::class, 'index']);
+        //order detail
+        Route::post('.order/{detail}/detail', [DetailOrderController::class, 'editDetail'])->name('order.editDetail');
     });
     Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin'], function () {
         require __DIR__ . '/transaction/payment.php';
         require __DIR__ . '/transaction/status.php';
 
-        //order detail
-        Route::post('.order/{detail}/detail', [DetailOrderController::class, 'editDetail'])->name('order.editDetail');
 
         //export pdf invoice payment
         Route::get('/invoice/{order}/{payment}', [ExportInvoiceController::class, 'getInvoice'])->name('getInvoice');
