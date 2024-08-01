@@ -88,7 +88,7 @@
                                 <th class="whitespace-nowrap text-center">Harga per Item</th>
                                 <th class="whitespace-nowrap text-center">Qty</th>
                                 <th class="whitespace-nowrap text-center">Total</th>
-                                @hasrole('admin||super_admin')
+                                @hasrole('agent')
                                     <th class="whitespace-nowrap text-center">Aksi</th>
                                 @endhasrole
                             </tr>
@@ -160,7 +160,7 @@
                                     </td>
                                     <td class="text-center">{{ $item->qty }}</td>
                                     <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}</td>
-                                    @hasrole('admin|super_admin')
+                                    @hasrole('agent')
                                         <td class="text-center">
                                             <a href="javascript:;" class="btn btn-primary btn-sm" data-tw-toggle="modal"
                                                 data-tw-target="#detail-confirmation-modal{{ $item->id }}"><i
@@ -241,13 +241,14 @@
                                     </span>
                                 @enderror
                             </div>
-                            <div class="mt-3">
+                            <div class="mt-3" id="bank-field" style="display: none">
                                 <label for="bank" class="form-label">Bank <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select mt-2 sm:mr-2" id="bank" name="bank" required>
                                     <option value="">Pilih...</option>
                                     <option value="BRI">BRI</option>
                                     <option value="BCA">BCA</option>
+                                    <option value="Mandiri">Mandiri</option>
                                 </select>
                                 @error('bank')
                                     <span class="invalid-feedback" role="alert">
@@ -295,6 +296,17 @@
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
 
     <script>
+        const methodSelect = document.getElementById('method');
+        const bankField = document.getElementById('bank-field');
+
+        methodSelect.addEventListener('change', (event) => {
+            if (event.target.value === 'transfer') {
+                bankField.style.display = 'block';
+            } else {
+                bankField.style.display = 'none';
+            }
+        });
+
         const currentDate = '{{ now()->format('Y-m-d') }}'; // Blade templating to get current date
         const dateInput = document.getElementById('date');
 

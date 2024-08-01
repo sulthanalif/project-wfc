@@ -65,7 +65,7 @@
                                     <div class="mt-3 lg:mt-0">
                                         <label for="ktp_address" class="form-label">Alamat KTP <span class="text-danger">* (Isi sesuai alamat yang ada di KTP)</span></label>
                                         <input id="ktp_address" name="ktp_address" type="text" class="form-control w-full"
-                                            placeholder="Masukkan Detail Alamat KTP" value="{{ $user->agentProfile->ktp_address }}">
+                                            placeholder="Masukkan Detail Alamat KTP" value="{{ $agent->agentProfile->ktp_address }}">
                                     </div>
                                     <div class="mt-3">
                                         <label for="address" class="form-label">Detail Alamat <span
@@ -157,6 +157,7 @@
         function previewFile(input) {
             const file = input.files[0];
             const preview = document.getElementById('image-preview');
+            const existingPreview = document.getElementById('existing-image-preview');
 
             if (file) {
                 // Check file size (2MB limit)
@@ -185,18 +186,27 @@
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     img.classList.add('w-auto', 'h-40', 'object-cover', 'rounded'); // Adjust size and styles as needed
-                    document.getElementById('existing-image-preview').innerHTML = '';
                     preview.innerHTML = ''; // Clear previous previews
                     preview.classList.remove('hidden'); // Show the preview container
                     preview.appendChild(img);
+                    
+                    // Hide the existing preview when a new image is selected
+                    if (existingPreview) {
+                        existingPreview.style.display = 'none';
+                    }
                 };
 
                 reader.readAsDataURL(file);
             } else {
                 preview.innerHTML = '';
                 preview.classList.add('hidden');
+                // Show the existing preview if no new image is selected
+                if (existingPreview) {
+                    existingPreview.style.display = 'block';
+                }
             }
         }
+
 
         const dataVillage = "{{ $agent->agentProfile->village }}";
         const dataDistrict = "{{ $agent->agentProfile->district }}";

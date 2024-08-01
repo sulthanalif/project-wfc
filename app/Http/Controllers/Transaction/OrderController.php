@@ -34,9 +34,10 @@ class OrderController extends Controller
 
             return view('cms.transactions.index', compact('orders'));
         } else {
+            $access_date = AccessDate::first();
             $orders = Order::orderByDesc('created_at')->paginate(10);
 
-            return view('cms.transactions.index', compact('orders'));
+            return view('cms.transactions.index', compact('orders', 'access_date'));
         }
     }
 
@@ -91,13 +92,13 @@ class OrderController extends Controller
 
         try {
             DB::transaction(function () use ($request, &$order) {
-                $access_date = AccessDate::first()->date;
+                $access_date = AccessDate::first();
                 $order = new Order([
                     'agent_id' => $request->agent_id,
                     'order_number' => $request->order_number,
                     'total_price' => $request->total_price,
                     'order_date' => $request->order_date ? $request->order_date : now(),
-                    'access_date' => $access_date ?? Carbon::parse($request->order_date)->addMonths(3),
+                    'access_date' => $access_date->date ?? Carbon::parse($request->order_date)->addMonths(3),
                     'status' =>  ValidateRole::check('super_admin||admin') ? 'accepted' : 'pending',
                 ]);
 

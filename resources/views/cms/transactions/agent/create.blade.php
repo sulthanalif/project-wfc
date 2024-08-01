@@ -22,6 +22,7 @@
                     </div>
 
                     <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
+                    <input type="date" name="order_date" value="{{ date('Y-m-d') }}" hidden>
 
                     <div class="mt-3">
                         <label for="package_id" class="form-label">Pilih Paket <span class="text-danger">*</span></label>

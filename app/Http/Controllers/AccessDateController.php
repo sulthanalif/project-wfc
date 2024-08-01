@@ -24,6 +24,8 @@ class AccessDateController extends Controller
                 $access_date->date = $request->date;
                 $access_date->save();
             });
+
+            return redirect()->route('order.index')->with('success', 'Batas akhir perubahan berhasil diubah!');
         } catch (\Exception $e) {
             $data = [
                 'message' => $e->getMessage(),

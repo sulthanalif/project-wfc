@@ -1,6 +1,21 @@
 <table class="table table-report -mt-2">
     <thead>
         <tr>
+            <th class="whitespace-nowrap">Total Pemasukan</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="intro-x">
+            <td>
+                <p class="text-slate-500 flex items-center mr-3">Rp.
+                    {{ number_format($datas->sum('amount'), 0, ',', '.') }}</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-report -mt-2">
+    <thead>
+        <tr>
             <th class="text-center whitespace-nowrap">TANGGAL</th>
             <th class="text-center whitespace-nowrap">KETERANGAN</th>
             <th class="text-center whitespace-nowrap">CASH</th>
@@ -24,7 +39,7 @@
                 </td>
                 <td>
                     <p class="text-center mr-3">
-                        {{ $data->method == 'cash' ? $data->amount : 0 }}
+                        {{ $data->method == 'tunai' ? $data->amount : 0 }}
                     </p>
                 </td>
                 <td>

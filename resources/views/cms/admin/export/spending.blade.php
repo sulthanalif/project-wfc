@@ -1,6 +1,21 @@
 <table class="table table-report -mt-2">
     <thead>
         <tr>
+            <th class="whitespace-nowrap">Total Pemasukan</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="intro-x">
+            <td>
+                <p class="text-slate-500 flex items-center mr-3">Rp.
+                    {{ number_format($datas->sum('amount'), 0, ',', '.') }}</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-report -mt-2">
+    <thead>
+        <tr>
             <th class="whitespace-nowrap">TANGGAL</th>
             <th class="whitespace-nowrap">KETERANGAN</th>
             <th class="whitespace-nowrap">BIAYA TRANSFORTASI PEMBELIAN</th>
