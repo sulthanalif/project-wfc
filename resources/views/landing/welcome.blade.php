@@ -405,7 +405,9 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h5 class="mb-1">Phone</h5>
-                                        <p class="f-14 mb-0 text-muted">Whatsapp: {{ $contact->phoneNumber }}</p>
+                                        @foreach ($contact->numbers as $number)
+                                            <p class="f-14 mb-0 text-muted">{{ $number->description }}: {{ $number->number }}</p>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
