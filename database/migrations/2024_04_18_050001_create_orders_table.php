@@ -17,6 +17,7 @@ return new class extends Migration
             $table->uuid('agent_id')->constrained('users')->onDelete('cascade');
             $table->decimal('total_price', 15, 2);
             $table->date('order_date')->nullable();
+            $table->date('access_date')->nullable();
             $table->string('status')->default('pending');
             $table->string('payment_status')->default('unpaid');
             $table->string('delivery_status')->default('pending');

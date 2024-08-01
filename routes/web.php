@@ -2,13 +2,15 @@
 
 use App\Models\SubAgent;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
 // use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\AgentProfileController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
+use App\Http\Controllers\AccessDateController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\LandingpageController;
 use App\Http\Controllers\Admin\ReportController;
@@ -16,9 +18,9 @@ use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\AdministrationController;
+// use App\Models\Administration;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Mail\NotificationController;
-// use App\Models\Administration;
 use App\Http\Controllers\Transaction\OrderController;
 use App\Http\Controllers\Admin\DistributionController;
 use App\Http\Controllers\Transaction\PaymentController;
@@ -27,7 +29,6 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Transaction\DetailOrderController;
 use App\Http\Controllers\Admin\ExportDeliveryOrderController;
 use App\Http\Controllers\Transaction\ExportInvoiceController;
-use Maatwebsite\Excel\Facades\Excel;
 
 // use App\Http\Controllers\Auth\AuthController;
 // use App\Http\Controllers\DashboardController;
@@ -78,6 +79,13 @@ Route::group(['middleware' => 'auth',], function () {
         Route::group(['prefix' => 'report'], function () {
             require __DIR__ . '/admin/report.php';
             // Route::resource('distribution', DistributionController::class);
+        });
+
+        //Options
+        Route::group(['prefix' => 'options'], function () {
+            //Access Date
+            Route::get('/access-date', [AccessDateController::class, 'index'])->name('access-date');
+            Route::post('/access-date', [AccessDateController::class, 'update'])->name('access-date.update');
         });
 
         //distribution

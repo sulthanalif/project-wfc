@@ -11,6 +11,7 @@ use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use App\Helpers\ValidateRole;
 use App\Exports\InvoiceExport;
+use Illuminate\Support\Carbon;
 use App\Mail\NotificationAccOrder;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Helpers\GenerateRandomString;
+use App\Models\AccessDate;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -79,6 +81,7 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), [
             'agent_id' => ['required'],
             'order_number' => ['required'],
+            'order_date' => ['required'],
             'total_price' => ['required', 'numeric'],
         ]);
 
@@ -88,14 +91,13 @@ class OrderController extends Controller
 
         try {
             DB::transaction(function () use ($request, &$order) {
-
-
-
+                $access_date = AccessDate::first()->date;
                 $order = new Order([
                     'agent_id' => $request->agent_id,
                     'order_number' => $request->order_number,
                     'total_price' => $request->total_price,
                     'order_date' => $request->order_date ? $request->order_date : now(),
+                    'access_date' => $access_date ?? Carbon::parse($request->order_date)->addMonths(3),
                     'status' =>  ValidateRole::check('super_admin||admin') ? 'accepted' : 'pending',
                 ]);
 
