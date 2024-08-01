@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('information')->nullable();
             $table->uuid('spending_type_id')->constrained('spending_types')->onDelete('cascade');;
-            $table->decimal('amount');
+            $table->decimal('amount', 20, 2);
             $table->string('method');
             $table->string('bank')->nullable();
             $table->date('date');

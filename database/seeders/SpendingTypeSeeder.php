@@ -40,7 +40,9 @@ class SpendingTypeSeeder extends Seeder
             ['name' => 'Biaya Transportasi Penjualan'],
             ['name' => 'Biaya Transportasi'],
             ['name' => 'Belanja'],
+            ['name' => 'Utang Dagang'],
             ['name' => 'Biaya Listrik/Telepon'],
+            ['name' => 'Gaji Karyawan'],
             ['name' => 'Perlengkapan'],
             ['name' => 'Peralatan'],
             ['name' => 'Reward'],
@@ -57,10 +59,10 @@ class SpendingTypeSeeder extends Seeder
             ['name' => 'Biaya Event'],
             ['name' => 'Biaya Lain-lain'],
         ];
-        
+
         foreach ($spendingTypes as $type) {
             SpendingType::create($type);
         }
-        
+
     }
 }

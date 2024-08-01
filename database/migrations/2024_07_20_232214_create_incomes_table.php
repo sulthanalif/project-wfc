@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('incomes', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('information');
-            $table->decimal('amount');
+            $table->decimal('amount', 20, 2);
             $table->string('method');
             $table->string('bank')->nullable();
             $table->date('date');

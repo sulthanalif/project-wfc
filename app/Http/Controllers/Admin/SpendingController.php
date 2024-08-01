@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Spending;
 use App\Models\SpendingType;
 use Illuminate\Http\Request;
+use App\Exports\SpendingExport;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 
 class SpendingController extends Controller
@@ -15,6 +17,11 @@ class SpendingController extends Controller
     {
         $spendings = Spending::latest()->paginate(10);
         return view('cms.admin.finance.spending.index', compact('spendings'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new SpendingExport, 'Laporan_Pengeluaran.xlsx');
     }
 
     public function show(Spending $spending)

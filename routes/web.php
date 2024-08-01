@@ -27,6 +27,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Transaction\DetailOrderController;
 use App\Http\Controllers\Admin\ExportDeliveryOrderController;
 use App\Http\Controllers\Transaction\ExportInvoiceController;
+use Maatwebsite\Excel\Facades\Excel;
 
 // use App\Http\Controllers\Auth\AuthController;
 // use App\Http\Controllers\DashboardController;

@@ -21,7 +21,7 @@
                             <div>
                                 <label for="information" class="form-label">Nama Pengeluaran <span class="text-danger">*</span></label>
                                 <input id="information" name="information" type="text" class="form-control w-full"
-                                    placeholder="Masukkan Nama Pengeluaran" value="{{ old('information', $income->information) }}" required>
+                                    placeholder="Masukkan Nama Pengeluaran" value="{{ old('information', $spending->information) }}" required>
                                 @error('information')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -31,7 +31,7 @@
                             <div class="mt-3">
                                 <label for="date" class="form-label">Tanggal Pengeluaran <span class="text-danger">*</span></label>
                                 <input id="date" name="date" type="date" class="form-control w-full"
-                                    placeholder="Masukkan Jumlah Pengeluaran" value="{{ old('date', $income->date) }}" required>
+                                    placeholder="Masukkan Jumlah Pengeluaran" value="{{ old('date', $spending->date) }}" required>
                                 @error('date')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -43,7 +43,7 @@
                                 <select class="tom-select" id="spending_type_id" name="spending_type_id" required>
                                     <option disabled selected>Pilih...</option>
                                     @foreach ($spendingTypes as $spendingType)
-                                        <option value="{{ $spendingType->id }}" {{ old('spending_type_id', $income->spending_type_id) == $spendingType->id ? 'selected' : '' }}>{{ $spendingType->name }}</option>
+                                        <option value="{{ $spendingType->id }}" {{ old('spending_type_id', $spending->spending_type_id) == $spendingType->id ? 'selected' : '' }}>{{ $spendingType->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -52,7 +52,7 @@
                             <div class="">
                                 <label for="amount" class="form-label">Jumlah Pengeluaran <span class="text-danger">*</span></label>
                                 <input id="amount" name="amount" type="number" class="form-control w-full"
-                                    placeholder="Masukkan Jumlah Pengeluaran" value="{{ old('amount', $income->amount) }}" required>
+                                    placeholder="Masukkan Jumlah Pengeluaran" value="{{ old('amount', $spending->amount) }}" required>
                                 @error('amount')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -63,17 +63,17 @@
                                 <label for="method" class="form-label">Metode <span class="text-danger">*</span></label>
                                 <select class="form-select" id="method" name="method" required>
                                     <option disabled selected>Pilih...</option>
-                                    <option value="transfer" {{ old('method', $income->method) == 'transfer' ? 'selected' : ''}}>Transfer</option>
-                                    <option value="tunai" {{ old('method', $income->method) == 'tunai' ? 'selected' : ''}}>Tunai</option>
+                                    <option value="transfer" {{ old('method', $spending->method) == 'transfer' ? 'selected' : ''}}>Transfer</option>
+                                    <option value="tunai" {{ old('method', $spending->method) == 'tunai' ? 'selected' : ''}}>Tunai</option>
                                 </select>
                             </div>
                             <div class="mt-3" id="bank-field" style="display: none">
                                 <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
                                 <select class="form-select" id="bank" name="bank">
                                     <option disabled selected>Pilih...</option>
-                                    <option value="BRI" {{ old('bank', $income->bank) == 'BRI' ? 'selected' : ''}}>BRI</option>
-                                    <option value="BCA" {{ old('bank', $income->bank) == 'BCA' ? 'selected' : ''}}>BCA</option>
-                                    <option value="Mandiri" {{ old('bank', $income->bank) == 'Mandiri' ? 'selected' : ''}}>Mandiri</option>
+                                    <option value="BRI" {{ old('bank', $spending->bank) == 'BRI' ? 'selected' : ''}}>BRI</option>
+                                    <option value="BCA" {{ old('bank', $spending->bank) == 'BCA' ? 'selected' : ''}}>BCA</option>
+                                    <option value="Mandiri" {{ old('bank', $spending->bank) == 'Mandiri' ? 'selected' : ''}}>Mandiri</option>
                                 </select>
                             </div>
                         </div>

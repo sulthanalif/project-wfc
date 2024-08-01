@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\IncomeExport;
 use App\Models\Income;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IncomeController extends Controller
 {
@@ -14,6 +16,11 @@ class IncomeController extends Controller
     {
         $incomes = Income::latest()->paginate(10);
         return view('cms.admin.finance.income.index', compact('incomes'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new IncomeExport, 'Laporan_Pemasukan.xlsx');
     }
 
     public function create()
