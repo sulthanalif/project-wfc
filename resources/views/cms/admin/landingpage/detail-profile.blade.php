@@ -98,74 +98,73 @@
                             </div>
 
                 </form>
-                            <div class="mt-3">
-                                <label>Misi </label>
-                                <table class="table ">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Poin</th>
-                                            <th scope="col">
-                                                <a href="javascript:;" class="flex items-center ml-auto text-primary"
-                                                    data-tw-toggle="modal" data-tw-target="#create-confirmation-modal"> <i
-                                                        data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah </a>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($detailProfile->mission as $mission)
-                                            <tr>
-                                                <th scope="row">{{ $loop->iteration }}</th>
-                                                <td>{{ $mission->content }}</td>
-                                                <td>
-                                                    <a class="flex items-center mr-3 text-danger" href="javascript:;"
-                                                        data-tw-toggle="modal"
-                                                        data-tw-target="#delete-confirmation-modal{{ $mission->id }}">
-                                                        <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                                </td>
-                                            </tr>
-                                            <!-- BEGIN: Delete Confirmation Modal -->
-                                            <div id="delete-confirmation-modal{{ $mission->id }}" class="modal"
-                                                tabindex="-1" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-body p-0">
-                                                            <div class="p-5 text-center">
-                                                                <i data-lucide="x-circle"
-                                                                    class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                                                <div class="text-slate-500 mt-2">
-                                                                    Apakah anda yakin untuk menghapus data ini?
-                                                                    <br>
-                                                                    Proses tidak akan bisa diulangi.
-                                                                </div>
-                                                            </div>
-                                                            <div class="px-5 pb-8 text-center">
-                                                                <form
-                                                                    action="{{ route('landingpage.detailProfile.deleteMission', $mission) }}"
-                                                                    method="post">
-                                                                    @csrf
-                                                                    @method('delete')
-                                                                    <button type="submit"
-                                                                        class="btn btn-danger w-24">Hapus</button>
-                                                                    <button type="button" data-tw-dismiss="modal"
-                                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
+                <div class="mt-3">
+                    <label>Misi </label>
+                    <table class="table ">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Poin</th>
+                                <th scope="col">
+                                    <a href="javascript:;" class="flex items-center ml-auto text-primary"
+                                        data-tw-toggle="modal" data-tw-target="#create-confirmation-modal"> <i
+                                            data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah </a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($detailProfile->mission as $mission)
+                                <tr>
+                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <td>{{ $mission->content }}</td>
+                                    <td>
+                                        <a class="flex items-center mr-3 text-danger" href="javascript:;"
+                                            data-tw-toggle="modal"
+                                            data-tw-target="#delete-confirmation-modal{{ $mission->id }}">
+                                            <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                    </td>
+                                </tr>
+                                <!-- BEGIN: Delete Confirmation Modal -->
+                                <div id="delete-confirmation-modal{{ $mission->id }}" class="modal" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body p-0">
+                                                <div class="p-5 text-center">
+                                                    <i data-lucide="x-circle"
+                                                        class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                    <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                    <div class="text-slate-500 mt-2">
+                                                        Apakah anda yakin untuk menghapus data ini?
+                                                        <br>
+                                                        Proses tidak akan bisa diulangi.
                                                     </div>
                                                 </div>
+                                                <div class="px-5 pb-8 text-center">
+                                                    <form
+                                                        action="{{ route('landingpage.detailProfile.deleteMission', $mission) }}"
+                                                        method="post">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                                        <button type="button" data-tw-dismiss="modal"
+                                                            class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                    </form>
+                                                </div>
                                             </div>
-                                            <!-- END: Delete Confirmation Modal -->
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- END: Delete Confirmation Modal -->
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <!-- END: Form Layout -->
         </div>
+    </div>
+    <!-- END: Form Layout -->
+    </div>
     </div>
     <!-- BEGIN: Create Confirmation Modal -->
     <div id="create-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">

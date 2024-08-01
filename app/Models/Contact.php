@@ -17,4 +17,9 @@ class Contact extends Model
         'phoneNumber',
         'mapUrl'
     ];
+
+    public function numbers()
+    {
+        return $this->hasMany(ContactNumber::class);
+    }
 }

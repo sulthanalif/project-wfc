@@ -26,6 +26,8 @@ Route::delete('/landing-page/detail-profile/mission/{mission}', [DetailProfileCo
 //contact
 Route::get('/landing-page/contact', [ContactController::class, 'index'])->name('landingpage.contact');
 Route::put('/landing-page/contact/{contact}', [ContactController::class, 'update'])->name('landingpage.contact.update');
+Route::post('/landing-page/contact/{contact}/addOrUpdateNumber', [ContactController::class, 'addOrUpdateNumber'])->name('landingpage.contact.addOrUpdateNumber');
+Route::delete('/landing-page/contact/number/{contactNumber}', [ContactController::class, 'deleteNumber'])->name('landingpage.contact.deleteNumber');
 
 //gallery
 Route::get('/landing-page/gallery', [GalleryController::class, 'index'])->name('landingpage.gallery');
