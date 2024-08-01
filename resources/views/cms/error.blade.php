@@ -10,7 +10,7 @@
 
     <title>Smart WFC</title>
 
-    <link href="{{ asset('assets/logo2.PNG') }}" rel="shortcut icon">
+    <link href="{{ asset('assets/logo2.png') }}" rel="shortcut icon">
     <!-- BEGIN: CSS Assets-->
     <link rel="stylesheet" href="{{ asset('assets/cms/css/app.css') }}" />
     <!-- END: CSS Assets-->
@@ -22,8 +22,8 @@
         <!-- BEGIN: Error Page -->
         <div class="error-page flex flex-col lg:flex-row items-center justify-center h-screen text-center lg:text-left">
             <div class="-intro-x lg:mr-20">
-                <img alt="Animation Error" class="h-48 lg:h-auto"
-                    src="{{ asset('assets/cms/images/error-illustration.svg') }}">
+                <img alt="Animation Error" class="img-fluid object-fit-cover"
+                    src="{{ asset('assets/cms/images/error-illustration.png') }}">
             </div>
             <div class="text-white mt-10 lg:mt-0">
                 <div class="intro-x text-8xl font-medium">{{ $data['status'] }}</div>

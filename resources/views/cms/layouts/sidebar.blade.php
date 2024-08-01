@@ -75,6 +75,33 @@
                     </li>
                 </ul>
             </li>
+            @hasrole('finance_admin|super_admin')
+                <li>
+                    <a href="javascript:;" class="side-menu @if (Route::is('income*') || Route::is('spending*')) side-menu--active @endif">
+                        <div class="side-menu__icon"> <i data-lucide="dollar-sign"></i> </div>
+                        <div class="side-menu__title">
+                            Keuangan
+                            <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                        </div>
+                    </a>
+                    <ul class="@if (Route::is('income*') || Route::is('spending*')) side-menu__sub-open @endif">
+                        <li>
+                            <a href="{{ route('income.index') }}"
+                                class="side-menu {{ Route::is('income*') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Pemasukan </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('spending.index') }}"
+                                class="side-menu {{ Route::is('spending*') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Pengeluaran </div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endhasrole
             @hasrole('super_admin|admin')
                 <li>
                     <a href="javascript:;" class="side-menu @if (Route::is('user*') ||
