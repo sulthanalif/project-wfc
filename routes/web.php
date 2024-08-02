@@ -153,6 +153,11 @@ Route::group(['middleware' => 'auth',], function () {
 
         require __DIR__ . '/agent/administration.php';
     });
+
+    //option
+    Route::group(['middleware' => 'role:admin|super_admin'], function () {
+        require __DIR__ . '/admin/options.php';
+    });
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

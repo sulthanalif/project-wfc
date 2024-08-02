@@ -221,6 +221,15 @@
                             </li>
                         </ul>
                     </li>
+                    <li>
+                        <a href="{{ route('options.index') }}"
+                            class="side-menu {{ Route::is('options.index') ? 'side-menu--active' : '' }}">
+                            <div class="side-menu__icon"> <i data-lucide="settings"></i> </div>
+                            <div class="side-menu__title">
+                                Pengaturan
+                            </div>
+                        </a>
+                    </li>
                 @endhasrole
             @endhasrole
         </ul>
