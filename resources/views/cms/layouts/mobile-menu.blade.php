@@ -77,25 +77,29 @@
                             </ul>
                         </li> --}}
                         <li>
-                            <a href="{{ route('totalDeposit') }}" class="menu {{ Route::is('totalDeposit') ? 'menu--active' : '' }}">
+                            <a href="{{ route('totalDeposit') }}"
+                                class="menu {{ Route::is('totalDeposit') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Total Setoran </div>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('rproductDetail') }}" class="menu{{ Route::is('rproductDetail') ? 'menu--active' : '' }}">
+                            <a href="{{ route('rproductDetail') }}"
+                                class="menu{{ Route::is('rproductDetail') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Rincian Perpaket </div>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('instalment') }}" class="menu {{ Route::is('instalment') ? 'menu--active' : '' }}">
+                            <a href="{{ route('instalment') }}"
+                                class="menu {{ Route::is('instalment') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Rincian Cicilan </div>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('requirement') }}" class="menu {{ Route::is('requirement') ? 'menu--active' : '' }}">
+                            <a href="{{ route('requirement') }}"
+                                class="menu {{ Route::is('requirement') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Rincian Sub Produk </div>
                             </a>
@@ -103,33 +107,34 @@
                     </ul>
                 </li>
                 @hasrole('finance_admin|super_admin')
-                <li>
-                    <a href="javascript:;" class="menu @if (Route::is('income*') || Route::is('spending*')) menu--active @endif">
-                        <div class="menu__icon"> <i data-lucide="dollar-sign"></i> </div>
-                        <div class="menu__title"> Keuangan <i data-lucide="chevron-down" class="menu__sub-icon "></i>
-                        </div>
-                    </a>
-                    <ul class="@if (Route::is('income*') || Route::is('spending*')) menu__sub-open @endif">
-                        <li>
-                            <a href="{{ route('income.index') }}"
-                                class="menu {{ Route::is('income*') ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Pemasukan </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('spending.index') }}"
-                                class="menu {{ Route::is('spending*') ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Pengeluaran </div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                    <li>
+                        <a href="javascript:;" class="menu @if (Route::is('income*') || Route::is('spending*')) menu--active @endif">
+                            <div class="menu__icon"> <i data-lucide="dollar-sign"></i> </div>
+                            <div class="menu__title"> Keuangan <i data-lucide="chevron-down" class="menu__sub-icon "></i>
+                            </div>
+                        </a>
+                        <ul class="@if (Route::is('income*') || Route::is('spending*')) menu__sub-open @endif">
+                            <li>
+                                <a href="{{ route('income.index') }}"
+                                    class="menu {{ Route::is('income*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Pemasukan </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('spending.index') }}"
+                                    class="menu {{ Route::is('spending*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Pengeluaran </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 @endhasrole
                 @hasrole('super_admin|admin')
                     <li>
                         <a href="javascript:;" class="menu @if (Route::is('user*') ||
+                                Route::is('options.index') ||
                                 Route::is('package*') ||
                                 Route::is('product*') ||
                                 Route::is('sub-product*') ||
@@ -141,6 +146,7 @@
                             </div>
                         </a>
                         <ul class="@if (Route::is('user*') ||
+                                Route::is('options.index') ||
                                 Route::is('package*') ||
                                 Route::is('product*') ||
                                 Route::is('sub-product*') ||
@@ -168,13 +174,13 @@
                                     <div class="menu__title"> Paket </div>
                                 </a>
                             </li>
-                            {{-- <li>
-                                <a href="{{ route('catalog.index') }}"
-                                    class="menu {{ Route::is('catalog*') ? 'menu--active' : '' }}">
+                            <li>
+                                <a href="{{ route('options.index') }}"
+                                    class="menu {{ Route::is('options.index') ? 'menu--active' : '' }}">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Katalog </div>
+                                    <div class="menu__title"> Periode </div>
                                 </a>
-                            </li> --}}
+                            </li>
                             <li>
                                 <a href="{{ route('supplier.index') }}"
                                     class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
@@ -199,64 +205,64 @@
                         </ul>
                     </li>
                     @hasrole('super_admin')
-                    <li>
-                        <a href="javascript:;" class="menu @if (Route::is('landingpage*')) menu--active @endif">
-                            <div class="menu__icon"> <i data-lucide="box"></i> </div>
-                            <div class="menu__title"> Master <i data-lucide="chevron-down" class="menu__sub-icon "></i>
-                            </div>
-                        </a>
-                        <ul class="@if (Route::is('landingpage*')) menu__sub-open @endif">
-                            <li>
-                                <a href="{{ route('landingpage.header') }}"
-                                    class="menu {{ Route::is('landingpage.header') ? 'menu--active' : '' }}">
-                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Header </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.profile') }}"
-                                    class="menu {{ Route::is('product.index') ? 'menu--active' : '' }}">
-                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Profile </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.detailProfile') }}"
-                                    class="menu {{ Route::is('landingpage.detailProfile') ? 'menu--active' : '' }}">
-                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Detail Profile </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('supplier.index') }}"
-                                    class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
-                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Supplier </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.gallery') }}"
-                                    class="menu {{ Route::is('landingpage.gallery') ? 'menu--active' : '' }}">
-                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Galeri </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.review') }}"
-                                    class="menu {{ Route::is('landingpage.review') ? 'menu--active' : '' }}">
-                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Review </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.contact') }}"
-                                    class="menu {{ Route::is('landingpage.contact') ? 'menu--active' : '' }}">
-                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="menu__title"> Kontak </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                        <li>
+                            <a href="javascript:;" class="menu @if (Route::is('landingpage*')) menu--active @endif">
+                                <div class="menu__icon"> <i data-lucide="settings"></i> </div>
+                                <div class="menu__title"> Landing Page <i data-lucide="chevron-down" class="menu__sub-icon "></i>
+                                </div>
+                            </a>
+                            <ul class="@if (Route::is('landingpage*')) menu__sub-open @endif">
+                                <li>
+                                    <a href="{{ route('landingpage.header') }}"
+                                        class="menu {{ Route::is('landingpage.header') ? 'menu--active' : '' }}">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Header </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('landingpage.profile') }}"
+                                        class="menu {{ Route::is('product.index') ? 'menu--active' : '' }}">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Profile </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('landingpage.detailProfile') }}"
+                                        class="menu {{ Route::is('landingpage.detailProfile') ? 'menu--active' : '' }}">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Detail Profile </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('supplier.index') }}"
+                                        class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Supplier </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('landingpage.gallery') }}"
+                                        class="menu {{ Route::is('landingpage.gallery') ? 'menu--active' : '' }}">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Galeri </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('landingpage.review') }}"
+                                        class="menu {{ Route::is('landingpage.review') ? 'menu--active' : '' }}">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Review </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('landingpage.contact') }}"
+                                        class="menu {{ Route::is('landingpage.contact') ? 'menu--active' : '' }}">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Kontak </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     @endhasrole
                 @endhasrole
             </ul>

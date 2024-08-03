@@ -10,41 +10,6 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin|admin|agent')
                 <a href="{{ route('order.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Pesanan</a>
-                @hasrole('admin|super_admin')
-                <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#access-date-modal"
-                    class="dropdown-toggle btn px-2 box">
-                    <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="settings"></i>
-                    </span>
-                </a>
-                
-                <!-- BEGIN: Access Confirmation Modal -->
-                <div id="access-date-modal" class="modal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-body p-0">
-                                <div class="p-5">
-                                    <form action="{{ route('access-date.update') }}" method="post">
-                                        @csrf
-                                        <div class="mt-3">
-                                            <label class="form-label" for="date">Atur Batas Akses Ubah Produk <span
-                                                    class="text-danger">*</span></label>
-                                            <input type="date" id="date" name="date" class="form-control"
-                                                value="{{ old('date', $access_date->date ?? date('Y-m-d')) }}">
-                                        </div>
-
-                                        <div class="px-5 mt-3 pb-8 text-center">
-                                            <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                                            <button type="button" data-tw-dismiss="modal"
-                                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                        </div>
-                                </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- END: Access Confirmation Modal -->
-                @endhasrole
 
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $orders->firstItem() }} hingga
                     {{ $orders->lastItem() }} dari {{ $orders->total() }} data</div>

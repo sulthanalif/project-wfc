@@ -10,7 +10,7 @@ class OptionController extends Controller
     public function index()
     {
         $periods = Period::paginate(5);
-        return view('cms.options.index', compact('periods'));
+        return view('cms.admin.options.index', compact('periods'));
     }
 
     public function selectPeriod(Request $request)

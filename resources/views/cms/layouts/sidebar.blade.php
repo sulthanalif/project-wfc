@@ -105,6 +105,7 @@
             @hasrole('super_admin|admin')
                 <li>
                     <a href="javascript:;" class="side-menu @if (Route::is('user*') ||
+                            Route::is('options.index') ||
                             Route::is('package*') ||
                             Route::is('product*') ||
                             Route::is('sub-product*') ||
@@ -118,6 +119,7 @@
                         </div>
                     </a>
                     <ul class="@if (Route::is('user*') ||
+                            Route::is('options.index') ||
                             Route::is('package*') ||
                             Route::is('product*') ||
                             Route::is('sub-product*') ||
@@ -146,6 +148,13 @@
                             </a>
                         </li>
                         <li>
+                            <a href="{{ route('options.index') }}"
+                                class="side-menu {{ Route::is('options.index') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Periode </div>
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{ route('supplier.index') }}"
                                 class="side-menu {{ Route::is('supplier*') ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
@@ -171,7 +180,7 @@
                 @hasrole('super_admin')
                     <li>
                         <a href="javascript:;" class="side-menu @if (Route::is('landingpage*')) side-menu--active @endif">
-                            <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                            <div class="side-menu__icon"> <i data-lucide="settings"></i> </div>
                             <div class="side-menu__title"> Landing Page
                                 <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                             </div>
@@ -220,15 +229,6 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
-                    <li>
-                        <a href="{{ route('options.index') }}"
-                            class="side-menu {{ Route::is('options.index') ? 'side-menu--active' : '' }}">
-                            <div class="side-menu__icon"> <i data-lucide="settings"></i> </div>
-                            <div class="side-menu__title">
-                                Pengaturan
-                            </div>
-                        </a>
                     </li>
                 @endhasrole
             @endhasrole
