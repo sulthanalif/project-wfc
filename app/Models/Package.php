@@ -38,4 +38,9 @@ class Package extends Model
     {
         return $this->hasOneThrough(Catalog::class, PackageCatalog::class, 'package_id', 'id', 'id', 'catalog_id')->withDefault(['name' => '-']);
     }
+
+    public function period()
+    {
+        return $this->belongsTo(Period::class);
+    }
 }

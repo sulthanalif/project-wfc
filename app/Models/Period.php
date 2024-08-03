@@ -17,8 +17,8 @@ class Period extends Model
         'is_active',
     ];
 
-    public function user()
+    public function package()
     {
-        return $this->hasMany(UserPeriod::class);
+        return $this->hasMany(Package::class);
     }
 }
