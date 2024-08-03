@@ -18,9 +18,9 @@ class IncomeController extends Controller
         return view('cms.admin.finance.income.index', compact('incomes'));
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        return Excel::download(new IncomeExport, 'Laporan_Pemasukan.xlsx');
+        return Excel::download(new IncomeExport($request->start_date, $request->end_date), 'Laporan_Pemasukan.xlsx');
     }
 
     public function create()
