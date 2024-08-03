@@ -20,7 +20,7 @@ class Order extends Model
         'order_number',
         'total_price',
         'order_date',
-        'access_date',
+        // 'access_date',
         'status',
         'payment_status',
         'delivery_status',

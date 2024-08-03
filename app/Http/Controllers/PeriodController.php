@@ -15,6 +15,7 @@ class PeriodController extends Controller
            'start_date' => 'required|date',
            'end_date' => 'required|date',
            'description' => 'required|string',
+           'access_date' => 'required|date',
         //    'is_active' => 'required|boolean'
         ]);
 
@@ -28,6 +29,7 @@ class PeriodController extends Controller
                 $data = $period ?? new Period();
                 $data->start_date = $request->start_date;
                 $data->end_date = $request->end_date;
+                $data->access_date = $request->access_date;
                 $data->description = $request->description;
                 $data->save();
             });

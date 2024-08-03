@@ -12,8 +12,9 @@ class Period extends Model
     protected $fillable = [
         'start_date',
         'end_date',
+        'access_date',
         'description',
-        // 'is_active',
+        'is_active',
     ];
 
     public function user()

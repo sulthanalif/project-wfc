@@ -81,12 +81,12 @@ Route::group(['middleware' => 'auth',], function () {
             // Route::resource('distribution', DistributionController::class);
         });
 
-        //Options
-        Route::group(['prefix' => 'options'], function () {
-            //Access Date
-            Route::get('/access-date', [AccessDateController::class, 'index'])->name('access-date');
-            Route::post('/access-date', [AccessDateController::class, 'update'])->name('access-date.update');
-        });
+        // //Options
+        // Route::group(['prefix' => 'options'], function () {
+        //     //Access Date
+        //     Route::get('/access-date', [AccessDateController::class, 'index'])->name('access-date');
+        //     Route::post('/access-date', [AccessDateController::class, 'update'])->name('access-date.update');
+        // });
 
         //distribution
         Route::resource('distribution', DistributionController::class);
@@ -104,6 +104,7 @@ Route::group(['middleware' => 'auth',], function () {
         require __DIR__ . '/admin/masterSupplier.php';
         // require __DIR__ . '/admin/masterReview.php';
         require __DIR__ . '/admin/masterLandingpage.php';
+        require __DIR__ . '/admin/options.php';
 
         Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
     });
@@ -154,10 +155,10 @@ Route::group(['middleware' => 'auth',], function () {
         require __DIR__ . '/agent/administration.php';
     });
 
-    //option
-    Route::group(['middleware' => 'role:admin|super_admin'], function () {
-        require __DIR__ . '/admin/options.php';
-    });
+    // //option
+    // Route::group(['middleware' => 'role:admin|super_admin'], function () {
+    //     require __DIR__ . '/admin/options.php';
+    // });
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

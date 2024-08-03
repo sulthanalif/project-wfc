@@ -20,6 +20,7 @@ class Package extends Model
         // 'catalog_id',
         'description',
         'image',
+        'period_id'
     ];
 
 
