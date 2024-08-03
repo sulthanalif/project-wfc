@@ -13,7 +13,16 @@ class PackageExport implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        return Package::all();
+        $packages = Package::all();
+        $packages->map(function ($package) {
+           return [
+               'id' => $package->id,
+               'name' => $package->name,
+               'periode' => $package->period->description,
+               'description' => $package->description,
+            //    'image' => $package->image,
+           ];
+        });
     }
 
     public function headings(): array
@@ -21,10 +30,11 @@ class PackageExport implements FromCollection, WithHeadings
         return [
             'id',
             'name',
+            'periode',
             'description',
-            'image',
-            'created_at',
-            'updated_at',
+            // 'image',
+            // 'created_at',
+            // 'updated_at',
         ];
     }
 }

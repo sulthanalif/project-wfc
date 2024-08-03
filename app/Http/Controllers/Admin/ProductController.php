@@ -33,9 +33,9 @@ class ProductController extends Controller
         return view('cms.admin.products.index', compact('products'));
     }
 
-    public function export()
+    public function export($period)
     {
-        return Excel::download(new ProductExport, 'Product_Export_' . now() . '.xlsx');
+        return Excel::download(new ProductExport($period), 'Product_Export_' . now() . '.xlsx');
     }
 
     public function import(Request $request)
