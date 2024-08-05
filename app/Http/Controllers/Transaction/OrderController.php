@@ -37,7 +37,7 @@ class OrderController extends Controller
             // $access_date = AccessDate::first();
             $orders = Order::orderByDesc('created_at')->paginate(10);
 
-            return view('cms.transactions.index', compact('orders', 'access_date'));
+            return view('cms.transactions.index', compact('orders'));
         }
     }
 
@@ -51,7 +51,9 @@ class OrderController extends Controller
         $orders = Order::all()->count();
         $orderNumber = GenerateRandomString::make(8) . now()->format('dmY') . '-' . ($orders + 1);
 
-        $packages = Package::with('product')->get();
+        $packages = Package::with('product')->whereHas('period', function ($query) {
+            $query->where('is_active', 1);
+        })->get();
 
         $user = Auth::user();
         $roleUser = $user->roles->first();

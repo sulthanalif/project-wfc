@@ -10,7 +10,8 @@
                     {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
                     <form action="{{ route('order.editDetail', $item) }}" method="post" enctype="multipart/form-data">
                         @csrf
-                        <input type="text" name="sub_agent_id" id="sub_agent_id" value="{{ $item->sub_agent_id }}" hidden>
+                        <input type="text" name="sub_agent_id" id="sub_agent_id" value="{{ $item->sub_agent_id }}"
+                            hidden>
                         <div>
                             <label for="product_id" class="form-label">Produk Yang Dibeli <span
                                     class="text-danger">*</span></label>
@@ -19,9 +20,11 @@
                                     $product = \App\Helpers\GetProduct::detail($item->product->name);
                                 @endphp
                                 @foreach ($product as $v)
-                                    <option value="{{ $v->id }}"
-                                        {{ $item->product_id == $v->id ? 'selected' : '' }}>{{ $v->name }}
-                                        {{ $v->is_safe_point == 1 ? '(Titik Aman)' : '' }}</option>
+                                    @if ($v->package->package->period->is_active)
+                                        <option value="{{ $v->id }}"
+                                            {{ $item->product_id == $v->id ? 'selected' : '' }}>{{ $v->name }}
+                                            {{ $v->is_safe_point == 1 ? '(Titik Aman)' : '' }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                             @error('product_id')

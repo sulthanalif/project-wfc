@@ -161,11 +161,20 @@
                                     <td class="text-center">{{ $item->qty }}</td>
                                     <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}</td>
                                     @hasrole('agent')
-                                        <td class="text-center">
-                                            <a href="javascript:;" class="btn btn-primary btn-sm" data-tw-toggle="modal"
-                                                data-tw-target="#detail-confirmation-modal{{ $item->id }}"><i
-                                                    data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah</a>
-                                        </td>
+                                        @if (\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($item->product->package->package->period->access_date)))
+                                            <td class="text-center">
+                                                <button class="btn btn-primary btn-sm" disabled><i data-lucide="edit"
+                                                        class="w-4 h-4 mr-2"></i> Ubah</button>
+                                            </td>
+                                        @else
+                                            <!-- Tanggal akses belum terlewat, tombol bisa diklik -->
+                                            <td class="text-center">
+                                                <a href="javascript:;" class="btn btn-primary btn-sm" data-tw-toggle="modal"
+                                                    data-tw-target="#detail-confirmation-modal{{ $item->id }}"><i
+                                                        data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah</a>
+                                            </td>
+                                        @endif
+
                                         @include('cms.transactions.modal.detail-modal')
                                     @endhasrole
                                 </tr>
@@ -242,8 +251,7 @@
                                 @enderror
                             </div>
                             <div class="mt-3" id="bank-field" style="display: none">
-                                <label for="bank" class="form-label">Bank <span
-                                        class="text-danger">*</span></label>
+                                <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
                                 <select class="form-select mt-2 sm:mr-2" id="bank" name="bank" required>
                                     <option value="">Pilih...</option>
                                     <option value="BRI">BRI</option>
