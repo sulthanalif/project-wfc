@@ -95,7 +95,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="text-slate-500">{{ $spending->date }}</span>
+                                    <span class="text-slate-500">{{ \Carbon\Carbon::parse($spending->date)->format('d-m-Y') }}</span>
                                 </td>
                                 <td class="table-report__action w-56">
                                     <div class="flex justify-center items-center">

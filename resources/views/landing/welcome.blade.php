@@ -277,73 +277,81 @@
         <!-- start container -->
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                     <div class="title text-center mb-5">
                         <h6 class="mb-0 fw-bold text-primary">Review</h6>
                         <h2 class="f-40">{{ $reviewPage->title }}</h2>
                         <p class="text-muted">{{ $reviewPage->subTitle }}</p>
                     </div>
                 </div>
-                <div class="col-lg-10">
+                <div class="col-lg-12">
                     <div class="testi-slider" id="testi-slider">
                         @if ($reviews->isEmpty())
                             <div class="item">
-                                <div class="testi-box position-relative overflow-hidden">
+                                <div class="testi-box position-relative overflow-hidden justify-content-center">
                                     <h4 class="text-center fw-bold p-5">Belum ada ulasan</h4>
                                 </div>
                             </div>
                         @else
                             @foreach ($reviews as $review)
-                                <div class="item">
-                                    <div class="testi-box position-relative overflow-hidden">
-                                        <div class="row align-items-center">
-                                            <div class="col-md-5 text-center px-3">
-                                                @if ($review->image === 'image.jpg' || $review->image == null)
-                                                    <img src="{{ asset('assets/logo2.png') }}" alt="Gambar Produk"
-                                                        class="img-fluid">
-                                                @else
-                                                    <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $review->image]) }}"
-                                                        alt="" class="img-fluid object-fit-contain"
-                                                        style="max-height: 200px">
-                                                @endif
-                                            </div>
-                                            <div class="col-md-7">
-                                                <div class="p-4">
-                                                    <div class="border-bottom border-primary pb-1">
-                                                        <h5 class="fw-bold f-24 lh-sm">
-                                                            {{ $review->name }} <br>
-                                                            <span
-                                                                class="text-muted fw-normal f-16">({{ $review->as }})</span>
-                                                        </h5>
-                                                    </div>
-                                                    <p class="text-muted mt-2">
-                                                        {{ $review->body }}
-                                                    </p>
-                                                    <div class="d-flex align-items-center mt-3">
-                                                        <div class="date">
-                                                            @if ($review->rating == 5)
-                                                                <img src="{{ asset('assets/landing/images/testi/rate-5.png') }}"
-                                                                    class="img-fluid w-50">
-                                                            @elseif ($review->rating == 4)
-                                                                <img src="{{ asset('assets/landing/images/testi/rate-4.png') }}"
-                                                                    class="img-fluid w-50">
-                                                            @elseif ($review->rating == 3)
-                                                                <img src="{{ asset('assets/landing/images/testi/rate-3.png') }}"
-                                                                    class="img-fluid w-50">
-                                                            @elseif ($review->rating == 2)
-                                                                <img src="{{ asset('assets/landing/images/testi/rate-2.png') }}"
-                                                                    class="img-fluid w-50">
-                                                            @elseif ($review->rating == 1)
-                                                                <img src="{{ asset('assets/landing/images/testi/rate-1.png') }}"
-                                                                    class="img-fluid w-50">
-                                                            @endif
+                                @if ($review->isPublish())
+                                    <div class="item">
+                                        <div class="testi-box position-relative overflow-hidden">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-5 text-center px-1">
+                                                    @if ($review->image === 'image.jpg' || $review->image == null)
+                                                        <img src="{{ asset('assets/logo2.png') }}" alt="Gambar Produk"
+                                                            class="img-fluid">
+                                                    @else
+                                                        <img src="{{ route('getImage', ['path' => 'landingpage', 'imageName' => $review->image]) }}"
+                                                            alt="" class="img-fluid object-fit-contain"
+                                                            style="max-height: 200px">
+                                                    @endif
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <div class="p-4">
+                                                        <div class="border-bottom border-primary pb-1">
+                                                            <h5 class="fw-bold f-24 lh-sm">
+                                                                {{ $review->name }}<br>
+                                                                <span class="text-muted fw-normal f-16">(Dibuat pada
+                                                                    {{ \Carbon\Carbon::parse($review->created_at)->format('d-m-Y H:i') }})</span>
+                                                            </h5>
+                                                        </div>
+                                                        <p class="text-muted mt-2">
+                                                            {!! $review->body !!}
+                                                        </p>
+                                                        <div class="d-flex align-items-center mt-3">
+                                                            <div class="date">
+                                                                @if ($review->rating == 5)
+                                                                    <img src="{{ asset('assets/landing/images/testi/rate-5.png') }}"
+                                                                        class="img-fluid w-50">
+                                                                @elseif ($review->rating == 4)
+                                                                    <img src="{{ asset('assets/landing/images/testi/rate-4.png') }}"
+                                                                        class="img-fluid w-50">
+                                                                @elseif ($review->rating == 3)
+                                                                    <img src="{{ asset('assets/landing/images/testi/rate-3.png') }}"
+                                                                        class="img-fluid w-50">
+                                                                @elseif ($review->rating == 2)
+                                                                    <img src="{{ asset('assets/landing/images/testi/rate-2.png') }}"
+                                                                        class="img-fluid w-50">
+                                                                @elseif ($review->rating == 1)
+                                                                    <img src="{{ asset('assets/landing/images/testi/rate-1.png') }}"
+                                                                        class="img-fluid w-50">
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @else
+                                    <div class="item">
+                                        <div class="testi-box position-relative overflow-hidden justify-content-center">
+                                            <h4 class="text-center fw-bold p-5">Belum ada ulasan</h4>
+                                        </div>
+                                    </div>
+                                @endif
                             @endforeach
                         @endif
                     </div>
@@ -406,7 +414,8 @@
                                     <div class="flex-grow-1 ms-3">
                                         <h5 class="mb-1">Phone</h5>
                                         @foreach ($contact->numbers as $number)
-                                            <p class="f-14 mb-0 text-muted">{{ $number->description }}: {{ $number->number }}</p>
+                                            <p class="f-14 mb-0 text-muted">{{ $number->description }}:
+                                                {{ $number->number }}</p>
                                         @endforeach
                                     </div>
                                 </div>

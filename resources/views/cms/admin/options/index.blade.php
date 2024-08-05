@@ -12,7 +12,7 @@
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             <a href="javascript:;" class="btn btn-primary shadow-md mr-2" data-tw-toggle="modal"
-                data-tw-target="#create-confirmation-modal">Tambah Paket</a>
+                data-tw-target="#create-confirmation-modal">Tambah Periode</a>
             <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $periods->firstItem() }} hingga
                 {{ $periods->lastItem() }} dari {{ $periods->total() }} data</div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
@@ -67,13 +67,13 @@
                                 </td>
                                 <td>
                                     @if ($period->is_active)
-                                    <a class="flex items-centerjustify-center text-success" href="javascript:;"
+                                    <a class="flex items-center justify-center text-success" href="javascript:;"
                                             data-tw-toggle="modal"
                                             data-tw-target="#active-confirmation-modal{{ $period->id }}"><i
                                                 data-lucide="check-square" class="w-4 h-4 mr-2"></i>
                                             Aktif </a>
                                     @else
-                                        <a class="flex items-centerjustify-center text-danger" href="javascript:;"
+                                        <a class="flex items-center justify-center text-danger" href="javascript:;"
                                             data-tw-toggle="modal"
                                             data-tw-target="#active-confirmation-modal{{ $period->id }}"><i
                                                 data-lucide="x-square" class="w-4 h-4 mr-2"></i>

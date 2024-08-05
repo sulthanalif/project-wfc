@@ -17,12 +17,24 @@ class Review extends Model
 
     protected $fillable = [
         'review_page_id',
+        'user_id',
         'name',
-        'as',
+        // 'as',
         'rating',
         'body',
-        'image'
+        'image',
+        'publish'
     ];
+
+    public function isPublish()
+    {
+        return $this->publish;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function reviewPage()
     {

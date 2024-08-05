@@ -50,7 +50,7 @@ class ReviewPageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string'],
-            'as' => ['required', 'string'],
+            // 'as' => ['required', 'string'],
             'rating' => ['required', 'string'],
             'body' => ['required', 'string'],
             'image' => ['required', 'mimes:png,jpg,jpeg', 'max:2048', 'image'],
@@ -68,11 +68,13 @@ class ReviewPageController extends Controller
 
                 $review = new Review();
                 $review->review_page_id = $reviewPage->id;
+                $review->user_id = auth()->user()->id;
                 $review->name = $request->name;
-                $review->as = $request->as;
+                // $review->as = $request->as;
                 $review->rating = $request->rating;
                 $review->body = $request->body;
                 $review->image = $imageName;
+                $review->publish = 0;
                 $review->save();
             });
             return redirect()->back()->with('success', 'Review Added Successfully');
@@ -90,7 +92,7 @@ class ReviewPageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string'],
-            'as' => ['required', 'string'],
+            // 'as' => ['required', 'string'],
             'rating' => ['required', 'string'],
             'body' => ['required', 'string'],
         ]);
@@ -112,14 +114,14 @@ class ReviewPageController extends Controller
                     Storage::disk('public')->put('images/landingpage/' . $imageName, $request->file('image')->getContent());
 
                     $review->name = $request->name;
-                    $review->as = $request->as;
+                    // $review->as = $request->as;
                     $review->rating = $request->rating;
                     $review->body = $request->body;
                     $review->image = $imageName;
                     $review->save();
                 } else {
                     $review->name = $request->name;
-                    $review->as = $request->as;
+                    // $review->as = $request->as;
                     $review->rating = $request->rating;
                     $review->body = $request->body;
                     $review->save();
@@ -145,5 +147,30 @@ class ReviewPageController extends Controller
 
         $review->delete();
         return redirect()->back()->with('success', 'Review Deleted Successfully');
+    }
+
+    public function publishReview(Request $request)
+    {
+        try {
+            $reviewPublish = Review::where('publish', 1)->first();
+            $newPublish = Review::find($request->id);
+            if ($reviewPublish) {
+                $reviewPublish->publish = 0;
+                $reviewPublish->save();
+                $newPublish->publish = 1;
+                $newPublish->save();
+            } else {
+                $newPublish->publish = 1;
+                $newPublish->save();
+            }
+            return back()->with('success', 'Review has been published');
+        } catch (\Exception $e) {
+            $data = [
+                'message' => $e->getMessage(),
+                'status' => 400
+            ];
+
+            return view('cms.error', compact('data'));
+        }
     }
 }

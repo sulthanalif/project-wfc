@@ -41,5 +41,6 @@ Route::put('/landing-page/review/{review}', [ReviewPageController::class, 'updat
 Route::post('/landing-page/review/{review_page}/addReview', [ReviewPageController::class, 'addReview'])->name('landingpage.review.addReview');
 Route::put('/landing-page/review/updateReview/{review}', [ReviewPageController::class, 'updateReview'])->name('landingpage.review.updateReview');
 Route::delete('/landing-page/review/deleteReview/{review}', [ReviewPageController::class, 'deleteReview'])->name('landingpage.review.deleteReview');
+Route::post('/landing-page/review/publish', [ReviewPageController::class, 'publishReview'])->name('publishReview');
 
 

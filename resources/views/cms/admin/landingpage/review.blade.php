@@ -60,23 +60,30 @@
                     <div class="col-span-6">
                         <label>Daftar Review</label>
                     </div>
-                    <div class="col-span-6">
-                        <a href="javascript:;" class="flex items-center ml-auto text-primary" data-tw-toggle="modal"
-                            data-tw-target="#create-confirmation-modal"> <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
-                            Tambah </a>
-                    </div>
                 </div>
+                <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center justify-between mt-3">
+                    <a href="javascript:;" class="btn btn-primary shadow-md mr-2" data-tw-toggle="modal"
+                        data-tw-target="#create-confirmation-modal">Tambah Ulasan</a>
+
+                        <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $review->reviews->count() }} data</div>
+                    
+                    <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                        <div class="w-56 relative text-slate-500">
+                            <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
+                            <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
+                        </div>
+                    </div>
+                </div>                
                 <div class="overflow-auto lg:overflow-visible">
                     <table class="table mt-2">
                         <thead>
                             <tr>
-                                <th scope="col" class="text-center">#</th>
-                                <th scope="col">Nama</th>
-                                <th scope="col">Rating</th>
-                                <th scope="col">Komentar</th>
-                                <th scope="col" class="text-center">
-                                    Aksi
-                                </th>
+                                <th class="text-center whitespace-nowrap">#</th>
+                                <th class="text-center whitespace-nowrap">NAMA USER</th>
+                                <th class="text-center whitespace-nowrap">RATING</th>
+                                <th class="text-center whitespace-nowrap">KOMENTAR</th>
+                                <th class="text-center whitespace-nowrap">STATUS</th>
+                                <th class="text-center whitespace-nowrap">AKSI</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -92,7 +99,7 @@
                                             <div class="flex items-center">
                                                 <div class="w-9 h-9 image-fit zoom-in">
                                                     <img alt="PAKET SMART WFC"
-                                                        class="rounded-lg border-white shadow-md tooltip"
+                                                        class="rounded-lg border-white shadow-md"
                                                         src="{{ empty($dataReview->image) ? asset('assets/cms/images/profile.svg') : route('getImage', ['path' => 'landingpage', 'imageName' => $dataReview->image]) }}"
                                                         title="{{ $dataReview->as }}">
                                                 </div>
@@ -104,14 +111,64 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <p class="text-slate-500 flex items-center">{{ $dataReview->rating }}</p>
+                                            <p class="text-slate-500 flex items-center justify-center">
+                                                {{ $dataReview->rating }}</p>
                                         </td>
                                         <td>
                                             <p class="text-slate-500 flex items-center">{{ $dataReview->body }}</p>
                                         </td>
+                                        <td>
+                                            @if ($dataReview->isPublish())
+                                                <a class="flex items-center justify-center text-success" href="javascript:;"
+                                                    data-tw-toggle="modal"
+                                                    data-tw-target="#active-confirmation-modal{{ $dataReview->id }}"><i
+                                                        data-lucide="check-square" class="w-4 h-4 mr-2"></i>
+                                                    Publish </a>
+                                            @else
+                                                <a class="flex items-center justify-center text-danger" href="javascript:;"
+                                                    data-tw-toggle="modal"
+                                                    data-tw-target="#active-confirmation-modal{{ $dataReview->id }}"><i
+                                                        data-lucide="x-square" class="w-4 h-4 mr-2"></i>
+                                                    Unpublish </a>
+                                            @endif
+                                            <div id="active-confirmation-modal{{ $dataReview->id }}" class="modal"
+                                                tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-body p-0">
+                                                            <div class="p-5 text-center">
+                                                                <i data-lucide="alert-circle"
+                                                                    class="w-16 h-16 text-warning mx-auto mt-3"></i>
+                                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                                <div class="text-slate-500 mt-2">
+                                                                    Apakah anda yakin untuk
+                                                                    {{ $dataReview->publish ? 'Unpublish' : 'Publish' }}
+                                                                    review ini?
+                                                                    <br>
+                                                                    Proses tidak akan bisa diulangi.
+                                                                </div>
+                                                            </div>
+                                                            <div class="px-5 pb-8 text-center">
+                                                                <form action="{{ route('publishReview') }}" method="post">
+                                                                    @csrf
+                                                                    @method('post')
+                                                                    <input type="hidden" name="id"
+                                                                        value="{{ $dataReview->id }}">
+                                                                    <button type="submit"
+                                                                        class="btn btn-{{ $dataReview->publish ? 'danger' : 'primary' }} w-24">{{ $dataReview->publish ? 'Unpublish' : 'Publish' }}</button>
+                                                                    <button type="button" data-tw-dismiss="modal"
+                                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td class="w-56">
                                             <div class="flex justify-center items-center">
-                                                <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                <a class="flex items-center mr-3" href="javascript:;"
+                                                    data-tw-toggle="modal"
                                                     data-tw-target="#upstat-confirmation-modal{{ $dataReview->id }}"> <i
                                                         data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
                                                 <a class="flex items-center mr-3 text-danger" href="javascript:;"
@@ -122,8 +179,8 @@
                                         </td>
                                     </tr>
                                     <!-- BEGIN: Update Confirmation Modal -->
-                                    <div id="upstat-confirmation-modal{{ $dataReview->id }}" class="modal" tabindex="-1"
-                                        aria-hidden="true">
+                                    <div id="upstat-confirmation-modal{{ $dataReview->id }}" class="modal"
+                                        tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-body p-0">
@@ -139,31 +196,7 @@
                                                                 <input type="text" class="form-control w-full"
                                                                     id="name" name="name"
                                                                     placeholder="Masukkan Nama Pemberi Review.."
-                                                                    value="{{ $dataReview->name }}">
-                                                            </div>
-                                                            <div class="mt-3">
-                                                                <label for="as" class="form-label">Sebagai <span
-                                                                        class="text-danger">*</span></label>
-                                                                <select class="form-select mt-2 sm:mr-2" id="as"
-                                                                    name="as" required>
-                                                                    <option selected disabled>Pilih Peran Reviewer...
-                                                                    </option>
-                                                                    <option value="Pemilik"
-                                                                        {{ $dataReview->as == 'Pemilik' ? 'selected' : '' }}>
-                                                                        Pemilik</option>
-                                                                    <option value="Admin"
-                                                                        {{ $dataReview->as == 'Admin' ? 'selected' : '' }}>
-                                                                        Admin</option>
-                                                                    <option value="Agent"
-                                                                        {{ $dataReview->as == 'Agent' ? 'selected' : '' }}>
-                                                                        Agent</option>
-                                                                    <option value="Sub Agent"
-                                                                        {{ $dataReview->as == 'Sub Agent' ? 'selected' : '' }}>
-                                                                        Sub Agent</option>
-                                                                    <option value="Pelanggan"
-                                                                        {{ $dataReview->as == 'Pelanggan' ? 'selected' : '' }}>
-                                                                        Pelanggan</option>
-                                                                </select>
+                                                                    value="{{ $dataReview->name }}" required>
                                                             </div>
                                                             <div class="mt-3">
                                                                 <label for="rating" class="form-label">Rating <span
@@ -171,8 +204,8 @@
                                                                 <input type="number" class="form-control w-full"
                                                                     id="rating" name="rating"
                                                                     placeholder="Masukkan Rating.." max="5"
-                                                                    min="1" required
-                                                                    value="{{ $dataReview->rating }}">
+                                                                    min="1" value="{{ $dataReview->rating }}"
+                                                                    required>
                                                             </div>
                                                             <div class="mt-3">
                                                                 <label for="body" class="form-label">Komentar <span
@@ -278,18 +311,6 @@
                                 <label for="name" class="form-label">Nama <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control w-full" id="name" name="name"
                                     placeholder="Masukkan Nama Pemberi Review..">
-                            </div>
-                            <div class="mt-3">
-                                <label for="as" class="form-label">Sebagai <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select mt-2 sm:mr-2" id="as" name="as" required>
-                                    <option selected disabled>Pilih Peran Reviewer...</option>
-                                    <option value="Pemilik">Pemilik</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Agent">Agent</option>
-                                    <option value="Sub Agent">Sub Agent</option>
-                                    <option value="Pelanggan">Pelanggan</option>
-                                </select>
                             </div>
                             <div class="mt-3">
                                 <label for="rating" class="form-label">Rating <span
