@@ -28,6 +28,21 @@
                     </div>
 
                     <div class="mt-3">
+                        <label for="period_id" class="form-label">Periode Paket <span class="text-danger">*</span></label>
+                        <select id="period_id" name="period_id" class="form-select w-full">
+                            <option disabled selected>Pilih Periode Paket...</option>
+                            @foreach ($periods as $period)
+                                <option value="{{ $period->id }}" {{ old('period_id', $package->period_id) == $period->id ? 'selected' : ''}}>{{ $period->description }}</option>
+                            @endforeach
+                        </select>
+                        @error('period_id')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
+                    <div class="mt-3">
                         <label>Deskripsi <span class="text-danger">*</span></label>
                         <div class="mt-2">
                             <textarea id="description" name="description" class="editor">
@@ -65,16 +80,15 @@
                             </span>
                         @enderror
                     </div>
-            </div>
 
-            <div class="text-left mt-5">
-                <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 mr-1">Kembali</a>
+                    <div class="text-left mt-5">
+                        <button type="submit" class="btn btn-primary w-24">Simpan</button>
+                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
+                    </div>
+                </form>
+                <!-- END: Form Layout -->
             </div>
-            </form>
         </div>
-        <!-- END: Form Layout -->
-    </div>
     </div>
 @endsection
 

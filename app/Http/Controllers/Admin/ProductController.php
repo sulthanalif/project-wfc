@@ -28,9 +28,21 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::latest()->paginate(10);
+        $products = Product::whereHas('package.package.period', function ($query) {
+            $query->where('is_active', 1);
+        })->latest()->paginate(10);
 
         return view('cms.admin.products.index', compact('products'));
+    }
+
+    public function archive()
+    {
+        $products = Product::whereHas('package.package.period', function ($query) {
+            $query->where('is_active', 0);
+        })->latest()->paginate(10);
+        dd($products);
+
+        return view('cms.admin.products.archive', compact('products'));
     }
 
     public function export($period)
@@ -70,9 +82,14 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $suppliers = Supplier::all();
-        $packages = Package::all();
-        return view('cms.admin.products.create', compact('suppliers', 'packages'));
+        // $suppliers = Supplier::all();
+        // $packages = Package::all();
+        $packages = Package::join('periods', 'packages.period_id', '=', 'periods.id')
+        ->where('periods.is_active', 1)
+        ->select('packages.*')
+        ->get();
+
+        return view('cms.admin.products.create', compact( 'packages'));
     }
 
     /**

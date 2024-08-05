@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StorepackageRequest;
 use App\Http\Requests\UpdatepackageRequest;
 use App\Imports\PackageImport;
+use App\Models\Period;
 use Maatwebsite\Excel\Excel as ExcelExcel;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -26,17 +27,31 @@ class PackageController extends Controller
      */
     public function index(Request $request)
     {
-        $packages = Package::latest()->paginate(10);
+        // $packages = Package::join('periods', 'packages.period_id', '=', 'periods.id')
+        // ->where('periods.is_active', 1)
+        // ->select('packages.*')
+        // ->paginate(10);
+        $packages = Package::whereHas('period', function ($query) {
+            $query->where('is_active', 1);
+        })->latest()->paginate(10);
 
         return view('cms.admin.pakets.index', compact('packages'));
+    }
+
+    public function archive()
+    {
+        $packages = Package::whereHas('period', function ($query) {
+            $query->where('is_active', 0);
+        })->latest()->paginate(10);
+        dd($packages);
+
+        return view('cms.admin.packages.archive', compact('packages'));
     }
 
     public function export()
     {
         return Excel::download(new PackageExport, 'Paket_export_'.now().'.xlsx');
     }
-
-
 
     public function import(Request $request)
     {
@@ -73,7 +88,9 @@ class PackageController extends Controller
     public function create()
     {
         $catalogs = Catalog::all();
-        return view('cms.admin.pakets.create', compact('catalogs'));
+        $periods = Period::where('is_active', 1)->get();
+
+        return view('cms.admin.pakets.create', compact('catalogs', 'periods'));
     }
 
     /**
@@ -85,6 +102,7 @@ class PackageController extends Controller
             'name' => ['required', 'max:225', 'string'],
             'description' => ['required', 'max:500', 'string'],
             'catalog_id' => ['nullable', 'string'],
+            'period_id' => ['required', 'string'],
             'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
@@ -113,6 +131,7 @@ class PackageController extends Controller
 
                 $package = Package::create([
                     'name' => $request->name,
+                    'period_id' => $request->period_id,
                     'description' => $request->description,
                     'image' => $imageName
                 ]);
@@ -157,12 +176,9 @@ class PackageController extends Controller
      */
     public function edit(Package $package)
     {
-        $catalogs = Catalog::all();
-        if ($package) {
-            return view('cms.admin.pakets.edit', compact('package' , 'catalogs'));
-        } else {
-            return back()->with('error', 'Data Tidak Ditemukan!');
-        }
+        $periods = Period::where('is_active', 1)->get();
+
+        return view('cms.admin.pakets.edit', compact('package', 'periods'));
     }
 
     /**

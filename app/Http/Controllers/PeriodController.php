@@ -47,17 +47,16 @@ class PeriodController extends Controller
     public function activatePeriod(Request $request)
     {
         try {
-            $periodActive = Period::where('is_active', 1)->first();
-            $newPeriod = Period::find($request->id);
-            if ($periodActive) {
-                $periodActive->is_active = 0;
-                $periodActive->save();
-                $newPeriod->is_active = 1;
-                $newPeriod->save();
+            $period = Period::find($request->id);
+
+            if ($period->is_active) {
+                $period->is_active = 0;
             } else {
-                $newPeriod->is_active = 1;
-                $newPeriod->save();
+                $period->is_active = 1;
             }
+
+            $period->save();
+            
             return back()->with('success', 'Period has been activated');
         } catch (\Exception $e) {
             $data = [

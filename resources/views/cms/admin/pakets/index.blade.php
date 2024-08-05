@@ -25,6 +25,10 @@
                                 data-tw-target="#import-confirmation-modal"> <i data-lucide="upload"
                                     class="w-4 h-4 mr-2"></i> Import </a>
                         </li>
+                        <li>
+                            <a href="{{ route('package.archive') }}" class="dropdown-item"> <i data-lucide="archive"
+                                    class="w-4 h-4 mr-2"></i> Arsip </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -43,7 +47,9 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA PAKET</th>
+                        <th class="text-center whitespace-nowrap">NAMA PAKET</th>
+                        <th class="text-center whitespace-nowrap">PERIODE</th>
+                        <th class="text-center whitespace-nowrap">BATAS WAKTU</th>
                         <th class="whitespace-nowrap">FOTO</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
@@ -63,6 +69,14 @@
                                     <a class="text-slate-500 flex items-center mr-3"
                                         href="{{ route('package.show', $package) }}"> <i data-lucide="external-link"
                                             class="w-4 h-4 mr-2"></i> {{ $package->name }} </a>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 whitespace-nowrap text-center">{{ $package->period->description }}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 whitespace-nowrap text-center">{{ \Carbon\Carbon::parse($package->period->access_date)->format('d M Y') }}
+                                    </p>
                                 </td>
                                 <td class="w-40">
                                     <div class="flex">
@@ -90,7 +104,6 @@
                                     </div>
                                 </td>
                             </tr>
-
 
                             <!-- BEGIN: Delete Confirmation Modal -->
                             <div id="delete-confirmation-modal{{ $package->id }}" class="modal" tabindex="-1"

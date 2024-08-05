@@ -12,3 +12,5 @@ Route::post('/product/{product}/sub-product', [ProductController::class, 'addSub
 //hapus sub product
 Route::delete('/product/{product}/sub-product/{productSubProduct}', [ProductController::class, 'destroySub'])->name('product.destroySub');
 
+Route::get('/product/archive', [ProductController::class, 'archive'])->name('product.archive');
+

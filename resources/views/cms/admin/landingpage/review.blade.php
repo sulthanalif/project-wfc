@@ -152,8 +152,8 @@
                                                                 <form action="{{ route('publishReview') }}" method="post">
                                                                     @csrf
                                                                     @method('post')
-                                                                    <input type="hidden" name="id"
-                                                                        value="{{ $dataReview->id }}">
+                                                                    <input type="text" name="id"
+                                                                        value="{{ $dataReview->id }}" hidden>
                                                                     <button type="submit"
                                                                         class="btn btn-{{ $dataReview->publish ? 'danger' : 'primary' }} w-24">{{ $dataReview->publish ? 'Unpublish' : 'Publish' }}</button>
                                                                     <button type="button" data-tw-dismiss="modal"

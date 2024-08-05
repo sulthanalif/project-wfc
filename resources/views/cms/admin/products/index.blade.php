@@ -25,6 +25,10 @@
                                 data-tw-target="#import-confirmation-modal"> <i data-lucide="upload"
                                     class="w-4 h-4 mr-2"></i> Import </a>
                         </li>
+                        <li>
+                            <a href="{{ route('product.archive') }}" class="dropdown-item"> <i data-lucide="archive"
+                                    class="w-4 h-4 mr-2"></i> Arsip </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -43,9 +47,11 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA BARANG</th>
-                        <th class="whitespace-nowrap">HARGA</th>
-                        <th class="whitespace-nowrap">FOTO</th>
+                        <th class="text-center whitespace-nowrap">NAMA BARANG</th>
+                        <th class="text-center whitespace-nowrap">HARGA</th>
+                        <th class="text-center whitespace-nowrap">PAKET</th>
+                        <th class="text-center whitespace-nowrap">PERIODE</th>
+                        <th class="text-center whitespace-nowrap">FOTO</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
                 </thead>
@@ -68,11 +74,18 @@
                                         </a>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 flex items-center mr-3">Rp.
+                                    <p class="text-slate-500 text-center">Rp.
                                         {{ number_format($product->price, 0, ',', '.') }}/hari </p>
                                 </td>
+                                <td>
+                                    <p class="text-slate-500 text-center">{{ $product->package->package->name }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 whitespace-nowrap text-center">{{ $product->package->package->period->description }}
+                                    </p>
+                                </td>
                                 <td class="w-40">
-                                    <div class="flex">
+                                    <div class="flex items-center justify-center">
                                         <div class="w-10 h-10 image-fit zoom-in">
                                                 @if ($product->detail->image == 'image.jpg' || $product->detail->image == null)
                                                     <img alt="PAKET SMART WFC" class="rounded-full"

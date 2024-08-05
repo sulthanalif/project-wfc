@@ -28,6 +28,21 @@
                     </div>
 
                     <div class="mt-3">
+                        <label for="period_id" class="form-label">Periode Paket <span class="text-danger">*</span></label>
+                        <select id="period_id" name="period_id" class="form-select w-full">
+                            <option disabled selected>Pilih Periode Paket...</option>
+                            @foreach ($periods as $period)
+                                <option value="{{ $period->id }}">{{ $period->description }}</option>
+                            @endforeach
+                        </select>
+                        @error('period_id')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
+                    <div class="mt-3">
                         <label>Deskripsi <span class="text-danger">*</span></label>
                         <div class="mt-2">
                             <textarea id="description" name="description" class="editor">

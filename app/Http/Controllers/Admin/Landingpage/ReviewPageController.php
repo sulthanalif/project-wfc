@@ -140,8 +140,8 @@ class ReviewPageController extends Controller
 
     public function deleteReview(Review $review)
     {
-         // Delete old image
-         if ($review->image && file_exists(storage_path('app/public/images/landingpage/' . $review->image))) {
+        // Delete old image
+        if ($review->image && file_exists(storage_path('app/public/images/landingpage/' . $review->image))) {
             unlink(storage_path('app/public/images/landingpage/' . $review->image));
         }
 
@@ -152,17 +152,15 @@ class ReviewPageController extends Controller
     public function publishReview(Request $request)
     {
         try {
-            $reviewPublish = Review::where('publish', 1)->first();
-            $newPublish = Review::find($request->id);
-            if ($reviewPublish) {
-                $reviewPublish->publish = 0;
-                $reviewPublish->save();
-                $newPublish->publish = 1;
-                $newPublish->save();
-            } else {
-                $newPublish->publish = 1;
-                $newPublish->save();
+            $publish = Review::find($request->id);
+
+            if($publish->publish == 0){
+                $publish->publish = 1;
+            }else{
+                $publish->publish = 0;
             }
+            $publish->save();
+            
             return back()->with('success', 'Review has been published');
         } catch (\Exception $e) {
             $data = [
