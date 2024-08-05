@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\DashboardAdminController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Transaction\DetailOrderController;
 use App\Http\Controllers\Admin\ExportDeliveryOrderController;
+use App\Http\Controllers\ReviewAgentController;
 use App\Http\Controllers\Transaction\ExportInvoiceController;
 
 // use App\Http\Controllers\Auth\AuthController;
@@ -150,6 +151,7 @@ Route::group(['middleware' => 'auth',], function () {
             require __DIR__ . '/agent/profile.php';
             require __DIR__ . '/agent/changeEmailPass.php';
             require __DIR__ . '/agent/report.php';
+            Route::resource('/reviews', ReviewAgentController::class)->except('create', 'show', 'edit');
         });
 
         require __DIR__ . '/agent/administration.php';

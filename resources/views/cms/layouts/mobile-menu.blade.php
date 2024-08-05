@@ -307,6 +307,13 @@
                     </li>
                     <li class="menu__devider my-6"></li>
                     <li>
+                        <a href="{{ route('reviews.index') }}"
+                            class="menu {{ Route::is('reviews*') ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-lucide="message-square"></i> </div>
+                            <div class="menu__title"> Ulasan </div>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('sub-agent.index') }}"
                             class="menu {{ Route::is('sub-agent*') ? 'menu--active' : '' }}">
                             <div class="menu__icon"> <i data-lucide="users"></i> </div>

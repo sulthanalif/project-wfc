@@ -286,6 +286,15 @@
                         </div>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('reviews.index') }}"
+                        class="side-menu {{ Route::is('reviews*') ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"> <i data-lucide="message-square"></i> </div>
+                        <div class="side-menu__title">
+                            Ulasan
+                        </div>
+                    </a>
+                </li>
                 {{-- <li class="side-nav__devider my-6"></li>
                 <li>
                     <a href="javascript:;" class="side-menu">

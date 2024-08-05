@@ -20,7 +20,7 @@ class LandingpageController extends Controller
     {
         $products = Product::paginate(5);
         $reviewPage = ReviewPage::first();
-        $reviews = Review::all();
+        $reviews = Review::where('publish', 1)->get();
 
         $header = Header::first();
         $profile = Profile::first();
