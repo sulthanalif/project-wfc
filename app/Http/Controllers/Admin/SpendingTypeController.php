@@ -11,14 +11,22 @@ use Illuminate\Support\Facades\Validator;
 class SpendingTypeController extends Controller
 {
     //route: spendingType.index
-    public function index()
+    public function index(Request $request)
     {
-        $spendingTypes = SpendingType::latest()->paginate(5);
-        return view('cms.admin.finance.spendingtype.index', compact('spendingTypes'));
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $spendingTypes = SpendingType::all();
+        } else {
+            $perPage = intval($perPages);
+            $spendingTypes = SpendingType::latest()->paginate($perPage);
+        }
+        
+        return view('cms.admin.finance.spending.type.index', compact('spendingTypes'));
     }
 
     //route: spendingType.storeOrUpdate
-    public function storeAndUpdate(Request $request)
+    public function storeOrUpdate(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',

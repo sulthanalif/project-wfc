@@ -108,12 +108,12 @@
                 </li>
                 @hasrole('finance_admin|super_admin')
                     <li>
-                        <a href="javascript:;" class="menu @if (Route::is('income*') || Route::is('spending*')) menu--active @endif">
+                        <a href="javascript:;" class="menu @if (Route::is('income*') || Route::is('spending*') || Route::is('type-spending.index')) menu--active @endif">
                             <div class="menu__icon"> <i data-lucide="dollar-sign"></i> </div>
                             <div class="menu__title"> Keuangan <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                             </div>
                         </a>
-                        <ul class="@if (Route::is('income*') || Route::is('spending*')) menu__sub-open @endif">
+                        <ul class="@if (Route::is('income*') || Route::is('spending*') || Route::is('type-spending.index')) menu__sub-open @endif">
                             <li>
                                 <a href="{{ route('income.index') }}"
                                     class="menu {{ Route::is('income*') ? 'menu--active' : '' }}">
@@ -126,6 +126,13 @@
                                     class="menu {{ Route::is('spending*') ? 'menu--active' : '' }}">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                     <div class="menu__title"> Pengeluaran </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('type-spending.index') }}"
+                                    class="menu {{ Route::is('type-spending.index') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Akun </div>
                                 </a>
                             </li>
                         </ul>

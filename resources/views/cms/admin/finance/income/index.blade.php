@@ -159,6 +159,10 @@
             <div class="modal-content">
                 <div class="modal-body p-0">
                     <form id="filter-form">
+                        <div class="modal-header flex items-center justify-end">
+                            <button type="button" id="export_button" class="btn btn-outline-secondary"><i data-lucide="download"
+                                class="w-4 h-4 mr-2"></i> Download</button>
+                        </div>
                         <div class="p-5 text-center">
                             <div class="grid grid-cols-12 gap-4">
                                 <div class="col-span-12 lg:col-span-6 intro-y">
@@ -226,7 +230,7 @@
                     if (dateCell) {
                         const dateText = dateCell.textContent.trim();
                         const [day, month, year] = dateText.split('-').map(num => parseInt(num,
-                        10));
+                            10));
                         const rowDate = new Date(year, month - 1, day);
 
                         if (rowDate >= startDate && rowDate <= endDate) {
@@ -236,6 +240,19 @@
                         }
                     }
                 });
+            });
+
+            document.getElementById('export_button').addEventListener('click', function() {
+                const startDate = document.getElementById('start_date').value;
+                const endDate = document.getElementById('end_date').value;
+
+                if (!startDate || !endDate) {
+                    alert('Please select both start and end dates.');
+                    return;
+                }
+
+                const url = `{{ route('income.export') }}?start_date=${startDate}&end_date=${endDate}`;
+                window.location.href = url;
             });
         });
     </script>

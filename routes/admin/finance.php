@@ -11,6 +11,6 @@ Route::resource('income', IncomeController::class);
 Route::get('/export-spending', [SpendingController::class, 'export'])->name('spending.export');
 Route::get('/export-income', [IncomeController::class, 'export'])->name('income.export');
 
-Route::get('/spending-type', [SpendingTypeController::class, 'index'])->name('spendingType.index');
-Route::post('/spending-type', [SpendingTypeController::class, 'storeOrUpdate'])->name('spendingType.storeOrUpdate');
-Route::delete('/spending-type/{spendingType}', [SpendingTypeController::class, 'destroy'])->name('spendingType.destroy');
+Route::get('/spending-type', [SpendingTypeController::class, 'index'])->name('type-spending.index');
+Route::post('/spending-type', [SpendingTypeController::class, 'storeOrUpdate'])->name('type-spending.storeOrUpdate');
+Route::delete('/spending-type/{spendingType}', [SpendingTypeController::class, 'destroy'])->name('type-spending.destroy');
