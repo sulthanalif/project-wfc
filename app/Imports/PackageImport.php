@@ -18,6 +18,7 @@ class PackageImport implements ToModel, WithHeadingRow
         return new Package([
             'name' => $row['name'],
             'description' => $row['description'],
+            'period_id' => $row['period_id'],
         ]);
     }
 }
