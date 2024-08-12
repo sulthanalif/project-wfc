@@ -15,7 +15,8 @@ class IncomeController extends Controller
     public function index(Request $request)
     {
         $incomes = Income::latest()->paginate(10);
-        return view('cms.admin.finance.income.index', compact('incomes'));
+        $totalIncome = Income::sum('amount');
+        return view('cms.admin.finance.income.index', compact('incomes', 'totalIncome'));
     }
 
     public function export(Request $request)

@@ -14,7 +14,7 @@
                         <i data-lucide="credit-card" class="report-box__icon text-primary"></i>
                     </div>
                     <div class="text-2xl font-bold leading-8 mt-6">Rp.
-                        {{ number_format($incomes->sum('amount'), 0, ',', '.') }}</div>
+                        {{ number_format($totalIncome, 0, ',', '.') }}</div>
                     <div class="text-base text-slate-500 mt-1">Total Pemasukan</div>
                 </div>
             </div>
