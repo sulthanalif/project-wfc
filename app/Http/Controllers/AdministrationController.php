@@ -15,7 +15,7 @@ class AdministrationController extends Controller
     public function index()
     {
 
-        if (Auth::user()->active == 0){
+        if (Auth::user()->active == 0) {
             return view('cms.agen.new-agent.index');
         } else {
             return redirect()->route('dashboard-agent');
@@ -45,13 +45,13 @@ class AdministrationController extends Controller
 
         try {
             DB::transaction(function () use ($request, &$upload) {
-                $imageNameKTP = 'administration_'.Auth::user()->id. '_ktp' . '.' . $request->file('ktp')->getClientOriginalExtension();
+                $imageNameKTP = 'administration_' . Auth::user()->id . '_ktp' . '.' . $request->file('ktp')->getClientOriginalExtension();
                 // $imageNameKK = 'administration_'.Auth::user()->id. '_kk' . '.' . $request->file('kk')->getClientOriginalExtension();
-                $imageNameSPerjanjian = 'administration_'.Auth::user()->id. '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
+                $imageNameSPerjanjian = 'administration_' . Auth::user()->id . '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
 
-                Storage::disk('public')->put('images/administration/'. $imageNameKTP, $request->file('ktp')->getContent());
+                Storage::disk('public')->put('images/administration/' . $imageNameKTP, $request->file('ktp')->getContent());
                 // Storage::disk('public')->put('images/administration/'. $imageNameKK, $request->file('kk')->getContent());
-                Storage::disk('public')->put('images/administration/'. $imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
+                Storage::disk('public')->put('images/administration/' . $imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
 
                 $upload = Administration::create([
                     'user_id' => Auth::user()->id,
@@ -85,6 +85,78 @@ class AdministrationController extends Controller
             return view('cms.admin.administrations.index', compact('user'));
         } else {
             return back()->with('error', 'Data Tidak Ditemukan');
+        }
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validator = Validator::make($request->all(), [
+            'ktp' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'sPerjanjian' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            DB::transaction(function () use ($request, $user) {
+                if ($request->hasFile('ktp') && $request->hasFile('sPerjanjian')) {
+                    if ($user->administration->ktp && file_exists(storage_path('app/public/images/administration/' . $user->administration->ktp))) {
+                        unlink(storage_path('app/public/images/administration/' . $user->administration->ktp));
+                    }
+                    if ($user->administration->sPerjanjian && file_exists(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian))) {
+                        unlink(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian));
+                    }
+
+                    $imageNameKTP = 'administration_' . $user->id . '_ktp' . '.' . $request->file('ktp')->getClientOriginalExtension();
+                    // $imageNameKK = 'administration_'.$user->id. '_kk' . '.' . $request->file('kk')->getClientOriginalExtension();
+                    $imageNameSPerjanjian = 'administration_' . $user->id . '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
+
+                    Storage::disk('public')->put('images/administration/' . $imageNameKTP, $request->file('ktp')->getContent());
+                    // Storage::disk('public')->put('images/administration/'. $imageNameKK, $request->file('kk')->getContent());
+                    Storage::disk('public')->put('images/administration/' . $imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
+
+                    $user->administration()->update([
+                        'ktp' => $imageNameKTP,
+                        'sPerjanjian' => $imageNameSPerjanjian
+                    ]);
+
+                } elseif ($request->hasFile('ktp')) {
+                    if ($user->administration->ktp && file_exists(storage_path('app/public/images/administration/' . $user->administration->ktp))) {
+                        unlink(storage_path('app/public/images/administration/' . $user->administration->ktp));
+                    }
+
+                    $imageNameKTP = 'administration_' . $user->id . '_ktp' . '.' . $request->file('ktp')->getClientOriginalExtension();
+                    Storage::disk('public')->put('images/administration/' . $imageNameKTP, $request->file('ktp')->getContent());
+
+                    $user->administration()->update([
+                        'ktp' => $imageNameKTP
+                    ]);
+
+                } elseif ($request->hasFile('sPerjanjian')) {
+                    if ($user->administration->sPerjanjian && file_exists(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian))) {
+                        unlink(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian));
+                    }
+
+                    $imageNameSPerjanjian = 'administration_' . $user->id . '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
+                    Storage::disk('public')->put('images/administration/' . $imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
+
+                    $user->administration()->update([
+                        'sPerjanjian' => $imageNameSPerjanjian
+                    ]);
+                } else {
+                    return back()->with('error', 'Data Tidak Ditemukan');
+                }
+            });
+
+            return redirect()->back()->with('success', 'Data Sukses Diunggah!');
+        } catch (\Exception $e) {
+            $data = [
+                'message' => $e->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
     }
 }

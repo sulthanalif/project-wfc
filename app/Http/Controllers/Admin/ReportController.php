@@ -28,11 +28,13 @@ class ReportController extends Controller
 
             //total price order
             foreach ($agent->order as $order) {
-                $totalPriceOrder += $order->total_price;
+                if ($order->status == 'accepted') {
+                    $totalPriceOrder += $order->total_price;
 
-                //total deposit
-                foreach ($order->payment as $payment) {
-                    $totalDeposit += $payment->pay;
+                    //total deposit
+                    foreach ($order->payment as $payment) {
+                        $totalDeposit += $payment->pay;
+                    }
                 }
             }
 
@@ -81,10 +83,12 @@ class ReportController extends Controller
             $totalPrice = 0;
 
             foreach ($agent->order as $order) {
-                $totalPrice += $order->total_price;
+                if ($order->status == 'accepted') {
+                    $totalPrice += $order->total_price;
 
-                foreach ($order->detail as $detail) {
-                    $totalProduct += $detail->qty;
+                    foreach ($order->detail as $detail) {
+                        $totalProduct += $detail->qty;
+                    }
                 }
             }
 
