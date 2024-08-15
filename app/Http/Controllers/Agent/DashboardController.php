@@ -14,18 +14,20 @@ class DashboardController extends Controller
     public function index()
     {
         $agent = Auth::user();
-        $myOrders = Order::where('agent_id', $agent->id)->count();
+        $myOrders = Order::where('agent_id', $agent->id)->where('status', 'accepted')->count();
         $subAgents = SubAgent::where('agent_id', $agent->id)->count();
         $totalPriceOrder = 0;
         $totalDeposit = 0;
 
         //total price order
         foreach ($agent->order as $order) {
-            $totalPriceOrder += $order->total_price;
+            if ($order->status == 'accepted') {
+                $totalPriceOrder += $order->total_price;
 
-            //total deposit
-            foreach ($order->payment as $payment) {
-                $totalDeposit += $payment->pay;
+                //total deposit
+                foreach ($order->payment as $payment) {
+                    $totalDeposit += $payment->pay;
+                }
             }
         }
 
