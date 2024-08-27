@@ -10,23 +10,38 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin|agent')
                 <a href="{{ route('sub-agent.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Sub Agen</a>
-                <div class="dropdown">
-                    <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
-                        <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="plus"></i>
-                        </span>
-                    </button>
-                    <div class="dropdown-menu w-40">
-                        <ul class="dropdown-content">
-                            <li>
-                                <a href="{{ route('export.subAgent') }}" class="dropdown-item"> <i data-lucide="log-out"
-                                        class="w-4 h-4 mr-2"></i> Export </a>
-                            </li>
-                        </ul>
+                @hasrole('super_admin')
+                    <div class="dropdown">
+                        <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
+                            <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="plus"></i>
+                            </span>
+                        </button>
+                        <div class="dropdown-menu w-40">
+                            <ul class="dropdown-content">
+                                <li>
+                                    <a href="{{ route('export.subAgent') }}" class="dropdown-item"> <i data-lucide="log-out"
+                                            class="w-4 h-4 mr-2"></i> Export </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
+                @endhasrole
+            @endhasrole
+            <div class="w-auto relative text-slate-500 ml-2">
+                <select id="records_per_page" class="form-control box">
+                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+            @if ($subAgents instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $subAgents->firstItem() }} hingga
                     {{ $subAgents->lastItem() }} dari {{ $subAgents->total() }} data</div>
-            @endhasrole
+            @else
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $subAgents->count() }} data
+                </div>
+            @endif
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
@@ -119,8 +134,10 @@
                                                 <form action="{{ route('sub-agent.destroy', $subAgent) }}" method="post">
                                                     @csrf
                                                     @method('delete')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $subAgents->currentPage() }}">
+                                                    @if ($subAgents instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $subAgents->currentPage() }}">
+                                                    @endif
                                                     <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -139,9 +156,24 @@
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $subAgents->links('cms.layouts.paginate') }}
-        </div>
+        @if ($subAgents instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $subAgents->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
 @endsection
+
+@push('custom-scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+        });
+    </script>
+@endpush

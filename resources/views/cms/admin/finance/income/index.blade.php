@@ -46,8 +46,22 @@
             {{-- <button class="btn btn-primary shadow-md mr-2 ml-auto sm:ml-0"><span
                     class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="filter"></i>
                 </span></button> --}}
-            <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $incomes->firstItem() }} hingga
-                {{ $incomes->lastItem() }} dari {{ $incomes->total() }} data</div>
+            <div class="w-auto relative text-slate-500 ml-2">
+                <select id="records_per_page" class="form-control box">
+                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+
+            @if ($incomes instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $incomes->firstItem() }} hingga
+                    {{ $incomes->lastItem() }} dari {{ $incomes->total() }} data</div>
+            @else
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $incomes->count() }} data
+                </div>
+            @endif
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
@@ -128,8 +142,10 @@
                                                 <form action="{{ route('income.destroy', $income) }}" method="post">
                                                     @csrf
                                                     @method('delete')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $incomes->currentPage() }}">
+                                                    @if ($incomes instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $incomes->currentPage() }}">
+                                                    @endif
                                                     <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -147,9 +163,11 @@
         </div>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $incomes->links('cms.layouts.paginate') }}
-        </div>
+        @if ($incomes instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $incomes->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
 
@@ -160,8 +178,8 @@
                 <div class="modal-body p-0">
                     <form id="filter-form">
                         <div class="modal-header flex items-center justify-end">
-                            <button type="button" id="export_button" class="btn btn-outline-secondary"><i data-lucide="download"
-                                class="w-4 h-4 mr-2"></i> Download</button>
+                            <button type="button" id="export_button" class="btn btn-outline-secondary"><i
+                                    data-lucide="download" class="w-4 h-4 mr-2"></i> Download</button>
                         </div>
                         <div class="p-5 text-center">
                             <div class="grid grid-cols-12 gap-4">
@@ -253,6 +271,13 @@
 
                 const url = `{{ route('income.export') }}?start_date=${startDate}&end_date=${endDate}`;
                 window.location.href = url;
+            });
+
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
             });
         });
     </script>

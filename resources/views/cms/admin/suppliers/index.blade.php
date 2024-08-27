@@ -10,8 +10,21 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin|admin')
                 <a href="{{ route('supplier.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Supplier</a>
-                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $suppliers->firstItem() }} hingga
-                    {{ $suppliers->lastItem() }} dari {{ $suppliers->total() }} data</div>
+                <div class="w-auto relative text-slate-500 ml-2">
+                    <select id="records_per_page" class="form-control box">
+                        <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                        <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                        <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                    </select>
+                </div>
+                @if ($suppliers instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                    <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $suppliers->firstItem() }} hingga
+                        {{ $suppliers->lastItem() }} dari {{ $suppliers->total() }} data</div>
+                @else
+                    <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $suppliers->count() }} data
+                    </div>
+                @endif
             @endhasrole
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
                 <div class="w-56 relative text-slate-500">
@@ -66,8 +79,8 @@
                                 @hasrole('super_admin|admin')
                                     <td class="table-report__action w-56">
                                         <div class="flex justify-center items-center">
-                                            <a class="flex items-center mr-3" href="{{ route('supplier.edit', $supplier) }}"> <i
-                                                    data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
+                                            <a class="flex items-center mr-3" href="{{ route('supplier.edit', $supplier) }}">
+                                                <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
                                             <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
                                                 data-tw-target="#delete-confirmation-modal{{ $supplier->id }}"> <i
                                                     data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
@@ -97,8 +110,10 @@
                                                 <form action="{{ route('supplier.destroy', $supplier) }}" method="post">
                                                     @csrf
                                                     @method('delete')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $suppliers->currentPage() }}">
+                                                    @if ($suppliers instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $suppliers->currentPage() }}">
+                                                    @endif
                                                     <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -117,9 +132,24 @@
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $suppliers->links('cms.layouts.paginate') }}
-        </div>
+        @if ($suppliers instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $suppliers->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
 @endsection
+
+@push('custom-scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+        });
+    </script>
+@endpush

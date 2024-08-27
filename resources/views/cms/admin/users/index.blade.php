@@ -29,9 +29,23 @@
                         </ul>
                     </div>
                 </div>
+            @endhasrole
+            <div class="w-auto relative text-slate-500 ml-2">
+                <select id="records_per_page" class="form-control box">
+                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+
+            @if ($users instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $users->firstItem() }} hingga
                     {{ $users->lastItem() }} dari {{ $users->total() }} data</div>
-            @endhasrole
+            @else
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $users->count() }} data
+                </div>
+            @endif
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
@@ -72,7 +86,8 @@
                                                 title="{{ empty($user->agentProfile->phone_number) ? 'Nomer HP Belum Diisi' : $user->agentProfile->phone_number }}">
                                         </div>
                                         <div class="ml-4">
-                                            <a href="{{ route('user.show', $user) }}" class="font-medium whitespace-nowrap">
+                                            <a href="{{ route('user.show', $user) }}"
+                                                class="font-medium whitespace-nowrap">
                                                 @if ($user->roles->first()->name == 'agent')
                                                     {{ $user->agentProfile ? $user->agentProfile->name : $user->email }}
                                                 @else
@@ -180,8 +195,10 @@
                                                 <form action="{{ route('user.status', $user) }}" method="post">
                                                     @csrf
                                                     @method('put')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $users->currentPage() }}">
+                                                    @if ($users instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $users->currentPage() }}">
+                                                    @endif
                                                     {{-- <input type="hidden" name="active" value {{ ($user->active == 1) ? 0 : 1 }}> --}}
                                                     <button type="submit" class="btn btn-warning w-24">Ubah</button>
                                                     <button type="button" data-tw-dismiss="modal"
@@ -213,8 +230,10 @@
                                                 <form action="{{ route('user.destroy', $user) }}" method="post">
                                                     @csrf
                                                     @method('delete')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $users->currentPage() }}">
+                                                    @if ($users instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $users->currentPage() }}">
+                                                    @endif
                                                     <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -233,9 +252,11 @@
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $users->links('cms.layouts.paginate') }}
-        </div>
+        @if ($users instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $users->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
     <!-- BEGIN: Import Confirmation Modal -->
@@ -277,3 +298,16 @@
     </div>
     <!-- END: Import Confirmation Modal -->
 @endsection
+
+@push('custom-scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+        });
+    </script>
+@endpush

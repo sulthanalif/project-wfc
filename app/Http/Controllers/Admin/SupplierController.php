@@ -17,7 +17,14 @@ class SupplierController extends Controller
      */
     public function index(Request $request)
     {
-        $suppliers = Supplier::latest()->paginate(10);
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $suppliers = Supplier::all();
+        } else {
+            $perPage = intval($perPages);
+            $suppliers = Supplier::latest()->paginate($perPage);
+        }
 
         return view('cms.admin.suppliers.index', compact('suppliers'));
     }

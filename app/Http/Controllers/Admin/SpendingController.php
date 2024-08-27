@@ -15,7 +15,14 @@ class SpendingController extends Controller
 {
     public function index(Request $request)
     {
-        $spendings = Spending::latest()->paginate(10);
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $spendings = Spending::all();
+        } else {
+            $perPage = intval($perPages);
+            $spendings = Spending::latest()->paginate($perPage);
+        }
         $totalSpending = Spending::sum('amount');
         return view('cms.admin.finance.spending.index', compact('spendings', 'totalSpending'));
     }

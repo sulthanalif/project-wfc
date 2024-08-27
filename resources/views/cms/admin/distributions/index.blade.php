@@ -9,8 +9,22 @@
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             <a href="{{ route('distribution.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Distribusi</a>
-            <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $distributions->firstItem() }} hingga
-                {{ $distributions->lastItem() }} dari {{ $distributions->total() }} data</div>
+            <div class="w-auto relative text-slate-500">
+                <select id="records_per_page" class="form-control box">
+                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+
+            @if ($distributions instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $distributions->firstItem() }} hingga
+                    {{ $distributions->lastItem() }} dari {{ $distributions->total() }} data</div>
+            @else
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $distributions->count() }} data
+                </div>
+            @endif
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search...">
@@ -44,17 +58,20 @@
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('distribution.show', $distribution) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $distribution->distribution_number }} </a>
+                                        href="{{ route('distribution.show', $distribution) }}"> <i
+                                            data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+                                        {{ $distribution->distribution_number }} </a>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 flex items-center mr-3"> {{ \Carbon\Carbon::parse($distribution->date)->format('d M Y') }} </p>
+                                    <p class="text-slate-500 flex items-center mr-3">
+                                        {{ \Carbon\Carbon::parse($distribution->date)->format('d M Y') }} </p>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 flex items-center mr-3"> {{ $distribution->driver }} </p>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 flex items-center mr-3"> {{ $distribution->order->order_number }} </p>
+                                    <p class="text-slate-500 flex items-center mr-3">
+                                        {{ $distribution->order->order_number }} </p>
                                 </td>
 
                                 <td class="table-report__action w-56">
@@ -85,11 +102,14 @@
                                                 </div>
                                             </div>
                                             <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('distribution.destroy', $distribution) }}" method="post">
+                                                <form action="{{ route('distribution.destroy', $distribution) }}"
+                                                    method="post">
                                                     @csrf
                                                     @method('delete')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $distributions->currentPage() }}">
+                                                    @if ($distributions instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $distributions->currentPage() }}">
+                                                    @endif
                                                     <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -107,16 +127,24 @@
         </div>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $distributions->links('cms.layouts.paginate') }}
-        </div>
+        @if ($distributions instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $distributions->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible show flex items-center mb-2" role="alert">
-            <i data-lucide="alert-octagon" class="w-6 h-6 mr-2"></i> {{ session('error') }}
-            <button type="button" class="btn-close text-white" data-tw-dismiss="alert" aria-label="Close"> <i
-                    data-lucide="x" class="w-4 h-4"></i> </button>
-        </div>
-    @endif
 @endsection
+
+@push('custom-scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+        });
+    </script>
+@endpush

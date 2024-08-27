@@ -28,7 +28,14 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::latest()->paginate(10);
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $users = User::all();
+        } else {
+            $perPage = intval($perPages);
+            $users = User::latest()->paginate($perPage);
+        }
 
         // Tampilkan data ke view.
         return view('cms.admin.users.index', compact('users'));

@@ -19,7 +19,7 @@ class AgentImport implements ToModel, WithHeadingRow
     {
         $agent = new User([
             'email' => $row['email'],
-            'password' => Hash::make($row['email']),
+            'password' => Hash::make('password'),
             'active' => 0
         ]);
 

@@ -29,9 +29,23 @@
                         </ul>
                     </div>
                 </div>
+            @endhasrole
+            <div class="w-auto relative text-slate-500 ml-2">
+                <select id="records_per_page" class="form-control box">
+                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+
+            @if ($subProducts instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $subProducts->firstItem() }} hingga
                     {{ $subProducts->lastItem() }} dari {{ $subProducts->total() }} data</div>
-            @endhasrole
+            @else
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $subProducts->count() }} data
+                </div>
+            @endif
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
@@ -81,13 +95,15 @@
                                 @hasrole('super_admin|admin')
                                     <td class="table-report__action w-56">
                                         <div class="flex justify-center items-center">
-                                            <a class="flex items-center mr-3" href="{{ route('sub-product.edit', $subProduct) }}"> <i
-                                                    data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
-                                                    @if ($subProduct->product->isEmpty())
-                                                    <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                                        data-tw-target="#delete-confirmation-modal{{ $subProduct->id }}"> <i
-                                                            data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                                    @endif
+                                            <a class="flex items-center mr-3"
+                                                href="{{ route('sub-product.edit', $subProduct) }}"> <i data-lucide="edit"
+                                                    class="w-4 h-4 mr-1"></i> Ubah </a>
+                                            @if ($subProduct->product->isEmpty())
+                                                <a class="flex items-center text-danger" href="javascript:;"
+                                                    data-tw-toggle="modal"
+                                                    data-tw-target="#delete-confirmation-modal{{ $subProduct->id }}"> <i
+                                                        data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                            @endif
                                         </div>
                                     </td>
                                 @endhasrole
@@ -111,11 +127,14 @@
                                                 </div>
                                             </div>
                                             <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('sub-product.destroy', $subProduct) }}" method="post">
+                                                <form action="{{ route('sub-product.destroy', $subProduct) }}"
+                                                    method="post">
                                                     @csrf
                                                     @method('delete')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $subProducts->currentPage() }}">
+                                                    @if ($subProducts instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $subProducts->currentPage() }}">
+                                                    @endif
                                                     <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -134,9 +153,11 @@
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $subProducts->links('cms.layouts.paginate') }}
-        </div>
+        @if ($subProducts instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $subProducts->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
 
@@ -145,7 +166,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body p-0">
-                    <form action="{{route('import.sub-product')}}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('import.sub-product') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="p-5 text-center">
                             <div class="modal-header">
@@ -179,3 +200,16 @@
     </div>
     <!-- END: Import Confirmation Modal -->
 @endsection
+
+@push('custom-scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+        });
+    </script>
+@endpush

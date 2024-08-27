@@ -28,9 +28,19 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::whereHas('package.package.period', function ($query) {
-            $query->where('is_active', 1);
-        })->latest()->paginate(10);
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $products = Product::whereHas('package.package.period', function ($query) {
+                $query->where('is_active', 1);
+            })->latest()->get();
+        } else {
+            $perPage = intval($perPages);
+            $products = Product::whereHas('package.package.period', function ($query) {
+                $query->where('is_active', 1);
+            })->latest()->paginate($perPage);
+        }
+        
 
         return view('cms.admin.products.index', compact('products'));
     }

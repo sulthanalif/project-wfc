@@ -16,7 +16,14 @@ class SubProductController extends Controller
 {
     public function index(Request $request)
     {
-        $subProducts = SubProduct::latest()->paginate(10);
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $subProducts = SubProduct::all();
+        } else {
+            $perPage = intval($perPages);
+            $subProducts = SubProduct::latest()->paginate($perPage);
+        }
 
         return view('cms.admin.sub-products.index', compact('subProducts'));
     }

@@ -32,8 +32,22 @@
                     </ul>
                 </div>
             </div>
-            <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $products->firstItem() }} hingga
-                {{ $products->lastItem() }} dari {{ $products->total() }} data</div>
+            <div class="w-auto relative text-slate-500 ml-2">
+                <select id="records_per_page" class="form-control box">
+                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+
+            @if ($products instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $products->firstItem() }} hingga
+                    {{ $products->lastItem() }} dari {{ $products->total() }} data</div>
+            @else
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $products->count() }} data
+                </div>
+            @endif
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
@@ -58,7 +72,7 @@
                 <tbody>
                     @if ($products->isEmpty())
                         <tr>
-                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
                         @foreach ($products as $product)
@@ -70,8 +84,8 @@
                                     <a class="text-slate-500 flex items-center mr-3"
                                         href="{{ route('product.show', $product) }}"> <i data-lucide="external-link"
                                             class="w-4 h-4 mr-2"></i> {{ $product->name }}
-                                            {{ $product->is_safe_point == 1 ? '(Titik Aman)' : '' }}
-                                        </a>
+                                        {{ $product->is_safe_point == 1 ? '(Titik Aman)' : '' }}
+                                    </a>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 text-center">Rp.
@@ -81,20 +95,21 @@
                                     <p class="text-slate-500 text-center">{{ $product->package->package->name }}</p>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 whitespace-nowrap text-center">{{ $product->package->package->period->description }}
+                                    <p class="text-slate-500 whitespace-nowrap text-center">
+                                        {{ $product->package->package->period->description }}
                                     </p>
                                 </td>
                                 <td class="w-40">
                                     <div class="flex items-center justify-center">
                                         <div class="w-10 h-10 image-fit zoom-in">
-                                                @if ($product->detail->image == 'image.jpg' || $product->detail->image == null)
-                                                    <img alt="PAKET SMART WFC" class="rounded-full"
-                                                        src="{{ asset('assets/logo2.png') }}">
-                                                @else
-                                                    <img alt="PAKET SMART WFC" class="tooltip rounded-full"
-                                                        src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
-                                                        title="@if ($product->created_at == $product->updated_at) Diupload {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }} @else Diupdate {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y, H:m:i') }} @endif">
-                                                @endif
+                                            @if ($product->detail->image == 'image.jpg' || $product->detail->image == null)
+                                                <img alt="PAKET SMART WFC" class="rounded-full"
+                                                    src="{{ asset('assets/logo2.png') }}">
+                                            @else
+                                                <img alt="PAKET SMART WFC" class="tooltip rounded-full"
+                                                    src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
+                                                    title="@if ($product->created_at == $product->updated_at) Diupload {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }} @else Diupdate {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y, H:m:i') }} @endif">
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
@@ -129,8 +144,10 @@
                                                 <form action="{{ route('product.destroy', $product) }}" method="post">
                                                     @csrf
                                                     @method('delete')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $products->currentPage() }}">
+                                                    @if ($products instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $products->currentPage() }}">
+                                                    @endif
                                                     <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -148,9 +165,11 @@
         </div>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $products->links('cms.layouts.paginate') }}
-        </div>
+        @if ($products instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $products->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
 
@@ -193,3 +212,16 @@
     </div>
     <!-- END: Import Confirmation Modal -->
 @endsection
+
+@push('custom-scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+        });
+    </script>
+@endpush

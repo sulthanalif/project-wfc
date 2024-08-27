@@ -14,7 +14,14 @@ class IncomeController extends Controller
 {
     public function index(Request $request)
     {
-        $incomes = Income::latest()->paginate(10);
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $incomes = Income::all();
+        } else {
+            $perPage = intval($perPages);
+            $incomes = Income::latest()->paginate($perPage);
+        }
         $totalIncome = Income::sum('amount');
         return view('cms.admin.finance.income.index', compact('incomes', 'totalIncome'));
     }

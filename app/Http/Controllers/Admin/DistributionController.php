@@ -22,7 +22,14 @@ class DistributionController extends Controller
      */
     public function index(Request $request)
     {
-        $distributions = Distribution::latest()->paginate(10);
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $distributions = Distribution::all();
+        } else {
+            $perPage = intval($perPages);
+            $distributions = Distribution::latest()->paginate($perPage);
+        }
 
         return view('cms.admin.distributions.index', compact('distributions'));
     }

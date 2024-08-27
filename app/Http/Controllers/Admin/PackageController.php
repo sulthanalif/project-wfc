@@ -31,9 +31,19 @@ class PackageController extends Controller
         // ->where('periods.is_active', 1)
         // ->select('packages.*')
         // ->paginate(10);
-        $packages = Package::whereHas('period', function ($query) {
-            $query->where('is_active', 1);
-        })->latest()->paginate(10);
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $packages = Package::whereHas('period', function ($query) {
+                $query->where('is_active', 1);
+            })->latest()->get();
+        } else {
+            $perPage = intval($perPages);
+            $packages = Package::whereHas('period', function ($query) {
+                $query->where('is_active', 1);
+            })->latest()->paginate($perPage);
+        }
+        
 
         return view('cms.admin.pakets.index', compact('packages'));
     }

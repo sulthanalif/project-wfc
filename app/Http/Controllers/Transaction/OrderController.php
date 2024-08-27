@@ -29,13 +29,25 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
+        $perPages = $request->get('perPage') ?? 5;
+
         if (ValidateRole::check('agent')) {
-            $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->paginate(10);
+            if ($perPages == 'all') {
+                $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->get();
+            } else {
+                $perPage = intval($perPages);
+                $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->paginate($perPage);
+            }
 
             return view('cms.transactions.index', compact('orders'));
         } else {
             // $access_date = AccessDate::first();
-            $orders = Order::orderByDesc('created_at')->paginate(10);
+            if ($perPages == 'all') {
+                $orders = Order::orderByDesc('created_at')->get();
+            } else {
+                $perPage = intval($perPages);
+                $orders = Order::orderByDesc('created_at')->paginate($perPage);
+            }
 
             return view('cms.transactions.index', compact('orders'));
         }

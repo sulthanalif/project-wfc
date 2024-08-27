@@ -32,8 +32,22 @@
                     </ul>
                 </div>
             </div>
-            <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $packages->firstItem() }} hingga
-                {{ $packages->lastItem() }} dari {{ $packages->total() }} data</div>
+            <div class="w-auto relative text-slate-500 ml-2">
+                <select id="records_per_page" class="form-control box">
+                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+
+            @if ($packages instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $packages->firstItem() }} hingga
+                    {{ $packages->lastItem() }} dari {{ $packages->total() }} data</div>
+            @else
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $packages->count() }} data
+                </div>
+            @endif
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
@@ -57,7 +71,7 @@
                 <tbody>
                     @if ($packages->isEmpty())
                         <tr>
-                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
                         @foreach ($packages as $package)
@@ -124,8 +138,10 @@
                                                 <form action="{{ route('package.destroy', $package) }}" method="post">
                                                     @csrf
                                                     @method('delete')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $packages->currentPage() }}">
+                                                    @if ($packages instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $packages->currentPage() }}">
+                                                    @endif
                                                     <button type="submit" class="btn btn-danger w-24">Hapus</button>
                                                     <button type="button" data-tw-dismiss="modal"
                                                         class="btn btn-outline-secondary w-24 ml-1">Batal</button>
@@ -143,9 +159,11 @@
         </div>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
+        @if ($packages instanceof \Illuminate\Pagination\LengthAwarePaginator)
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
             {{ $packages->links('cms.layouts.paginate') }}
         </div>
+    @endif
         <!-- END: Pagination -->
     </div>
 
@@ -187,3 +205,16 @@
     </div>
     <!-- END: Delete Confirmation Modal -->
 @endsection
+
+@push('custom-scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+        });
+    </script>
+@endpush
