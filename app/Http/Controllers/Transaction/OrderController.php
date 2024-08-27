@@ -223,4 +223,23 @@ class OrderController extends Controller
             return response()->json($data, 400);
         }
     }
+
+    public function destroy(Order $order)
+    {
+        try {
+            DB::transaction(function () use ($order) {
+                $order->detail()->delete();
+                $order->payment()->delete() ?? null;
+                $order->delete();
+            });
+
+            return back()->with('success', 'Data Berhasil Dihapus!');
+        } catch (\Exception $e) {
+            $data = [
+                'message' => $e->getMessage(),
+                'status' => 400,
+            ];
+            return response()->json($data, 400);
+        }
+    }
 }

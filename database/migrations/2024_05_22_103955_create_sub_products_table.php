@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('unit');
             // $table->string('amount');
-            $table->decimal('price')->nullable();
+            $table->decimal('price', 10, 2)->nullable();
             $table->timestamps();
         });
     }
