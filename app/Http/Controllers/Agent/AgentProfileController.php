@@ -43,7 +43,7 @@ class AgentProfileController extends Controller
     {
         $validasi = Validator::make($request->all(), [
             'name' => 'required|string',
-            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
             'ktp_address' => 'string',
             'address' => 'string',
             'phone_number' => 'string',
