@@ -34,9 +34,9 @@ class AdministrationController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ktp' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            // 'kk' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'sPerjanjian' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'ktp' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
+            // 'kk' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
+            'sPerjanjian' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
         ]);
 
         if ($validator->fails()) {
@@ -91,8 +91,8 @@ class AdministrationController extends Controller
     public function update(Request $request, User $user)
     {
         $validator = Validator::make($request->all(), [
-            'ktp' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'sPerjanjian' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'ktp' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
+            'sPerjanjian' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
         ]);
 
         if ($validator->fails()) {
