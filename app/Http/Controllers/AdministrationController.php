@@ -14,7 +14,6 @@ class AdministrationController extends Controller
 {
     public function index()
     {
-
         if (Auth::user()->active == 0) {
             return view('cms.agen.new-agent.index');
         } else {

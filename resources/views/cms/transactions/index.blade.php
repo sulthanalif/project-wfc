@@ -188,8 +188,10 @@
                                                     <div class="mb-3" id="desc-fields" style="display: none">
                                                         <textarea id="description" name="description" class="form-control w-full" placeholder="Masukkan Description "></textarea>
                                                     </div>
+                                                    @if (request()->perPage != 'all')
                                                     <input type="hidden" name="page"
                                                         value="{{ $orders->currentPage() }}">
+                                                    @endif
                                                     <div class="text-center">
                                                         <button type="submit" class="btn btn-warning w-24">Ubah</button>
                                                         <button type="button" data-tw-dismiss="modal"
