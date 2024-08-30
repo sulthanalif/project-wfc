@@ -175,7 +175,7 @@ class OrderController extends Controller
             ]);
 
             if ($update) {
-                return redirect()->route('order.index')->with('success', 'Order Berhasil diterima');
+                return redirect()->back()->with('success', 'Order Berhasil diterima');
             } else {
                 return back()->with('error', 'Kesalahan');
             }
@@ -195,7 +195,7 @@ class OrderController extends Controller
             if ($update) {
                 Mail::to($order->agent->email)->send(new NotificationAccOrder($order));
 
-                return redirect()->route('order.index')->with('success', 'Order Status Berhasil Diubah');
+                return redirect()->back()->with('success', 'Order Status Berhasil Diubah');
             } else {
                 return back()->with('error', 'Kesalahan');
             }

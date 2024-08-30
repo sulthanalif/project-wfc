@@ -23,7 +23,7 @@
                 @endhasrole
             </tr>
         @else
-            @foreach ($order->payment as $payment)
+            @foreach ($order->payment->sortByDesc('date') as $payment)
                 <tr class="intro-x">
                     <td>
                         <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>

@@ -7,7 +7,7 @@
         <h2 class="text-lg font-medium mr-auto">
             Detail Pesanan
         </h2>
-        <a href="{{ route('order.index') }}" class="btn btn-primary w-24 mr-1">Kembali</a>
+        <a href="{{ url()->previous() }}" class="btn btn-primary w-24 mr-1">Kembali</a>
     </div>
 
     <div class="intro-y grid grid-cols-11 gap-5 mt-5">
@@ -252,7 +252,7 @@
                             </div>
                             <div class="mt-3" id="bank-field" style="display: none">
                                 <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
-                                <select class="form-select mt-2 sm:mr-2" id="bank" name="bank" required>
+                                <select class="form-select mt-2 sm:mr-2" id="bank" name="bank">
                                     <option value="">Pilih...</option>
                                     <option value="BRI">BRI</option>
                                     <option value="BCA">BCA</option>
@@ -308,7 +308,7 @@
         const bankField = document.getElementById('bank-field');
 
         methodSelect.addEventListener('change', (event) => {
-            if (event.target.value === 'transfer') {
+            if (event.target.value === 'Transfer') {
                 bankField.style.display = 'block';
             } else {
                 bankField.style.display = 'none';

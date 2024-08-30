@@ -61,7 +61,7 @@ class PaymentController extends Controller
         $validator = Validator::make($request->all(), [
             'pay' => ['required', 'numeric'],
             'method' => ['required', 'string'],
-            'bank' => ['sometimes', 'string'],
+            'bank' => ['nullable', 'string'],
             'note' => ['nullable', 'string'],
             'date' => ['required', 'date'],
         ]);
