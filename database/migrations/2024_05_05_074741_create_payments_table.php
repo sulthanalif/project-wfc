@@ -16,10 +16,10 @@ return new class extends Migration
             $table->uuid('order_id')->constrained('orders')->onDelete('cascade');
             $table->string('invoice_number');
             $table->decimal('pay', 15, 2);
-            $table->decimal('remaining_payment', 15, 2);
+            // $table->decimal('remaining_payment', 15, 2);
             $table->string('method');
             $table->string('bank')->nullable();
-            $table->string('installment');
+            // $table->string('installment');
             // $table->string('image')->nullable();
             $table->text('note')->nullable();
             $table->date('date');

@@ -19,10 +19,10 @@ class Payment extends Model
         'order_id',
         'invoice_number',
         'pay',
-        'remaining_payment',
+        // 'remaining_payment',
         'method',
         'bank',
-        'installment',
+        // 'installment',
         'note',
         'date',
     ];

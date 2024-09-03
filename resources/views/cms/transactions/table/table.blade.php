@@ -97,7 +97,7 @@
                 <th colspan="2" class="text-center">SISA PEMBAYARAN</th>
                 <th class="text-center">
                     Rp.
-                    {{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '.') }}
+                    {{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->total_price - $order->payment()->sum('pay') : $order->total_price, 0, ',', '.') }}
                 </th>
             </tr>
         </tfoot>

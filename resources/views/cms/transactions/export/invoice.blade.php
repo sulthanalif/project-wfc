@@ -138,7 +138,7 @@
                             Pembayaran: {{ $payment->method }}
                         </td>
                         <td class="col-6">
-                            Angsuran ke: {{ $payment->installment }}
+                            Angsuran ke: {{ $number }}
                             <br>
                             No Faktur: {{ $payment->invoice_number }}
                             <br>
@@ -160,7 +160,7 @@
                 </thead>
                 <tbody class="text-center">
                     <tr>
-                        <td>{{ $payment->installment }}</td>
+                        <td>{{ $number }}</td>
                         <td>{{ \Carbon\Carbon::parse($payment->date)->format('d M Y') }}</td>
                         <td>{{ strtoupper($payment->method) }}</td>
                         <td>{!! $payment->note ?? '-' !!}</td>
@@ -174,12 +174,12 @@
                     </tr>
                     <tr>
                         <td colspan=4 class="fw-bold">TOTAL DIANGSUR</td>
-                        <td class="text-center">Rp. {{ number_format(array_sum(array_column($order->payment->toArray(), 'pay')), 0, ',', '.') }}
+                        <td class="text-center">Rp. {{ number_format($installments, 0, ',', '.') }}
                         </td>
                     </tr>
                     <tr>
                         <td colspan=4 class="fw-bold">SISA TAGIHAN</td>
-                        <td class="text-center">Rp. {{ number_format($payment->remaining_payment, 0, ',', '.') }}</td>
+                        <td class="text-center">Rp. {{ number_format($remaining, 0, ',', '.') }}</td>
                     </tr>
                 </tfoot>
             </table>

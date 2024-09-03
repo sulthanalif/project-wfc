@@ -12,12 +12,18 @@ class ExportInvoiceController extends Controller
 {
     public function getInvoice(Order $order, Payment $payment)
     {
+        $oldPayments = $order->payment()->where('created_at', '<', $payment->created_at)->get();
+        // return response()->json(compact('oldPayments'));
         $data = [
+            'number' => $oldPayments->count() + 1,
             'title'=> 'Faktur Pembayaran Angsuran',
             'order' => $order,
-            'payment' => $payment
+            'payment' => $payment,
+            'installments' => $oldPayments->sum('pay') + $payment->pay,
+            'remaining' => $order->total_price - ($oldPayments->sum('pay') + $payment->pay),
         ];
 
+        // return response()->json($data);
 
         $pdf = Pdf::loadView('cms.transactions.export.invoice', $data);
         return $pdf->stream('invoice-'. $payment->invoice_number .'.pdf');

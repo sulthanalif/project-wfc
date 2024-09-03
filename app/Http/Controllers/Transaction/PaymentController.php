@@ -81,10 +81,10 @@ class PaymentController extends Controller
                     'order_id' => $order->id,
                     'invoice_number' => $invoiceNumber,
                     'pay' => $request->pay,
-                    'remaining_payment' => $existingPayment ? $existingPayment->remaining_payment - $request->pay : $order->total_price - $request->pay,
+                    // 'remaining_payment' => $existingPayment ? $existingPayment->remaining_payment - $request->pay : $order->total_price - $request->pay,
                     'method' => $request->method,
                     'bank' => $request->bank ?? '',
-                    'installment' => $existingPayment ? $existingPayment->installment + 1 : 1,
+                    // 'installment' => $existingPayment ? $existingPayment->installment + 1 : 1,
                     'note' => $request->note,
                     'date' => $request->date
                 ]);
