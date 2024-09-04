@@ -77,13 +77,29 @@
         <div class="col-span-12">
             <div class="box p-5 rounded-md">
                 <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                    <div class="font-medium text-base truncate">Detail Produk Pesanan</div>
+                    <div class="font-medium text-base truncate mr-2">Detail Produk Pesanan</div>
+                    <div class="w-auto relative text-slate-500 border rounded">
+                        <select id="records_per_page" class="form-control box">
+                            <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>Nama</option>
+                        </select>
+                    </div>
+                    @hasrole('agent')
+                        @if (
+                            \Carbon\Carbon::now()->greaterThan(
+                                \Carbon\Carbon::parse($order->detail->first()->product->package->package->period->access_date)))
+                            <!-- Konten jika kondisi true -->
+                        @else
+                            <a class="flex items-center ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
+                                data-tw-target="#add-product-modal"><i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah</a>
+                            @include('cms.transactions.modal.add-product')
+                        @endif
+                    @endhasrole
                 </div>
                 <div class="overflow-auto lg:overflow-visible -mt-3">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th class="whitespace-nowrap text-center">Sub Agent</th>
+                                <th class="whitespace-nowrap text-center">Nama</th>
                                 <th class="whitespace-nowrap text-center !py-5">Produk</th>
                                 <th class="whitespace-nowrap text-center">Harga per Item</th>
                                 <th class="whitespace-nowrap text-center">Qty</th>
@@ -172,6 +188,45 @@
                                                 <a href="javascript:;" class="btn btn-primary btn-sm" data-tw-toggle="modal"
                                                     data-tw-target="#detail-confirmation-modal{{ $item->id }}"><i
                                                         data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah</a>
+                                                @if ($item->qty == 0)
+                                                    <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                        data-tw-toggle="modal"
+                                                        data-tw-target="#delete-confirmation-modal{{ $item->id }}"><i
+                                                            data-lucide="trash" class="w-4 h-4 mr-2"></i> Hapus</a>
+                                                    <!-- BEGIN: Delete Confirmation Modal -->
+                                                    <div id="delete-confirmation-modal{{ $item->id }}" class="modal"
+                                                        tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-body p-0">
+                                                                    <div class="p-5 text-center">
+                                                                        <i data-lucide="x-circle"
+                                                                            class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                                        <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                                        <div class="text-slate-500 mt-2">
+                                                                            Apakah anda yakin untuk menghapus data ini?
+                                                                            <br>
+                                                                            Proses tidak akan bisa diulangi.
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="px-5 pb-8 text-center">
+                                                                        <form action="#" method="post">
+                                                                            @csrf
+                                                                            @method('delete')
+                                                                            <input type="hidden" name="page"
+                                                                                value="{{ $item->id }}">
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger w-24">Hapus</button>
+                                                                            <button type="button" data-tw-dismiss="modal"
+                                                                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- END: Delete Confirmation Modal -->
+                                                @endif
                                             </td>
                                         @endif
 

@@ -162,7 +162,12 @@ class OrderController extends Controller
 
         // $product= GetProduct::detail('Product PHL 1');
         // return response()->json($product);
-        return view('cms.transactions.detail', compact('order'));
+        $packages = Package::with('product')->whereHas('period', function ($query) {
+            $query->where('is_active', 1);
+        })->get();
+        $agents = auth()->user();
+
+        return view('cms.transactions.detail', compact(['order', 'packages', 'agents']));
     }
 
 
