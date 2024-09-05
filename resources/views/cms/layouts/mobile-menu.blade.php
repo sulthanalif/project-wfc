@@ -25,12 +25,19 @@
                         <div class="menu__title"> Transaksi <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                         </div>
                     </a>
-                    <ul class="@if (Route::is('order*') || Route::is('distribution*')) menu__sub-open @endif">
+                    <ul class="@if (Route::is('order*') || Route::is('distribution*') || Route::is('payment*')) menu__sub-open @endif">
                         <li>
                             <a href="{{ route('order.index') }}"
                                 class="menu {{ Route::is('order*') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Pesanan </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('payment.index') }}"
+                                class="menu {{ Route::is('payment*') ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Pembayaran </div>
                             </a>
                         </li>
                         <li>

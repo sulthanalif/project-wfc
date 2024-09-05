@@ -2,23 +2,73 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use App\Models\User;
 use App\Models\Order;
-use App\Models\Payment;
 // use Illuminate\Routing\Controller;
+use App\Models\Package;
+use App\Models\Payment;
 use Illuminate\Http\Request;
+use App\Helpers\ValidateRole;
+use App\Mail\NotificationPayment;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Helpers\GenerateRandomString;
-use App\Mail\NotificationPayment;
 use Illuminate\Support\Facades\Mail;
+use App\Helpers\GenerateRandomString;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
+    public function index(Request $request) {
+        $perPages = $request->get('perPage') ?? 10;
+        
+        if (ValidateRole::check('agent')) {
+            if ($perPages == 'all') {
+                $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->get();
+            } else {
+                $perPage = intval($perPages);
+                $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->paginate($perPage);
+            }
 
+            return view('cms.transactions.index', compact('orders'));
+        } else {
+            if ($perPages == 'all') {
+                $orders = Order::with('agent.agentProfile')->get()->groupBy('agent_id');
+            } else {
+                $perPage = intval($perPages);
+                $orders = Order::with('agent.agentProfile')->paginate($perPage)->groupBy('agent_id');
+            }
 
+            return view('cms.admin.payment.index', compact('orders'));
+        }
+    }
 
+    public function show(User $user, Request $request)
+    {
+        $perPages = $request->get('perPage') ?? 10;
+        
+        $packages = Package::with('product')->whereHas('period', function ($query) {
+            $query->where('is_active', 1);
+        })->get();
+
+        if ($perPages == 'all') {
+            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->get();
+        } else {
+            $perPage = intval($perPages);
+            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->paginate($perPage);
+        }
+        
+        return view('cms.admin.payment.show', compact('user', 'packages', 'orders'));
+    }
+
+    public function showPayment(User $user, Order $order)
+    {        
+        $packages = Package::with('product')->whereHas('period', function ($query) {
+            $query->where('is_active', 1);
+        })->get();
+        
+        return view('cms.admin.payment.detail', compact('packages', 'order', 'user'));
+    }
 
     public function changePaymentStatus(Request $request, Payment $payment)
     {

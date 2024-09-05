@@ -19,12 +19,19 @@
                         <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                     </div>
                 </a>
-                <ul class="@if (Route::is('order*') || Route::is('distribution*')) side-menu__sub-open @endif">
+                <ul class="@if (Route::is('order*') || Route::is('distribution*') || Route::is('payment*')) side-menu__sub-open @endif">
                     <li>
                         <a href="{{ route('order.index') }}"
                             class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Pesanan </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('payment.index') }}"
+                            class="side-menu {{ Route::is('payment*') ? 'side-menu--active' : '' }}">
+                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                            <div class="side-menu__title"> Pembayaran </div>
                         </a>
                     </li>
                     <li>
