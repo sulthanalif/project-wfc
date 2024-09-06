@@ -83,12 +83,15 @@ class DetailOrderController extends Controller
                 $order->total_price = $order->detail->sum('sub_price');
                 $order->save();
 
-                // if ($payments->count() > 0) {
-                //     foreach ($payments as $key => $payment) {
-                //         $payment->remaining_payment = $key == 0 ? $order->total_price - $payment->pay : $payments[$key - 1]->remaining_payment - $payment->pay;
-                //         $payment->save();
-                //     }
-                // }
+                if ($order->payment()->count() > 0) {
+                    if ($order->payment()->sum('pay') == $order->total_price) {
+                        $order->payment_status = 'paid';
+                        $order->save();
+                    } else {
+                        $order->payment_status = 'pending';
+                        $order->save();
+                    }
+                }
             });
 
             return back()->with('success', 'Data Berhasil Diperbaharui!');
@@ -130,6 +133,16 @@ class DetailOrderController extends Controller
                 $updateOrder = $order->update([
                     'total_price' => $order->total_price + $request->total_price,
                 ]);
+
+                if ($order->payment()->count() > 0) {
+                    if ($order->payment()->sum('pay') == $order->total_price) {
+                        $order->payment_status = 'paid';
+                        $order->save();
+                    } else {
+                        $order->payment_status = 'pending';
+                        $order->save();
+                    }
+                }
             });
             if ($updateOrder) {
                 return redirect()->back()->with('success', 'Item Telah Ditambahkan');
