@@ -40,7 +40,7 @@ class ProductController extends Controller
                 $query->where('is_active', 1);
             })->latest()->paginate($perPage);
         }
-        
+
 
         return view('cms.admin.products.index', compact('products'));
     }
@@ -350,7 +350,7 @@ class ProductController extends Controller
         $delete =  $product->delete();
 
         if ($delete) {
-            return redirect()->route('product.index', ['page' => $request->page])->with('success', 'Data Berhasil Dihapus');
+            return redirect()->back()->with('success', 'Data Berhasil Dihapus');
         } else {
             return back()->with('error', 'Data Gagal Dihapus!');
         }

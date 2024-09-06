@@ -36,9 +36,13 @@ class DetailOrderController extends Controller
                     ->first();
 
                 if ($detail->product_id == $request->product_id) {
-                    $detail->qty = $request->qty;
-                    $detail->sub_price = $product->total_price * $request->qty;
-                    $detail->save();
+                    if ($request->qty <= 0) {
+                        $detail->delete();
+                    } else {
+                        $detail->qty = $request->qty;
+                        $detail->sub_price = $product->total_price * $request->qty;
+                        $detail->save();
+                    }
                 } else {
                     if ($product_safe_point) {
                         $existingSafePointDetail = OrderDetail::where('order_id', $order->id)
@@ -79,17 +83,65 @@ class DetailOrderController extends Controller
                 $order->total_price = $order->detail->sum('sub_price');
                 $order->save();
 
-                if ($payments->count() > 0) {
-                    foreach ($payments as $key => $payment) {
-                        $payment->remaining_payment = $key == 0 ? $order->total_price - $payment->pay : $payments[$key - 1]->remaining_payment - $payment->pay;
-                        $payment->save();
-                    }
-                }
+                // if ($payments->count() > 0) {
+                //     foreach ($payments as $key => $payment) {
+                //         $payment->remaining_payment = $key == 0 ? $order->total_price - $payment->pay : $payments[$key - 1]->remaining_payment - $payment->pay;
+                //         $payment->save();
+                //     }
+                // }
             });
 
             return back()->with('success', 'Data Berhasil Diperbaharui!');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function addItems(Request $request, Order $order)
+    {
+        // return response()->json($request->all());
+        try {
+            DB::transaction(function () use ($request, $order, &$updateOrder) {
+
+
+                $products = json_decode($request->products, true);
+
+                // dd($products);
+
+                // Membuat OrderDetail untuk setiap produk
+                foreach ($products as $product) {
+                    // Mendapatkan detail produk berdasarkan productId
+                    $productDetail = Product::findOrFail($product['productId']);
+
+                    // Membuat OrderDetail untuk setiap produk
+                    OrderDetail::create([
+                        'order_id' => $order->id,
+                        // 'sub_agent_id' => $request->sub_agent_item,
+                        'sub_agent_id' => $product['subAgentId'],
+                        // 'name' => $productDetail->name,
+                        'product_id' => $product['productId'],
+                        // 'price' => $productDetail->price,
+                        'sub_price' => $product['subTotal'],
+                        'qty' => $product['qty']
+                    ]);
+                }
+
+                // $access_date = AccessDate::first();
+                $updateOrder = $order->update([
+                    'total_price' => $order->total_price + $request->total_price,
+                ]);
+            });
+            if ($updateOrder) {
+                return redirect()->back()->with('success', 'Item Telah Ditambahkan');
+            } else {
+                return redirect()->back()->with('error', 'Item Gagal Ditambahkan');
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
         }
     }
 
@@ -110,8 +162,7 @@ class DetailOrderController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request) {
-            });
+            DB::transaction(function () use ($request) {});
         } catch (\Throwable $th) {
             //throw $th;
         }

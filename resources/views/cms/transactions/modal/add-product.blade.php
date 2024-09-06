@@ -7,7 +7,7 @@
             <div class="modal-body p-0">
                 <div class="p-5">
                     {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
-                    <form id="orderForm" action="#" method="post" enctype="multipart/form-data">
+                    <form id="orderForm" action="{{ route('order.addItems', $order) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
                         <div>

@@ -19,9 +19,10 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $perPages = $request->get('perPage') ?? 10;
-        
+
         if (ValidateRole::check('agent')) {
             if ($perPages == 'all') {
                 $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->get();
@@ -46,7 +47,7 @@ class PaymentController extends Controller
     public function show(User $user, Request $request)
     {
         $perPages = $request->get('perPage') ?? 10;
-        
+
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->get();
@@ -57,16 +58,16 @@ class PaymentController extends Controller
             $perPage = intval($perPages);
             $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->paginate($perPage);
         }
-        
+
         return view('cms.admin.payment.show', compact('user', 'packages', 'orders'));
     }
 
     public function showPayment(User $user, Order $order)
-    {        
+    {
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->get();
-        
+
         return view('cms.admin.payment.detail', compact('packages', 'order', 'user'));
     }
 
@@ -92,7 +93,6 @@ class PaymentController extends Controller
                     $payment->description = $request->description;
                     $payment->save();
                 }
-
             });
             return redirect()->route('order.show', $payment->order)->with('success', 'Pembayaran Diterima');
         } catch (\Throwable $th) {
@@ -116,15 +116,14 @@ class PaymentController extends Controller
             'date' => ['required', 'date'],
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return back()->with('error', $validator->errors());
         }
 
         try {
             DB::transaction(function () use ($request, $order) {
-                $existingPayment = $order->payment->sortByDesc('created_at')->first();
                 $paymentCount = Payment::where('order_id', $order->id)->count();
-                $invoiceNumber = 'INV'.GenerateRandomString::make(5) . ($paymentCount + 1) . now()->format('dmY');
+                $invoiceNumber = 'INV' . GenerateRandomString::make(5) . ($paymentCount + 1) . now()->format('dmY');
 
 
                 $payment = new Payment([
@@ -146,14 +145,19 @@ class PaymentController extends Controller
                 }
 
 
-                if ($payment->remaining_payment == 0) {
+                $existingPayment = $order->payment()->get();
+
+                if ($existingPayment->sum('pay') == $order->total_price) {
                     $order->payment_status = 'paid';
+                    $order->save();
+                } else {
+                    $order->payment_status = 'pending';
                     $order->save();
                 }
 
                 Mail::to($order->agent->email)->send(new NotificationPayment($payment));
             });
-            return redirect()->route('order.show', $order)->with('success' , 'Pembayaran berhasil ditambahkan');
+            return redirect()->route('order.show', $order)->with('success', 'Pembayaran berhasil ditambahkan');
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),
@@ -176,8 +180,13 @@ class PaymentController extends Controller
                     $order->payment_status = 'unpaid';
                     $order->save();
                 } else {
-                    $order->payment_status = 'pending';
-                    $order->save();
+                    if ($order->payment()->sum('pay') == $order->total_price) {
+                        $order->payment_status = 'paid';
+                        $order->save();
+                    } else {
+                        $order->payment_status = 'pending';
+                        $order->save();
+                    }
                 }
             });
             return back()->with('success', 'Berhasil dihapus');
@@ -190,7 +199,7 @@ class PaymentController extends Controller
         }
     }
 
-    public function check (Order $order)
+    public function check(Order $order)
     {
         $existingPayment = $order->payment->sortByDesc('created_at')->first();
 

@@ -9,14 +9,14 @@
                         <div class="mt-3 text-center">
                             <label class="form-label">Total Pembayaran</label>
                             <span class="font-bold"> Rp.
-                                {{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '.') }}</span>
+                                {{ number_format($order->total_price - $order->payment()->sum('pay'), 0, ',', '.') }}</span>
                         </div>
 
                         <div class="mt-3">
                             <label for="pay" class="form-label">Jumlah Pembayaran <span
                                     class="text-danger">*</span></label>
                             <input id="pay" name="pay" type="number"
-                                value="{{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '') }}"
+                                value="{{ number_format($order->total_price - $order->payment()->sum('pay'), 0, ',', '') }}"
                                 class="form-control w-full" placeholder="Masukkan Jumlah Pembayaran" required>
                             @error('pay')
                                 <span class="invalid-feedback" role="alert">

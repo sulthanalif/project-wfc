@@ -124,6 +124,7 @@ Route::group(['middleware' => 'auth',], function () {
         // Route::get('/test', [TestController::class, 'index']);
         //order detail
         Route::post('.order/{detail}/detail', [DetailOrderController::class, 'editDetail'])->name('order.editDetail');
+        Route::post('.order/{order}/addItems', [DetailOrderController::class, 'addItems'])->name('order.addItems');
     });
     Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin'], function () {
         require __DIR__ . '/transaction/payment.php';
