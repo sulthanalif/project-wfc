@@ -167,7 +167,7 @@ class OrderController extends Controller
         })->get();
         $agents = auth()->user();
 
-        $selects = $order->detail()->pluck('sub_agent_id')->map(function ($subAgentId) use ($order) {
+        $selects = $order->detail()->pluck('sub_agent_id')->unique()->map(function ($subAgentId) use ($order) {
             return $order->agent->subAgent->where('id', $subAgentId)->first()->name ?? $order->agent->agentProfile->name;
         })->toArray();
 
