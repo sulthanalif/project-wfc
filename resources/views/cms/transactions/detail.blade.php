@@ -79,8 +79,13 @@
                 <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                     <div class="font-medium text-base truncate mr-2">Detail Produk Pesanan</div>
                     <div class="w-auto relative text-slate-500 border rounded">
-                        <select id="records_per_page" class="form-control box">
-                            <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>Nama</option>
+                        <select id="records_select"
+                            onchange="window.location.href = '{{ $order->id }}' + (this.value === 'all' ? '' : '?select=' + this.value)"
+                            class="form-control box">
+                            <option value="all">Semua</option>
+                            @foreach ($selects as $select)
+                                <option value="{{ $select }}" {{ request()->get('select') == $select || (request()->get('select') == 'agent' && $select == $order->agent->agentProfile->name) ? 'selected' : '' }}>{{ $select }}</option>
+                            @endforeach
                         </select>
                     </div>
                     @hasrole('agent')
@@ -112,7 +117,146 @@
                         <tbody>
                             @php
                                 $total_qty = 0;
+                                $total_price = 0;
                             @endphp
+                            @if (request()->has('select'))
+                                @foreach ($order->detail()->where(function ($query) use ($order) {
+                                    if (request()->get('select') == $order->agent->agentProfile->name) {
+                                        $query->whereNull('sub_agent_id');
+                                    } else {
+                                        $query->whereHas('subAgent', function ($query) {
+                                            $query->where('name', 'like', '%' . request()->get('select') . '%');
+                                        });
+                                    }
+                                })->get() as $item)
+                                    <tr>
+                                        <td>{{ $item->subAgent->name ?? $order->agent->agentProfile->name }}</td>
+                                        <td class="!py-4">
+                                            <div class="flex items-center">
+                                                @hasrole('admin|super_admin|finance_admin')
+                                                    @if ($item->product->detail->image == null)
+                                                        <div class="w-10 h-10 image-fit zoom-in">
+                                                            <img alt="PAKET SMART WFC"
+                                                                class="rounded-lg border-2 border-white shadow-md"
+                                                                src="{{ asset('assets/logo2.png') }}">
+                                                        </div>
+                                                    @else
+                                                        @if ($item->product->detail->image == 'image.jpg')
+                                                            <div class="w-10 h-10 image-fit zoom-in">
+                                                                <img alt="PAKET SMART WFC"
+                                                                    class="rounded-lg border-2 border-white shadow-md"
+                                                                    src="{{ asset('assets/logo2.png') }}">
+                                                            </div>
+                                                        @else
+                                                            <div class="w-10 h-10 image-fit zoom-in">
+                                                                <img alt="PAKET SMART WFC"
+                                                                    class="rounded-lg border-2 border-white shadow-md"
+                                                                    src="{{ route('getImage', ['path' => 'product', 'imageName' => $item->product->detail->image]) }}">
+                                                            </div>
+                                                        @endif
+                                                    @endif
+                                                    <a href="{{ route('product.show', $item->product_id) }}"
+                                                        class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}
+                                                        {{ $item->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</a>
+                                                @endhasrole
+                                                @hasrole('agent')
+                                                    @if ($item->product->detail->image == null)
+                                                        <div class="w-10 h-10 image-fit zoom-in">
+                                                            <img alt="PAKET SMART WFC"
+                                                                class="rounded-lg border-2 border-white shadow-md"
+                                                                src="{{ asset('assets/logo2.png') }}">
+                                                        </div>
+                                                    @else
+                                                        @if ($item->product->detail->image == 'image.jpg')
+                                                            <div class="w-10 h-10 image-fit zoom-in">
+                                                                <img alt="PAKET SMART WFC"
+                                                                    class="rounded-lg border-2 border-white shadow-md"
+                                                                    src="{{ asset('assets/logo2.png') }}">
+                                                            </div>
+                                                        @else
+                                                            <div class="w-10 h-10 image-fit zoom-in">
+                                                                <img alt="PAKET SMART WFC"
+                                                                    class="rounded-lg border-2 border-white shadow-md"
+                                                                    src="{{ route('getImage', ['path' => 'product', 'imageName' => $item->product->detail->image]) }}">
+                                                            </div>
+                                                        @endif
+                                                    @endif
+                                                    <span
+                                                        class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}
+                                                        {{ $item->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</span>
+                                                @endhasrole
+                                            </div>
+                                        </td>
+                                        <td class="text-center">Rp.
+                                            {{ number_format($item->product->total_price, 0, ',', '.') }}
+                                        </td>
+                                        <td class="text-center">{{ $item->qty }}</td>
+                                        <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}
+                                        </td>
+                                        @hasrole('agent')
+                                            @if (\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($item->product->package->package->period->access_date)))
+                                                <td class="text-center">
+                                                    <button class="btn btn-primary btn-sm" disabled><i data-lucide="edit"
+                                                            class="w-4 h-4 mr-2"></i> Ubah</button>
+                                                </td>
+                                            @else
+                                                <!-- Tanggal akses belum terlewat, tombol bisa diklik -->
+                                                <td class="text-center">
+                                                    <a href="javascript:;" class="btn btn-primary btn-sm"
+                                                        data-tw-toggle="modal"
+                                                        data-tw-target="#detail-confirmation-modal{{ $item->id }}"><i
+                                                            data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah</a>
+                                                    @if ($item->qty == 0)
+                                                        <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                            data-tw-toggle="modal"
+                                                            data-tw-target="#delete-confirmation-modal{{ $item->id }}"><i
+                                                                data-lucide="trash" class="w-4 h-4 mr-2"></i> Hapus</a>
+                                                        <!-- BEGIN: Delete Confirmation Modal -->
+                                                        <div id="delete-confirmation-modal{{ $item->id }}" class="modal"
+                                                            tabindex="-1" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-body p-0">
+                                                                        <div class="p-5 text-center">
+                                                                            <i data-lucide="x-circle"
+                                                                                class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                                            <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                                            <div class="text-slate-500 mt-2">
+                                                                                Apakah anda yakin untuk menghapus data ini?
+                                                                                <br>
+                                                                                Proses tidak akan bisa diulangi.
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="px-5 pb-8 text-center">
+                                                                            <form action="#" method="post">
+                                                                                @csrf
+                                                                                @method('delete')
+                                                                                <input type="hidden" name="page"
+                                                                                    value="{{ $item->id }}">
+                                                                                <button type="submit"
+                                                                                    class="btn btn-danger w-24">Hapus</button>
+                                                                                <button type="button" data-tw-dismiss="modal"
+                                                                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- END: Delete Confirmation Modal -->
+                                                    @endif
+                                                </td>
+                                            @endif
+
+                                            @include('cms.transactions.modal.detail-modal')
+                                        @endhasrole
+                                    </tr>
+                                    @php
+                                        $total_qty += $item->qty;
+                                        $total_price += $item->sub_price;
+                                    @endphp
+                                @endforeach
+                            @else
                             @foreach ($order->detail as $item)
                                 <tr>
                                     <td>{{ $item->subAgent->name ?? $order->agent->agentProfile->name }}</td>
@@ -166,7 +310,8 @@
                                                         </div>
                                                     @endif
                                                 @endif
-                                                <span class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}
+                                                <span
+                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}
                                                     {{ $item->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</span>
                                             @endhasrole
                                         </div>
@@ -175,7 +320,8 @@
                                         {{ number_format($item->product->total_price, 0, ',', '.') }}
                                     </td>
                                     <td class="text-center">{{ $item->qty }}</td>
-                                    <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}</td>
+                                    <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}
+                                    </td>
                                     @hasrole('agent')
                                         @if (\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($item->product->package->package->period->access_date)))
                                             <td class="text-center">
@@ -185,7 +331,8 @@
                                         @else
                                             <!-- Tanggal akses belum terlewat, tombol bisa diklik -->
                                             <td class="text-center">
-                                                <a href="javascript:;" class="btn btn-primary btn-sm" data-tw-toggle="modal"
+                                                <a href="javascript:;" class="btn btn-primary btn-sm"
+                                                    data-tw-toggle="modal"
                                                     data-tw-target="#detail-confirmation-modal{{ $item->id }}"><i
                                                         data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah</a>
                                                 @if ($item->qty == 0)
@@ -235,14 +382,16 @@
                                 </tr>
                                 @php
                                     $total_qty += $item->qty;
+                                    $total_price += $item->sub_price;
                                 @endphp
                             @endforeach
+                            @endif
                         </tbody>
                         <tfoot>
                             <tr class="text-center">
                                 <th colspan="3">TOTAL PESANAN</th>
                                 <th>{{ $total_qty }}</th>
-                                <th>Rp. {{ number_format($order->total_price, 0, ',', '.') }}</th>
+                                <th>Rp. {{ number_format($total_price, 0, ',', '.') }}</th>
                             </tr>
                         </tfoot>
                     </table>

@@ -157,7 +157,7 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
+    public function show(Request $request,Order $order)
     {
 
         // $product= GetProduct::detail('Product PHL 1');
@@ -167,7 +167,18 @@ class OrderController extends Controller
         })->get();
         $agents = auth()->user();
 
-        return view('cms.transactions.detail', compact(['order', 'packages', 'agents']));
+        $selects = $order->detail()->pluck('sub_agent_id')->map(function ($subAgentId) use ($order) {
+            return $order->agent->subAgent->where('id', $subAgentId)->first()->name ?? $order->agent->agentProfile->name;
+        })->toArray();
+
+        // return response()->json($selects);
+        // if ($request->get('select')) {
+        //     $order = $order->detail()->whereHas('subAgent', function ($query) use ($request) {
+        //         $query->where('name', 'like', "%{$request->select}%");
+        //     })->get();
+        // }
+
+        return view('cms.transactions.detail', compact(['order', 'packages', 'agents', 'selects']));
     }
 
 
