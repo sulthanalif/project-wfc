@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Period;
 use App\Models\Package;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Models\SubProduct;
 use Illuminate\Http\Request;
 use App\Models\ProductDetail;
 use App\Exports\ProductExport;
 use App\Imports\ProductImport;
 use App\Models\ProductPackage;
 use App\Models\ProductSupplier;
+use App\Models\ProductSubProduct;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,8 +21,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Models\ProductSubProduct;
-use App\Models\SubProduct;
 
 class ProductController extends Controller
 {
@@ -55,9 +56,13 @@ class ProductController extends Controller
         return view('cms.admin.products.archive', compact('products'));
     }
 
-    public function export($period)
+    public function export()
     {
-        return Excel::download(new ProductExport($period), 'Product_Export_' . now() . '.xlsx');
+        $products = Product::whereHas('package.package.period', function ($query) {
+            $query->where('is_active', 1);
+        })->get();
+        // return response()->json($products);
+        return Excel::download(new ProductExport($products), 'Product_Export_' . now() . '.xlsx');
     }
 
     public function import(Request $request)

@@ -8,27 +8,17 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 
 class ProductExport implements FromCollection, WithHeadings
 {
-    public $period;
-    public function __construct($period)
+    public $products;
+    public function __construct($products)
     {
-        $this->period = $period;
+        $this->products = $products;
     }
     /**
     * @return \Illuminate\Support\Collection
     */
     public function collection()
     {
-        if ($this->period) {
-            $period = \App\Models\Period::find($this->period);
-            if ($period) {
-                $products = $period->package->product()->with('packageName', 'detail')->get();
-            } else {
-                $products = Product::with('packageName', 'detail')->get();
-            }
-        } else {
-            $products = Product::with('packageName', 'detail')->get();
-        }
-        $datas = $products->map(function ($product) {
+        $datas = $this->products->map(function ($product) {
             return [
                 'id' => $product->id,
                 'package_name' => $product->packageName->name,

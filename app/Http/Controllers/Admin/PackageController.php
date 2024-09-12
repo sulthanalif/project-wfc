@@ -43,7 +43,7 @@ class PackageController extends Controller
                 $query->where('is_active', 1);
             })->latest()->paginate($perPage);
         }
-        
+
 
         return view('cms.admin.pakets.index', compact('packages'));
     }
@@ -60,7 +60,11 @@ class PackageController extends Controller
 
     public function export()
     {
-        return Excel::download(new PackageExport, 'Paket_export_'.now().'.xlsx');
+        $packages = Package::whereHas('period', function ($query) {
+            $query->where('is_active', 1);
+        })->latest()->get();
+
+        return Excel::download(new PackageExport($packages), 'Paket_export_'.now().'.xlsx');
     }
 
     public function import(Request $request)

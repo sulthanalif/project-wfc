@@ -8,13 +8,17 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class PackageExport implements FromCollection, WithHeadings
 {
+    public $packages;
+    public function __construct($packages)
+    {
+        $this->packages = $packages;
+    }
     /**
     * @return \Illuminate\Support\Collection
     */
     public function collection()
     {
-        $packages = Package::all();
-        $packages->map(function ($package) {
+        $datas = $this->packages->map(function ($package) {
            return [
                'id' => $package->id,
                'name' => $package->name,
@@ -23,6 +27,8 @@ class PackageExport implements FromCollection, WithHeadings
             //    'image' => $package->image,
            ];
         });
+
+        return $datas;
     }
 
     public function headings(): array
