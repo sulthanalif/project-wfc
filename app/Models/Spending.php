@@ -20,6 +20,7 @@ class Spending extends Model
         'spending_type_id',
         'amount',
         'method',
+        'qty',
         'bank',
         'date'
     ];

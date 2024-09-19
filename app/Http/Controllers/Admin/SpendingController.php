@@ -51,6 +51,7 @@ class SpendingController extends Controller
             'amount' => ['required', 'numeric'],
             'method' => ['required', 'string'],
             'bank' => ['sometimes', 'nullable', 'string'],
+            'qty' => ['sometimes', 'nullable', 'numeric'],
             'date' => ['required', 'date'],
         ]);
 
@@ -66,6 +67,7 @@ class SpendingController extends Controller
                 $spending->amount = $request->amount;
                 $spending->method  = $request->method;
                 $spending->bank = $request->method == 'transfer' ? $request->bank : null;
+                $spending->qty = $request->qty ?? 1;
                 $spending->date = $request->date;
                 $spending->save();
             });
@@ -93,6 +95,7 @@ class SpendingController extends Controller
             'amount' => ['required', 'numeric'],
             'method' => ['required', 'string'],
             'bank' => ['sometimes', 'nullable', 'string'],
+            'qty' => ['sometimes', 'nullable', 'numeric'],
             'date' => ['required', 'date'],
         ]);
 
@@ -107,6 +110,7 @@ class SpendingController extends Controller
                 $spending->amount = $request->amount;
                 $spending->method  = $request->method;
                 $spending->bank = $request->method == 'transfer' ? $request->bank : null;
+                $spending->qty = $request->qty ?? 1;
                 $spending->date = $request->date;
                 $spending->save();
             });

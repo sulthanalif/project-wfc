@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('amount', 20, 2);
             $table->string('method');
             $table->string('bank')->nullable();
+            $table->string('qty')->nullable();
             $table->date('date');
             $table->timestamps();
         });

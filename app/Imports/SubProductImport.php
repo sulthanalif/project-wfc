@@ -19,5 +19,7 @@ class SubProductImport implements ToModel, WithHeadingRow
         ]);
 
         $subProduct->save();
+
+        return $subProduct;
    }
 }

@@ -59,6 +59,16 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
+                                <label for="qty" class="form-label">Jumlah Yang Dibeli </label>
+                                <input id="qty" name="qty" type="number" class="form-control w-full"
+                                    placeholder="Masukkan Jumlah Yang Dibeli" >
+                                @error('qty')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="mt-3">
                                 <label for="method" class="form-label">Metode <span class="text-danger">*</span></label>
                                 <select class="form-select" id="method" name="method" required>
                                     <option disabled selected>Pilih...</option>
@@ -80,7 +90,7 @@
 
                     <div class="text-left mt-5">
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
-                        <a href="{{ route('income.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
+                        <a href="{{ route('spending.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
                     </form>
                     <!-- END: Form Layout -->

@@ -74,6 +74,7 @@
                         <th class="whitespace-nowrap">NAMA PENGELUARAN</th>
                         <th class="whitespace-nowrap">KATEGORI</th>
                         <th class="whitespace-nowrap">JUMLAH</th>
+                        <th class="whitespace-nowrap">QTY</th>
                         <th class="whitespace-nowrap">METODE</th>
                         <th class="text-center whitespace-nowrap">TANGGAL</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
@@ -101,12 +102,15 @@
                                         {{ number_format($spending->amount, 0, ',', '.') }} </p>
                                 </td>
                                 <td>
-                                    <span class="text-slate-500">
-                                        {{ $spending->method == 'tunai' ? 'Tunai' : 'Transfer' }}
-                                        @if ($spending->method == 'transfer')
-                                            ({{ $spending->bank }})
-                                        @endif
-                                    </span>
+                                    <span class="text-slate-500">{{ $spending->qty ?? 1 }}</span>
+                                </td>
+                                <td>
+                                <span class="text-slate-500">
+                                    {{ $spending->method == 'tunai' ? 'Tunai' : 'Transfer' }}
+                                    @if ($spending->method == 'transfer')
+                                        ({{ $spending->bank }})
+                                    @endif
+                                </span>
                                 </td>
                                 <td>
                                     <span
