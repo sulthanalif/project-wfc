@@ -187,7 +187,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         if ($product) {
-            $subProducts = $product->subProduct()->paginate(5);
+            $subProducts = $product->subProduct()->get();
             $itemSubProduct = SubProduct::get();
             return view('cms.admin.products.detail', compact('product', 'subProducts', 'itemSubProduct'));
         } else {
