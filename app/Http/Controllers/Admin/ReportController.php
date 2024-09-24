@@ -59,7 +59,7 @@ class ReportController extends Controller
             'totalRemainingAll' => $totalRemainingAll
         ];
 
-        $paginationData = PaginationHelper::paginate($datas, 10, 'totalDeposit');
+        // $paginationData = PaginationHelper::paginate($datas, 10, 'totalDeposit');
 
 
         // untuk export, routenya harus "route('totalDeposit', ['export' => 1])"
@@ -67,7 +67,7 @@ class ReportController extends Controller
             return Excel::download(new ReportTotalDepositExport($datas, $stats), 'Laporan_Total_Setoran_' . now()->format('dmY') . '.xlsx');
         }
 
-        return view('cms.admin.reports.total-deposit', compact('stats', 'paginationData'));
+        return view('cms.admin.reports.total-deposit', compact('stats', 'datas'));
         // return response()->json(compact('stats', 'paginationData'));
         // routenya 'report/total-deposit'
 
@@ -115,9 +115,9 @@ class ReportController extends Controller
             return Excel::download(new ReportProductDetailExport($datas, $stats), 'Laporan_Rincian_Perpaket_' . now()->format('dmY') . '.xlsx');
         }
 
-        $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
+        // $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
 
-        return view('cms.admin.reports.product-detail', compact('stats', 'paginationData'));
+        return view('cms.admin.reports.product-detail', compact('stats', 'datas'));
         // return response()->json(compact('stats', 'paginationData'));
         // routenya 'report/product-detail'
     }
@@ -212,9 +212,9 @@ class ReportController extends Controller
             return Excel::download(new ReportRequirementExport($datasubs, $stats), 'Laporan_Rincian_SubProduct_' . now()->format('dmY') . '.xlsx');
         }
 
-        $paginationData = PaginationHelper::paginate($datasubs, 10, 'requirement');
+        // $paginationData = PaginationHelper::paginate($datasubs, 10, 'requirement');
 
-        return view('cms.admin.reports.requirement', compact('stats', 'paginationData'));
+        return view('cms.admin.reports.requirement', compact('stats', 'datasubs'));
         // return response()->json(compact('datas', 'datasubs'));
     }
 }

@@ -67,12 +67,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!$paginationData)
+                    @if (!$dataSubs)
                         <tr>
                             <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
-                        @foreach ($paginationData['data'] as $sub)
+                        @foreach ($dataSubs as $sub)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
