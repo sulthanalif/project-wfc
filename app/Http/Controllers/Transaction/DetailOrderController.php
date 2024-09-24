@@ -103,13 +103,15 @@ class DetailOrderController extends Controller
     public function addItems(Request $request, Order $order)
     {
         // return response()->json($request->all());
+        $products = json_decode($request->products, true);
+
+        if ($products == null) {
+            return back()->with('error', 'Produk Tidak Boleh Kosong');
+            // dd('Produk Tidak Valid');
+        }
+
         try {
-            DB::transaction(function () use ($request, $order, &$updateOrder) {
-
-
-                $products = json_decode($request->products, true);
-
-                // dd($products);
+            DB::transaction(function () use ($request, $order, $products, &$updateOrder) {
 
                 // Membuat OrderDetail untuk setiap produk
                 foreach ($products as $product) {

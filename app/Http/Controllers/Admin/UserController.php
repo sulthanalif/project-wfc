@@ -306,7 +306,12 @@ class UserController extends Controller
         if ($roleName == 'agent') {
             $user->subAgent()->delete();
             $user->agentProfile()->delete();
-            $user->order()->detail()->delete();
+            if ($user->order) {
+                $user->order->each(function ($order) {
+                    $order->detail()->delete();
+                    $order->payment()->delete();
+                });
+            }
             $user->order()->delete();
             $delete = $user->delete();
         } else {

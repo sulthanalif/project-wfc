@@ -10,7 +10,7 @@
                 <div class="col-span-12 mt-8">
                     <div class="intro-y flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
-                            Laporan Total Deposit
+                            Laporan Total Setoran
                         </h2>
                     </div>
                     <div class="grid grid-cols-12 gap-6 mt-5">
@@ -22,7 +22,7 @@
                                     </div>
                                     <div class="text-2xl font-bold leading-8 mt-6">Rp.
                                         {{ number_format($stats['totalPriceOrderAll'], 0, ',', '.') }}</div>
-                                    <div class="text-base text-slate-500 mt-1">Total Pemasukan</div>
+                                    <div class="text-base text-slate-500 mt-1">Total Tagihan</div>
                                 </div>
                             </div>
                         </div>

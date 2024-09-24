@@ -104,8 +104,15 @@ class OrderController extends Controller
             return back()->with('error', $validator->errors());
         }
 
+        $products = json_decode($request->products, true);
+
+        if ($products == null) {
+            return back()->with('error', 'Produk Tidak Boleh Kosong');
+            // dd('Produk Tidak Valid');
+        }
+
         try {
-            DB::transaction(function () use ($request, &$order) {
+            DB::transaction(function () use ($request, $products, &$order) {
                 // $access_date = AccessDate::first();
                 $order = new Order([
                     'agent_id' => $request->agent_id,
@@ -117,11 +124,6 @@ class OrderController extends Controller
                 ]);
 
                 $order->save();
-
-                $products = json_decode($request->products, true);
-
-                // dd($products);
-
                 // Membuat OrderDetail untuk setiap produk
                 foreach ($products as $product) {
                     // Mendapatkan detail produk berdasarkan productId
@@ -157,7 +159,7 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request,Order $order)
+    public function show(Request $request, Order $order)
     {
 
         // $product= GetProduct::detail('Product PHL 1');
