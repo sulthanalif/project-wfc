@@ -66,12 +66,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!$paginationData)
+                    @if (!$datas)
                         <tr>
                             <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
-                        @foreach ($paginationData['data'] as $agent)
+                        @foreach ($datas as $agent)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
