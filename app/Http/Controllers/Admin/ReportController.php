@@ -214,7 +214,7 @@ class ReportController extends Controller
 
         // $paginationData = PaginationHelper::paginate($datasubs, 10, 'requirement');
 
-        return view('cms.admin.reports.requirement', compact('stats', 'datasubs'));
+        return view('cms.admin.reports.requirement', compact('datasubs', 'stats', 'datas'));
         // return response()->json(compact('datas', 'datasubs'));
     }
 }

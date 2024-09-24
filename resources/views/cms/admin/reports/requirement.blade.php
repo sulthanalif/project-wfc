@@ -67,12 +67,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!$dataSubs)
+                    @if (!$datasubs)
                         <tr>
-                            <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
-                        @foreach ($dataSubs as $sub)
+                        @foreach ($datasubs as $sub)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
