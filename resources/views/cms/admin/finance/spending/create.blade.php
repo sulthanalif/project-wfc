@@ -49,9 +49,9 @@
                         </div>
                         <div class="col-span-12 lg:col-span-6 intro-y mt-3 lg:mt-0">
                             <div class="">
-                                <label for="amount" class="form-label">Jumlah Pengeluaran <span class="text-danger">*</span></label>
+                                <label for="amount" class="form-label">Harga Pengeluaran (Satuan) <span class="text-danger">*</span></label>
                                 <input id="amount" name="amount" type="number" class="form-control w-full"
-                                    placeholder="Masukkan Jumlah Pengeluaran" required>
+                                    placeholder="Masukkan Harga Pengeluaran (Satuan)" required>
                                 @error('amount')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -59,7 +59,7 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="qty" class="form-label">Jumlah Yang Dibeli </label>
+                                <label for="qty" class="form-label">Jumlah Yang Dibeli (Qty) </label>
                                 <input id="qty" name="qty" type="number" class="form-control w-full"
                                     placeholder="Masukkan Jumlah Yang Dibeli" >
                                 @error('qty')

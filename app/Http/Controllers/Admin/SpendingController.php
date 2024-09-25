@@ -23,7 +23,8 @@ class SpendingController extends Controller
             $perPage = intval($perPages);
             $spendings = Spending::latest()->paginate($perPage);
         }
-        $totalSpending = Spending::sum('amount');
+        $totalSpending = Spending::selectRaw('SUM(amount * COALESCE(qty, 1)) as total')->value('total');
+
         return view('cms.admin.finance.spending.index', compact('spendings', 'totalSpending'));
     }
 
