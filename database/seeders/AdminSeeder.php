@@ -55,5 +55,18 @@ class AdminSeeder extends Seeder
         $admin->adminProfile()->create([
             'name' => 'Salwa'
         ]);
+
+        $agent = User::create([
+            // 'name' => 'Admin',
+            'email' => 'agent@gmail.com',
+            'password' => Hash::make('password'),
+            'active' => 1
+        ]);
+
+        $agent->assignRole('agent');
+
+        $agent->agentProfile()->create([
+            'name' => 'Agent 1'
+        ]);
     }
 }

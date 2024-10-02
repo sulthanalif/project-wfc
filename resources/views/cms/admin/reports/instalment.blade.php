@@ -41,8 +41,24 @@
                 <!-- END: Laporan Rincian Cicilan -->
             </div>
         </div>
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            <a href="{{ route('instalment', ['export' => 1]) }}"
+        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
+            <form action="{{ route('instalment') }}" class="w-full sm:w-auto flex items-center gap-2">
+                <div class="w-auto relative text-slate-500 border rounded">
+                    <select id="records_select" name="agent">
+                        <option value="">Semua</option>
+                        @foreach ($agentsName as $agent)
+                            <option value="{{ $agent }}" {{ request()->get('agent') == $agent ? 'selected' : '' }} >{{ $agent }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="">
+                    <input id="order_date" name="date"
+                    type="date" value="{{ request()->get('date') }}" class="form-control w-full">
+                </div>
+
+                <button class="btn btn-primary" type="submit"> <i data-lucide="search" class="w-4 h-4 mr-3"></i> Cari</button>
+            </form>
+            <a href="{{ route('instalment', array_merge(request()->except('page'), ['export' => 1])) }}"
                 class="btn btn-primary shadow-md mr-2"> <i data-lucide="file"
                     class="w-4 h-4 mr-3"></i> Export </a>
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">

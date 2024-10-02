@@ -19,7 +19,14 @@ class ReportController extends Controller
 {
     public function totalDeposit(Request $request)
     {
-        $agents = User::role('agent')->get();
+        $getAgent = $request->get('agent');
+
+        $agentsName = User::role('agent')->get();
+
+        $agents = User::role('agent')->whereHas('agentProfile', function($q) use ($getAgent) {
+            $q->where('name', 'like', '%'.$getAgent.'%');
+        })->get();
+
         $datas = [];
 
         foreach ($agents as $agent) {
@@ -67,7 +74,8 @@ class ReportController extends Controller
             return Excel::download(new ReportTotalDepositExport($datas, $stats), 'Laporan_Total_Setoran_' . now()->format('dmY') . '.xlsx');
         }
 
-        return view('cms.admin.reports.total-deposit', compact('stats', 'datas'));
+        // return response()->json($request->get('agent'));
+        return view('cms.admin.reports.total-deposit', compact('stats', 'datas', 'agentsName'));
         // return response()->json(compact('stats', 'paginationData'));
         // routenya 'report/total-deposit'
 
@@ -75,7 +83,15 @@ class ReportController extends Controller
 
     public function productDetail(Request $request)
     {
-        $agents = User::role('agent')->get();
+
+        $getAgent = $request->get('agent');
+
+        $agentsName = User::role('agent')->get();
+
+        $agents = User::role('agent')->whereHas('agentProfile', function ($q) use ($getAgent) {
+            $q->where('name', 'like', '%'.$getAgent.'%');
+        })->get();
+
         $datas = [];
 
         foreach ($agents as $agent) {
@@ -117,14 +133,34 @@ class ReportController extends Controller
 
         // $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
 
-        return view('cms.admin.reports.product-detail', compact('stats', 'datas'));
+        return view('cms.admin.reports.product-detail', compact('stats', 'datas', 'agentsName'));
         // return response()->json(compact('stats', 'paginationData'));
         // routenya 'report/product-detail'
     }
 
     public function instalment(Request $request)
     {
-        $payments = Payment::with('order')->orderBy('created_at', 'desc')->get();
+        $filterAgent = $request->get('agent');
+        $filterDate = $request->get('date');
+
+        $agentsName = Order::whereHas('payment', function($q) {
+            $q->where('pay', '>', 0);
+        })->pluck('agent_id')->unique()->map(function ($agentId) {
+            return User::find($agentId)->agentProfile->name;
+        })->toArray();
+
+        // return response()->json($agentsName);
+        $payments = Payment::with('order')->orderBy('created_at', 'desc')->wherehas('order.agent.agentProfile', function ($q) use ($filterAgent, $filterDate) {
+            if ($filterAgent && $filterDate) {
+                $q->where('name', 'like', '%'.$filterAgent.'%')
+                    ->whereDate('date', $filterDate);
+            } elseif ($filterAgent && !$filterDate) {
+                $q->where('name', 'like', '%'.$filterAgent.'%');
+            } elseif (!$filterAgent && $filterDate) {
+                $q->whereDate('date', $filterDate);
+            }
+        })->get();
+
         $stats = [];
         $pay = 0;
         $remaining_pay = 0;
@@ -143,7 +179,7 @@ class ReportController extends Controller
             return Excel::download(new ReportInstalmentExport($payments, $stats), 'Laporan_Rincian_Cicilan_' . now()->format('dmY') . '.xlsx');
         }
 
-        return view('cms.admin.reports.instalment', compact('stats', 'payments'));
+        return view('cms.admin.reports.instalment', compact('stats', 'payments', 'agentsName'));
         // return response()->json(compact('stats', 'payments'));
         // routenya 'report/instalment'
     }

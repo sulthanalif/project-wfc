@@ -55,8 +55,19 @@
                 <!-- END: Laporan Total Deposit -->
             </div>
         </div>
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            <a href="{{ route('totalDeposit', ['export' => 1]) }}"
+
+        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
+            <div class="w-auto relative text-slate-500 border rounded">
+                <select id="records_select"
+                    onchange="window.location.href = (this.value === 'all' ? '?' + '{{ http_build_query(request()->except('agent', 'page')) }}' : '?agent=' + this.value + '&' + '{{ http_build_query(request()->except('agent', 'page')) }}')"
+                    class="form-control box">
+                    <option value="all">Semua</option>
+                    @foreach ($agentsName as $agent)
+                        <option value="{{ $agent->agentProfile->name }}" {{ request()->get('agent') == $agent->agentProfile->name ? 'selected' : '' }} >{{ $agent->agentProfile->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <a href="{{ route('totalDeposit', array_merge(request()->except('page'), ['export' => 1])) }}"
                 class="btn btn-primary shadow-md mr-2"> <i data-lucide="file"
                     class="w-4 h-4 mr-3"></i> Export </a>
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
@@ -64,7 +75,6 @@
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
-
             </div>
         </div>
         <!-- BEGIN: Data List -->
