@@ -71,11 +71,12 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA PENGELUARAN</th>
-                        <th class="whitespace-nowrap">KATEGORI</th>
-                        <th class="whitespace-nowrap">JUMLAH</th>
-                        <th class="whitespace-nowrap">QTY</th>
-                        <th class="whitespace-nowrap">METODE</th>
+                        <th class="text-center whitespace-nowrap">NAMA PENGELUARAN</th>
+                        <th class="text-center whitespace-nowrap">KATEGORI</th>
+                        <th class="text-center whitespace-nowrap">HARGA</th>
+                        <th class="text-center whitespace-nowrap">QTY</th>
+                        <th class="text-center whitespace-nowrap">TOTAL</th>
+                        <th class="text-center whitespace-nowrap">METODE</th>
                         <th class="text-center whitespace-nowrap">TANGGAL</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
@@ -98,11 +99,15 @@
                                     <span class="text-slate-500">{{ $spending->spendingType->name }}</span>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 flex items-center mr-3">Rp.
+                                    <p class="text-slate-500 flex items-center whitespace-nowrap">Rp.
                                         {{ number_format($spending->amount, 0, ',', '.') }} </p>
                                 </td>
                                 <td>
                                     <span class="text-slate-500">{{ $spending->qty ?? 1 }}</span>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 flex items-center whitespace-nowrap">Rp.
+                                        {{ number_format($spending->amount * ($spending->qty ?? 1), 0, ',', '.') }} </p>
                                 </td>
                                 <td>
                                 <span class="text-slate-500">
@@ -116,7 +121,7 @@
                                     <span
                                         class="text-slate-500">{{ \Carbon\Carbon::parse($spending->date)->format('d-m-Y') }}</span>
                                 </td>
-                                <td class="table-report__action w-56">
+                                <td class="table-report__action">
                                     <div class="flex justify-center items-center">
                                         <a class="flex items-center mr-3" href="{{ route('spending.edit', $spending) }}">
                                             <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
