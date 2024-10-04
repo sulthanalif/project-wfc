@@ -89,9 +89,13 @@
                         </select>
                     </div>
                     @hasrole('agent')
-                        @if (
-                            \Carbon\Carbon::now()->greaterThan(
-                                \Carbon\Carbon::parse($order->detail->first()->product->package->package->period->access_date)))
+                        @php
+                            $detail = optional($order->detail->first());
+                            $product = optional($detail->product);
+                            $package = optional($product->package);
+                            $period = optional($package->period);
+                        @endphp
+                        @if ($period->access_date && \Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($period->access_date)))
                             <!-- Konten jika kondisi true -->
                         @else
                             <a class="flex items-center ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
@@ -323,7 +327,13 @@
                                     <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}
                                     </td>
                                     @hasrole('agent')
-                                        @if (\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($item->product->package->package->period->access_date)))
+                                        @php
+                                            $product = optional($item->product);
+                                            $package = optional($product->package);
+                                            $period = optional($package->period);
+                                        @endphp
+                                        
+                                        @if ($period->access_date && \Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($period->access_date)))
                                             <td class="text-center">
                                                 <button class="btn btn-primary btn-sm" disabled><i data-lucide="edit"
                                                         class="w-4 h-4 mr-2"></i> Ubah</button>
@@ -397,7 +407,7 @@
                     </table>
                 </div>
             </div>
-            <div class="box p-5 rounded-md mt-5">
+            {{-- <div class="box p-5 rounded-md mt-5">
                 <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                     <div class="font-medium text-base truncate">Detail Pembayaran</div>
                     @hasrole('admin|super_admin')
@@ -411,12 +421,12 @@
                 <div class="overflow-auto lg:overflow-visible -mt-3">
                     @include('cms.transactions.table.table')
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 
     <!-- BEGIN: Payment Confirmation Modal -->
-    <div id="payment-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
+    {{-- <div id="payment-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body p-0">
@@ -500,7 +510,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <!-- END: Payment Confirmation Modal -->
 @endsection
 

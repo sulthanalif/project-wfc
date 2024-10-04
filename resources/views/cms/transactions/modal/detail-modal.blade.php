@@ -20,7 +20,7 @@
                                     $product = \App\Helpers\GetProduct::detail($item->product->name);
                                 @endphp
                                 @foreach ($product as $v)
-                                    @if ($v->package->package->period->is_active)
+                                    @if (optional($v->package)->package && optional($v->package->package->period)->is_active)
                                         <option value="{{ $v->id }}"
                                             {{ $item->product_id == $v->id ? 'selected' : '' }}>{{ $v->name }}
                                             {{ $v->is_safe_point == 1 ? '(Titik Aman)' : '' }}</option>
