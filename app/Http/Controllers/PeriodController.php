@@ -71,8 +71,17 @@ class PeriodController extends Controller
     public function deletePeriod(Period $period)
     {
         try {
-            $period->delete();
-            return back()->with('success', 'Period has been deleted');
+            $delete = false;
+
+            if ($period->package->count() == 0) {
+                $delete = $period->delete();
+            }
+            
+            if ($delete) {
+                return back()->with('success', 'Period has been deleted');
+            } else {
+                return back()->with('error', 'Data Gagal Dihapus!');
+            }
         } catch (\Exception $e) {
             $data = [
                 'message' => $e->getMessage(),

@@ -191,7 +191,11 @@ class SubAgentController extends Controller
      */
     public function destroy(Request $request, SubAgent $subAgent)
     {
-        $delete = $subAgent->delete();
+        $delete = false;
+
+        if ($subAgent->orderDetail()->count() == 0) {
+            $delete = $subAgent->delete();
+        }
 
         if ($delete) {
             return redirect()->route('sub-agent.index', ['page' => $request->page])->with('success', 'Data Berhasil Dihapus!');

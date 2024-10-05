@@ -278,20 +278,22 @@ class PackageController extends Controller
      */
     public function destroy(Request $request, Package $package)
     {
-        if ($package->image && file_exists(storage_path('app/public/images/package/' . $package->image))) {
-            unlink(storage_path('app/public/images/package/' . $package->image));
+        $delete = false;
+        
+        if ($package->product()->count() == 0) {
+            if ($package->image && file_exists(storage_path('app/public/images/package/' . $package->image))) {
+                unlink(storage_path('app/public/images/package/' . $package->image));
+            }
+    
+            $packageCatalog = PackageCatalog::where('package_id', $package->id)
+                        ->first();
+    
+            if ($packageCatalog){
+                $package->catalog()->delete();
+            }
+    
+            $delete = $package->delete();
         }
-
-        $packageCatalog = PackageCatalog::where('package_id', $package->id)
-                    ->first();
-
-        if ($packageCatalog){
-            $package->catalog()->delete();
-        }
-
-        $delete = $package->delete();
-
-
 
         if ($delete) {
             return redirect()->route('package.index', ['page' => $request->page])->with('success', 'Data Berhasil Dihapus');
