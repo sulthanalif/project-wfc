@@ -21,7 +21,7 @@ class ReportController extends Controller
     {
         $getAgent = $request->get('agent');
 
-        $agentsName = User::role('agent')->get();
+        $agentsName = User::role('agent')->where('active', 1)->get();
 
         $agents = User::role('agent')->whereHas('agentProfile', function($q) use ($getAgent) {
             $q->where('name', 'like', '%'.$getAgent.'%');
@@ -86,7 +86,7 @@ class ReportController extends Controller
 
         $getAgent = $request->get('agent');
 
-        $agentsName = User::role('agent')->get();
+        $agentsName = User::role('agent')->where('active', 1)->get();
 
         $agents = User::role('agent')->whereHas('agentProfile', function ($q) use ($getAgent) {
             $q->where('name', 'like', '%'.$getAgent.'%');
