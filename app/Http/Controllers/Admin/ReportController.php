@@ -216,8 +216,8 @@ class ReportController extends Controller
                     ];
                 }
 
-                foreach ($detail->product->subProduct as $sub) {
-                    if ($sub->subProduct) {
+                if ($detail->product->subProduct) {
+                    foreach ($detail->product->subProduct as $sub) {
                         $found1 = false;
                         foreach ($datasubs as &$data1) {
                             if ($data1['id'] == $sub->subProduct->id) {
