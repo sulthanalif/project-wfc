@@ -210,7 +210,7 @@ class ReportController extends Controller
                 if (!$found) {
                     $datas[] = [
                         'product_id' => $detail->product_id,
-                        'product_name' => $detail->product->name,
+                        'product_name' => $detail->product ? $detail->product->name : '',
                         'qty' => $detail->qty,
                         'price' => ($detail->product->price * $detail->product->days) * $detail->qty
                     ];
