@@ -212,7 +212,7 @@ class ReportController extends Controller
                         'product_id' => $detail->product_id,
                         'product_name' => $detail->product ? $detail->product->name : '',
                         'qty' => $detail->qty,
-                        'price' => ($detail->product->price * $detail->product->days) * $detail->qty
+                        'price' => ($detail->product ? $detail->product->price * $detail->product->days : 0) * $detail->qty
                     ];
                 }
 
