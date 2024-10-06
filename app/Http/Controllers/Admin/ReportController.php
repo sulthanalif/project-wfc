@@ -217,23 +217,25 @@ class ReportController extends Controller
                 }
 
                 foreach ($detail->product->subProduct as $sub) {
-                    $found1 = false;
-                    foreach ($datasubs as &$data1) {
-                        if ($data1['id'] == $sub->subProduct->id) {
-                            $data1['qty'] += $detail->qty * $sub->amount;
-                            $data1['price'] += ($detail->qty * $sub->amount) * $sub->subProduct->price;
-                            $found1 = true;
-                            break;
+                    if ($sub->subProduct) {
+                        $found1 = false;
+                        foreach ($datasubs as &$data1) {
+                            if ($data1['id'] == $sub->subProduct->id) {
+                                $data1['qty'] += $detail->qty * $sub->amount;
+                                $data1['price'] += ($detail->qty * $sub->amount) * $sub->subProduct->price;
+                                $found1 = true;
+                                break;
+                            }
                         }
-                    }
-                    if (!$found1) {
-                        $datasubs[] = [
-                            'id' => $sub->subProduct->id,
-                            'name' => $sub->subProduct->name,
-                            'qty' => $detail->qty * $sub->amount,
-                            'unit' => $sub->subProduct->unit,
-                            'price' => ($detail->qty * $sub->amount) * $sub->subProduct->price
-                        ];
+                        if (!$found1) {
+                            $datasubs[] = [
+                                'id' => $sub->subProduct->id,
+                                'name' => $sub->subProduct->name,
+                                'qty' => $detail->qty * $sub->amount,
+                                'unit' => $sub->subProduct->unit,
+                                'price' => ($detail->qty * $sub->amount) * $sub->subProduct->price
+                            ];
+                        }
                     }
                 }
             }
