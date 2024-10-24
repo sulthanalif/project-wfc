@@ -1,16 +1,16 @@
 @extends('cms.layouts.app', [
-    'title' => 'Laporan Rincian Perpaket',
+    'title' => 'Laporan Rincian Pesanan Per Agent'
 ])
 
 @section('content')
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 2xl:col-span-9">
             <div class="grid grid-cols-12 gap-6">
-                <!-- BEGIN: Laporan Rincian Perpaket -->
+                <!-- BEGIN: Laporan Rincian Pesanan Per Agent -->
                 <div class="col-span-12 mt-8">
                     <div class="intro-y flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
-                            Laporan Rincian Perpaket
+                            Laporan Rincian Pesanan Per Agent
                         </h2>
                     </div>
                     <div class="grid grid-cols-12 gap-6 mt-5">
@@ -45,19 +45,17 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
             <div class="w-auto relative text-slate-500 border rounded">
                 <select id="records_select"
-                    onchange="window.location.href = (this.value === 'all' ? '?' + '{{ http_build_query(request()->except('package', 'page')) }}' : '?package=' + this.value + '&' + '{{ http_build_query(request()->except('package', 'page')) }}')"
+                    onchange="window.location.href = (this.value === 'all' ? '?' + '{{ http_build_query(request()->except('agent', 'page')) }}' : '?agent=' + this.value + '&' + '{{ http_build_query(request()->except('agent', 'page')) }}')"
                     class="form-control box">
                     <option value="all">Semua</option>
-                    @foreach ($datas as $data)
-                        <option value="{{ $data['package'] }}"
-                            {{ request()->get('package') == $data['package'] ? 'selected' : '' }}>
-                            {{ $data['package'] }}
-                        </option>
+                    @foreach ($agentsName as $agent)
+                        <option value="{{ $agent->agentProfile->name }}" {{ request()->get('agent') == $agent->agentProfile->name ? 'selected' : '' }} >{{ $agent->agentProfile->name }}</option>
                     @endforeach
                 </select>
             </div>
-            <a href="{{ route('rproductDetail', array_merge(request()->except('page'), ['export' => 1])) }}"
-                class="btn btn-primary shadow-md mr-2"> <i data-lucide="file" class="w-4 h-4 mr-3"></i> Export </a>
+            <a href="{{ route('ragentOrder', array_merge(request()->except('page'), ['export' => 1])) }}"
+                class="btn btn-primary shadow-md mr-2"> <i data-lucide="file"
+                    class="w-4 h-4 mr-3"></i> Export </a>
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
@@ -72,8 +70,8 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA PAKET</th>
-                        <th class="text-center whitespace-nowrap">TOTAL PESANAN</th>
+                        <th class="text-center whitespace-nowrap">NAMA AGEN</th>
+                        <th class="text-center whitespace-nowrap">TOTAL PRODUK</th>
                         <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
                     </tr>
                 </thead>
@@ -83,21 +81,21 @@
                             <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
-                        @foreach ($datas as $item)
+                        @foreach ($datas as $agent)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
 
                                 <td>
-                                    <p class="text-slate-500 flex items-center mr-3"> {{ $item['package'] }} </p>
+                                    <p class="text-slate-500 flex items-center mr-3"> {{ $agent['agent_name'] }} </p>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 text-center">{{ $item['total_product'] }}</p>
+                                    <p class="text-slate-500 text-center">{{ $agent['total_product'] }}</p>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 text-center"> Rp.
-                                        {{ number_format($item['total_price'], 0, ',', '.') }} </p>
+                                        {{ number_format($agent['total_price'], 0, ',', '.') }} </p>
                                 </td>
 
                             </tr>

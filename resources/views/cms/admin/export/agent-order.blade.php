@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <th class="whitespace-nowrap">Total Produk/Paket</th>
-            <th class="whitespace-nowrap">Total Harga</th>
+            <th class="whitespace-nowrap">Total Setoran</th>
 
         </tr>
     </thead>
@@ -21,22 +21,23 @@
 <table class="table table-report -mt-2">
     <thead>
         <tr>
-            <th class="whitespace-nowrap">NAMA PAKET</th>
-            <th class="whitespace-nowrap">TOTAL PESANAN</th>
-            <th class="whitespace-nowrap">TOTAL HARGA</th>
+            <th class="whitespace-nowrap">NAMA AGEN</th>
+            <th class="whitespace-nowrap">JUMLAH PRODUK/PAKET</th>
+            <th class="whitespace-nowrap">SETORAN</th>
         </tr>
     </thead>
     <tbody>
-            @foreach ($datas as $item)
+            @foreach ($datas as $agent)
                 <tr class="intro-x">
+                   
                     <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $item['package'] }} </p>
+                        <p class="text-slate-500 flex items-center mr-3">{{ $agent['agent_name'] }} </p>
                     </td>
                     <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $item['total_product'] }} </p>
+                        <p class="text-slate-500 flex items-center mr-3">{{ $agent['total_product'] }} </p>
                     </td>
                     <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $item['total_price'] }} </p>
+                        <p class="text-slate-500 flex items-center mr-3">{{ $agent['total_price'] }} </p>
                     </td>      
                 </tr>  
             @endforeach

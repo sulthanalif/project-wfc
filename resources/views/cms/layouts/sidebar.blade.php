@@ -45,13 +45,13 @@
             </li>
             {{-- <li class="side-nav__devider my-4"></li> --}}
             <li>
-                <a href="javascript:;" class="side-menu @if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment') || Route::is('requirement')) side-menu--active @endif">
+                <a href="javascript:;" class="side-menu @if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('ragentOrder') || Route::is('instalment') || Route::is('requirement')) side-menu--active @endif">
                     <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
                     <div class="side-menu__title"> Laporan
                         <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                     </div>
                 </a>
-                <ul class="@if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('instalment') || Route::is('requirement')) side-menu__sub-open @endif">
+                <ul class="@if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('ragentOrder') || Route::is('instalment') || Route::is('requirement')) side-menu__sub-open @endif">
                     <li>
                         <a href="{{ route('totalDeposit') }}"
                             class="side-menu {{ Route::is('totalDeposit') ? 'side-menu--active' : '' }}">
@@ -63,21 +63,28 @@
                         <a href="{{ route('rproductDetail') }}"
                             class="side-menu {{ Route::is('rproductDetail') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Rincian Perpaket </div>
+                            <div class="side-menu__title"> Perpaket </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('ragentOrder') }}"
+                            class="side-menu {{ Route::is('ragentOrder') ? 'side-menu--active' : '' }}">
+                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                            <div class="side-menu__title"> Pesanan Agen </div>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('instalment') }}"
                             class="side-menu {{ Route::is('instalment') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Rincian Cicilan </div>
+                            <div class="side-menu__title"> Cicilan </div>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('requirement') }}"
                             class="side-menu {{ Route::is('requirement') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Rincian Sub Produk </div>
+                            <div class="side-menu__title"> Sub Produk </div>
                         </a>
                     </li>
                 </ul>

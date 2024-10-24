@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ReportAgentOrderExport;
 use App\Exports\ReportInstalmentExport;
 use App\Exports\ReportRequirementExport;
 use App\Exports\ReportTotalDepositExport;
@@ -21,13 +22,13 @@ class ReportController extends Controller
     {
         $getAgent = $request->get('agent');
 
-        $agentsName = User::role('agent')->whereHas('agentProfile', function($q) {
+        $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
             $q->where('name', '!=', null)
-            ->orderBy('name', 'asc');
+                ->orderBy('name', 'asc');
         })->where('active', 1)->get();
 
-        $agents = User::role('agent')->whereHas('agentProfile', function($q) use ($getAgent) {
-            $q->where('name', 'like', '%'.$getAgent.'%');
+        $agents = User::role('agent')->whereHas('agentProfile', function ($q) use ($getAgent) {
+            $q->where('name', 'like', '%' . $getAgent . '%');
         })->get();
 
         $datas = [];
@@ -86,42 +87,27 @@ class ReportController extends Controller
 
     public function productDetail(Request $request)
     {
-
-        $getAgent = $request->get('agent');
-
-        $agentsName = User::role('agent')->whereHas('agentProfile', function($q) {
-            $q->where('name', '!=', null)
-            ->orderBy('name', 'asc');
-        })->where('active', 1)->get();
-
-        $agents = User::role('agent')->whereHas('agentProfile', function ($q) use ($getAgent) {
-            $q->where('name', 'like', '%'.$getAgent.'%');
-        })->get();
+        $orders = Order::all();
 
         $datas = [];
 
-        foreach ($agents as $agent) {
-            $totalProduct = 0;
-            $totalPrice = 0;
+        foreach ($orders as $item) {
+            foreach ($item->detail as $order) {
+                $packageName = $order->product->name;
 
-            foreach ($agent->order as $order) {
-                if ($order->status == 'accepted') {
-                    $totalPrice += $order->total_price;
-
-                    foreach ($order->detail as $detail) {
-                        $totalProduct += $detail->qty;
-                    }
+                if (isset($datas[$packageName])) {
+                    $datas[$packageName]['total_product'] += $order->qty;
+                    $datas[$packageName]['total_price'] += $order->sub_price;
+                } else {
+                    $datas[$packageName] = [
+                        'package' => $packageName,
+                        'total_product' => $order->qty,
+                        'total_price' => $order->sub_price
+                    ];
                 }
             }
-
-            if ($totalPrice > 0) {
-                $datas[] = [
-                    'agent_name' => $agent->agentProfile->name,
-                    'total_product' => $totalProduct,
-                    'total_price' => $totalPrice
-                ];
-            }
         }
+
         if (is_array($datas)) {
             $totalProductAll = array_sum(array_column($datas, 'total_product'));
             $totalPriceAll = array_sum(array_column($datas, 'total_price'));
@@ -139,7 +125,7 @@ class ReportController extends Controller
 
         // $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
 
-        return view('cms.admin.reports.product-detail', compact('stats', 'datas', 'agentsName'));
+        return view('cms.admin.reports.product-detail', compact('stats', 'datas'));
         // return response()->json(compact('stats', 'paginationData'));
         // routenya 'report/product-detail'
     }
@@ -149,7 +135,7 @@ class ReportController extends Controller
         $filterAgent = $request->get('agent');
         $filterDate = $request->get('date');
 
-        $agentsName = Order::whereHas('payment', function($q) {
+        $agentsName = Order::whereHas('payment', function ($q) {
             $q->where('pay', '>', 0);
         })->pluck('agent_id')->unique()->map(function ($agentId) {
             return User::find($agentId)->agentProfile->name;
@@ -158,10 +144,10 @@ class ReportController extends Controller
         // return response()->json($agentsName);
         $payments = Payment::with('order')->orderBy('created_at', 'desc')->wherehas('order.agent.agentProfile', function ($q) use ($filterAgent, $filterDate) {
             if ($filterAgent && $filterDate) {
-                $q->where('name', 'like', '%'.$filterAgent.'%')
+                $q->where('name', 'like', '%' . $filterAgent . '%')
                     ->whereDate('date', $filterDate);
             } elseif ($filterAgent && !$filterDate) {
-                $q->where('name', 'like', '%'.$filterAgent.'%');
+                $q->where('name', 'like', '%' . $filterAgent . '%');
             } elseif (!$filterAgent && $filterDate) {
                 $q->whereDate('date', $filterDate);
             }
@@ -260,5 +246,65 @@ class ReportController extends Controller
 
         return view('cms.admin.reports.requirement', compact('datasubs', 'stats', 'datas'));
         // return response()->json(compact('datas', 'datasubs'));
+    }
+
+    public function agentOrder(Request $request)
+    {
+
+        $getAgent = $request->get('agent');
+
+        $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
+            $q->where('name', '!=', null)
+                ->orderBy('name', 'asc');
+        })->where('active', 1)->get();
+
+        $agents = User::role('agent')->whereHas('agentProfile', function ($q) use ($getAgent) {
+            $q->where('name', 'like', '%' . $getAgent . '%');
+        })->get();
+
+        $datas = [];
+
+        foreach ($agents as $agent) {
+            $totalProduct = 0;
+            $totalPrice = 0;
+
+            foreach ($agent->order as $order) {
+                if ($order->status == 'accepted') {
+                    $totalPrice += $order->total_price;
+
+                    foreach ($order->detail as $detail) {
+                        $totalProduct += $detail->qty;
+                    }
+                }
+            }
+
+            if ($totalPrice > 0) {
+                $datas[] = [
+                    'agent_name' => $agent->agentProfile->name,
+                    'total_product' => $totalProduct,
+                    'total_price' => $totalPrice
+                ];
+            }
+        }
+        if (is_array($datas)) {
+            $totalProductAll = array_sum(array_column($datas, 'total_product'));
+            $totalPriceAll = array_sum(array_column($datas, 'total_price'));
+        }
+
+        $stats = [
+            'totalProductAll' => $totalProductAll,
+            'totalPriceAll' => $totalPriceAll,
+        ];
+
+        // untuk export, routenya harus "route('productDetail', ['export' => 1])"
+        if ($request->get('export') == 1) {
+            return Excel::download(new ReportAgentOrderExport($datas, $stats), 'Laporan_Rincian_Order_Agent_' . now()->format('dmY') . '.xlsx');
+        }
+
+        // $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
+
+        return view('cms.admin.reports.agent-order', compact('stats', 'datas', 'agentsName'));
+        // return response()->json(compact('stats', 'paginationData'));
+        // routenya 'report/product-detail'
     }
 }

@@ -157,7 +157,7 @@ class PaymentController extends Controller
 
                 Mail::to($order->agent->email)->send(new NotificationPayment($payment));
             });
-            return redirect()->route('order.show', $order)->with('success', 'Pembayaran berhasil ditambahkan');
+            return redirect()->back()->with('success', 'Pembayaran berhasil ditambahkan');
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),
