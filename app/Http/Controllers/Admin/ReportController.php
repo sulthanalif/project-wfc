@@ -99,19 +99,16 @@ class ReportController extends Controller
         
                         if (isset($datas[$packageName])) {
                             $datas[$packageName]['total_product'] += $order->qty;
-                            $datas[$packageName]['total_price'] += $order->sub_price;
                         } else {
                             $datas[$packageName] = [
                                 'package' => $packageName,
                                 'total_product' => $order->qty,
-                                'total_price' => $order->sub_price
                             ];
                         }
                     } else {
                         $datas[] = [
                             'package' => 'Order dengan nomor ' . $order->order->order_number . ' Paket Tidak Tersedia' . ' (' . $order->product_id . ')',
                             'total_product' => $order->qty,
-                            'total_price' => $order->sub_price
                         ];
                     }
                 }

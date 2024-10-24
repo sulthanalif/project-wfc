@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
-            <div class="w-auto relative text-slate-500 border rounded">
+            {{-- <div class="w-auto relative text-slate-500 border rounded">
                 <select id="records_select"
                     onchange="window.location.href = (this.value === 'all' ? '?' + '{{ http_build_query(request()->except('package', 'page')) }}' : '?package=' + this.value + '&' + '{{ http_build_query(request()->except('package', 'page')) }}')"
                     class="form-control box">
@@ -55,7 +55,7 @@
                         </option>
                     @endforeach
                 </select>
-            </div>
+            </div> --}}
             <a href="{{ route('rproductDetail', array_merge(request()->except('page'), ['export' => 1])) }}"
                 class="btn btn-primary shadow-md mr-2"> <i data-lucide="file" class="w-4 h-4 mr-3"></i> Export </a>
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
@@ -74,7 +74,6 @@
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">NAMA PAKET</th>
                         <th class="text-center whitespace-nowrap">TOTAL PESANAN</th>
-                        <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,10 +93,6 @@
                                 </td>
                                 <td>
                                     <p class="text-slate-500 text-center">{{ $item['total_product'] }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center"> Rp.
-                                        {{ number_format($item['total_price'], 0, ',', '.') }} </p>
                                 </td>
 
                             </tr>

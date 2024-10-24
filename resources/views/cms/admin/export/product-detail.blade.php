@@ -2,7 +2,6 @@
     <thead>
         <tr>
             <th class="whitespace-nowrap">Total Produk/Paket</th>
-            <th class="whitespace-nowrap">Total Harga</th>
 
         </tr>
     </thead>
@@ -23,7 +22,6 @@
         <tr>
             <th class="whitespace-nowrap">NAMA PAKET</th>
             <th class="whitespace-nowrap">TOTAL PESANAN</th>
-            <th class="whitespace-nowrap">TOTAL HARGA</th>
         </tr>
     </thead>
     <tbody>
@@ -34,9 +32,6 @@
                     </td>
                     <td>
                         <p class="text-slate-500 flex items-center mr-3">{{ $item['total_product'] }} </p>
-                    </td>
-                    <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $item['total_price'] }} </p>
                     </td>      
                 </tr>  
             @endforeach
