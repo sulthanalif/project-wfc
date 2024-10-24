@@ -94,16 +94,24 @@ class ReportController extends Controller
         foreach ($orders as $item) {
             if ($item->status == 'accepted') {
                 foreach ($item->detail as $order) {
-                    $packageName = $order->product->name;
-
-                    if (isset($datas[$packageName])) {
-                        $datas[$packageName]['total_product'] += $order->qty;
-                        $datas[$packageName]['total_price'] += $order->sub_price;
+                    if ($order->product) {
+                        $packageName = $order->product->name;
+        
+                        if (isset($datas[$packageName])) {
+                            $datas[$packageName]['total_product'] += $order->qty;
+                            $datas[$packageName]['total_price'] += $order->sub_price;
+                        } else {
+                            $datas[$packageName] = [
+                                'package' => $packageName,
+                                'total_product' => $order->qty,
+                                'total_price' => $order->sub_price
+                            ];
+                        }
                     } else {
-                        $datas[$packageName] = [
-                            'package' => $packageName,
-                            'total_product' => $order->qty,
-                            'total_price' => $order->sub_price
+                        $datas[] = [
+                            'package' => 'Order dengan nomor' . $order->order->order_number . 'Paket Tidak Tersedia',
+                            'total_product' => 0,
+                            'total_price' => 0
                         ];
                     }
                 }
