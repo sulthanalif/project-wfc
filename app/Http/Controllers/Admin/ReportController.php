@@ -109,9 +109,9 @@ class ReportController extends Controller
                         }
                     } else {
                         $datas[] = [
-                            'package' => 'Order dengan nomor' . $order->order->order_number . 'Paket Tidak Tersedia',
-                            'total_product' => 0,
-                            'total_price' => 0
+                            'package' => 'Order dengan nomor ' . $order->order->order_number . ' Paket Tidak Tersedia' . ' (' . $order->product_id . ')',
+                            'total_product' => $order->qty,
+                            'total_price' => $order->sub_price
                         ];
                     }
                 }
