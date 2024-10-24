@@ -25,18 +25,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
-                            <div class="report-box zoom-in">
-                                <div class="box p-5">
-                                    <div class="flex">
-                                        <i data-lucide="credit-card" class="report-box__icon text-pending"></i>
-                                    </div>
-                                    <div class="text-2xl font-bold leading-8 mt-6">Rp.
-                                        {{ number_format($stats['totalPriceAll'], 0, ',', '.') }}</div>
-                                    <div class="text-base text-slate-500 mt-1">Total Harga</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <!-- END: Laporan Rincian Perpaket -->
