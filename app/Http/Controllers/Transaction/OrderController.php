@@ -167,21 +167,39 @@ class OrderController extends Controller
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->get();
+
+        // $selectsProduct = $packages->pluck('product_id')->unique()->map(function ($productId) use ($packages) {
+        //     $product = Product::where('id', $productId)->get();
+        //     return $product->name;
+        // })->toArray();
+
+        // return response()->json($selectsProduct );
+
         $agents = auth()->user();
 
+        //select agent name
         $selects = $order->detail()->pluck('sub_agent_id')->unique()->map(function ($subAgentId) use ($order) {
             $subAgent = $order->agent->subAgent->where('id', $subAgentId)->first();
             return $subAgent ? $subAgent->name : $order->agent->agentProfile->name;
         })->toArray();
 
-        // return response()->json($selects);
+        //select product
+        $selectProducts = $order->detail->pluck('product_id')->unique()->map(function ($productId) use ($order) {
+            $product = $order->detail->where('product_id', $productId)->first()->product;
+            return [
+                'id' => $product->id,
+                'name' => $product->name
+            ];
+        })->toArray();
+
+        // return response()->json($selectProducts);
         // if ($request->get('select')) {
         //     $order = $order->detail()->whereHas('subAgent', function ($query) use ($request) {
         //         $query->where('name', 'like', "%{$request->select}%");
         //     })->get();
         // }
 
-        return view('cms.transactions.detail', compact(['order', 'packages', 'agents', 'selects']));
+        return view('cms.transactions.detail', compact(['order', 'packages', 'agents', 'selects', 'selectProducts']));
     }
 
 

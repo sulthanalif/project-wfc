@@ -78,18 +78,33 @@
             <div class="box p-5 rounded-md">
                 <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                     <div class="font-medium text-base truncate mr-2">Detail Produk Pesanan</div>
-                    <div class="w-auto relative text-slate-500 border rounded">
-                        <select id="records_select"
-                            onchange="window.location.href = '{{ $order->id }}' + (this.value === 'all' ? '' : '?select=' + this.value)"
-                            class="form-control box">
-                            <option value="all">Semua</option>
-                            @foreach ($selects as $select)
-                                <option value="{{ $select }}"
-                                    {{ request()->get('select') === $select || (request()->get('select') == 'agent' && trim($select) === trim($order->agent->agentProfile->name)) ? 'selected' : '' }}>
-                                    {{ $select }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="flex gap-2">
+                        <div class="w-auto relative text-slate-500 border rounded">
+                            <select id="records_select"
+                                onchange="window.location.href = '{{ $order->id }}' + (this.value === 'all' ? '' : (document.getElementById('records_select_product').value !== 'all' ? '?select=' + this.value + '&productId=' + document.getElementById('records_select_product').value : '?select=' + this.value))"
+                                class="form-control box">
+                                <option value="all">Nama Agen</option>
+                                @foreach ($selects as $select)
+                                    <option value="{{ $select }}"
+                                        {{ request()->get('select') === $select || (request()->get('select') == 'agent' && trim($select) === trim($order->agent->agentProfile->name)) ? 'selected' : '' }}>
+                                        {{ $select }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="w-auto relative text-slate-500 border rounded">
+                            <select id="records_select_product"
+                                onchange="window.location.href = '{{ $order->id }}' + (this.value === 'all' ? '' : (document.getElementById('records_select').value !== 'all' ? '?select=' + document.getElementById('records_select').value + '&productId=' + this.value : '?productId=' + this.value))"
+                                class="form-control box">
+                                <option value="all">Semua</option>
+                                @foreach ($selectProducts as $product)
+                                    <option value="{{ $product['id'] }}"
+                                        >
+                                        {{ $product['name'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     @hasrole('agent')
                         @php
