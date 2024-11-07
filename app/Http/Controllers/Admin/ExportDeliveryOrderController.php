@@ -7,6 +7,7 @@ use App\Models\Distribution;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
+use App\Models\Contact;
 
 class ExportDeliveryOrderController extends Controller
 {
@@ -14,7 +15,8 @@ class ExportDeliveryOrderController extends Controller
     {
         $data = [
             'title' => 'Surat Jalan',
-            'distribution' => $distribution
+            'distribution' => $distribution,
+            'contact' => Contact::first()
         ];
 
         $pdf = Pdf::loadView('cms.admin.distributions.export.distribution-order', $data);

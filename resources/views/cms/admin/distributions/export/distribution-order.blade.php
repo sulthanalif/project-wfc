@@ -26,24 +26,27 @@
         <section class="text-center lh-sm">
             <table class="table table-borderless">
                 <thead>
-                    <th class="h5 fw-bold text-start">CV. WIDA NUGRAHA</th>
+                    <th class="h5 fw-bold text-start">PAKET SMART WFC JABAR</th>
                     <th class="h5 fw-bold text-end">Surat Jalan</th>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="text-start">Jl. Cipareuag No. 5, Sukadana<br>Kec. Cimanggung, Kab. Sumedang,<br>Jawa
-                            Barat 45364<br>Telp. 081262760289</td>
+                        <td class="text-start">{{ $contact->address }}
+                            @foreach ($contact->numbers as $number)
+                            <br>Telp. {{ $number->number }}</td>
+                            @endforeach
 
                     </tr>
                     <tr>
-                        <td style="border: 1px solid #ccc; padding: 5px;">
-                            Alamat :
+                        <td style="border: 1px solid #ccc;">
+                            Alamat Dituju : <br>
+                            {{ $distribution->order->agent->agentProfile->address ? $distribution->order->agent->agentProfile->address . " RT " . $distribution->order->agent->agentProfile->rt . " / RW " . $distribution->order->agent->agentProfile->rw . ", " . $distribution->order->agent->agentProfile->village . ", " . $distribution->order->agent->agentProfile->district . ", " . $distribution->order->agent->agentProfile->regency . ", " . $distribution->order->agent->agentProfile->province : 'Alamat Belum Diisi' }}
                         </td>
                         <td class="text-start">
-                            No. Surat Jalan: {{ $distribution->distribution_number }}<br>
-                            Tanggal: {{ \Carbon\Carbon::parse($distribution->date)->format('d M Y') }}<br>
-                            No. Polisi: {{ $distribution->police_number }}<br>
-                            Nama Pengemudi: {{ $distribution->driver }}
+                            No. Surat Jalan: <b>{{ $distribution->distribution_number }}</b><br>
+                            Tanggal: <b>{{ \Carbon\Carbon::parse($distribution->date)->format('d M Y') }}</b><br>
+                            No. Polisi: <b>{{ $distribution->police_number }}</b><br>
+                            Nama Pengemudi: <b>{{ $distribution->driver }}</b>
                         </td>
                     </tr>
                 </tbody>
