@@ -82,8 +82,8 @@
                         <div class="w-auto relative text-slate-500 border rounded">
                             <select id="records_select"
                                 onchange="window.location.href = '{{ $order->id }}' + (this.value === 'all' ? '' : (document.getElementById('records_select_product').value !== 'all' ? '?select=' + this.value + '&productId=' + document.getElementById('records_select_product').value : '?select=' + this.value))"
-                                class="form-control box">
-                                <option value="all">Nama Agen</option>
+                                class="tom-select box">
+                                <option value="all">Semua Agen</option>
                                 @foreach ($selects as $select)
                                     <option value="{{ $select }}"
                                         {{ request()->get('select') === $select || (request()->get('select') == 'agent' && trim($select) === trim($order->agent->agentProfile->name)) ? 'selected' : '' }}>
@@ -95,10 +95,11 @@
                         <div class="w-auto relative text-slate-500 border rounded">
                             <select id="records_select_product"
                                 onchange="window.location.href = '{{ $order->id }}' + (this.value === 'all' ? '' : (document.getElementById('records_select').value !== 'all' ? '?select=' + document.getElementById('records_select').value + '&productId=' + this.value : '?productId=' + this.value))"
-                                class="form-control box">
+                                class="tom-select box">
                                 <option value="all">Semua</option>
                                 @foreach ($selectProducts as $product)
-                                    <option value="{{ $product['id'] }}" {{ request()->get('productId') == $product['id'] ? 'selected' : '' }}>
+                                    <option value="{{ $product['id'] }}"
+                                        {{ request()->get('productId') == $product['id'] ? 'selected' : '' }}>
                                         {{ $product['name'] }}
                                     </option>
                                 @endforeach
@@ -140,26 +141,52 @@
                                 $total_qty = 0;
                                 $total_price = 0;
                             @endphp
-                            @if (request()->has('select'))
+                            @if (request()->has('select') || request()->has('productId'))
                                 @php
                                     $selectedAgent = request()->get('select');
                                     $selectedProduct = request()->get('productId');
 
-                                    $query = $order->detail()->where(function ($query) use ($order, $selectedAgent) {
-                                        if ($selectedAgent == 'all') {
-                                            // No filtering for agent
-                                        } elseif ($selectedAgent == $order->agent->agentProfile->name) {
-                                            $query->whereNull('sub_agent_id');
-                                        } else {
-                                            $query->whereHas('subAgent', function ($query) use ($selectedAgent) {
-                                                $query->where('name', 'like', '%' . $selectedAgent . '%');
-                                            });
-                                        }
-                                    });
+                                    $query = $order
+                                        ->detail()
+                                        ->where(function ($query) use ($order, $selectedAgent, $selectedProduct) {
+                                            if ($selectedAgent && $selectedAgent !== 'all') {
+                                                if ($selectedAgent == $order->agent->agentProfile->name) {
+                                                    $query->whereNull('sub_agent_id');
+                                                } else {
+                                                    $query->whereHas('subAgent', function ($query) use (
+                                                        $selectedAgent,
+                                                    ) {
+                                                        $query->where('name', 'like', '%' . $selectedAgent . '%');
+                                                    });
+                                                }
+                                            }
 
-                                    if (!empty($selectedProduct) && $selectedProduct != 'all') {
-                                        $query->where('product_id', $selectedProduct);
-                                    }
+                                            if ($selectedProduct && $selectedProduct !== 'all') {
+                                                $query->where('product_id', $selectedProduct);
+                                            }
+                                            
+                                            if (
+                                                ($selectedAgent == 'all' || !$selectedAgent) &&
+                                                ($selectedProduct == 'all' || !$selectedProduct)
+                                            ) {
+                                                // Ambil semua data
+                                            }
+
+                                            if ($selectedAgent && $selectedProduct) {
+                                                $query->where(function ($query) use ($selectedAgent, $selectedProduct, $order) {
+                                                    $query->where('product_id', $selectedProduct);
+                                                    if ($selectedAgent == $order->agent->agentProfile->name) {
+                                                        $query->whereNull('sub_agent_id');
+                                                    } elseif ($selectedAgent !== 'all') {
+                                                        $query->whereHas('subAgent', function ($query) use (
+                                                            $selectedAgent,
+                                                        ) {
+                                                            $query->where('name', 'like', '%' . $selectedAgent . '%');
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
 
                                     $details = $query->get();
                                 @endphp
