@@ -98,8 +98,7 @@
                                 class="form-control box">
                                 <option value="all">Semua</option>
                                 @foreach ($selectProducts as $product)
-                                    <option value="{{ $product['id'] }}"
-                                        >
+                                    <option value="{{ $product['id'] }}" {{ request()->get('productId') == $product['id'] ? 'selected' : '' }}>
                                         {{ $product['name'] }}
                                     </option>
                                 @endforeach
@@ -110,14 +109,14 @@
                         @php
                             $detail = optional($order->detail->first());
                             $product = optional($detail->product);
-                            $package = optional($product->package);
+                            $package = optional($product->package->package);
                             $period = optional($package->period);
                         @endphp
-                        @if ($period->access_date && \Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($period->access_date)))
-                            <!-- Konten jika kondisi true -->
-                        @else
+                        @if ($period->access_date && \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($period->access_date)))
                             <a class="flex items-center ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
-                                data-tw-target="#add-product-modal"><i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah</a>
+                                data-tw-target="#add-product-modal">
+                                <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah
+                            </a>
                             @include('cms.transactions.modal.add-product')
                         @endif
                     @endhasrole
@@ -142,15 +141,29 @@
                                 $total_price = 0;
                             @endphp
                             @if (request()->has('select'))
-                                @foreach ($order->detail()->where(function ($query) use ($order) {
-                if (request()->get('select') == $order->agent->agentProfile->name) {
-                    $query->whereNull('sub_agent_id');
-                } else {
-                    $query->whereHas('subAgent', function ($query) {
-                        $query->where('name', 'like', '%' . request()->get('select') . '%');
-                    });
-                }
-            })->get() as $item)
+                                @php
+                                    $selectedAgent = request()->get('select');
+                                    $selectedProduct = request()->get('productId');
+
+                                    $query = $order->detail()->where(function ($query) use ($order, $selectedAgent) {
+                                        if ($selectedAgent == 'all') {
+                                            // No filtering for agent
+                                        } elseif ($selectedAgent == $order->agent->agentProfile->name) {
+                                            $query->whereNull('sub_agent_id');
+                                        } else {
+                                            $query->whereHas('subAgent', function ($query) use ($selectedAgent) {
+                                                $query->where('name', 'like', '%' . $selectedAgent . '%');
+                                            });
+                                        }
+                                    });
+
+                                    if (!empty($selectedProduct) && $selectedProduct != 'all') {
+                                        $query->where('product_id', $selectedProduct);
+                                    }
+
+                                    $details = $query->get();
+                                @endphp
+                                @foreach ($details as $item)
                                     <tr>
                                         <td>{{ $item->subAgent->name ?? $order->agent->agentProfile->name }}</td>
                                         <td class="!py-4">
@@ -216,58 +229,54 @@
                                         <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}
                                         </td>
                                         @hasrole('agent')
-                                            @if (\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($item->product->package->package->period->access_date)))
-                                                <td class="text-center">
-                                                    <button class="btn btn-primary btn-sm" disabled><i data-lucide="edit"
-                                                            class="w-4 h-4 mr-2"></i> Ubah</button>
-                                                </td>
-                                            @else
-                                                <!-- Tanggal akses belum terlewat, tombol bisa diklik -->
-                                                <td class="text-center">
-                                                    <a href="javascript:;" class="btn btn-primary btn-sm"
+                                            @if (
+                                                $item->product->package->package->period->access_date &&
+                                                    \Carbon\Carbon::now()->lessThanOrEqualTo(
+                                                        \Carbon\Carbon::parse($item->product->package->package->period->access_date)))
+                                                <a href="javascript:;" class="btn btn-primary btn-sm" data-tw-toggle="modal"
+                                                    data-tw-target="#detail-confirmation-modal{{ $item->id }}">
+                                                    <i data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah
+                                                </a>
+
+                                                @if ($item->qty == 0)
+                                                    <a href="javascript:;" class="btn btn-danger btn-sm"
                                                         data-tw-toggle="modal"
-                                                        data-tw-target="#detail-confirmation-modal{{ $item->id }}"><i
-                                                            data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah</a>
-                                                    @if ($item->qty == 0)
-                                                        <a href="javascript:;" class="btn btn-danger btn-sm"
-                                                            data-tw-toggle="modal"
-                                                            data-tw-target="#delete-confirmation-modal{{ $item->id }}"><i
-                                                                data-lucide="trash" class="w-4 h-4 mr-2"></i> Hapus</a>
-                                                        <!-- BEGIN: Delete Confirmation Modal -->
-                                                        <div id="delete-confirmation-modal{{ $item->id }}" class="modal"
-                                                            tabindex="-1" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-body p-0">
-                                                                        <div class="p-5 text-center">
-                                                                            <i data-lucide="x-circle"
-                                                                                class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                                                            <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                                                            <div class="text-slate-500 mt-2">
-                                                                                Apakah anda yakin untuk menghapus data ini?
-                                                                                <br>
-                                                                                Proses tidak akan bisa diulangi.
-                                                                            </div>
+                                                        data-tw-target="#delete-confirmation-modal{{ $item->id }}">
+                                                        <i data-lucide="trash" class="w-4 h-4 mr-2"></i> Hapus
+                                                    </a>
+                                                    <!-- BEGIN: Delete Confirmation Modal -->
+                                                    <div id="delete-confirmation-modal{{ $item->id }}" class="modal"
+                                                        tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-body p-0">
+                                                                    <div class="p-5 text-center">
+                                                                        <i data-lucide="x-circle"
+                                                                            class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                                        <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                                        <div class="text-slate-500 mt-2">
+                                                                            Apakah anda yakin untuk menghapus data ini? <br>
+                                                                            Proses tidak akan bisa diulangi.
                                                                         </div>
-                                                                        <div class="px-5 pb-8 text-center">
-                                                                            <form action="#" method="post">
-                                                                                @csrf
-                                                                                @method('delete')
-                                                                                <input type="hidden" name="page"
-                                                                                    value="{{ $item->id }}">
-                                                                                <button type="submit"
-                                                                                    class="btn btn-danger w-24">Hapus</button>
-                                                                                <button type="button" data-tw-dismiss="modal"
-                                                                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                                                            </form>
-                                                                        </div>
+                                                                    </div>
+                                                                    <div class="px-5 pb-8 text-center">
+                                                                        <form action="#" method="post">
+                                                                            @csrf
+                                                                            @method('delete')
+                                                                            <input type="hidden" name="page"
+                                                                                value="{{ $item->id }}">
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger w-24">Hapus</button>
+                                                                            <button type="button" data-tw-dismiss="modal"
+                                                                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                                        </form>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <!-- END: Delete Confirmation Modal -->
-                                                    @endif
-                                                </td>
+                                                    </div>
+                                                    <!-- END: Delete Confirmation Modal -->
+                                                @endif
                                             @endif
 
                                             @include('cms.transactions.modal.detail-modal')
@@ -344,30 +353,24 @@
                                         <td class="text-center">{{ $item->qty }}</td>
                                         <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}
                                         </td>
-                                        @hasrole('agent')
-                                            @php
-                                                $product = optional($item->product);
-                                                $package = optional($product->package);
-                                                $period = optional($package->period);
-                                            @endphp
-
-                                            @if ($period->access_date && \Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($period->access_date)))
-                                                <td class="text-center">
-                                                    <button class="btn btn-primary btn-sm" disabled><i data-lucide="edit"
-                                                            class="w-4 h-4 mr-2"></i> Ubah</button>
-                                                </td>
-                                            @else
-                                                <!-- Tanggal akses belum terlewat, tombol bisa diklik -->
-                                                <td class="text-center">
+                                        <td>
+                                            @hasrole('agent')
+                                                @if (
+                                                    $item->product->package->package->period->access_date &&
+                                                        \Carbon\Carbon::now()->lessThanOrEqualTo(
+                                                            \Carbon\Carbon::parse($item->product->package->package->period->access_date)))
                                                     <a href="javascript:;" class="btn btn-primary btn-sm"
                                                         data-tw-toggle="modal"
-                                                        data-tw-target="#detail-confirmation-modal{{ $item->id }}"><i
-                                                            data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah</a>
+                                                        data-tw-target="#detail-confirmation-modal{{ $item->id }}">
+                                                        <i data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah
+                                                    </a>
+
                                                     @if ($item->qty == 0)
                                                         <a href="javascript:;" class="btn btn-danger btn-sm"
                                                             data-tw-toggle="modal"
-                                                            data-tw-target="#delete-confirmation-modal{{ $item->id }}"><i
-                                                                data-lucide="trash" class="w-4 h-4 mr-2"></i> Hapus</a>
+                                                            data-tw-target="#delete-confirmation-modal{{ $item->id }}">
+                                                            <i data-lucide="trash" class="w-4 h-4 mr-2"></i> Hapus
+                                                        </a>
                                                         <!-- BEGIN: Delete Confirmation Modal -->
                                                         <div id="delete-confirmation-modal{{ $item->id }}" class="modal"
                                                             tabindex="-1" aria-hidden="true">
@@ -379,8 +382,7 @@
                                                                                 class="w-16 h-16 text-danger mx-auto mt-3"></i>
                                                                             <div class="text-3xl mt-5">Apakah anda yakin?</div>
                                                                             <div class="text-slate-500 mt-2">
-                                                                                Apakah anda yakin untuk menghapus data ini?
-                                                                                <br>
+                                                                                Apakah anda yakin untuk menghapus data ini? <br>
                                                                                 Proses tidak akan bisa diulangi.
                                                                             </div>
                                                                         </div>
@@ -402,11 +404,11 @@
                                                         </div>
                                                         <!-- END: Delete Confirmation Modal -->
                                                     @endif
-                                                </td>
-                                            @endif
+                                                @endif
 
-                                            @include('cms.transactions.modal.detail-modal')
-                                        @endhasrole
+                                                @include('cms.transactions.modal.detail-modal')
+                                            @endhasrole
+                                        </td>
                                     </tr>
                                     @php
                                         $total_qty += $item->qty;
@@ -425,111 +427,8 @@
                     </table>
                 </div>
             </div>
-            {{-- <div class="box p-5 rounded-md mt-5">
-                <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                    <div class="font-medium text-base truncate">Detail Pembayaran</div>
-                    @hasrole('admin|super_admin')
-                        @if ($order->payment_status !== 'paid')
-                            <a class="btn btn-primary shadow-md flex items-center ml-auto" href="javascript:;"
-                                data-tw-toggle="modal" data-tw-target="#payment-confirmation-modal">
-                                Setor </a>
-                        @endif
-                    @endhasrole
-                </div>
-                <div class="overflow-auto lg:overflow-visible -mt-3">
-                    @include('cms.transactions.table.table')
-                </div>
-            </div> --}}
         </div>
     </div>
-
-    <!-- BEGIN: Payment Confirmation Modal -->
-    {{-- <div id="payment-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body p-0">
-                    <div class="p-5">
-                        <form action="{{ route('storePayment', $order) }}" method="post" enctype="multipart/form-data">
-                            @csrf
-                            <div class="mt-3 text-center">
-                                <label class="form-label">Total Pembayaran</label>
-                                <span class="font-bold"> Rp.
-                                    {{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '.') }}</span>
-                            </div>
-
-                            <div class="mt-3">
-                                <label for="pay" class="form-label">Jumlah Pembayaran <span
-                                        class="text-danger">*</span></label>
-                                <input id="pay" name="pay" type="number"
-                                    value="{{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->payment->sortByDesc('created_at')->first()->remaining_payment : $order->total_price, 0, ',', '') }}"
-                                    class="form-control w-full" placeholder="Masukkan Jumlah Pembayaran" required>
-                                @error('pay')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            <div class="mt-3">
-                                <label for="method" class="form-label">Metode Pembayaran <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select mt-2 sm:mr-2" id="method" name="method" required>
-                                    <option value="Tunai">Tunai</option>
-                                    <option value="Transfer">Transfer</option>
-                                </select>
-                                @error('method')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            <div class="mt-3" id="bank-field" style="display: none">
-                                <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
-                                <select class="form-select mt-2 sm:mr-2" id="bank" name="bank">
-                                    <option value="">Pilih...</option>
-                                    <option value="BRI">BRI</option>
-                                    <option value="BCA">BCA</option>
-                                    <option value="Mandiri">Mandiri</option>
-                                </select>
-                                @error('bank')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            <div class="mt-3">
-                                <label for="date" class="form-label">Tanggal <span
-                                        class="text-danger">*</span></label>
-                                <input id="date" name="date" type="date" class="form-control w-full"
-                                    required>
-                                @error('date')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-
-                            <div class="mt-3">
-                                <label for="note" class="form-label">Keterangan <span
-                                        class="text-danger">*</span></label>
-                                <textarea id="note" name="note" class="editor"> </textarea>
-                                @error('note')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            <div class="px-5 mt-3 pb-8 text-center">
-                                <button type="submit" class="btn btn-primary w-24">Setor</button>
-                                <button type="button" data-tw-dismiss="modal"
-                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                            </div>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-    <!-- END: Payment Confirmation Modal -->
 @endsection
 
 @push('custom-scripts')

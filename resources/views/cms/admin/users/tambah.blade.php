@@ -36,8 +36,8 @@
                             <div class="mt-3">
                                 <label for="role" class="form-label">Hak Akses <span
                                         class="text-danger">*</span></label>
-                                <select class="form-select mt-2 sm:mr-2" id="role" name="role" required>
-                                    <option value="">Pilih...</option>
+                                <select class="tom-select mt-2 sm:mr-2" id="role" name="role" required>
+                                    <option selected disabled>Pilih...</option>
                                     <option value="super_admin">Super Admin</option>
                                     <option value="admin">Admin</option>
                                     <option value="finance_admin">Keuangan</option>

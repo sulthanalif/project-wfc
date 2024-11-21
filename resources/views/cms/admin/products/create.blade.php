@@ -70,8 +70,8 @@
                             <div class="mt-3">
                                 <label for="package_id" class="form-label">Paket <span class="text-danger">(Jangan ubah jika
                                         tidak masuk Paket)</span></label>
-                                <select class="form-select mt-2 sm:mr-2" id="package_id" name="package_id">
-                                    <option value="">Pilih...</option>
+                                <select class="tom-select mt-2 sm:mr-2" id="package_id" name="package_id">
+                                    <option disabled selected>Pilih Paket...</option>
                                     @foreach ($packages as $package)
                                         <option value="{{ $package->id }}">{{ $package->name }}</option>
                                     @endforeach

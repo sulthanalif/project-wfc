@@ -21,11 +21,11 @@
                         <input id="name" name="name" type="text" class="form-control w-full"
                             placeholder="Masukkan Nama Lengkap Sub Agent" required value="{{ $subAgent->name }}">
                     </div>
-                    @hasrole('super_admin')
+                    @hasrole('super_admin|admin')
                         <div class="mt-3">
                             <label for="agent_id" class="form-label">Dari Agent <span class="text-danger">*</span></label>
-                            <select class="form-select mt-2 sm:mr-2" id="agent_id" name="agent_id" required>
-                                <option value="">Pilih...</option>
+                            <select class="tom-select mt-2 sm:mr-2" id="agent_id" name="agent_id" required>
+                                <option selected disabled>Pilih Agent...</option>
                                 @foreach ($agents as $agent)
                                     <option value="{{ $agent->id }}"
                                         {{ $subAgent->agent_id == $agent->id ? 'selected' : '' }}>

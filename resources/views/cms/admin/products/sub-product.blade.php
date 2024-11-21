@@ -93,8 +93,8 @@
                         <div class="mt-3">
                             <label for="sub_product_id" class="form-label">Sub Barang <span
                                     class="text-danger">*</span></label>
-                            <select class="form-select mt-2 sm:mr-2" id="sub_product_id" name="sub_product_id">
-                                <option value="" disabled>Pilih Sub Barang...</option>
+                            <select class="tom-select mt-2 sm:mr-2" id="sub_product_id" name="sub_product_id">
+                                <option selected disabled>Pilih Sub Barang...</option>
                                 @foreach ($itemSubProduct as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }} | {{ $item->unit }} |
                                         {{ $item->price }}</option>

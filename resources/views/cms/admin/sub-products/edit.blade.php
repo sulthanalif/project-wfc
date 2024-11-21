@@ -23,8 +23,8 @@
                     </div>
                     <div class="mt-3">
                         <label for="unit" class="form-label">Satuan <span class="text-danger">*</span></label>
-                        <select class="form-select w-full" name="unit" id="unit" required>
-                            <option value="" disabled>Pilih Satuan</option>
+                        <select class="tom-select w-full" name="unit" id="unit" required>
+                            <option selected disabled>Pilih Satuan</option>
                             <option value="Rupiah" {{ isset($subProduct->unit) && $subProduct->unit === 'Rupiah' ? 'selected' : '' }}>Rupiah</option>
                             <option value="Pcs" {{ isset($subProduct->unit) && $subProduct->unit === 'Pcs' ? 'selected' : '' }}>Pcs</option>
                             <option value="Kg" {{ isset($subProduct->unit) && $subProduct->unit === 'Kg' ? 'selected' : '' }}>Kg</option>
