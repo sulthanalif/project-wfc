@@ -15,6 +15,8 @@
     <!-- BEGIN: CSS Assets-->
     <link rel="stylesheet" href="{{ asset('assets/cms/css/app.css') }}" />
     <!-- END: CSS Assets-->
+
+    @stack('custom-styles')
 </head>
 <!-- END: Head -->
 

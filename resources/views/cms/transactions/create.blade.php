@@ -53,7 +53,7 @@
                     <div class="mt-3" id="product_fields" style="display: none;">
                         <label for="product_id_item" class="form-label">Pilih Item <span
                                 class="text-danger">*</span></label>
-                        <select class="form-select mt-2 sm:mr-2" id="product_id_item" name="product_id_item" required>
+                        <select class="tom-select mt-2 sm:mr-2" id="product_id_item" name="product_id_item" required>
                         </select>
                         <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
                     </div>
@@ -146,9 +146,10 @@
                         var option = document.createElement('option');
                         option.value = '{{ $product->product->id }}';
                         option.textContent =
-                            "{{ $product->product->name }} {{ $product->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - Rp. {{ number_format($product->product->price, 0, ',', '.') }}/hari";
+                            "{{ $product->product->name }} {{ $product->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - Rp. {{ number_format($product->product->total_price, 0, ',', '.') }}";
                         option.dataset.harga = '{{ $product->product->total_price }}';
-                        productSelect.appendChild(option);
+                        productSelect.tomselect.addOption(option);
+                        // productSelect.appendChild(option);
                     @endforeach
                 }
             @endforeach
@@ -164,7 +165,9 @@
 
             const itemId = selectedOption.value;
             const itemName = selectedOption.textContent.trim().split(' - ')[0];
-            const itemPrice = parseInt(selectedOption.dataset.harga);
+            const harga = selectedOption.textContent.trim().split(' - ')[1].replace(/[^0-9]/g, '');
+            const itemPrice = parseInt(harga, 10);
+            
             const itemQuantity = 1;
             const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
             $('.transaksiItem').append(newRow);

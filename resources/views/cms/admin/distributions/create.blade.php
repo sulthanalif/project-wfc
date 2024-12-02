@@ -94,7 +94,7 @@
                             <div class="mt-3" id="product_fields" style="display: none;">
                                 <label for="product_id_item" class="form-label">Pilih Produk <span
                                         class="text-danger">*</span></label>
-                                <select class="form-select" id="product_id_item" name="product_id_item" required>
+                                <select class="tom-select" id="product_id_item" name="product_id_item" required>
                                 </select>
                                 <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
                             </div>
@@ -181,7 +181,7 @@
                             option.disabled = true;
                         @endif
 
-                        productSelect.appendChild(option);
+                        productSelect.tomselect.addOption(option);
                     @endforeach
                 }
             @endforeach
@@ -193,7 +193,8 @@
             const itemId = selectedOption.value;
             const itemSubAgent = selectedOption.textContent.trim().split(' - ')[0];
             const itemName = selectedOption.textContent.trim().split(' - ')[1];
-            const itemQuantity = parseInt(selectedOption.dataset.qty);
+            const qty = selectedOption.textContent.trim().split(' - ')[2].replace(/[^0-9]/g, '');
+            const itemQuantity = parseInt(qty, 10);
 
             const newRow = createTableRow(itemId, itemSubAgent, itemName, itemQuantity);
             document.getElementById('product-item').appendChild(newRow);
