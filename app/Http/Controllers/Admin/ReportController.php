@@ -190,44 +190,46 @@ class ReportController extends Controller
         $datas = [];
         $datasubs = [];
         foreach ($orders as $item) {
-            foreach ($item->detail as $detail) {
-                $found = false;
-                foreach ($datas as &$data) {
-                    if ($data['product_id'] == $detail->product_id) {
-                        $data['qty'] += $detail->qty;
-                        $data['price'] += ($detail->product->price * $detail->product->days) * $data['qty'];
-                        $found = true;
-                        break;
-                    }
-                }
-                if (!$found) {
-                    $datas[] = [
-                        'product_id' => $detail->product_id,
-                        'product_name' => $detail->product ? $detail->product->name : '',
-                        'qty' => $detail->qty,
-                        'price' => ($detail->product ? $detail->product->price * $detail->product->days : 0) * $detail->qty
-                    ];
-                }
-
-                if ($detail->product != null && $detail->product->subProduct != null) {
-                    foreach ($detail->product->subProduct as $sub) {
-                        $found1 = false;
-                        foreach ($datasubs as &$data1) {
-                            if ($data1['id'] == $sub->subProduct->id) {
-                                $data1['qty'] += $detail->qty * $sub->amount;
-                                $data1['price'] += ($detail->qty * $sub->amount) * $sub->subProduct->price;
-                                $found1 = true;
-                                break;
-                            }
+            if ($item->status == 'accepted') {
+                foreach ($item->detail as $detail) {
+                    $found = false;
+                    foreach ($datas as &$data) {
+                        if ($data['product_id'] == $detail->product_id) {
+                            $data['qty'] += $detail->qty;
+                            $data['price'] += ($detail->product->price * $detail->product->days) * $data['qty'];
+                            $found = true;
+                            break;
                         }
-                        if (!$found1) {
-                            $datasubs[] = [
-                                'id' => $sub->subProduct->id,
-                                'name' => $sub->subProduct->name,
-                                'qty' => $detail->qty * $sub->amount,
-                                'unit' => $sub->subProduct->unit,
-                                'price' => ($detail->qty * $sub->amount) * $sub->subProduct->price
-                            ];
+                    }
+                    if (!$found) {
+                        $datas[] = [
+                            'product_id' => $detail->product_id,
+                            'product_name' => $detail->product ? $detail->product->name : '',
+                            'qty' => $detail->qty,
+                            'price' => ($detail->product ? $detail->product->price * $detail->product->days : 0) * $detail->qty
+                        ];
+                    }
+    
+                    if ($detail->product != null && $detail->product->subProduct != null) {
+                        foreach ($detail->product->subProduct as $sub) {
+                            $found1 = false;
+                            foreach ($datasubs as &$data1) {
+                                if ($data1['id'] == $sub->subProduct->id) {
+                                    $data1['qty'] += $detail->qty * $sub->amount;
+                                    $data1['price'] += ($detail->qty * $sub->amount) * $sub->subProduct->price;
+                                    $found1 = true;
+                                    break;
+                                }
+                            }
+                            if (!$found1) {
+                                $datasubs[] = [
+                                    'id' => $sub->subProduct->id,
+                                    'name' => $sub->subProduct->name,
+                                    'qty' => $detail->qty * $sub->amount,
+                                    'unit' => $sub->subProduct->unit,
+                                    'price' => ($detail->qty * $sub->amount) * $sub->subProduct->price
+                                ];
+                            }
                         }
                     }
                 }
