@@ -105,7 +105,7 @@ class DistributionController extends Controller
                 }
 
 
-                Mail::to($order->agent->email)->send(new NotificationDistribution($order->distribution));
+                // Mail::to($order->agent->email)->send(new NotificationDistribution($order->distribution));
             });
 
             return redirect()->route('distribution.index')->with('success', 'Data Berhasil Ditambah');
