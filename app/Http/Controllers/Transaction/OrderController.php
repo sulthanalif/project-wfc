@@ -230,7 +230,7 @@ class OrderController extends Controller
             ]);
 
             if ($update) {
-                Mail::to($order->agent->email)->send(new NotificationAccOrder($order));
+                // Mail::to($order->agent->email)->send(new NotificationAccOrder($order));
 
                 return redirect()->back()->with('success', 'Order Status Berhasil Diubah');
             } else {
