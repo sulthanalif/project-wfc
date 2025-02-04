@@ -76,7 +76,7 @@
         </div>
         <div class="col-span-12">
             <div class="box p-5 rounded-md">
-                <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
+                <div class="flex flex-col lg:flex-row items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5 gap-2">
                     <div class="font-medium text-base truncate mr-2">Detail Produk Pesanan</div>
                     <div class="flex gap-2">
                         <div class="w-auto relative text-slate-500 border rounded">
@@ -106,6 +106,10 @@
                             </select>
                         </div>
                     </div>
+                    @hasrole('admin|super_admin')
+                        <a href="{{ route('countPrice', ['order' => $order]) }}"
+                            class="flex items-center ml-auto btn btn-sm btn-primary">Hitung Ulang</a>
+                    @endhasrole
                     @hasrole('agent')
                         @php
                             $detail = optional($order->detail->first());
@@ -114,7 +118,7 @@
                             $period = optional($package->period);
                         @endphp
                         @if ($period->access_date && \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($period->access_date)))
-                            <a class="flex items-center ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
+                            <a class="flex items-center lg:ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
                                 data-tw-target="#add-product-modal">
                                 <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah
                             </a>
@@ -164,7 +168,7 @@
                                             if ($selectedProduct && $selectedProduct !== 'all') {
                                                 $query->where('product_id', $selectedProduct);
                                             }
-                                            
+
                                             if (
                                                 ($selectedAgent == 'all' || !$selectedAgent) &&
                                                 ($selectedProduct == 'all' || !$selectedProduct)
@@ -173,7 +177,11 @@
                                             }
 
                                             if ($selectedAgent && $selectedProduct) {
-                                                $query->where(function ($query) use ($selectedAgent, $selectedProduct, $order) {
+                                                $query->where(function ($query) use (
+                                                    $selectedAgent,
+                                                    $selectedProduct,
+                                                    $order,
+                                                ) {
                                                     $query->where('product_id', $selectedProduct);
                                                     if ($selectedAgent == $order->agent->agentProfile->name) {
                                                         $query->whereNull('sub_agent_id');

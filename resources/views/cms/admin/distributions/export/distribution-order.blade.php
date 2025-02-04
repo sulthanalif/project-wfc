@@ -38,9 +38,39 @@
 
                     </tr>
                     <tr>
+                        @php
+                            $details = $distribution->detail;
+                            $data = [];
+                            $tampilkan = [];
+                            foreach ($details as $d) {
+                                if (!$d->orderDetail->sub_agent_id) {
+                                    $query = $d->orderDetail->order->agent->agentProfile;
+                                    $data[] = [
+                                        'name' => $query->name,
+                                        'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
+                                        'address' => $query->address ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}" : 'Alamat Belum Diisi',
+                                    ];
+                                } else {
+                                    $data[] = $d->orderDetail->subAgent->agentProfile;
+                                }
+                            }
+
+                            foreach (array_filter($data) as $d) {
+                                $tampilkan = $d;
+                            }
+
+                            if ($tampilkan == null) {
+                                $tampilkan = [
+                                    'name' => $details->first()->orderDetail->subAgent->name,
+                                    'phone_number' => $details->first()->orderDetail->subAgent->phone_number,
+                                    'address' => $details->first()->orderDetail->subAgent->address,
+                                ];
+                            }
+
+                        @endphp
                         <td style="border: 1px solid #ccc;">
                             Alamat Dituju : <br>
-                            {{ $distribution->order->agent->agentProfile->address ? $distribution->order->agent->agentProfile->address . " RT " . $distribution->order->agent->agentProfile->rt . " / RW " . $distribution->order->agent->agentProfile->rw . ", " . $distribution->order->agent->agentProfile->village . ", " . $distribution->order->agent->agentProfile->district . ", " . $distribution->order->agent->agentProfile->regency . ", " . $distribution->order->agent->agentProfile->province : 'Alamat Belum Diisi' }}
+                            {!! $tampilkan['address'] !!}
                         </td>
                         <td class="text-start">
                             No. Surat Jalan: <b>{{ $distribution->distribution_number }}</b><br>
@@ -56,6 +86,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
+                        <th>Pemesan</th>
                         <th>Nama Barang</th>
                         <th>Jumlah</th>
                         <th>Satuan</th>
@@ -65,6 +96,9 @@
                     @foreach ($distribution->detail as $detail)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
+                            <td>
+                                {{ $detail->orderDetail->sub_agent_id ? $detail->orderDetail->subAgent->name : $distribution->order->agent->agentProfile->name }}
+                            </td>
                             <td>{{ $detail->orderDetail->product->name }}</td>
                             <td>{{ $detail->qty }}</td>
                             <td>{{ $detail->orderDetail->product->unit }}</td>
@@ -85,7 +119,7 @@
                 </tr>
                 <tr>
                     <td class="text-center"><span style="border-bottom: 1px solid black;">(
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</span>
+                        {{ $tampilkan['name'] }})</span>
                     </td>
 
                 </tr>

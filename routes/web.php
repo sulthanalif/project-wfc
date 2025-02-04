@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\DashboardAdminController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Transaction\DetailOrderController;
 use App\Http\Controllers\Admin\ExportDeliveryOrderController;
+use App\Http\Controllers\CountPriceTransactionController;
 use App\Http\Controllers\ReviewAgentController;
 use App\Http\Controllers\Transaction\ExportInvoiceController;
 
@@ -63,7 +64,9 @@ Route::get('/testview', function () {
 
 Route::group(['middleware' => 'auth',], function () {
     Route::get('/agent', [DashboardController::class, 'noActive'])->name('nonactive');
+    
 
+    
 
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
@@ -109,6 +112,9 @@ Route::group(['middleware' => 'auth',], function () {
 
         Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
         Route::put('/administration/{user}', [AdministrationController::class, 'update'])->name('updateAdministration');
+
+         //count price
+        Route::get('/countPrice/{order}', [CountPriceTransactionController::class, 'count'])->name('countPrice');
     });
 
     //finance_admin, super_admin

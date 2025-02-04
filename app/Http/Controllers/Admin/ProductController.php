@@ -100,11 +100,11 @@ class ProductController extends Controller
         // $suppliers = Supplier::all();
         // $packages = Package::all();
         $packages = Package::join('periods', 'packages.period_id', '=', 'periods.id')
-        ->where('periods.is_active', 1)
-        ->select('packages.*')
-        ->get();
+            ->where('periods.is_active', 1)
+            ->select('packages.*')
+            ->get();
 
-        return view('cms.admin.products.create', compact( 'packages'));
+        return view('cms.admin.products.create', compact('packages'));
     }
 
     /**
@@ -309,6 +309,18 @@ class ProductController extends Controller
                 } else {
                     // Hapus relasi
                     $product->package()->delete();
+                }
+
+                $orders = $product->order()->get();
+
+                foreach ($orders as $orderDetail) {
+                    $orderDetail->sub_price = $orderDetail->product->total_price * $orderDetail->qty;
+                    $orderDetail->save();
+
+                    $order = $orderDetail->order()->first();
+
+                    $order->total_price = $order->detail()->sum('sub_price');
+                    $order->save();
                 }
             });
             if ($update) {

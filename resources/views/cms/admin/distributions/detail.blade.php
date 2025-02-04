@@ -15,7 +15,9 @@
                 <div class="dropdown-menu w-40">
                     <ul class="dropdown-content">
                         <li>
-                            <a href="{{ route('export.deliveryOrder', ['distribution'=> $distribution]) }}" class="dropdown-item" target="_blank"> <i data-lucide="file" class="w-4 h-4 mr-2"></i> Cetak Surat </a>
+                            <a href="{{ route('export.deliveryOrder', ['distribution' => $distribution]) }}"
+                                class="dropdown-item" target="_blank"> <i data-lucide="file" class="w-4 h-4 mr-2"></i> Cetak
+                                Surat </a>
                         </li>
                     </ul>
                 </div>
@@ -32,14 +34,19 @@
                         <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                             <div class="font-medium text-base truncate">Detail Pengiriman</div>
                         </div>
-                        <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i> Nomor
+                        <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Nomor
                             Pengiriman: <span
-                                class="underline decoration-dotted ml-1">{{ $distribution->distribution_number }}</span> </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="calendar" class="w-4 h-4 text-slate-500 mr-2"></i>
+                                class="underline decoration-dotted ml-1">{{ $distribution->distribution_number }}</span>
+                        </div>
+                        <div class="flex items-center mt-3"> <i data-lucide="calendar"
+                                class="w-4 h-4 text-slate-500 mr-2"></i>
                             Waktu Pengiriman: {{ $distribution->date }} </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i> Nomor
+                        <div class="flex items-center mt-3"> <i data-lucide="clipboard"
+                                class="w-4 h-4 text-slate-500 mr-2"></i> Nomor
                             Polisi: {{ $distribution->police_number }} </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="user" class="w-4 h-4 text-slate-500 mr-2"></i> Driver: {{ $distribution->driver }}
+                        <div class="flex items-center mt-3"> <i data-lucide="user" class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Driver: {{ $distribution->driver }}
                         </div>
                     </div>
                 </div>
@@ -48,11 +55,16 @@
                         <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                             <div class="font-medium text-base truncate">Detail Pesanan</div>
                         </div>
-                        <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i> Nomor
-                            Pesanan: <span class="underline decoration-dotted ml-1">{{ $distribution->order->order_number }}</span> </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="calendar" class="w-4 h-4 text-slate-500 mr-2"></i>
+                        <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Nomor
+                            Pesanan: <span
+                                class="underline decoration-dotted ml-1">{{ $distribution->order->order_number }}</span>
+                        </div>
+                        <div class="flex items-center mt-3"> <i data-lucide="calendar"
+                                class="w-4 h-4 text-slate-500 mr-2"></i>
                             Waktu Pesanan: {{ $distribution->order->order_date }} </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="pie-chart" class="w-4 h-4 text-slate-500 mr-2"></i> Status
+                        <div class="flex items-center mt-3"> <i data-lucide="pie-chart"
+                                class="w-4 h-4 text-slate-500 mr-2"></i> Status
                             Pesanan:
                             @if ($distribution->order->status === 'accepted')
                                 <span class="bg-success/20 text-success rounded px-2 ml-1">Diterima</span>
@@ -66,7 +78,8 @@
                                 <span class="bg-warning/20 text-warning rounded px-2 ml-1">Pending</span>
                             @endif
                         </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="file-text" class="w-4 h-4 text-slate-500 mr-2"></i>
+                        <div class="flex items-center mt-3"> <i data-lucide="file-text"
+                                class="w-4 h-4 text-slate-500 mr-2"></i>
                             Keterangan:
                             @if ($distribution->order->status === 'reject')
                                 <p class="ml-1">{{ $order->description }}</p>
@@ -79,17 +92,48 @@
                 <div class="col-span-12 lg:col-span-4">
                     <div class="box p-5 rounded-md">
                         <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                            <div class="font-medium text-base truncate">Detail Agen</div>
-                            <a href="{{ route('user.show', $distribution->order->agent) }}" class="flex items-center ml-auto text-primary"> <i
-                                    data-lucide="eye" class="w-4 h-4 mr-2"></i> Lihat Profil </a>
+                            <div class="font-medium text-base truncate">Detail Penerima</div>
                         </div>
-                        <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i> Nama:
-                            <span class="underline decoration-dotted ml-1">{{ $distribution->order->agent->agentProfile->name }}</span>
+                        @php
+                            $details = $distribution->detail;
+                            $data = [];
+                            $tampilkan = [];
+                            foreach ($details as $d) {
+                                if (!$d->orderDetail->sub_agent_id) {
+                                    $query = $d->orderDetail->order->agent->agentProfile;
+                                    $data[] = [
+                                        'name' => $query->name,
+                                        'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
+                                        'address' => $query->address ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}" : 'Alamat Belum Diisi',
+                                    ];
+                                } else {
+                                    $data[] = $d->orderDetail->subAgent->agentProfile;
+                                }
+                            }
+
+                            foreach (array_filter($data) as $d) {
+                                $tampilkan = $d;
+                            }
+
+                            if ($tampilkan == null) {
+                                $tampilkan = [
+                                    'name' => $details->first()->orderDetail->subAgent->name,
+                                    'phone_number' => $details->first()->orderDetail->subAgent->phone_number,
+                                    'address' => $details->first()->orderDetail->subAgent->address,
+                                ];
+                            }
+
+                        @endphp
+                        <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Penerima:
+                            <span class="underline decoration-dotted ml-1">{{ $tampilkan['name'] }}</span>
                         </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="calendar" class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Nomor Telepon: {{ $distribution->order->agent->agentProfile->phone_number }} </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="map-pin" class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Alamat: {{ $distribution->order->agent->agentProfile->address }} </div>
+                        <div class="flex items-center mt-3"> <i data-lucide="calendar"
+                                class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Nomor Telepon: {{ $tampilkan['phone_number'] }} </div>
+                        <div class="flex items-center mt-3"> <i data-lucide="map-pin"
+                                class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Alamat: {!! $tampilkan['address'] !!} </div>
                     </div>
                 </div>
             </div>
@@ -103,7 +147,7 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th class="whitespace-nowrap text-center">Sub Agent</th>
+                                <th class="whitespace-nowrap text-center">Penerima</th>
                                 <th class="whitespace-nowrap text-center">Produk</th>
                                 {{-- <th class="whitespace-nowrap text-center">Harga per Item</th> --}}
                                 <th class="whitespace-nowrap text-center">Qty</th>
@@ -140,7 +184,8 @@
                                                     @endif
                                                 @endif
                                                 <a href="{{ route('product.show', $item->orderDetail->product_id) }}"
-                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->orderDetail->product->name }} {{ $item->orderDetail->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</a>
+                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->orderDetail->product->name }}
+                                                    {{ $item->orderDetail->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</a>
                                             @endhasrole
                                             @hasrole('agent')
                                                 @if ($item->product->detail->image == null)
@@ -160,8 +205,8 @@
                                                         </div>
                                                     @endif
                                                 @endif
-                                                <span
-                                                    class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }} {{ $item->orderDetail->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</span>
+                                                <span class="font-medium whitespace-nowrap ml-4">{{ $item->product->name }}
+                                                    {{ $item->orderDetail->product->is_safe_point == 1 ? '(Titik Aman)' : '' }}</span>
                                             @endhasrole
                                         </div>
                                     </td>
