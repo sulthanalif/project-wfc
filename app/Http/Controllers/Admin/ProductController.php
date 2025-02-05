@@ -7,6 +7,7 @@ use App\Models\Package;
 use App\Models\Product;
 use App\Models\Supplier;
 use App\Models\SubProduct;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use App\Models\ProductDetail;
 use App\Exports\ProductExport;
@@ -344,32 +345,49 @@ class ProductController extends Controller
      */
     public function destroy(Request $request, Product $product)
     {
-        // Delete old image
-        if ($product->image && file_exists(storage_path('app/public/images/product/' . $product->image))) {
-            unlink(storage_path('app/public/images/product/' . $product->image));
+        $productInOrder = OrderDetail::where('product_id', $product->id)->exists();
+
+        if ($productInOrder) {
+            return back()->with('error', 'Produk tidak bisa dihapus karena terdaftar dalam pesanan.');
         }
 
-        $productSupplier = ProductSupplier::where('product_id', $product->id)
-            ->first();
+        try {
+            DB::beginTransaction();
 
-        $productPackage = ProductPackage::where('product_id', $product->id)
-            ->first();
+            // Hapus gambar lama jika ada
+            if (!empty($product->image)) {
+                $imagePath = storage_path('app/public/images/product/' . $product->image);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
 
-        if ($productSupplier) {
-            $product->supplier()->delete();
-        }
+            // Hapus relasi produk dengan supplier dan paket jika ada
+            if ($product->supplier()->exists()) {
+                $product->supplier()->delete();
+            }
 
-        if ($productPackage) {
-            $product->package()->delete();
-        }
+            if ($product->package()->exists()) {
+                $product->package()->delete();
+            }
 
-        $product->detail()->delete();
-        $delete =  $product->delete();
+            // Hapus detail produk sebelum menghapus produk utama
+            $product->detail()->delete();
 
-        if ($delete) {
-            return redirect()->back()->with('success', 'Data Berhasil Dihapus');
-        } else {
-            return back()->with('error', 'Data Gagal Dihapus!');
+            // Hapus produk
+            $delete = $product->delete();
+
+            DB::commit();
+
+            if ($delete) {
+                return redirect()->back()->with('success', 'Data Berhasil Dihapus');
+            } else {
+                return back()->with('error', 'Data Gagal Dihapus!');
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return back()->with('error', 'Terjadi kesalahan saat menghapus produk: ' . $th->getMessage());
         }
     }
 

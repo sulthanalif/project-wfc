@@ -115,6 +115,7 @@ Route::group(['middleware' => 'auth',], function () {
 
          //count price
         Route::get('/countPrice/{order}', [CountPriceTransactionController::class, 'count'])->name('countPrice');
+        Route::get('/countAll', [CountPriceTransactionController::class, 'countAll'])->name('countAll');
     });
 
     //finance_admin, super_admin

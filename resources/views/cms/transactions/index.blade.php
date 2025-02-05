@@ -3,9 +3,19 @@
 ])
 
 @section('content')
-    <h2 class="intro-y text-lg font-medium mt-10">
-        Pesanan Paket
-    </h2>
+    <div class="grid grid-cols-12 mt-12">
+        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap">
+            <h2 class="w-auto relative text-lg font-medium">
+                Pesanan Paket
+            </h2>
+            <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto">
+                @hasrole('admin|super_admin')
+                    <a href="{{ route('countAll') }}"
+                        class="btn btn-sm btn-primary">Hitung Ulang Pesanan</a>
+                @endhasrole
+            </div>
+        </div>
+    </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin|admin|agent')
@@ -189,8 +199,8 @@
                                                         <textarea id="description" name="description" class="form-control w-full" placeholder="Masukkan Description "></textarea>
                                                     </div>
                                                     @if (request()->perPage != 'all')
-                                                    <input type="hidden" name="page"
-                                                        value="{{ $orders->currentPage() }}">
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $orders->currentPage() }}">
                                                     @endif
                                                     <div class="text-center">
                                                         <button type="submit" class="btn btn-warning w-24">Ubah</button>
