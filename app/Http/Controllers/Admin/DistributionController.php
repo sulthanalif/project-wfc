@@ -25,7 +25,8 @@ class DistributionController extends Controller
         $perPages = $request->get('perPage') ?? 5;
 
         if ($perPages == 'all') {
-            $distributions = Distribution::all();
+            $distributions = Distribution::latest()->get();
+
         } else {
             $perPage = intval($perPages);
             $distributions = Distribution::latest()->paginate($perPage);

@@ -196,9 +196,11 @@
             const qty = selectedOption.textContent.trim().split(' - ')[2].replace(/[^0-9]/g, '');
             const itemQuantity = parseInt(qty, 10);
 
-            const newRow = createTableRow(itemId, itemSubAgent, itemName, itemQuantity);
-            document.getElementById('product-item').appendChild(newRow);
-            // console.log(newRow);
+            const existingRow = document.querySelector(`#product-item tr input[value="${itemId}"]`);
+            if (!existingRow) {
+                const newRow = createTableRow(itemId, itemSubAgent, itemName, itemQuantity);
+                document.getElementById('product-item').appendChild(newRow);
+            }
         }
 
         function createTableRow(id, subAgent, name, quantity) {

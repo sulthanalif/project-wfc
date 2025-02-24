@@ -71,7 +71,7 @@
                                 </td>
                                 <td>
                                     <p class="text-slate-500 flex items-center mr-3">
-                                        {{ $distribution->order->order_number }} </p>
+                                        {{ $distribution->order->order_number ?? '-' }} </p>
                                 </td>
 
                                 <td class="table-report__action w-56">
