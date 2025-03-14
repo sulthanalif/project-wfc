@@ -26,7 +26,6 @@ class DistributionController extends Controller
 
         if ($perPages == 'all') {
             $distributions = Distribution::latest()->get();
-
         } else {
             $perPage = intval($perPages);
             $distributions = Distribution::latest()->paginate($perPage);
@@ -141,18 +140,20 @@ class DistributionController extends Controller
                 $distribution->delete();
 
                 $order = Order::find($distribution->order_id);
-                $orderDetails = $order->detail->toArray() ?? [];
-                $qty = array_sum(array_column($orderDetails, 'qty'));
+                $orderDetails = $order?->detail->toArray() ?? [];
+                if($orderDetails) {
+                    $qty = array_sum(array_column($orderDetails, 'qty'));
 
-                $totalQty = 0;
-                $distribution = Distribution::where('order_id', $order->id)->get();
-                foreach ($distribution as $item) {
-                    $totalQty += $item->detail->sum('qty');
-                }
+                    $totalQty = 0;
+                    $distribution = Distribution::where('order_id', $order->id)->get();
+                    foreach ($distribution as $item) {
+                        $totalQty += $item->detail->sum('qty');
+                    }
 
-                if ($qty - $totalQty  !== 0) {
-                    $order->delivery_status = 'pending';
-                    $order->save();
+                    if ($qty - $totalQty  !== 0) {
+                        $order->delivery_status = 'pending';
+                        $order->save();
+                    }
                 }
             });
             return redirect()->route('distribution.index')->with('success', 'Data Berhasil Dihapus');

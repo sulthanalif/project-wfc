@@ -41,6 +41,7 @@
                         <th class="whitespace-nowrap">NOMOR PENGIRIMAN</th>
                         <th class="whitespace-nowrap">TANGAL</th>
                         <th class="whitespace-nowrap">DRIVER</th>
+                        <th class="whitespace-nowrap">PENERIMA</th>
                         <th class="whitespace-nowrap">NOMOR PESANAN</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
@@ -68,6 +69,39 @@
                                 </td>
                                 <td>
                                     <p class="text-slate-500 flex items-center mr-3"> {{ $distribution->driver }} </p>
+                                </td>
+                                @php
+                                    $details = $distribution->detail;
+                                    $data = [];
+                                    $tampilkan = [];
+                                    foreach ($details as $d) {
+                                        if (!$d->orderDetail?->sub_agent_id) {
+                                            $query = $d->orderDetail?->order->agent->agentProfile;
+                                            $data[] = [
+                                                'name' => $query->name ?? '-',
+                                                'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
+                                                'address' => $query?->address ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}" : 'Alamat Belum Diisi',
+                                            ];
+                                        } else {
+                                            $data[] = $d->orderDetail?->subAgent->agentProfile;
+                                        }
+                                    }
+
+                                    foreach (array_filter($data) as $d) {
+                                        $tampilkan = $d;
+                                    }
+
+                                    if ($tampilkan == null) {
+                                        $tampilkan = [
+                                            'name' => $details->first()->orderDetail?->subAgent->name,
+                                            'phone_number' => $details->first()->orderDetail?->subAgent->phone_number,
+                                            'address' => $details->first()->orderDetail?->subAgent->address,
+                                        ];
+                                    }
+
+                                @endphp
+                                <td>
+                                    <p class="text-slate-500 flex items-center mr-3"> {{ $tampilkan['name'] ?? '-' }} </p>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 flex items-center mr-3">
