@@ -128,18 +128,21 @@
                                 <div class="row justify-content-end">
                                     <div class="col-lg-10 col-9">
                                         <div class="team-image">
-                                            @if ($agent->agentProfile->photo == null)
+                                            @if (isset($agent->agentProfile->photo) && $agent->agentProfile->photo == null)
                                                 <img src="{{ asset('assets/logo2.png') }}" alt="Gambar Produk"
                                                     class="img-fluid">
-                                            @else
+                                            @elseif (isset($agent->agentProfile->photo))
                                                 <img src="{{ route('getImage', ['path' => 'photos', 'imageName' => $agent->agentProfile->photo]) }}"
                                                     alt="Foto Profil" class="img-fluid">
+                                            @else
+                                                <img src="{{ asset('assets/logo2.png') }}" alt="Gambar Produk"
+                                                    class="img-fluid">
                                             @endif
                                         </div>
                                     </div>
                                 </div>
                                 <div class="team-info position-absolute">
-                                    <p class="h6 fw-bold">{{ $agent->agentProfile->name }} <span
+                                    <p class="h6 fw-bold">{{ $agent->agentProfile->name ?? '' }} <span
                                             class="f-14 text-muted fw-normal"></span></p>
                                 </div>
                             </div>
