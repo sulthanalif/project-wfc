@@ -66,10 +66,25 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="mt-3" id="product_fields" style="display: none;">
+                                <label for="product_id_item" class="form-label">Pilih Produk <span
+                                        class="text-danger">*</span></label>
+                                <select class="tom-select" id="product_id_item" name="product_id_item" required>
+                                </select>
+                                <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
+                            </div>
                         </div>
-                        <div class="col-span-12 lg:col-span-6 mt-3 lg:mt-0">
+                        <div class="col-span-12 lg:col-span-6 mt-3 lg:mt-0" >
                             <div>
-                                <label for="driver" class="form-label">Nama Pengemudi <span
+                                <label for="method" class="form-label">Metode Distribusi <span class="text-danger">*</span></label>
+                                <select class="tom-select" id="method" name="method" onchange="changeMethod()" required>
+                                    <option value="">Pilih Metode</option>
+                                    <option value="diantar">Diantar</option>
+                                    <option value="dijemput">Dijemput</option>
+                                </select>
+                            </div>
+                            <div class="mt-3" id="driver_fields" style="display: none;">
+                                <label for="driver" class="form-label" id="driver-label">Nama Pengemudi <span
                                         class="text-danger">*</span></label>
                                 <input id="driver" name="driver" type="text" class="form-control w-full" required>
                                 @error('date')
@@ -79,24 +94,14 @@
                                 @enderror
                             </div>
 
-                            <div class="mt-3">
-                                <label for="police_number" class="form-label">Nomer Polisi <span
-                                        class="text-danger">*</span></label>
-                                <input id="police_number" name="police_number" type="text" class="form-control w-full"
-                                    required>
-                                @error('date')
+                            <div class="mt-3" id="police_number_fields" style="display: none;">
+                                <label for="police_number" class="form-label">Nomer Polisi </label>
+                                <input id="police_number" name="police_number" type="text" class="form-control w-full">
+                                @error('police_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                            </div>
-
-                            <div class="mt-3" id="product_fields" style="display: none;">
-                                <label for="product_id_item" class="form-label">Pilih Produk <span
-                                        class="text-danger">*</span></label>
-                                <select class="tom-select" id="product_id_item" name="product_id_item" required>
-                                </select>
-                                <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
                             </div>
                         </div>
                     </div>
@@ -143,6 +148,26 @@
             orderSelect = document.getElementById('order_id');
             orderSelect.addEventListener('change', handleOrderChange);
         });
+
+        function changeMethod() {
+            const selectedMethod = document.getElementById('method').value;
+            const driverFields = document.getElementById('driver_fields');
+            const policeNumberFields = document.getElementById('police_number_fields');
+            const driverLabel = document.getElementById('driver-label');
+
+            if (selectedMethod === 'diantar') {
+                driverFields.style.display = 'block';
+                policeNumberFields.style.display = 'block';
+                driverLabel.innerHTML = `Nama Pengemudi<span
+                                        class="text-danger">*</span>`;
+            } else if (selectedMethod === 'dijemput') {
+                driverFields.style.display = 'block';
+                policeNumberFields.style.display = 'none';
+                driverLabel.innerHTML = `Dijemput Oleh<span
+                                        class="text-danger">*</span>`;
+            } else {
+            }
+        }
 
         function handleOrderChange(event) {
             const orderId = event.target.value;

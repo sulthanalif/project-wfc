@@ -122,8 +122,13 @@
                                 </td>
                                 <td>
                                     @if ($order->delivery_status === 'success')
-                                        <div class="flex items-center justify-center text-success"> <i
-                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> Diantarkan </div>
+                                        @if ($order->isAllItemDistributed())
+                                            <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> Sukses </div>
+                                        @else
+                                            <div class="flex items-center justify-center text-warning"> <i
+                                                    data-lucide="clock" class="w-4 h-4 mr-2"></i> Sedang Proses </div>
+                                        @endif
                                     @else
                                         <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
                                                 class="w-4 h-4 mr-2"></i> Belum Diantarkan </div>

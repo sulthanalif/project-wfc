@@ -22,6 +22,8 @@ class Distribution extends Model
         'driver',
         // 'agent_id',
         'order_id',
+        'status',
+        'is_delivery'
     ];
 
     public function order()

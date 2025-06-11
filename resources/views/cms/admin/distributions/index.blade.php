@@ -43,6 +43,7 @@
                         <th class="whitespace-nowrap">DRIVER</th>
                         <th class="whitespace-nowrap">PENERIMA</th>
                         <th class="whitespace-nowrap">NOMOR PESANAN</th>
+                        <th class="whitespace-nowrap">STATUS</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
                 </thead>
@@ -106,6 +107,24 @@
                                 <td>
                                     <p class="text-slate-500 flex items-center mr-3">
                                         {{ $distribution->order->order_number ?? '-' }} </p>
+                                </td>
+                                <td>
+                                    @if ($distribution->is_delivery)
+                                        @switch($distribution->status)
+                                            @case('on_process')
+                                                <p class="text-warning flex items-center mr-3">Process</p>
+                                            @break
+                                            @case('canceled')
+                                                <p class="text-danger flex items-center mr-3">Canceled</p>
+                                            @break
+                                            @default
+                                                <p class="text-success flex items-center mr-3">Diantarkan</p>
+                                        @endswitch
+                                    @else
+                                        <p class="text-success flex items-center mr-3">
+                                            Diambil
+                                        </p>
+                                    @endif
                                 </td>
 
                                 <td class="table-report__action w-56">

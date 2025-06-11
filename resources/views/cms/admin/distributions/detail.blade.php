@@ -32,21 +32,23 @@
                 <div class="col-span-12 lg:col-span-4">
                     <div class="box p-5 rounded-md">
                         <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                            <div class="font-medium text-base truncate">Detail Pengiriman</div>
+                            <div class="font-medium text-base truncate">Detail @if($distribution->is_delivery)Pengiriman @else Pengambilan @endif</div>
                         </div>
                         <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i>
                             Nomor
-                            Pengiriman: <span
+                            : <span
                                 class="underline decoration-dotted ml-1">{{ $distribution->distribution_number }}</span>
                         </div>
                         <div class="flex items-center mt-3"> <i data-lucide="calendar"
                                 class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Waktu Pengiriman: {{ $distribution->date }} </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="clipboard"
+                            Waktu : {{ \Carbon\Carbon::parse($distribution->date)->format('d M Y') }} </div>
+                        @if ($distribution->is_delivery)
+                            <div class="flex items-center mt-3"> <i data-lucide="clipboard"
                                 class="w-4 h-4 text-slate-500 mr-2"></i> Nomor
                             Polisi: {{ $distribution->police_number }} </div>
+                        @endif
                         <div class="flex items-center mt-3"> <i data-lucide="user" class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Driver: {{ $distribution->driver }}
+                            Oleh: {{ $distribution->driver }}
                         </div>
                     </div>
                 </div>
@@ -62,7 +64,7 @@
                         </div>
                         <div class="flex items-center mt-3"> <i data-lucide="calendar"
                                 class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Waktu Pesanan: {{ $distribution->order->order_date }} </div>
+                            Waktu Pesanan: {{ \Carbon\Carbon::parse($distribution->order->order_date)->format('d M Y') }} </div>
                         <div class="flex items-center mt-3"> <i data-lucide="pie-chart"
                                 class="w-4 h-4 text-slate-500 mr-2"></i> Status
                             Pesanan:
@@ -78,18 +80,18 @@
                                 <span class="bg-warning/20 text-warning rounded px-2 ml-1">Pending</span>
                             @endif
                         </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="file-text"
+
+                            @if ($distribution->order->status === 'reject')
+                            <div class="flex items-center mt-3"> <i data-lucide="file-text"
                                 class="w-4 h-4 text-slate-500 mr-2"></i>
                             Keterangan:
-                            @if ($distribution->order->status === 'reject')
                                 <p class="ml-1">{{ $order->description }}</p>
-                            @else
-                                <p class="ml-1">-</p>
+                            </div>
                             @endif
-                        </div>
                     </div>
                 </div>
-                <div class="col-span-12 lg:col-span-4">
+                @if ($distribution->is_delivery)
+                    <div class="col-span-12 lg:col-span-4">
                     <div class="box p-5 rounded-md">
                         <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
                             <div class="font-medium text-base truncate">Detail Penerima</div>
@@ -136,6 +138,7 @@
                             Alamat: {!! $tampilkan['address'] !!} </div>
                     </div>
                 </div>
+                @endif
             </div>
         </div>
         <div class="col-span-12">

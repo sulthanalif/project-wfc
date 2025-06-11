@@ -42,8 +42,14 @@ class Order extends Model
         return $this->hasMany(Payment::class);
     }
 
-    public function distribution()
+
+    public function distributions()
     {
-        return $this->hasOne(Distribution::class);
+        return $this->hasMany(Distribution::class);
+    }
+
+    public function isAllItemDistributed()
+    {
+        return $this->detail->pluck('qty')->sum() === $this->distributions->pluck('detail')->flatten()->pluck('qty')->sum();
     }
 }

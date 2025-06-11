@@ -53,13 +53,19 @@ class DistributionController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'distribution_number' => ['required', 'string'],
             'date' => ['required', 'date'],
-            'police_number' => ['required', 'string'],
             'driver' => ['required', 'string'],
             'order_id' => ['required']
-        ]);
+        ];
+
+        if ($request->method == 'diantar') {
+            $rules['police_number'] = ['required', 'string'];
+        }
+
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return back()->with('error', $validator->errors());
@@ -70,10 +76,13 @@ class DistributionController extends Controller
                 $distribution = new Distribution([
                     'distribution_number' => $request->distribution_number,
                     'date' => $request->date,
-                    'police_number' => $request->police_number,
+                    'police_number' => $request->police_number ?? '-',
                     'driver' => $request->driver,
-                    'order_id' => $request->order_id
+                    'order_id' => $request->order_id,
+                    'status' => $request->method == 'diantar' ? 'on_process' : 'delivered',
+                    'is_delivery' => $request->method == 'diantar' ? true : false
                 ]);
+
                 $distribution->save();
 
                 $products = json_decode($request->products, true);
