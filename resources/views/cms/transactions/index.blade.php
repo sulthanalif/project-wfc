@@ -121,17 +121,18 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if ($order->delivery_status === 'success')
-                                        @if ($order->isAllItemDistributed())
+
+                                    @if ($order->isAllItemDistributed())
                                             <div class="flex items-center justify-center text-success"> <i
                                                 data-lucide="check-square" class="w-4 h-4 mr-2"></i> Sukses </div>
-                                        @else
-                                            <div class="flex items-center justify-center text-warning"> <i
-                                                    data-lucide="clock" class="w-4 h-4 mr-2"></i> Sedang Proses </div>
-                                        @endif
                                     @else
-                                        <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
-                                                class="w-4 h-4 mr-2"></i> Belum Diantarkan </div>
+                                            @if ($order->distributions->isNotEmpty())
+                                                <div class="flex items-center justify-center text-warning"> <i
+                                                    data-lucide="clock" class="w-4 h-4 mr-2"></i> Sedang Proses </div>
+                                            @else
+                                            <div class="flex items-center justify-center text-primary"> <i
+                                                    data-lucide="clock" class="w-4 h-4 mr-2"></i> Belum Dikirim </div>
+                                            @endif
                                     @endif
                                 </td>
                                 @hasrole('super_admin|admin')

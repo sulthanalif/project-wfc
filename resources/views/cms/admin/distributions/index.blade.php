@@ -27,7 +27,7 @@
             @endif
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Search...">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                 <tbody>
                     @if ($distributions->isEmpty())
                         <tr>
-                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="8" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
                         @foreach ($distributions as $distribution)
