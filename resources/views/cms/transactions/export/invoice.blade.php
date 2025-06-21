@@ -53,7 +53,8 @@
             margin-bottom: 20px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 8px;
             border: 1px solid #ccc;
         }
@@ -62,7 +63,8 @@
             background-color: #f8f8f8;
         }
 
-        .table-borderless th, .table-borderless td {
+        .table-borderless th,
+        .table-borderless td {
             border: none;
         }
 
@@ -136,6 +138,11 @@
                             {{ $order->agent->agentProfile->phone_number ? $order->agent->agentProfile->phone_number : '-' }}
                             <br>
                             Pembayaran: {{ $payment->method }}
+                            @if ($payment->method == 'Transfer')
+                                <br>
+                                Detail Rekening: {{ $payment->bank }}
+                                ({{ $payment->bank_number ? $payment->bank_number . ' - ' . $payment->bank_owner : 'Detail rekening belum diisi' }})
+                            @endif
                         </td>
                         <td class="col-6">
                             Angsuran ke: {{ $number }}
@@ -190,7 +197,8 @@
                 <tr>
                     <td class="text-center px-5">Petugas <br> <br> <br></td>
                     <td class="text-center px-5">Agen <br> <br> <br></td>
-                    <td class="fw-bold fst-italic px-5 fh-cat">(Simpan sebagai bukti pembayaran yang sah)<br> <br> <br></td>
+                    <td class="fw-bold fst-italic px-5 fh-cat">(Simpan sebagai bukti pembayaran yang sah)<br> <br> <br>
+                    </td>
                 </tr>
                 <tr>
                     <td class="text-center"><span style="border-bottom: 1px solid black;">(

@@ -23,6 +23,7 @@
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">TANGGAL</th>
+                        <th class="text-center whitespace-nowrap">METODE</th>
                         <th class="text-center whitespace-nowrap" width="30%">JUMLAH BAYAR</th>
                         <th class="text-center whitespace-nowrap">KETERANGAN</th>
                         @hasrole('finance_admin|super_admin|admin')
@@ -52,6 +53,16 @@
                                 </td>
                                 <td class="text-center">
                                     <p>
+                                        @if ($payment->method == 'Transfer')
+                                            {{ $payment->bank }} <br />
+                                            ({{ $payment->bank_number ? $payment->bank_number . ' - ' . $payment->bank_owner : 'Detail rekening belum diisi' }})
+                                        @elseif ($payment->method == 'Tunai')
+                                            Tunai
+                                        @endif
+                                    </p>
+                                </td>
+                                <td class="text-center">
+                                    <p>
                                         Rp. {{ number_format($payment->pay, 0, ',', '.') }}
                                     </p>
                                 </td>
@@ -61,7 +72,16 @@
                                 @hasrole('finance_admin|super_admin')
                                     <td class="table-report__action">
                                         <div class="flex justify-center items-center">
+                                            @if ($payment->method == 'Transfer')
+                                                @if ($payment->bank_number == '')
+                                                    <a class="flex items-center mr-3 text-warning" href="javascript:;"
+                                                        data-tw-toggle="modal"
+                                                        data-tw-target="#update-detail-confirmation-modal{{ $payment->id }}">
+                                                        <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Edit </a>
 
+                                                    @include('cms.admin.payment.modal.update-detail')
+                                                @endif
+                                            @endif
                                             <a class="flex items-center mr-3 text-success" target="_blank"
                                                 href="{{ route('getInvoice', ['order' => $order, 'payment' => $payment]) }}">
                                                 <i data-lucide="printer" class="w-4 h-4 mr-1"></i> Cetak </a>

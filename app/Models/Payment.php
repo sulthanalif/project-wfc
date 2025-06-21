@@ -22,6 +22,8 @@ class Payment extends Model
         // 'remaining_payment',
         'method',
         'bank',
+        'bank_number',
+        'bank_owner',
         // 'installment',
         'note',
         'date',

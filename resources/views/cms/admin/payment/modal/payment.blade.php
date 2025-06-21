@@ -37,25 +37,49 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="mt-3" id="bank-field" style="display: none">
-                            <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
-                            <select class="form-select mt-2 sm:mr-2" id="bank" name="bank">
-                                <option value="">Pilih...</option>
-                                <option value="BRI">BRI</option>
-                                <option value="BCA">BCA</option>
-                                <option value="Mandiri">Mandiri</option>
-                            </select>
-                            @error('bank')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                        <div id="bank-field" style="display: none">
+                            <div class="grid grid-cols-12 gap-2 mt-3">
+                                <div class="col-span-12 lg:col-span-6">
+                                    <label for="bank" class="form-label">Bank <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" id="bank" name="bank">
+                                        <option value="">Pilih...</option>
+                                        <option value="BRI">BRI</option>
+                                        <option value="BCA">BCA</option>
+                                        <option value="Mandiri">Mandiri</option>
+                                    </select>
+                                    @error('bank')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-span-12 lg:col-span-6 sm:mt-3">
+                                    <label for="bank_number" class="form-label">Nomor Rekening <span
+                                            class="text-danger">*</span></label>
+                                    <input id="bank_number" name="bank_number" type="number"
+                                        class="form-control w-full" placeholder="Masukkan Nomor Rekening" required>
+                                    @error('bank_number')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label for="bank_owner" class="form-label">Pemilik Bank <span class="text-danger">*</span></label>
+                                <input id="bank_owner" name="bank_owner" type="text" class="form-control w-full"
+                                    placeholder="Masukkan Atas Nama Rekening" required>
+                                @error('bank_owner')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
                         <div class="mt-3">
-                            <label for="date" class="form-label">Tanggal <span
-                                    class="text-danger">*</span></label>
-                            <input id="date" name="date" type="date" class="form-control w-full"
-                                required>
+                            <label for="date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                            <input id="date" name="date" type="date" class="form-control w-full" required>
                             @error('date')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>

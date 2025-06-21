@@ -112,6 +112,8 @@ class PaymentController extends Controller
             'pay' => ['required', 'numeric'],
             'method' => ['required', 'string'],
             'bank' => ['nullable', 'string'],
+            'bank_number' => ['nullable', 'string'],
+            'bank_owner' => ['nullable', 'string'],
             'note' => ['nullable', 'string'],
             'date' => ['required', 'date'],
         ]);
@@ -125,7 +127,6 @@ class PaymentController extends Controller
                 $paymentCount = Payment::where('order_id', $order->id)->count();
                 $invoiceNumber = 'INV' . GenerateRandomString::make(5) . ($paymentCount + 1) . now()->format('dmY');
 
-
                 $payment = new Payment([
                     'order_id' => $order->id,
                     'invoice_number' => $invoiceNumber,
@@ -133,6 +134,8 @@ class PaymentController extends Controller
                     // 'remaining_payment' => $existingPayment ? $existingPayment->remaining_payment - $request->pay : $order->total_price - $request->pay,
                     'method' => $request->method,
                     'bank' => $request->bank ?? '',
+                    'bank_number' => $request->bank_number ?? '',
+                    'bank_owner' => $request->bank_owner ?? '',
                     // 'installment' => $existingPayment ? $existingPayment->installment + 1 : 1,
                     'note' => $request->note,
                     'date' => $request->date
@@ -206,5 +209,36 @@ class PaymentController extends Controller
         return response()->json([
             'check' => $existingPayment
         ]);
+    }
+
+    public function updatePayment(Request $request, Payment $payment)
+    {
+        $validator = Validator::make($request->all(), [
+            'upd_method' => ['required', 'string'],
+            'upd_bank' => ['nullable', 'string'],
+            'upd_bank_number' => ['nullable', 'string'],
+            'upd_bank_owner' => ['nullable', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors());
+        }
+
+        try {
+            DB::transaction(function () use ($request, $payment) {
+                $payment->method = $request->upd_method;
+                $payment->bank = $request->upd_bank ?? '';
+                $payment->bank_number = $request->upd_bank_number ?? '';
+                $payment->bank_owner = $request->upd_bank_owner ?? '';
+                $payment->save();
+            });
+            return redirect()->back()->with('success', 'Pembayaran berhasil diubah');
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
     }
 }
