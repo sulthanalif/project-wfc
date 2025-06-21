@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,21 +22,34 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <section class="text-center lh-sm">
             <table class="table table-borderless">
                 <thead>
-                    <th class="h5 fw-bold text-start">PAKET SMART WFC JABAR</th>
-                    <th class="h5 fw-bold text-end">Surat Jalan</th>
+                    <th class="h5 fw-bold text-start align-top">PAKET SMART WFC JABAR</th>
+                    <th class="h5 fw-bold text-end align-top">
+                        Surat Jalan
+                    </th>
                 </thead>
                 <tbody>
                     <tr>
                         <td class="text-start">{{ $contact->address }}
                             @foreach ($contact->numbers as $number)
-                            <br>Telp. {{ $number->number }}</td>
+                                <br>Telp. {{ $number->number }}
                             @endforeach
-
+                        </td>
+                        <td class="h5 fw-bold text-end">
+                            <div
+                            style="border: 1px solid #000; padding: 4px 8px; display: inline-block; margin-top: 4px; font-size: 14px;">
+                            @if ($distribution->print_count == 1)
+                                Asli
+                            @else
+                                Copy ke-{{ $distribution->print_count }}
+                            @endif
+                        </div>
+                        </td>
                     </tr>
                     <tr>
                         @php
@@ -48,7 +62,9 @@
                                     $data[] = [
                                         'name' => $query->name,
                                         'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
-                                        'address' => $query->address ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}" : 'Alamat Belum Diisi',
+                                        'address' => $query->address
+                                            ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}"
+                                            : 'Alamat Belum Diisi',
                                     ];
                                 } else {
                                     $data[] = $d->orderDetail->subAgent->agentProfile;
@@ -112,14 +128,16 @@
                     <td class="text-center px-5">Tanda Terima <br> <br> <br></td>
 
                     <td class="fw-bold fst-italic px-5">
-                    <td class="text-center px-2" style="border: 2px solid #ccc;padding: 5px;">Pengemudi <br> <br> <br></td>
-                    <td class="text-center px-2" style="border: 2px solid #ccc;padding: 5px;">Bag Checker <br> <br> <br></td>
+                    <td class="text-center px-2" style="border: 2px solid #ccc;padding: 5px;">Pengemudi <br> <br> <br>
+                    </td>
+                    <td class="text-center px-2" style="border: 2px solid #ccc;padding: 5px;">Bag Checker <br> <br> <br>
+                    </td>
                     <td class="text-center px-2" style="border: 2px solid #ccc;padding: 5px;">Gudang <br> <br> <br></td>
                     </td>
                 </tr>
                 <tr>
                     <td class="text-center"><span style="border-bottom: 1px solid black;">(
-                        {{ $tampilkan['name'] }})</span>
+                            {{ $tampilkan['name'] }})</span>
                     </td>
 
                 </tr>
@@ -127,4 +145,5 @@
         </section>
     </div>
 </body>
+
 </html>

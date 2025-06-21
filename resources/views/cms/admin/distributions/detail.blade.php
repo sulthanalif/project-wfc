@@ -15,9 +15,14 @@
                 <div class="dropdown-menu w-40">
                     <ul class="dropdown-content">
                         <li>
-                            <a href="{{ route('export.deliveryOrder', ['distribution' => $distribution]) }}"
-                                class="dropdown-item" target="_blank"> <i data-lucide="file" class="w-4 h-4 mr-2"></i> Cetak
-                                Surat </a>
+                            <form action="{{ route('export.printed', ['distribution' => $distribution]) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="flex items-center dropdown-item">
+                                    <i data-lucide="file" class="w-4 h-4 mr-2"></i>
+                                    Cetak
+                                    Surat
+                                </button>
+                            </form>
                         </li>
                     </ul>
                 </div>
@@ -32,20 +37,24 @@
                 <div class="col-span-12 lg:col-span-4">
                     <div class="box p-5 rounded-md">
                         <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                            <div class="font-medium text-base truncate">Detail @if($distribution->is_delivery)Pengiriman @else Pengambilan @endif</div>
+                            <div class="font-medium text-base truncate">Detail @if ($distribution->is_delivery)
+                                    Pengiriman
+                                @else
+                                    Pengambilan
+                                @endif
+                            </div>
                         </div>
                         <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i>
                             Nomor
-                            : <span
-                                class="underline decoration-dotted ml-1">{{ $distribution->distribution_number }}</span>
+                            : <span class="underline decoration-dotted ml-1">{{ $distribution->distribution_number }}</span>
                         </div>
                         <div class="flex items-center mt-3"> <i data-lucide="calendar"
                                 class="w-4 h-4 text-slate-500 mr-2"></i>
                             Waktu : {{ \Carbon\Carbon::parse($distribution->date)->format('d M Y') }} </div>
                         @if ($distribution->is_delivery)
                             <div class="flex items-center mt-3"> <i data-lucide="clipboard"
-                                class="w-4 h-4 text-slate-500 mr-2"></i> Nomor
-                            Polisi: {{ $distribution->police_number }} </div>
+                                    class="w-4 h-4 text-slate-500 mr-2"></i> Nomor
+                                Polisi: {{ $distribution->police_number }} </div>
                         @endif
                         <div class="flex items-center mt-3"> <i data-lucide="user" class="w-4 h-4 text-slate-500 mr-2"></i>
                             Oleh: {{ $distribution->driver }}
@@ -64,7 +73,8 @@
                         </div>
                         <div class="flex items-center mt-3"> <i data-lucide="calendar"
                                 class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Waktu Pesanan: {{ \Carbon\Carbon::parse($distribution->order->order_date)->format('d M Y') }} </div>
+                            Waktu Pesanan: {{ \Carbon\Carbon::parse($distribution->order->order_date)->format('d M Y') }}
+                        </div>
                         <div class="flex items-center mt-3"> <i data-lucide="pie-chart"
                                 class="w-4 h-4 text-slate-500 mr-2"></i> Status
                             Pesanan:
@@ -81,63 +91,66 @@
                             @endif
                         </div>
 
-                            @if ($distribution->order->status === 'reject')
+                        @if ($distribution->order->status === 'reject')
                             <div class="flex items-center mt-3"> <i data-lucide="file-text"
-                                class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Keterangan:
+                                    class="w-4 h-4 text-slate-500 mr-2"></i>
+                                Keterangan:
                                 <p class="ml-1">{{ $order->description }}</p>
                             </div>
-                            @endif
+                        @endif
                     </div>
                 </div>
                 @if ($distribution->is_delivery)
                     <div class="col-span-12 lg:col-span-4">
-                    <div class="box p-5 rounded-md">
-                        <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
-                            <div class="font-medium text-base truncate">Detail Penerima</div>
-                        </div>
-                        @php
-                            $details = $distribution->detail;
-                            $data = [];
-                            $tampilkan = [];
-                            foreach ($details as $d) {
-                                if (!$d->orderDetail->sub_agent_id) {
-                                    $query = $d->orderDetail->order->agent->agentProfile;
-                                    $data[] = [
-                                        'name' => $query->name,
-                                        'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
-                                        'address' => $query->address ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}" : 'Alamat Belum Diisi',
-                                    ];
-                                } else {
-                                    $data[] = $d->orderDetail->subAgent->agentProfile;
+                        <div class="box p-5 rounded-md">
+                            <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
+                                <div class="font-medium text-base truncate">Detail Penerima</div>
+                            </div>
+                            @php
+                                $details = $distribution->detail;
+                                $data = [];
+                                $tampilkan = [];
+                                foreach ($details as $d) {
+                                    if (!$d->orderDetail->sub_agent_id) {
+                                        $query = $d->orderDetail->order->agent->agentProfile;
+                                        $data[] = [
+                                            'name' => $query->name,
+                                            'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
+                                            'address' => $query->address
+                                                ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}"
+                                                : 'Alamat Belum Diisi',
+                                        ];
+                                    } else {
+                                        $data[] = $d->orderDetail->subAgent->agentProfile;
+                                    }
                                 }
-                            }
 
-                            foreach (array_filter($data) as $d) {
-                                $tampilkan = $d;
-                            }
+                                foreach (array_filter($data) as $d) {
+                                    $tampilkan = $d;
+                                }
 
-                            if ($tampilkan == null) {
-                                $tampilkan = [
-                                    'name' => $details->first()->orderDetail->subAgent->name,
-                                    'phone_number' => $details->first()->orderDetail->subAgent->phone_number,
-                                    'address' => $details->first()->orderDetail->subAgent->address,
-                                ];
-                            }
+                                if ($tampilkan == null) {
+                                    $tampilkan = [
+                                        'name' => $details->first()->orderDetail->subAgent->name,
+                                        'phone_number' => $details->first()->orderDetail->subAgent->phone_number,
+                                        'address' => $details->first()->orderDetail->subAgent->address,
+                                    ];
+                                }
 
-                        @endphp
-                        <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Penerima:
-                            <span class="underline decoration-dotted ml-1">{{ $tampilkan['name'] }}</span>
+                            @endphp
+                            <div class="flex items-center"> <i data-lucide="clipboard"
+                                    class="w-4 h-4 text-slate-500 mr-2"></i>
+                                Penerima:
+                                <span class="underline decoration-dotted ml-1">{{ $tampilkan['name'] }}</span>
+                            </div>
+                            <div class="flex items-center mt-3"> <i data-lucide="calendar"
+                                    class="w-4 h-4 text-slate-500 mr-2"></i>
+                                Nomor Telepon: {{ $tampilkan['phone_number'] }} </div>
+                            <div class="flex items-center mt-3"> <i data-lucide="map-pin"
+                                    class="w-4 h-4 text-slate-500 mr-2"></i>
+                                Alamat: {!! $tampilkan['address'] !!} </div>
                         </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="calendar"
-                                class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Nomor Telepon: {{ $tampilkan['phone_number'] }} </div>
-                        <div class="flex items-center mt-3"> <i data-lucide="map-pin"
-                                class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Alamat: {!! $tampilkan['address'] !!} </div>
                     </div>
-                </div>
                 @endif
             </div>
         </div>

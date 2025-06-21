@@ -23,7 +23,8 @@ class Distribution extends Model
         // 'agent_id',
         'order_id',
         'status',
-        'is_delivery'
+        'is_delivery',
+        'print_count'
     ];
 
     public function order()

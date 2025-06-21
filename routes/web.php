@@ -96,6 +96,7 @@ Route::group(['middleware' => 'auth',], function () {
         Route::resource('distribution', DistributionController::class);
         Route::group(['prefix' => 'distribution'], function () {
             Route::get('/export/{distribution}', [ExportDeliveryOrderController::class, 'getDeliveryOrder'])->name('export.deliveryOrder');
+            Route::post('/export/{distribution}/printed', [ExportDeliveryOrderController::class, 'printed'])->name('export.printed');
         });
     });
     //master
