@@ -174,4 +174,26 @@ class DistributionController extends Controller
             return view('cms.error', compact('data'));
         }
     }
+
+    public function approve(Distribution $distribution)
+    {
+        try {
+            DB::beginTransaction();
+
+            $distribution->status = 'delivered';
+            // $distribution->is_delivery = false;
+            $distribution->save();
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Data Berhasil Terapprove');
+
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
+    }
 }

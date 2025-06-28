@@ -64,9 +64,9 @@ Route::get('/testview', function () {
 
 Route::group(['middleware' => 'auth',], function () {
     Route::get('/agent', [DashboardController::class, 'noActive'])->name('nonactive');
-    
 
-    
+
+
 
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
@@ -95,6 +95,7 @@ Route::group(['middleware' => 'auth',], function () {
         //distribution
         Route::resource('distribution', DistributionController::class);
         Route::group(['prefix' => 'distribution'], function () {
+            Route::put('/{distribution}/approve', [DistributionController::class, 'approve'])->name('distribution.approve');
             Route::get('/export/{distribution}', [ExportDeliveryOrderController::class, 'getDeliveryOrder'])->name('export.deliveryOrder');
             Route::post('/export/{distribution}/printed', [ExportDeliveryOrderController::class, 'printed'])->name('export.printed');
         });

@@ -170,6 +170,7 @@
         }
 
         function handleOrderChange(event) {
+
             const orderId = event.target.value;
             const productFields = document.getElementById('product_fields');
 
@@ -184,7 +185,17 @@
 
         function populateProducts(orderId) {
             productSelect = document.getElementById('product_id_item');
-            productSelect.innerHTML = '<option disabled>Pilih Item...</option>';
+
+            // Clear existing options first
+            productSelect.tomselect.clear();
+            productSelect.tomselect.clearOptions();
+
+            // Add default disabled option
+            productSelect.tomselect.addOption({
+                value: '',
+                text: 'Pilih Item...',
+                disabled: true
+            });
 
             @foreach ($datas as $order)
                 if ('{{ $order->id }}' == orderId) {
@@ -196,20 +207,20 @@
                             }
                         @endphp
 
-                        var option = document.createElement('option');
-                        option.value = '{{ $products->id }}';
-                        option.textContent =
-                            "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} {{ $products->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - {{ $products->qty - $qty }}";
-                        option.dataset.qty = '{{ $products->qty - $qty }}';
-
-                        @if ($products->qty - $qty == 0)
-                            option.disabled = true;
-                        @endif
+                        var option = {
+                            value: '{{ $products->id }}',
+                            text: "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} {{ $products->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - {{ $products->qty - $qty }}",
+                            qty: '{{ $products->qty - $qty }}',
+                            disabled: {{ ($products->qty - $qty == 0) ? 'true' : 'false' }}
+                        };
 
                         productSelect.tomselect.addOption(option);
                     @endforeach
                 }
             @endforeach
+
+            // Reset selection
+            productSelect.tomselect.setValue('');
         }
 
         function addItem() {
