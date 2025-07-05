@@ -140,8 +140,9 @@
                             Pembayaran: {{ $payment->method }}
                             @if ($payment->method == 'Transfer')
                                 <br>
-                                Detail Rekening: {{ $payment->bank }}
-                                ({{ $payment->bank_number ? $payment->bank_number . ' - ' . $payment->bank_owner : 'Detail rekening belum diisi' }})
+                                Detail Rekening:
+                                {{ $payment->bank_owner_id ? $banks->where('id', $payment->bank_owner_id)->first()->name : $payment->bank }}
+                                ({{ $payment->bank_owner_id ? $banks->where('id', $payment->bank_owner_id)->first()->account_number . ' - ' . $banks->where('id', $payment->bank_owner_id)->first()->account_name : 'Detail rekening belum diisi' }})
                             @endif
                         </td>
                         <td class="col-6">

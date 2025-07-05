@@ -26,19 +26,19 @@ class PaymentController extends Controller
 
         if (ValidateRole::check('agent')) {
             if ($perPages == 'all') {
-                $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->get();
+                $orders = Order::where('agent_id', Auth::user()->id)->where('status', ['accepted', 'stop'])->orderByDesc('created_at')->get();
             } else {
                 $perPage = intval($perPages);
-                $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->paginate($perPage);
+                $orders = Order::where('agent_id', Auth::user()->id)->where('status', ['accepted', 'stop'])->orderByDesc('created_at')->paginate($perPage);
             }
 
             return view('cms.transactions.index', compact('orders'));
         } else {
             if ($perPages == 'all') {
-                $orders = Order::with('agent.agentProfile')->get()->groupBy('agent_id');
+                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->get()->groupBy('agent_id');
             } else {
                 $perPage = intval($perPages);
-                $orders = Order::with('agent.agentProfile')->paginate($perPage)->groupBy('agent_id');
+                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->paginate($perPage)->groupBy('agent_id');
             }
 
             return view('cms.admin.payment.index', compact('orders'));
@@ -54,10 +54,10 @@ class PaymentController extends Controller
         })->get();
 
         if ($perPages == 'all') {
-            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->get();
+            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->where('status', ['accepted', 'stop'])->get();
         } else {
             $perPage = intval($perPages);
-            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->paginate($perPage);
+            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->where('status', ['accepted', 'stop'])->paginate($perPage);
         }
 
         return view('cms.admin.payment.show', compact('user', 'packages', 'orders'));
@@ -233,7 +233,7 @@ class PaymentController extends Controller
                     $payment->bank_owner_id = null;
                     $payment->bank = null;
                 }
-                
+
                 $payment->save();
             });
             return redirect()->back()->with('success', 'Pembayaran berhasil diubah');

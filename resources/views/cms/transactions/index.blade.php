@@ -10,8 +10,7 @@
             </h2>
             <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto">
                 @hasrole('admin|super_admin')
-                    <a href="{{ route('countAll') }}"
-                        class="btn btn-sm btn-primary">Hitung Ulang Pesanan</a>
+                    <a href="{{ route('countAll') }}" class="btn btn-sm btn-primary">Hitung Ulang Pesanan</a>
                 @endhasrole
             </div>
         </div>
@@ -21,12 +20,22 @@
             @hasrole('super_admin|admin|agent')
                 <a href="{{ route('order.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Pesanan</a>
             @endhasrole
-            <div class="w-auto relative text-slate-500">
+            <div class="w-auto relative text-slate-500 mr-2">
                 <select id="records_per_page" class="form-control box">
                     <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
                     <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
                     <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
                     <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+            <div class="w-auto relative text-slate-500 mt-2 lg:mt-0">
+                <select id="records_per_status" class="form-control box">
+                    <option value="accepted" {{ request()->get('status') == "accepted" ? 'selected' : '' }}>Diterima</option>
+                    <option value="stop" {{ request()->get('status') == "stop" ? 'selected' : '' }}>Mundur</option>
+                    <option value="pending" {{ request()->get('status') == "pending" ? 'selected' : '' }}>Pending</option>
+                    <option value="reject" {{ request()->get('status') == "reject" ? 'selected' : '' }}>Ditolak</option>
+                    <option value="canceled" {{ request()->get('status') == "canceled" ? 'selected' : '' }}>Dibatalkan</option>
+                    <option value="all" {{ request()->get('status') == 'all' ? 'selected' : '' }}>All</option>
                 </select>
             </div>
 
@@ -123,42 +132,40 @@
                                 <td>
 
                                     @if ($order->isAllItemDistributed())
-                                            <div class="flex items-center justify-center text-success"> <i
+                                        <div class="flex items-center justify-center text-success"> <i
                                                 data-lucide="check-square" class="w-4 h-4 mr-2"></i> Sukses </div>
                                     @else
-                                            @if ($order->distributions->isNotEmpty())
-                                                <div class="flex items-center justify-center text-warning"> <i
+                                        @if ($order->distributions->isNotEmpty())
+                                            <div class="flex items-center justify-center text-warning"> <i
                                                     data-lucide="clock" class="w-4 h-4 mr-2"></i> Sedang Proses </div>
-                                            @else
+                                        @else
                                             <div class="flex items-center justify-center text-primary"> <i
                                                     data-lucide="clock" class="w-4 h-4 mr-2"></i> Belum Dikirim </div>
-                                            @endif
+                                        @endif
                                     @endif
                                 </td>
                                 @hasrole('super_admin|admin')
-                                    @if ($order->payment_status == 'paid')
-                                        <td class="table-report__action w-56">
+                                    <td class="table-report__action w-56">
+                                        @if ($order->payment_status == 'paid')
                                             <div class="flex items-center justify-center text-success"> <i
                                                     data-lucide="check-square" class="w-4 h-4 mr-2"></i> </div>
-                                        </td>
-                                    @elseif ($order->status === 'canceled')
-                                        <td class="table-report__action w-56">
+                                        @elseif ($order->status === 'canceled')
                                             <div class="flex justify-center items-center">
                                                 <a class="flex items-center text-danger" href="javascript:;"
                                                     data-tw-toggle="modal"
                                                     data-tw-target="#delete-confirmation-modal{{ $order->id }}"> <i
                                                         data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
                                             </div>
-                                        </td>
-                                    @else
-                                        <td class="table-report__action w-50">
-                                            <div class="flex justify-center items-center">
-                                                <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
-                                                    data-tw-target="#change-confirmation-modal{{ $order->id }}">
-                                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
-                                            </div>
-                                        </td>
-                                    @endif
+                                        @else
+                                            @if ($order->payment_status !== 'pending')
+                                                <div class="flex justify-center items-center">
+                                                    <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                        data-tw-target="#change-confirmation-modal{{ $order->id }}">
+                                                        <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </td>
                                 @endhasrole
                             </tr>
 
@@ -278,6 +285,12 @@
                 const perPage = this.value;
                 const urlParams = new URLSearchParams(window.location.search);
                 urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+            document.getElementById('records_per_status').addEventListener('change', function() {
+                const status = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('status', status);
                 window.location.search = urlParams.toString();
             });
         });

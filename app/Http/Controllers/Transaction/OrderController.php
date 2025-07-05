@@ -30,30 +30,47 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $perPages = $request->get('perPage') ?? 5;
+        $status = $request->get('status') ?? 'accepted';
 
         if (ValidateRole::check('agent')) {
             if ($perPages == 'all') {
-                $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->get();
+                if ($status == 'all') {
+                    $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->get();
+                } else {
+                    $orders = Order::where('status', $status)->where('agent_id', Auth::user()->id)->orderByDesc('created_at')->get();
+                }
             } else {
-                $perPage = intval($perPages);
-                $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->paginate($perPage);
+                if ($status == 'all') {
+                    $perPage = intval($perPages);
+                    $orders = Order::where('agent_id', Auth::user()->id)->orderByDesc('created_at')->paginate($perPage);
+                } else {
+                    $perPage = intval($perPages);
+                    $orders = Order::where('status', $status)->where('agent_id', Auth::user()->id)->orderByDesc('created_at')->paginate($perPage);
+                }
             }
 
             return view('cms.transactions.index', compact('orders'));
         } else {
             // $access_date = AccessDate::first();
             if ($perPages == 'all') {
-                $orders = Order::orderByDesc('created_at')->get();
+                if ($status == 'all') {
+                    $orders = Order::orderByDesc('created_at')->get();
+                } else {
+                    $orders = Order::where('status', $status)->orderByDesc('created_at')->get();
+                }
             } else {
-                $perPage = intval($perPages);
-                $orders = Order::orderByDesc('created_at')->paginate($perPage);
+                if ($status == 'all') {
+                    $perPage = intval($perPages);
+                    $orders = Order::orderByDesc('created_at')->paginate($perPage);
+                } else {
+                    $perPage = intval($perPages);
+                    $orders = Order::where('status', $status)->orderByDesc('created_at')->paginate($perPage);
+                }
             }
 
             return view('cms.transactions.index', compact('orders'));
         }
     }
-
-
 
     /**
      * Show the form for creating a new resource.
