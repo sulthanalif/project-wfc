@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             RoleAndPermissionSeeder::class,
             AdminSeeder::class,
             SpendingTypeSeeder::class,
+            BankOwnerSeeder::class,
             // UserSeeder::class,
             // ProductPackageSeeder::class
         ]);

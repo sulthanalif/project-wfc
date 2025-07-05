@@ -45,13 +45,21 @@
             </li>
             {{-- <li class="side-nav__devider my-4"></li> --}}
             <li>
-                <a href="javascript:;" class="side-menu @if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('ragentOrder') || Route::is('instalment') || Route::is('requirement')) side-menu--active @endif">
+                <a href="javascript:;" class="side-menu @if (Route::is('totalDeposit') ||
+                        Route::is('rproductDetail') ||
+                        Route::is('ragentOrder') ||
+                        Route::is('instalment') ||
+                        Route::is('requirement')) side-menu--active @endif">
                     <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
                     <div class="side-menu__title"> Laporan
                         <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                     </div>
                 </a>
-                <ul class="@if (Route::is('totalDeposit') || Route::is('rproductDetail') || Route::is('ragentOrder') || Route::is('instalment') || Route::is('requirement')) side-menu__sub-open @endif">
+                <ul class="@if (Route::is('totalDeposit') ||
+                        Route::is('rproductDetail') ||
+                        Route::is('ragentOrder') ||
+                        Route::is('instalment') ||
+                        Route::is('requirement')) side-menu__sub-open @endif">
                     <li>
                         <a href="{{ route('totalDeposit') }}"
                             class="side-menu {{ Route::is('totalDeposit') ? 'side-menu--active' : '' }}">
@@ -132,6 +140,7 @@
                             Route::is('sub-product*') ||
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
+                            Route::is('bank-owner*') ||
                             Route::is('getAdministration')) side-menu--active @endif">
                         <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
                         <div class="side-menu__title">
@@ -146,6 +155,7 @@
                             Route::is('sub-product*') ||
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
+                            Route::is('bank-owner*') ||
                             Route::is('getAdministration')) side-menu__sub-open @endif">
                         <li>
                             <a href="{{ route('sub-product.index') }}"
@@ -175,6 +185,15 @@
                                 <div class="side-menu__title"> Periode </div>
                             </a>
                         </li>
+                        @hasrole('super_admin|admin|finance_admin')
+                            <li>
+                                <a href="{{ route('bank-owner.index') }}"
+                                    class="side-menu {{ Route::is('bank-owner*') ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="side-menu__title"> Bank </div>
+                                </a>
+                            </li>
+                        @endhasrole
                         <li>
                             <a href="{{ route('supplier.index') }}"
                                 class="side-menu {{ Route::is('supplier*') ? 'side-menu--active' : '' }}">

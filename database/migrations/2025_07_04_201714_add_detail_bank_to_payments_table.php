@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->string('bank_number')->nullable();
-            $table->string('bank_owner')->nullable();
+            $table->foreignId('bank_owner_id')
+                ->nullable()
+                ->constrained('bank_owners')
+                ->onDelete('cascade');
         });
     }
 
@@ -23,8 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('bank_number');
-            $table->dropColumn('bank_owner');
+            $table->dropColumn('bank_owner_id');
         });
     }
 };

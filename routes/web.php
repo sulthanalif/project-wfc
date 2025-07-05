@@ -11,6 +11,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
 use App\Http\Controllers\AccessDateController;
+use App\Http\Controllers\Admin\BankOwnerController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\LandingpageController;
 use App\Http\Controllers\Admin\ReportController;
@@ -71,6 +72,10 @@ Route::group(['middleware' => 'auth',], function () {
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
+
+        Route::group(['prefix' => 'master'], function () {
+           Route::resource('bank-owner', BankOwnerController::class)->except(['create', 'show', 'edit']); 
+        });
 
         //export
         require __DIR__ . '/admin/export.php';

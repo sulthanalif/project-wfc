@@ -22,8 +22,7 @@ class Payment extends Model
         // 'remaining_payment',
         'method',
         'bank',
-        'bank_number',
-        'bank_owner',
+        'bank_owner_id',
         // 'installment',
         'note',
         'date',
@@ -32,5 +31,10 @@ class Payment extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'order_id');
+    }
+
+    public function bankOwner()
+    {
+        return $this->belongsTo(User::class, 'bank_owner_id');
     }
 }
