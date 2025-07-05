@@ -35,10 +35,10 @@
                     @if ($order->payment->isEmpty())
                         <tr>
                             @hasrole('finance_admin|super_admin|admin')
-                                <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                                <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                             @endhasrole
                             @hasrole('agent')
-                                <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                                <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                             @endhasrole
                         </tr>
                     @else
@@ -48,14 +48,14 @@
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td class="text-center">
-                                    {{-- {{ \Carbon\Carbon::parse($payment->created_at)->format('d M Y, H:m:i') }} --}}
                                     {{ \Carbon\Carbon::parse($payment->date)->format('d M Y') }}
                                 </td>
                                 <td class="text-center">
                                     <p>
                                         @if ($payment->method == 'Transfer')
-                                            {{ $payment->bank }} <br />
-                                            ({{ $payment->bank_number ? $payment->bank_number . ' - ' . $payment->bank_owner : 'Detail rekening belum diisi' }})
+                                            {{ $payment->bank_owner_id ? $banks->where('id', $payment->bank_owner_id)->first()->name : $payment->bank }}
+                                            <br />
+                                            ({{ $payment->bank_owner_id ? $banks->where('id', $payment->bank_owner_id)->first()->account_number . ' - ' . $banks->where('id', $payment->bank_owner_id)->first()->account_name : 'Detail rekening belum diisi' }})
                                         @elseif ($payment->method == 'Tunai')
                                             Tunai
                                         @endif
@@ -72,16 +72,12 @@
                                 @hasrole('finance_admin|super_admin')
                                     <td class="table-report__action">
                                         <div class="flex justify-center items-center">
-                                            @if ($payment->method == 'Transfer')
-                                                @if ($payment->bank_number == '')
-                                                    <a class="flex items-center mr-3 text-warning" href="javascript:;"
-                                                        data-tw-toggle="modal"
-                                                        data-tw-target="#update-detail-confirmation-modal{{ $payment->id }}">
-                                                        <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Edit </a>
-
-                                                    @include('cms.admin.payment.modal.update-detail')
-                                                @endif
-                                            @endif
+                                            <a class="flex items-center mr-3 text-warning" href="javascript:;"
+                                                data-tw-toggle="modal"
+                                                data-tw-target="#update-detail-confirmation-modal{{ $payment->id }}">
+                                                <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Edit </a>
+                                            @include('cms.admin.payment.modal.update-detail')
+                                            
                                             <a class="flex items-center mr-3 text-success" target="_blank"
                                                 href="{{ route('getInvoice', ['order' => $order, 'payment' => $payment]) }}">
                                                 <i data-lucide="printer" class="w-4 h-4 mr-1"></i> Cetak </a>

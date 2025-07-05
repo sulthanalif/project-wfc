@@ -25,10 +25,10 @@
                                 data-tw-target="#import-confirmation-modal"> <i data-lucide="upload"
                                     class="w-4 h-4 mr-2"></i> Import </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('product.archive') }}" class="dropdown-item"> <i data-lucide="archive"
                                     class="w-4 h-4 mr-2"></i> Arsip </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
             </div>

@@ -15,6 +15,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Helpers\GenerateRandomString;
+use App\Models\BankOwner;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
@@ -68,7 +69,9 @@ class PaymentController extends Controller
             $query->where('is_active', 1);
         })->get();
 
-        return view('cms.admin.payment.detail', compact('packages', 'order', 'user'));
+        $banks = BankOwner::all();
+
+        return view('cms.admin.payment.detail', compact('packages', 'order', 'user', 'banks'));
     }
 
     public function changePaymentStatus(Request $request, Payment $payment)
@@ -112,8 +115,6 @@ class PaymentController extends Controller
             'pay' => ['required', 'numeric'],
             'method' => ['required', 'string'],
             'bank' => ['nullable', 'string'],
-            'bank_number' => ['nullable', 'string'],
-            'bank_owner' => ['nullable', 'string'],
             'note' => ['nullable', 'string'],
             'date' => ['required', 'date'],
         ]);
@@ -126,6 +127,7 @@ class PaymentController extends Controller
             DB::transaction(function () use ($request, $order) {
                 $paymentCount = Payment::where('order_id', $order->id)->count();
                 $invoiceNumber = 'INV' . GenerateRandomString::make(5) . ($paymentCount + 1) . now()->format('dmY');
+                $bank = BankOwner::where('id', $request->bank)->first();
 
                 $payment = new Payment([
                     'order_id' => $order->id,
@@ -133,9 +135,8 @@ class PaymentController extends Controller
                     'pay' => $request->pay,
                     // 'remaining_payment' => $existingPayment ? $existingPayment->remaining_payment - $request->pay : $order->total_price - $request->pay,
                     'method' => $request->method,
-                    'bank' => $request->bank ?? '',
-                    'bank_number' => $request->bank_number ?? '',
-                    'bank_owner' => $request->bank_owner ?? '',
+                    'bank' => $bank->name ?? null,
+                    'bank_owner_id' => $request->bank ?? null,
                     // 'installment' => $existingPayment ? $existingPayment->installment + 1 : 1,
                     'note' => $request->note,
                     'date' => $request->date
@@ -216,8 +217,6 @@ class PaymentController extends Controller
         $validator = Validator::make($request->all(), [
             'upd_method' => ['required', 'string'],
             'upd_bank' => ['nullable', 'string'],
-            'upd_bank_number' => ['nullable', 'string'],
-            'upd_bank_owner' => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -227,9 +226,14 @@ class PaymentController extends Controller
         try {
             DB::transaction(function () use ($request, $payment) {
                 $payment->method = $request->upd_method;
-                $payment->bank = $request->upd_bank ?? '';
-                $payment->bank_number = $request->upd_bank_number ?? '';
-                $payment->bank_owner = $request->upd_bank_owner ?? '';
+
+                if ($request->upd_method == 'Transfer') {
+                    $payment->bank_owner_id = $request->upd_bank;
+                } else {
+                    $payment->bank_owner_id = null;
+                    $payment->bank = null;
+                }
+                
                 $payment->save();
             });
             return redirect()->back()->with('success', 'Pembayaran berhasil diubah');

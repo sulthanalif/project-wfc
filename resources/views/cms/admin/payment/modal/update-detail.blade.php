@@ -2,12 +2,15 @@
 <div id="update-detail-confirmation-modal{{ $payment->id }}" class="modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="font-medium text-base mr-auto">Ubah Detail Pembayaran</h2>
+            </div>
             <div class="modal-body p-0">
                 <div class="p-5">
                     <form action="{{ route('updatePayment', $payment) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        <div class="mt-3">
+                        <div>
                             <label for="upd_method_{{ $payment->id }}" class="form-label">Metode Pembayaran <span
                                     class="text-danger">*</span></label>
                             <select class="form-select mt-2 sm:mr-2 method-select" id="upd_method_{{ $payment->id }}"
@@ -26,45 +29,26 @@
 
                         <div id="upd-bank-field-{{ $payment->id }}"
                             style="display: {{ old('upd_method', $payment->method) == 'Transfer' ? 'block' : 'none' }}">
-                            <div class="grid grid-cols-12 gap-2 mt-3">
-                                <div class="col-span-12 lg:col-span-6">
-                                    <label for="upd_bank" class="form-label">Bank <span
-                                            class="text-danger">*</span></label>
-                                    <select class="form-select" id="upd_bank" name="upd_bank">
-                                        <option value="">Pilih...</option>
-                                        <option value="BRI" {{ old('upd_bank', $payment->bank) == 'BRI' ? 'selected' : ''}}>BRI</option>
-                                        <option value="BCA" {{ old('upd_bank', $payment->bank) == 'BCA' ? 'selected' : ''}}>BCA</option>
-                                        <option value="Mandiri" {{ old('upd_bank', $payment->bank) == 'Mandiri' ? 'selected' : ''}}>Mandiri</option>
-                                    </select>
-                                    @error('upd_bank')
-                                        <span class="invalid-feedback"
-                                            role="alert"><strong>{{ $message }}</strong></span>
-                                    @enderror
-                                </div>
-                                <div class="col-span-12 lg:col-span-6 sm:mt-3">
-                                    <label for="upd_bank_number" class="form-label">Nomor Rekening <span
-                                            class="text-danger">*</span></label>
-                                    <input id="upd_bank_number" name="upd_bank_number" type="number"
-                                        class="form-control w-full" placeholder="Masukkan Nomor Rekening" required>
-                                    @error('upd_bank_number')
-                                        <span class="invalid-feedback"
-                                            role="alert"><strong>{{ $message }}</strong></span>
-                                    @enderror
-                                </div>
-                            </div>
                             <div class="mt-3">
-                                <label for="upd_bank_owner" class="form-label">Pemilik Bank <span
-                                        class="text-danger">*</span></label>
-                                <input id="upd_bank_owner" name="upd_bank_owner" type="text"
-                                    class="form-control w-full" placeholder="Masukkan Atas Nama Rekening" required>
-                                @error('upd_bank_owner')
+                                <label for="upd_bank" class="form-label">Bank <span class="text-danger">*</span></label>
+                                <select class="form-select" id="upd_bank" name="upd_bank">
+                                    <option value="">Pilih...</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{ $bank->id }}"
+                                            {{ old('upd_bank', $payment->bank_owner_id) == $bank->id ? 'selected' : '' }}>
+                                            {{ $bank->name }} - {{ $bank->account_number }}
+                                            ({{ $bank->account_name }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('upd_bank')
                                     <span class="invalid-feedback"
                                         role="alert"><strong>{{ $message }}</strong></span>
                                 @enderror
                             </div>
                         </div>
 
-                        <div class="px-5 mt-3 pb-8 text-center">
+                        <div class="px-5 mt-3 py-3 text-center">
                             <button type="submit" class="btn btn-primary w-24">Update</button>
                             <button type="button" data-tw-dismiss="modal"
                                 class="btn btn-outline-secondary w-24 ml-1">Batal</button>

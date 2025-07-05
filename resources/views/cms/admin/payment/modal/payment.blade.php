@@ -38,39 +38,15 @@
                             @enderror
                         </div>
                         <div id="bank-field" style="display: none">
-                            <div class="grid grid-cols-12 gap-2 mt-3">
-                                <div class="col-span-12 lg:col-span-6">
-                                    <label for="bank" class="form-label">Bank <span
-                                            class="text-danger">*</span></label>
-                                    <select class="form-select" id="bank" name="bank">
-                                        <option value="">Pilih...</option>
-                                        <option value="BRI">BRI</option>
-                                        <option value="BCA">BCA</option>
-                                        <option value="Mandiri">Mandiri</option>
-                                    </select>
-                                    @error('bank')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="col-span-12 lg:col-span-6 sm:mt-3">
-                                    <label for="bank_number" class="form-label">Nomor Rekening <span
-                                            class="text-danger">*</span></label>
-                                    <input id="bank_number" name="bank_number" type="number"
-                                        class="form-control w-full" placeholder="Masukkan Nomor Rekening" required>
-                                    @error('bank_number')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
                             <div class="mt-3">
-                                <label for="bank_owner" class="form-label">Pemilik Bank <span class="text-danger">*</span></label>
-                                <input id="bank_owner" name="bank_owner" type="text" class="form-control w-full"
-                                    placeholder="Masukkan Atas Nama Rekening" required>
-                                @error('bank_owner')
+                                <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
+                                <select class="form-select" id="bank" name="bank">
+                                    <option value="">Pilih...</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{ $bank->id }}">{{ $bank->name }} - {{ $bank->account_number }} ({{ $bank->account_name }})</option>
+                                    @endforeach
+                                </select>
+                                @error('bank')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -97,7 +73,7 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="px-5 mt-3 pb-8 text-center">
+                        <div class="px-5 mt-3 py-3 text-center">
                             <button type="submit" class="btn btn-primary w-24">Setor</button>
                             <button type="button" data-tw-dismiss="modal"
                                 class="btn btn-outline-secondary w-24 ml-1">Batal</button>
