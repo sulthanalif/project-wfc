@@ -16,6 +16,8 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('bank_owners')
                 ->onDelete('cascade');
+            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+            $table->string('photo')->nullable();
         });
     }
 

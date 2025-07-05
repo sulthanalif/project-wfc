@@ -5,14 +5,14 @@
 @section('content')
     <div class="intro-y flex items-center mt-8">
         <h2 class="text-lg font-medium mr-auto">
-            Pembayaran Paket #{{ $user->agentProfile->name }} - {{ $order->order_number }}
+            Pembayaran Paket #{{ $order->order_number }}
         </h2>
-        <a href="{{ route('payment.show', $user) }}" class="btn px-2 box"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
+        <a href="{{ route('payment-agent.index') }}" class="btn px-2 box"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
         @if ($order->payment_status !== 'paid')
             <a class="btn btn-primary btn-sm py-2 px-3 shadow-md flex items-center ml-2" href="javascript:;"
                 data-tw-toggle="modal" data-tw-target="#payment-confirmation-modal">
                 Setor </a>
-            @include('cms.admin.payment.modal.payment')
+            @include('cms.agen.payment.modal.payment')
         @endif
     </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
@@ -28,20 +28,13 @@
                         <th class="text-center whitespace-nowrap">STATUS</th>
                         <th class="text-center whitespace-nowrap">KETERANGAN</th>
                         <th class="text-center whitespace-nowrap">BUKTI</th>
-                        @hasrole('finance_admin|super_admin|admin')
-                            <th class="text-center whitespace-nowrap">AKSI</th>
-                        @endhasrole
+                        <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if ($order->payment->isEmpty())
                         <tr>
-                            @hasrole('finance_admin|super_admin|admin')
-                                <td colspan="8" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                            @endhasrole
-                            @hasrole('agent')
-                                <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                            @endhasrole
+                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
                         @foreach ($order->payment->sortByDesc('date') as $payment)
@@ -96,8 +89,7 @@
                                                     title="@if ($payment->created_at == $payment->updated_at) Diupload {{ \Carbon\Carbon::parse($payment->created_at)->format('d M Y, H:m:i') }} @else Diupdate {{ \Carbon\Carbon::parse($payment->updated_at)->format('d M Y, H:m:i') }} @endif">
                                             @endif
                                             <!-- Image Modal -->
-                                            <div id="image-modal-{{ $payment->id }}" class="modal" tabindex="-1"
-                                                aria-hidden="true">
+                                            <div id="image-modal-{{ $payment->id }}" class="modal" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content"> <a data-tw-dismiss="modal"
                                                             href="javascript:;"> <i data-lucide="x"
@@ -112,43 +104,23 @@
                                         </div>
                                     </div>
                                 </td>
-                                @hasrole('finance_admin|super_admin')
-                                    <td class="table-report__action">
-                                        <div class="flex justify-center items-center">
-                                            @if ($payment->status == 'pending')
-                                                <a class="flex items-center mr-3 text-secondary" href="javascript:;"
-                                                    data-tw-toggle="modal"
-                                                    data-tw-target="#confirm-confirmation-modal{{ $payment->id }}">
-                                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
-                                                @include('cms.admin.payment.modal.confirm')
+                                <td class="table-report__action">
+                                    <div class="flex justify-center items-center">
+                                        @if ($payment->status == 'pending')
+                                            <a class="flex items-center mr-3 text-warning" href="javascript:;"
+                                                data-tw-toggle="modal"
+                                                data-tw-target="#update-detail-confirmation-modal{{ $payment->id }}">
+                                                <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Edit </a>
+                                            @include('cms.agen.payment.modal.update-detail')
+                                        @endif
 
-                                                <a class="flex items-center mr-3 text-warning" href="javascript:;"
-                                                    data-tw-toggle="modal"
-                                                    data-tw-target="#update-detail-confirmation-modal{{ $payment->id }}">
-                                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Edit </a>
-                                                @include('cms.admin.payment.modal.update-detail')
-                                            @endif
-
-                                            @if ($payment->status == 'accepted')
-                                                <a class="flex items-center mr-3 text-success" target="_blank"
-                                                    href="{{ route('getInvoice', ['order' => $order, 'payment' => $payment]) }}">
-                                                    <i data-lucide="printer" class="w-4 h-4 mr-1"></i> Cetak </a>
-                                            @endif
-
-                                            @if ($payment->status == 'rejected')
-                                                <a class="flex items-center mr-3 text-danger" href="javascript:;"
-                                                    data-tw-toggle="modal"
-                                                    data-tw-target="#delete-confirmation-modal{{ $payment->id }}">
-                                                    <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                                @include('cms.admin.payment.modal.delete')
-                                            @endif
-
-                                            {{-- <a class="flex items-center text-success" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#delete-confirmation-modal{{ $order->id }}">
-                                                 <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Accept </a> --}}
-                                        </div>
-                                    </td>
-                                @endhasrole
+                                        @if ($payment->status == 'accepted')
+                                            <a class="flex items-center mr-3 text-success" target="_blank"
+                                                href="{{ route('getInvoice', ['order' => $order, 'payment' => $payment]) }}">
+                                                <i data-lucide="printer" class="w-4 h-4 mr-1"></i> Cetak </a>
+                                        @endif
+                                    </div>
+                                </td>
                             </tr>
                         @endforeach
                     @endif
@@ -156,7 +128,7 @@
                 @if ($order->payment->first())
                     <tfoot>
                         <tr>
-                            <th colspan="2" class="text-center">SISA PEMBAYARAN</th>
+                            <th colspan="3" class="text-center">SISA PEMBAYARAN</th>
                             <th class="text-center">
                                 Rp.
                                 {{ number_format($order->payment->sortByDesc('created_at')->first() ? $order->total_price - $order->payment()->where('status', 'accepted')->sum('pay') : $order->total_price, 0, ',', '.') }}

@@ -26,6 +26,8 @@ class Payment extends Model
         // 'installment',
         'note',
         'date',
+        'status',
+        'photo',
     ];
 
     public function order()

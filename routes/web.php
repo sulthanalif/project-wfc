@@ -74,7 +74,7 @@ Route::group(['middleware' => 'auth',], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
 
         Route::group(['prefix' => 'master'], function () {
-           Route::resource('bank-owner', BankOwnerController::class)->except(['create', 'show', 'edit']); 
+            Route::resource('bank-owner', BankOwnerController::class)->except(['create', 'show', 'edit']);
         });
 
         //export
@@ -120,7 +120,7 @@ Route::group(['middleware' => 'auth',], function () {
         Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
         Route::put('/administration/{user}', [AdministrationController::class, 'update'])->name('updateAdministration');
 
-         //count price
+        //count price
         Route::get('/countPrice/{order}', [CountPriceTransactionController::class, 'count'])->name('countPrice');
         Route::get('/countAll', [CountPriceTransactionController::class, 'countAll'])->name('countAll');
     });
@@ -139,6 +139,12 @@ Route::group(['middleware' => 'auth',], function () {
         //order detail
         Route::post('.order/{detail}/detail', [DetailOrderController::class, 'editDetail'])->name('order.editDetail');
         Route::post('.order/{order}/addItems', [DetailOrderController::class, 'addItems'])->name('order.addItems');
+
+        // Payment
+        Route::get('/payment-agent', [PaymentController::class, 'index'])->name('payment-agent.index');
+        Route::get('/payment-agent/{user}/{order}', [PaymentController::class, 'showPaymentAgent'])->name('payment-agent.detail');
+        Route::post('/payment-agent/{order}', [PaymentController::class, 'storePaymentAgent'])->name('storePaymentAgent');
+        Route::put('/payment-agent/{payment}', [PaymentController::class, 'updatePaymentAgent'])->name('updatePaymentAgent');
     });
     Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin'], function () {
         require __DIR__ . '/transaction/payment.php';

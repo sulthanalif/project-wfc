@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-body p-0">
                 <div class="p-5">
-                    <form action="{{ route('storePayment', $order) }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('storePaymentAgent', $order) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="mt-3 text-center">
                             <label class="form-label">Total Pembayaran</label>

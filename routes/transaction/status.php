@@ -9,7 +9,7 @@ Route::post('/acc/{order}', [OrderController::class, 'accOrder'])->name('order.a
 Route::post('/changeOrderStatus/{order}', [OrderController::class, 'changeOrderStatus'])->name('order.changeOrderStatus');
 Route::post('/accPayment/{payment}/{order}', [PaymentController::class, 'accPayment'])->name('accPayment');
 Route::post('/rejectPayment/{payment}/{order}', [PaymentController::class, 'rejectPayment'])->name('rejectPayment');
-Route::post('/changePaymentStatus/{payment}', [PaymentController::class, 'changePaymentStatus'])->name('changePaymentStatus');
+Route::put('/changePaymentStatus/{payment}', [PaymentController::class, 'changePaymentStatus'])->name('changePaymentStatus');
 
 //order stats
 Route::get('/orderStats', [OrderController::class, 'getOrderStats'])->name('getOrderStats');
