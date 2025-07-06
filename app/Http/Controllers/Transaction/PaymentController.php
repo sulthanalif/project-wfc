@@ -7,6 +7,8 @@ use App\Models\Order;
 // use Illuminate\Routing\Controller;
 use App\Models\Package;
 use App\Models\Payment;
+use App\Models\BankOwner;
+use App\Exports\ExportDatas;
 use Illuminate\Http\Request;
 use App\Helpers\ValidateRole;
 use App\Mail\NotificationPayment;
@@ -14,8 +16,8 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Helpers\GenerateRandomString;
-use App\Models\BankOwner;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,6 +46,30 @@ class PaymentController extends Controller
                 $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->paginate($perPage)->groupBy('agent_id');
             }
 
+            if ($request->get('export') == 'true') {
+                $datas = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->get()->groupBy('agent_id')->map(function ($item) {
+                    $allPaid = $item->every(function ($o) {
+                        return $o->payment_status === 'paid';
+                    });
+                    $hasPending = $item->contains(function ($o) {
+                        return $o->payment_status === 'pending';
+                    });
+                    return [
+                        'agent' => $item->first()->agent->agentProfile->name,
+                        'total_price' => $item->sum('total_price'),
+                        'status' => $allPaid ? 'Lunas' : ($hasPending ? 'Dicicilkan' : 'Belum Lunas')
+                    ];
+                });
+
+                $headers = [
+                    'agent',
+                    'total_price',
+                    'status',
+                ];
+                // return response()->json($datas);
+                return Excel::download(new ExportDatas($datas, 'Data Pembayaran', $headers), 'Data Pembayaran.xlsx');
+            }
+
             return view('cms.admin.payment.index', compact('orders'));
         }
     }
@@ -63,6 +89,29 @@ class PaymentController extends Controller
             $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->where('status', ['accepted', 'stop'])->paginate($perPage);
         }
 
+        if ($request->get('export') == 'true') {
+            $datas = Order::with('agent.agentProfile')->where('agent_id', $user->id)->where('status', ['accepted', 'stop'])->get()->map(function ($item) {
+                return [
+                    'order_number' => $item->order_number,
+                    'order_date' => $item->order_date,
+                    'total_price' => $item->total_price,
+                    'status' => $item->payment_status === 'paid' ? 'Lunas' : ($item->payment_status === 'pending' ? 'Dicicil' : 'Belum Dibayar')
+                ];
+            });
+
+            // if ($request->get('type') == 'json') {
+                // return response()->json($datas);
+            // }
+
+            $headers = [
+                'order_number',
+                'order_date',
+                'total_price',
+                'status',
+            ];
+            return Excel::download(new ExportDatas($datas, 'Data Pembayaran Paket #' . $user->agentProfile->name, $headers), 'Data Pembayaran Paket '.$user->agentProfile->name.' .xlsx');
+        }
+
         return view('cms.admin.payment.show', compact('user', 'packages', 'orders'));
     }
 
@@ -74,16 +123,39 @@ class PaymentController extends Controller
 
         $banks = BankOwner::all();
 
+
         return view('cms.agen.payment.detail', compact('packages', 'order', 'user', 'banks'));
     }
 
-    public function showPayment(User $user, Order $order)
+    public function showPayment(Request $request, User $user, Order $order)
     {
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->get();
 
         $banks = BankOwner::all();
+
+        if ($request->get('export') == 'true') {
+            $datas = $order->payment->map(function ($item) {
+                return [
+                    'payment_date' => $item->date,
+                    'metode' => $item->method,
+                    'total_payment' => $item->pay,
+                    'status' => $item->status === 'accepted' ? 'Diterima' : ($item->status === 'rejected' ? 'Ditolak' : 'Pending'),
+                    'note' => strip_tags($item->note),
+                ];
+            });
+
+            $headers = [
+                'payment_date',
+                'metode',
+                'total_payment',
+                'status',
+                'note',
+            ];
+
+            return Excel::download(new ExportDatas($datas, 'Data Pembayaran #'.$user->agentProfile->name.' #Order '.$order->order_number, $headers), 'Data Pembayaran '.$user->agentProfile->name.' Order '.$order->order_number.'.xlsx');
+        }
 
         return view('cms.admin.payment.detail', compact('packages', 'order', 'user', 'banks'));
     }

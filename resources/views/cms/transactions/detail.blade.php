@@ -106,10 +106,15 @@
                             </select>
                         </div>
                     </div>
-                    @hasrole('admin|super_admin')
-                        <a href="{{ route('countPrice', ['order' => $order]) }}"
-                            class="flex items-center ml-auto btn btn-sm btn-primary">Hitung Ulang</a>
-                    @endhasrole
+                    <div class="flex items-center ml-auto gap-2">
+                        @hasrole('admin|super_admin')
+                            <a href="{{ route('order.show', ['order' => $order, 'export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4" data-lucide="download"></i> Export</a>
+                        @endhasrole
+                        @hasrole('admin|super_admin')
+                            <a href="{{ route('countPrice', ['order' => $order]) }}"
+                                class="btn btn-sm btn-primary">Hitung Ulang</a>
+                        @endhasrole
+                    </div>
                     @hasrole('agent')
                         @php
                             $detail = optional($order->detail->first());

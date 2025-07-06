@@ -156,8 +156,9 @@
         </div>
         <div class="col-span-12">
             <div class="box p-5 rounded-md">
-                <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5 mb-5">
+                <div class="d-flex justify-content-between items-center border-bottom pb-3 mb-3">
                     <div class="font-medium text-base truncate">Detail Produk Distribusi</div>
+                    {{-- <div class="font-medium text-base truncate">Total Uang: {{ number_format($total_money, 0, ',', '.') }}</div> --}}
                 </div>
                 <div class="overflow-auto lg:overflow-visible -mt-3">
                     <table class="table table-striped">
@@ -167,12 +168,16 @@
                                 <th class="whitespace-nowrap text-center">Produk</th>
                                 {{-- <th class="whitespace-nowrap text-center">Harga per Item</th> --}}
                                 <th class="whitespace-nowrap text-center">Qty</th>
+                                @hasrole('admin|super_admin|finance_admin')
+                                <th class="whitespace-nowrap text-center">Jumlah Uang</th>
+                                @endhasrole
                                 {{-- <th class="whitespace-nowrap text-center">Total</th> --}}
                             </tr>
                         </thead>
                         <tbody>
                             @php
                                 $total_qty = 0;
+                                $total_rupiah = 0;
                             @endphp
                             @foreach ($distribution->detail as $item)
                                 <tr>
@@ -229,10 +234,14 @@
                                     {{-- <td class="text-center">Rp. {{ number_format($item->product->price, 0, ',', '.') }}
                                     </td> --}}
                                     <td class="text-center">{{ $item->qty }}</td>
+                                    @hasrole('admin|super_admin|finance_admin')
+                                    <td class="text-center">{{ number_format($item->orderDetail->product->sumRupiah() * $item->qty, 0, ',', '.') }}</td>
+                                    @endhasrole
                                     {{-- <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}</td> --}}
                                 </tr>
                                 @php
                                     $total_qty += $item->qty;
+                                    $total_rupiah += $item->orderDetail->product->sumRupiah() * $item->qty;
                                 @endphp
                             @endforeach
                         </tbody>
@@ -240,7 +249,9 @@
                             <tr class="text-center">
                                 <th colspan="2">TOTAL</th>
                                 <th>{{ $total_qty }}</th>
-                                {{-- <th>Rp. {{ number_format($distribution->order->total_price, 0, ',', '.') }}</th> --}}
+                                @hasrole('admin|super_admin|finance_admin')
+                                <th>{{ number_format($total_rupiah, 0, ',', '.') }}</th>
+                                @endhasrole
                             </tr>
                         </tfoot>
                     </table>

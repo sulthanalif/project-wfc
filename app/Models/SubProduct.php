@@ -26,4 +26,5 @@ class SubProduct extends Model
     {
         return $this->hasMany(ProductSubProduct::class);
     }
+
 }

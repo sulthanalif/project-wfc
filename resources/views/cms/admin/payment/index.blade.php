@@ -3,8 +3,17 @@
 ])
 
 @section('content')
-    <h2 class="intro-y text-lg font-medium mt-10">
-        Pembayaran Paket
+    <h2 class="grid grid-cols-12 mt-12">
+        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap">
+            <h2 class="w-auto relative text-lg font-medium">
+            Pembayaran Paket
+            </h2>
+            <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
+                @hasrole('admin|super_admin')
+                    <a href="{{ route('payment.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4" data-lucide="download"></i> Export</a>
+                @endhasrole
+            </div>
+        </div>
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">

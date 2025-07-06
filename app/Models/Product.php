@@ -59,4 +59,15 @@ class Product extends Model
     {
         return $this->hasOneThrough(Package::class, ProductPackage::class, 'product_id', 'id', 'id', 'package_id')->withDefault(['name' => '-']);
     }
+
+    public function sumRupiah()
+    {
+        return $this->subProduct()->get()->map(function ($item) {
+            if ($item->subProduct->unit == 'Rupiah') {
+                return [
+                    'total' => $item->amount * $item->subProduct->price,
+                ];
+            }
+        })->sum('total');
+    }
 }

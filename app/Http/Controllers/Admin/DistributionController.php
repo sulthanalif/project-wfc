@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\OrderDetail;
 use App\Models\Distribution;
 use Illuminate\Http\Request;
 use App\Models\DistributionDetail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 use App\Helpers\GenerateRandomString;
 use App\Mail\NotificationDistribution;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class DistributionController extends Controller
@@ -132,7 +133,15 @@ class DistributionController extends Controller
      */
     public function show(Distribution $distribution)
     {
-        // $datas = $distribution->order->detail;
+        // $total_money = $distribution->order->get()->sum(function($item) {
+        //     return $item->detail->sum(function($detail) {
+        //         return $detail->product->sumRupiah() * $detail->qty;
+        //     });
+        // });
+
+        // $total_money = Product::find('9d2705c6-8f0f-401e-bd52-a3a9ff023392')->sumRupiah();
+
+        // return response()->json(compact('total_money'));
         return view('cms.admin.distributions.detail', compact('distribution'));
         // return response()->json(compact('datas'));
     }

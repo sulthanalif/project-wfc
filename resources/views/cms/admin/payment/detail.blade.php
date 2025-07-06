@@ -3,17 +3,20 @@
 ])
 
 @section('content')
-    <div class="intro-y flex items-center mt-8">
+    <div class="intro-y flex items-center mt-8 gap-2">
         <h2 class="text-lg font-medium mr-auto">
             Pembayaran Paket #{{ $user->agentProfile->name }} - {{ $order->order_number }}
         </h2>
-        <a href="{{ route('payment.show', $user) }}" class="btn px-2 box"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
+        @hasrole('admin|super_admin')
+            <a href="{{ route('payment.detail', ['user' => $user->id, 'order' => $order->id, 'export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4" data-lucide="download"></i> Export</a>
+        @endhasrole
         @if ($order->payment_status !== 'paid')
             <a class="btn btn-primary btn-sm py-2 px-3 shadow-md flex items-center ml-2" href="javascript:;"
                 data-tw-toggle="modal" data-tw-target="#payment-confirmation-modal">
                 Setor </a>
             @include('cms.admin.payment.modal.payment')
         @endif
+        <a href="{{ route('payment.show', $user) }}" class="btn px-2 box"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
     </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <!-- BEGIN: Data List -->

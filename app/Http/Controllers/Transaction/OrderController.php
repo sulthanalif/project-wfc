@@ -6,12 +6,15 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Package;
 use App\Models\Product;
+use App\Models\AccessDate;
 use App\Helpers\GetProduct;
 use App\Models\OrderDetail;
+use App\Exports\ExportDatas;
 use Illuminate\Http\Request;
 use App\Helpers\ValidateRole;
 use App\Exports\InvoiceExport;
 use Illuminate\Support\Carbon;
+use App\Exports\DetailOrderExport;
 use App\Mail\NotificationAccOrder;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -19,7 +22,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Helpers\GenerateRandomString;
-use App\Models\AccessDate;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -66,6 +68,38 @@ class OrderController extends Controller
                     $perPage = intval($perPages);
                     $orders = Order::where('status', $status)->orderByDesc('created_at')->paginate($perPage);
                 }
+            }
+
+            if ($request->get('export') == 'true') {
+
+                $datas = Order::orderByDesc('created_at')->get()->map(function ($item) {
+                    return [
+                        'order_number' => $item->order_number,
+                        'order_date' => $item->order_date,
+                        'total_price' => $item->total_price,
+                        'agent_name' => $item->agent->agentProfile->name,
+                        'status' => $item->status,
+                        'status_payment' => $item->payment_status,
+                        'status_delivery' => $item->isAllItemDistributed() ? 'Sukses' :
+                            ($item->distributions->isNotEmpty() ? 'Sedang Proses' : 'Belum Dikirim'),
+                        'created_at' => $item->created_at,
+                        // 'updated_at' => $item->updated_at,
+                    ];
+                });
+                $headers = [
+                    'order_number',
+                    'order_date',
+                    'total_price',
+                    'agent_name',
+                    'status',
+                    'status_payment',
+                    'status_delivery',
+                    'created_at',
+                    // 'updated_at',
+                ];
+
+                // return response()->json($datas);
+                return Excel::download(new ExportDatas($datas, 'Data Pesanan', $headers), 'Data Pesanan.xlsx');
             }
 
             return view('cms.transactions.index', compact('orders'));
@@ -215,6 +249,10 @@ class OrderController extends Controller
         //         $query->where('name', 'like', "%{$request->select}%");
         //     })->get();
         // }
+
+        if ($request->get('export') == 'true') {
+            return Excel::download(new DetailOrderExport($order->id), 'Order Detail ' . $order->order_number . '.xlsx');
+        }
 
         return view('cms.transactions.detail', compact(['order', 'packages', 'agents', 'selects', 'selectProducts']));
     }

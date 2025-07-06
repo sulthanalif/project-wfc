@@ -8,7 +8,10 @@
             <h2 class="w-auto relative text-lg font-medium">
                 Pesanan Paket
             </h2>
-            <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto">
+            <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
+                @hasrole('admin|super_admin')
+                    <a href="{{ route('order.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4" data-lucide="download"></i> Export</a>
+                @endhasrole
                 @hasrole('admin|super_admin')
                     <a href="{{ route('countAll') }}" class="btn btn-sm btn-primary">Hitung Ulang Pesanan</a>
                 @endhasrole
