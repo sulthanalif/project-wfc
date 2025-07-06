@@ -2,7 +2,9 @@
     <thead>
         <tr>
             <th class="whitespace-nowrap">Total Terbayar</th>
-            <th class="whitespace-nowrap">Total Belum Terbayar</th>
+            @if (isset($stats['remaining_pay']))
+                <th class="whitespace-nowrap">Total Belum Terbayar</th>
+            @endif
         </tr>
     </thead>
     <tbody>
@@ -10,9 +12,11 @@
             <td>
                 <p class="text-slate-500 flex items-center mr-3">{{ $stats['pay'] }} </p>
             </td>
-            <td>
-                <p class="text-slate-500 flex items-center mr-3">{{ $stats['remaining_pay'] }} </p>
-            </td>
+            @if (isset($stats['remaining_pay']))
+                <td>
+                    <p class="text-slate-500 flex items-center mr-3">{{ $stats['remaining_pay'] }} </p>
+                </td>
+            @endif
         </tr>
     </tbody>
 </table>

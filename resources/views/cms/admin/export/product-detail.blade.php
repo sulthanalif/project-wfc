@@ -6,15 +6,16 @@
         </tr>
     </thead>
     <tbody>
-                <tr class="intro-x">
-                    <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $stats['totalProductAll'] }} </p>
-                    </td>
-                    <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $stats['totalPriceAll'] }} </p>
-                    </td>
-                  
-                </tr>  
+        <tr class="intro-x">
+            <td>
+                <p class="text-slate-500 flex items-center mr-3">{{ $stats['totalProductAll'] }} </p>
+            </td>
+            @if (isset($stats['totalPriceAll']))
+                <td>
+                    <p class="text-slate-500 flex items-center mr-3">{{ $stats['totalPriceAll'] }} </p>
+                </td>
+            @endif
+        </tr>
     </tbody>
 </table>
 <table class="table table-report -mt-2">
@@ -25,15 +26,15 @@
         </tr>
     </thead>
     <tbody>
-            @foreach ($datas as $item)
-                <tr class="intro-x">
-                    <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $item['package'] }} </p>
-                    </td>
-                    <td>
-                        <p class="text-slate-500 flex items-center mr-3">{{ $item['total_product'] }} </p>
-                    </td>      
-                </tr>  
-            @endforeach
+        @foreach ($datas as $item)
+            <tr class="intro-x">
+                <td>
+                    <p class="text-slate-500 flex items-center mr-3">{{ $item['package'] }} </p>
+                </td>
+                <td>
+                    <p class="text-slate-500 flex items-center mr-3">{{ $item['total_product'] }} </p>
+                </td>
+            </tr>
+        @endforeach
     </tbody>
 </table>

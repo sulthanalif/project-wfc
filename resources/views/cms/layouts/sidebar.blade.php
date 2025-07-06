@@ -49,6 +49,7 @@
                         Route::is('rproductDetail') ||
                         Route::is('ragentOrder') ||
                         Route::is('instalment') ||
+                        Route::is('daily') ||
                         Route::is('requirement')) side-menu--active @endif">
                     <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
                     <div class="side-menu__title"> Laporan
@@ -59,7 +60,15 @@
                         Route::is('rproductDetail') ||
                         Route::is('ragentOrder') ||
                         Route::is('instalment') ||
+                        Route::is('daily') ||
                         Route::is('requirement')) side-menu__sub-open @endif">
+                    <li>
+                        <a href="{{ route('daily') }}"
+                            class="side-menu {{ Route::is('daily') ? 'side-menu--active' : '' }}">
+                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                            <div class="side-menu__title"> Harian </div>
+                        </a>
+                    </li>
                     <li>
                         <a href="{{ route('totalDeposit') }}"
                             class="side-menu {{ Route::is('totalDeposit') ? 'side-menu--active' : '' }}">

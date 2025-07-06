@@ -95,24 +95,17 @@ class PaymentController extends Controller
                 $payment->status = $request->status;
                 $payment->save();
 
-                if ($payment->remaining_payment == 0) {
-                    $payment->order->payment_status = 'paid';
-                    $payment->order->save();
+                $order = Order::find($payment->order_id);
+                $payments = Payment::where('order_id', $payment->order_id)->get();
+                $countPayment = $payments->where('status', 'accepted')->sum('pay');
+
+                if ($countPayment == $order->total_price) {
+                    $order->payment_status = 'paid';
+                    $order->save();
+                } else {
+                    $order->payment_status = 'pending';
+                    $order->save();
                 }
-
-                // if ($request->status == 'success') {
-                //     $payment->status = 'success';
-                //     $payment->save();
-
-                //     if ($payment->remaining_payment == 0) {
-                //         $payment->order->payment_status = 'paid';
-                //         $payment->order->save();
-                //     }
-                // } else {
-                //     $payment->status = 'reject';
-                //     $payment->description = $request->description;
-                //     $payment->save();
-                // }
             });
             return redirect()->back()->with('success', 'Status Pembayaran Berhasil Diubah');
         } catch (\Throwable $th) {
@@ -173,7 +166,7 @@ class PaymentController extends Controller
 
                 $existingPayment = $order->payment()->get();
 
-                if ($existingPayment->sum('pay') == $order->total_price) {
+                if ($existingPayment->where('status', 'accepted')->sum('pay') == $order->total_price) {
                     $order->payment_status = 'paid';
                     $order->save();
                 } else {
@@ -237,7 +230,7 @@ class PaymentController extends Controller
 
                 $existingPayment = $order->payment()->get();
 
-                if ($existingPayment->sum('pay') == $order->total_price) {
+                if ($existingPayment->where('status', 'accepted')->sum('pay') == $order->total_price) {
                     $order->payment_status = 'paid';
                     $order->save();
                 } else {
