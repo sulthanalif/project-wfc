@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\SubProduct;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use App\Helpers\PaginationHelper;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ReportAgentOrderExport;
@@ -15,7 +18,6 @@ use App\Exports\ReportInstalmentExport;
 use App\Exports\ReportRequirementExport;
 use App\Exports\ReportTotalDepositExport;
 use App\Exports\ReportProductDetailExport;
-use Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -246,75 +248,88 @@ class ReportController extends Controller
 
     public function requirement(Request $request)
     {
-        $orders = Order::get();
+        // 1. Ambil semua detail order yang statusnya 'accepted' dalam satu query
+        // Ini adalah langkah optimisasi utama untuk menghindari N+1 problem
+        $orderDetails = OrderDetail::whereHas('order', function ($query) {
+            $query->where('status', 'accepted');
+        })->with('product.subProduct.subProduct')->get();
+
         $datas = [];
         $datasubs = [];
-        foreach ($orders as $item) {
-            if ($item->status == 'accepted') {
-                foreach ($item->detail as $detail) {
-                    $found = false;
-                    foreach ($datas as &$data) {
-                        if ($data['product_id'] == $detail->product_id) {
-                            $data['qty'] += $detail->qty;
-                            $data['price'] += ($detail->product->price * $detail->product->days) * $data['qty'];
-                            $found = true;
-                            break;
-                        }
-                    }
-                    if (!$found) {
-                        $datas[] = [
-                            'product_id' => $detail->product_id,
-                            'product_name' => $detail->product ? $detail->product->name : '',
-                            'qty' => $detail->qty,
-                            'price' => ($detail->product ? $detail->product->price * $detail->product->days : 0) * $detail->qty
-                        ];
+
+        foreach ($orderDetails as $detail) {
+            // Lewati jika detail tidak memiliki produk terkait (data integrity)
+            if (!$detail->product) {
+                continue;
+            }
+
+            $productId = $detail->product_id;
+            $qty = $detail->qty;
+
+            // 2. Agregasi data produk utama menggunakan ID produk sebagai key array
+            // Ini jauh lebih cepat daripada looping untuk mencari data yang sudah ada
+            if (!isset($datas[$productId])) {
+                $datas[$productId] = [
+                    'product_id'   => $productId,
+                    'product_name' => $detail->product->name,
+                    'qty'          => 0,
+                    'price'        => 0,
+                ];
+            }
+            $datas[$productId]['qty'] += $qty;
+            $datas[$productId]['price'] += ($detail->product->price * $detail->product->days) * $qty;
+
+            // 3. Agregasi data sub-produk
+            if ($detail->product->subProduct) {
+                foreach ($detail->product->subProduct as $sub) {
+                    // Lewati jika relasi sub-produk tidak lengkap
+                    if (!$sub->subProduct) {
+                        continue;
                     }
 
-                    if ($detail->product != null && $detail->product->subProduct != null) {
-                        foreach ($detail->product->subProduct as $sub) {
-                            $found1 = false;
-                            foreach ($datasubs as &$data1) {
-                                if ($data1['id'] == $sub->subProduct->id) {
-                                    $data1['qty'] += $detail->qty * $sub->amount;
-                                    $data1['price'] += ($detail->qty * $sub->amount) * $sub->subProduct->price;
-                                    $found1 = true;
-                                    break;
-                                }
-                            }
-                            if (!$found1) {
-                                $datasubs[] = [
-                                    'id' => $sub->subProduct->id,
-                                    'name' => $sub->subProduct->name,
-                                    'qty' => $detail->qty * $sub->amount,
-                                    'unit' => $sub->subProduct->unit,
-                                    'price' => ($detail->qty * $sub->amount) * $sub->subProduct->price
-                                ];
-                            }
-                        }
+                    $subProductId = $sub->subProduct->id;
+                    $subProductAmount = $sub->amount;
+                    $calculatedQty = $qty * $subProductAmount;
+
+                    // Gunakan ID sub-produk sebagai key untuk agregasi cepat
+                    if (!isset($datasubs[$subProductId])) {
+                        $datasubs[$subProductId] = [
+                            'id'    => $subProductId,
+                            'name'  => $sub->subProduct->name,
+                            'unit'  => $sub->subProduct->unit,
+                            'qty'   => 0,
+                            'price' => 0,
+                        ];
                     }
+                    $datasubs[$subProductId]['qty'] += $calculatedQty;
+                    $datasubs[$subProductId]['price'] += $calculatedQty * $sub->subProduct->price;
                 }
             }
         }
 
-        if (is_array($datasubs)) {
-            $totalSubProductAll = array_sum(array_column($datasubs, 'qty'));
-            $totalPriceAll = array_sum(array_column($datasubs, 'price'));
-        }
+        // Kalkulasi total
+        $totalSubProductAll = array_sum(array_column($datasubs, 'qty'));
+        $totalPriceAll = array_sum(array_column($datasubs, 'price'));
 
         $stats = [
             'totalSubProductAll' => $totalSubProductAll,
-            'totalPriceAll' => $totalPriceAll,
+            'totalPriceAll'      => $totalPriceAll,
         ];
 
-        // untuk export, routenya harus "route('requirement', ['export' => 1])"
+        // 4. Konversi array asosiatif kembali menjadi array numerik agar formatnya sama seperti kode lama
+        $finalDatas = array_values($datas);
+        $finalDatasubs = array_values($datasubs);
+
+        // untuk export
         if ($request->get('export') == 1) {
-            return Excel::download(new ReportRequirementExport($datasubs, $stats), 'Laporan_Rincian_SubProduct_' . now()->format('dmY') . '.xlsx');
+            return Excel::download(new ReportRequirementExport($finalDatasubs, $stats), 'Laporan_Rincian_SubProduct_' . now()->format('dmY') . '.xlsx');
         }
 
-        // $paginationData = PaginationHelper::paginate($datasubs, 10, 'requirement');
-
-        return view('cms.admin.reports.requirement', compact('datasubs', 'stats', 'datas'));
-        // return response()->json(compact('datas', 'datasubs'));
+        return view('cms.admin.reports.requirement', [
+            'datasubs' => $finalDatasubs,
+            'stats'    => $stats,
+            'datas'    => $finalDatas,
+        ]);
     }
 
     public function daily(Request $request)
