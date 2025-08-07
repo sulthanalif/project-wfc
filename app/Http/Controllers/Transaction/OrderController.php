@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Transaction;
 
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Period;
 use App\Models\Package;
 use App\Models\Product;
 use App\Models\AccessDate;
@@ -32,7 +33,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $perPages = $request->get('perPage') ?? 5;
-        $status = $request->get('status') ?? 'accepted';
+        $status = $request->get('status') ?? 'all';
 
         if (ValidateRole::check('agent')) {
             if ($perPages == 'all') {
@@ -53,7 +54,6 @@ class OrderController extends Controller
 
             return view('cms.transactions.index', compact('orders'));
         } else {
-            // $access_date = AccessDate::first();
             if ($perPages == 'all') {
                 if ($status == 'all') {
                     $orders = Order::orderByDesc('created_at')->get();
@@ -155,11 +155,17 @@ class OrderController extends Controller
             return back()->with('error', $validator->errors());
         }
 
+        $user = Auth::user();
+        $periode = Period::where('is_active', 1)->first();
+
+        if ($user->roleName == 'agent') {
+            if ($user->order()?->exists() && $user->order()?->first()->created_at < $periode->end_date) return back()->with('error', 'Selesaikan dulu pesanan pada periode ini');
+        }
+
         $products = json_decode($request->products, true);
 
         if ($products == null) {
             return back()->with('error', 'Produk Tidak Boleh Kosong');
-            // dd('Produk Tidak Valid');
         }
 
         try {

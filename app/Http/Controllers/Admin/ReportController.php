@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Spending;
 use App\Models\SubProduct;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
@@ -286,6 +287,11 @@ class ReportController extends Controller
                     if (!$sub->subProduct) {
                         continue;
                     }
+
+                    // Get spending data efficiently with a single query
+                    // $spending = Spending::where('information', 'like', '%' . $sub->name . '%')
+                    //     ->select(DB::raw('COALESCE(SUM(qty), 0) as total_qty'))
+                    //     ->first();
 
                     $subProductId = $sub->subProduct->id;
                     $subProductAmount = $sub->amount;
