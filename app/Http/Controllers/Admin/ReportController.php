@@ -213,7 +213,7 @@ class ReportController extends Controller
         })->toArray();
 
         // return response()->json($agentsName);
-        $payments = Payment::with('order')->orderBy('created_at', 'desc')->wherehas('order.agent.agentProfile', function ($q) use ($filterAgent, $filterDate) {
+        $payments = Payment::with('order')->where('status', 'accepted')->orderBy('created_at', 'desc')->wherehas('order.agent.agentProfile', function ($q) use ($filterAgent, $filterDate) {
             if ($filterAgent && $filterDate) {
                 $q->where('name', 'like', '%' . $filterAgent . '%')
                     ->whereDate('date', $filterDate);
@@ -224,13 +224,17 @@ class ReportController extends Controller
             }
         })->get();
 
+        $orders = Order::where('status', 'accepted')->get();
+
         $stats = [];
         $pay = 0;
         $remaining_pay = 0;
+        $total_price = $orders->sum('total_price');
 
         foreach ($payments as $payment) {
             $pay += $payment->pay;
-            $remaining_pay += $payment->order->payment_status == 'paid' ? 0 : $payment->remaining_payment;
+            $total_price_remaining = $total_price - $pay;
+            $remaining_pay += $payment->order->payment_status == 'paid' ? 0 : $total_price_remaining;
         }
 
         $stats = [

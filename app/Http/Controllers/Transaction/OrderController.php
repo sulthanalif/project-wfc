@@ -33,7 +33,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $perPages = $request->get('perPage') ?? 5;
-        $status = $request->get('status') ?? 'all';
+        $status = $request->get('status') ?? 'accepted';
 
         if (ValidateRole::check('agent')) {
             if ($perPages == 'all') {
