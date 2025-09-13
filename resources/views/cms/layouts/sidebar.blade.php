@@ -115,12 +115,19 @@
                             <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                         </div>
                     </a>
-                    <ul class="@if (Route::is('income*') || Route::is('spending*') || Route::is('type-spending.index')) side-menu__sub-open @endif">
+                    <ul class="@if (Route::is('income*') || Route::is('loan*') || Route::is('spending*') || Route::is('type-spending.index')) side-menu__sub-open @endif">
                         <li>
                             <a href="{{ route('income.index') }}"
                                 class="side-menu {{ Route::is('income*') ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="side-menu__title"> Pemasukan </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('loan.index') }}"
+                                class="side-menu {{ Route::is('loan*') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Pinjaman/Piutang </div>
                             </a>
                         </li>
                         <li>
