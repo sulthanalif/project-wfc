@@ -7,6 +7,9 @@ use App\Models\SubProduct;
 use App\Models\OrderDetail;
 use App\Models\SpendingType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ProcurementController extends Controller
 {
@@ -15,89 +18,68 @@ class ProcurementController extends Controller
 
     public function __construct()
     {
-        $this->spendingType = SpendingType::where('name', 'Pengadaan')->first();
+        // Menggunakan firstOrCreate agar lebih tangguh
+        $this->spendingType = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
+        $spendingTypeId = $this->spendingType->id;
 
-        // 1. Ambil semua detail order yang statusnya 'accepted' dalam satu query
-        // Ini adalah langkah optimisasi utama untuk menghindari N+1 problem
+        // =========================================================================
+        // LANGKAH 1: HITUNG TOTAL KEBUTUHAN DARI SEMUA ORDER (SAMA SEPERTI SEBELUMNYA)
+        // =========================================================================
         $orderDetails = OrderDetail::whereHas('order', function ($query) {
             $query->where('status', 'accepted');
         })->with('product.subProduct.subProduct')->get();
 
-        if ($this->spendingType) {
-            $spendingProcurements = Spending::where('spending_type_id', $this->spendingType->id)->get();
-        } else {
-            $spendingProcurements = collect();
-        }
-
-        $datas = [];
-        $datasubs = [];
-
+        $neededSubProducts = [];
         foreach ($orderDetails as $detail) {
-            // Lewati jika detail tidak memiliki produk terkait (data integrity)
-            if (!$detail->product) {
+            if (!$detail->product || !$detail->product->subProduct) {
                 continue;
             }
 
-            $productId = $detail->product_id;
-            $qty = $detail->qty;
-
-            // 2. Agregasi data produk utama menggunakan ID produk sebagai key array
-            // Ini jauh lebih cepat daripada looping untuk mencari data yang sudah ada
-            if (!isset($datas[$productId])) {
-                $datas[$productId] = [
-                    'product_id'   => $productId,
-                    'product_name' => $detail->product->name,
-                    'qty'          => 0,
-                    'price'        => 0,
-                ];
-            }
-            $datas[$productId]['qty'] += $qty;
-            $datas[$productId]['price'] += ($detail->product->price * $detail->product->days) * $qty;
-
-            // 3. Agregasi data sub-produk
-            if ($detail->product->subProduct) {
-                foreach ($detail->product->subProduct as $sub) {
-                    // Lewati jika relasi sub-produk tidak lengkap
-                    if (!$sub->subProduct) {
-                        continue;
-                    }
-
-                    // Get spending data efficiently with a single query
-                    // $spending = Spending::where('information', 'like', '%' . $sub->name . '%')
-                    //     ->select(DB::raw('COALESCE(SUM(qty), 0) as total_qty'))
-                    //     ->first();
-
-                    $subProductId = $sub->subProduct->id;
-                    $subProductAmount = $sub->amount;
-                    $calculatedQty = $qty * $subProductAmount;
-
-                    if ($spendingProcurements->where('information', 'like', '%' . $sub->name . '%')->count() > 0) {
-                        $procurement = $spendingProcurements->where('information', 'like', '%' . $sub->name . '%')->first();
-                    } else {
-                        $procurement = (object)[
-                            'qty' => 0
-                        ];
-                    }
-
-                    // Gunakan ID sub-produk sebagai key untuk agregasi cepat
-                    if (!isset($datasubs[$subProductId])) {
-                        $datasubs[$subProductId] = [
-                            'id'    => $subProductId,
-                            'name'  => $sub->subProduct->name,
-                            'unit'  => $sub->subProduct->unit,
-                            'qty'   => 0,
-                            'price' => 0,
-                        ];
-                    }
-                    $datasubs[$subProductId]['qty'] += $calculatedQty;
-                    $datasubs[$subProductId]['price'] += $calculatedQty * $sub->subProduct->price;
-                    $datasubs[$subProductId]['procurement'] = $procurement->qty ?? 0;
-                    $datasubs[$subProductId]['remaining'] = $datasubs[$subProductId]['qty'] - ($procurement->qty ?? 0);
+            foreach ($detail->product->subProduct as $sub) {
+                if (!$sub->subProduct) {
+                    continue;
                 }
+                $subProductId = $sub->subProduct->id;
+                $calculatedQty = $detail->qty * $sub->amount;
+
+                if (!isset($neededSubProducts[$subProductId])) {
+                    $neededSubProducts[$subProductId] = [
+                        'id'    => $subProductId,
+                        'name'  => $sub->subProduct->name,
+                        'unit'  => $sub->subProduct->unit,
+                        'needed' => 0,
+                    ];
+                }
+                $neededSubProducts[$subProductId]['needed'] += $calculatedQty;
             }
         }
 
-        $this->datas = $datasubs;
+        // =========================================================================
+        // LANGKAH 2: GABUNGKAN DATA & HITUNG SISA BERDASARKAN KOLOM 'information'
+        // =========================================================================
+        $finalData = [];
+        foreach ($neededSubProducts as $subProductId => $data) {
+            $subProductName = $data['name'];
+            $needed = $data['needed'];
+
+            // Cari total pengadaan untuk item ini berdasarkan namanya di kolom 'information'
+            $procured = Spending::where('spending_type_id', $spendingTypeId)
+                                ->where('information', 'Pengadaan: ' . $subProductName)
+                                ->sum('qty'); // Gunakan sum() untuk total yang akurat
+
+            $remaining = $needed - $procured;
+
+            $finalData[$subProductId] = [
+                'id'          => $data['id'],
+                'name'        => $data['name'],
+                'unit'        => $data['unit'],
+                'needed'      => $needed,
+                'procurement' => $procured,
+                'remaining'   => $remaining,
+            ];
+        }
+
+        $this->datas = $finalData;
     }
 
     public function index(Request $request)
@@ -113,109 +95,74 @@ class ProcurementController extends Controller
         //
     }
 
-    // public function create()
-    // {
-    //     $subProductIds = OrderDetail::whereHas('order', function ($query) {
-    //         $query->where('status', 'accepted');
-    //     })
-    //     ->whereHas('product.subProduct')
-    //     ->with(['product.subProduct:product_id,sub_product_id'])
-    //     ->get()
-    //     ->pluck('product.subProduct.*.sub_product_id')
-    //     ->flatten()
-    //     ->unique()
-    //     ->values()
-    //     ->toArray();
-
-    //     if (empty($subProductIds)) {
-    //         return view('cms.admin.finance.procurement.create', ['datasubs' => []]);
-    //     }
-
-    //     $datasubs = SubProduct::whereIn('id', $subProductIds)->get();
-
-    //     $finalDatasubs = $datasubs->map(function ($sub) {
-    //         return [
-    //             'id'    => $sub->id,
-    //             'name'  => $sub->name,
-    //             'unit'  => $sub->unit,
-    //         ];
-    //     })->toArray();
-
-    //     return view('cms.admin.finance.procurement.create', [
-    //         'datasubs' => $finalDatasubs,
-    //     ]);
-    // }
 
     public function create()
     {
-        // 1. Ambil semua detail order yang statusnya 'accepted' dalam satu query
-        // Ini adalah langkah optimisasi utama untuk menghindari N+1 problem
-        $orderDetails = OrderDetail::whereHas('order', function ($query) {
-            $query->where('status', 'accepted');
-        })->with('product.subProduct.subProduct')->get();
-
-        $datas = [];
-        $datasubs = [];
-
-        foreach ($orderDetails as $detail) {
-            // Lewati jika detail tidak memiliki produk terkait (data integrity)
-            if (!$detail->product) {
-                continue;
-            }
-
-            $productId = $detail->product_id;
-            $qty = $detail->qty;
-
-            // 2. Agregasi data produk utama menggunakan ID produk sebagai key array
-            // Ini jauh lebih cepat daripada looping untuk mencari data yang sudah ada
-            if (!isset($datas[$productId])) {
-                $datas[$productId] = [
-                    'product_id'   => $productId,
-                    'product_name' => $detail->product->name,
-                    'qty'          => 0,
-                    'price'        => 0,
-                ];
-            }
-            $datas[$productId]['qty'] += $qty;
-            $datas[$productId]['price'] += ($detail->product->price * $detail->product->days) * $qty;
-
-            // 3. Agregasi data sub-produk
-            if ($detail->product->subProduct) {
-                foreach ($detail->product->subProduct as $sub) {
-                    // Lewati jika relasi sub-produk tidak lengkap
-                    if (!$sub->subProduct) {
-                        continue;
-                    }
-
-                    // Get spending data efficiently with a single query
-                    // $spending = Spending::where('information', 'like', '%' . $sub->name . '%')
-                    //     ->select(DB::raw('COALESCE(SUM(qty), 0) as total_qty'))
-                    //     ->first();
-
-                    $subProductId = $sub->subProduct->id;
-                    $subProductAmount = $sub->amount;
-                    $calculatedQty = $qty * $subProductAmount;
-
-                    // Gunakan ID sub-produk sebagai key untuk agregasi cepat
-                    if (!isset($datasubs[$subProductId])) {
-                        $datasubs[$subProductId] = [
-                            'id'    => $subProductId,
-                            'name'  => $sub->subProduct->name,
-                            'unit'  => $sub->subProduct->unit,
-                            'qty'   => 0,
-                            'price' => 0,
-                        ];
-                    }
-                    $datasubs[$subProductId]['qty'] += $calculatedQty;
-                    $datasubs[$subProductId]['price'] += $calculatedQty * $sub->subProduct->price;
-                }
-            }
-        }
-
-        // return response()->json($datasubs);
+        $filteredDatasubs = array_filter($this->datas, function ($item) {
+            return isset($item['remaining']) && $item['remaining'] > 0;
+        });
 
         return view('cms.admin.finance.procurement.create', [
-            'datasubs' => $datasubs,
+            'datasubs' => $filteredDatasubs,
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        // 1. Validasi Input
+        $validator = Validator::make($request->all(), [
+            'date'      => 'required|date',
+            'method'    => 'required|in:tunai,transfer',
+            'bank'      => 'required_if:method,transfer|in:BRI,BCA,Mandiri',
+            'items'     => 'required|array|min:1',
+            'items.*'   => 'required|integer|min:1',
+        ], [
+            'items.required' => 'Anda harus memilih setidaknya satu item untuk pengadaan.',
+            'items.min'      => 'Anda harus memilih setidaknya satu item untuk pengadaan.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // 2. Mulai Database Transaction
+        DB::beginTransaction();
+
+        try {
+            // Ambil atau buat tipe pengeluaran 'Pengadaan'
+            $spendingType = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
+
+            // 3. Looping dan simpan setiap item
+            foreach ($request->items as $subProductId => $quantity) {
+                $subProduct = SubProduct::findOrFail($subProductId);
+
+                // Hitung total untuk item ini
+                $totalAmountForItem = $subProduct->price * $quantity;
+
+                // Buat entri spending baru
+                Spending::create([
+                    'spending_type_id' => $spendingType->id,
+                    'date'             => $request->date,
+                    'information'      => 'Pengadaan: ' . $subProduct->name,
+                    'qty'              => $quantity,
+                    'price'            => $subProduct->price,
+                    'amount'           => $totalAmountForItem, // DIGANTI dari 'total' menjadi 'amount'
+                    'method'           => $request->method,
+                    'bank'             => $request->method === 'transfer' ? $request->bank : null,
+                    'user_id'          => auth()->id(),
+                ]);
+            }
+
+            // 4. Commit transaction
+            DB::commit();
+
+            return redirect()->route('spending.index')->with('success', 'Data pengadaan berhasil disimpan.');
+
+        } catch (\Exception $e) {
+            // 5. Rollback jika terjadi error
+            DB::rollBack();
+            Log::error('Gagal menyimpan data pengadaan: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
+        }
     }
 }

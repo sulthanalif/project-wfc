@@ -94,7 +94,7 @@
                         @foreach ($procurements as $data)
                             <tr class="intro-x">
                                 <td>
-                                    {{-- <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p> --}}
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <span class="text-slate-500">{{ $data['name'] }}</span>
@@ -107,7 +107,7 @@
                                         {{ number_format($data['price'], 0, ',', '.') }} </p>
                                 </td> --}}
                                 <td align='center'>
-                                    <span class="text-slate-500">{{ $data['qty'] ?? 1 }}</span>
+                                    <span class="text-slate-500">{{ $data['needed'] ?? 1 }}</span>
                                 </td>
                                 <td align='center'>
                                     <span class="text-slate-500">{{ $data['procurement'] ?? 0 }}</span>
