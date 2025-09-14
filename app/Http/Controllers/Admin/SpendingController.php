@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Exports\SpendingExport;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\BankOwner;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 
@@ -41,7 +42,9 @@ class SpendingController extends Controller
     public function create()
     {
         $spendingTypes = SpendingType::latest()->get();
-        return view('cms.admin.finance.spending.create', compact('spendingTypes'));
+        $banks = BankOwner::all();
+
+        return view('cms.admin.finance.spending.create', compact('spendingTypes', 'banks'));
     }
 
     public function store(Request $request)
@@ -62,13 +65,17 @@ class SpendingController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
+                $bank = BankOwner::where('id', $request->bank)->first();
+
                 $spending = new Spending();
                 $spending->information = $request->information;
                 $spending->spending_type_id = $request->spending_type_id;
                 $spending->amount = $request->amount;
                 $spending->method  = $request->method;
-                $spending->bank = $request->method == 'transfer' ? $request->bank : null;
+                $spending->bank = $request->method == 'Transfer' ? $bank->name : null;
+                $spending->bank_owner_id = $request->method == 'Transfer' ? $request->bank : null;
                 $spending->qty = $request->qty ?? 1;
+                $spending->total_amount = $request->amount * ($request->qty ?? 1);
                 $spending->date = $request->date;
                 $spending->save();
             });
@@ -85,7 +92,9 @@ class SpendingController extends Controller
     public function edit(Spending $spending)
     {
         $spendingTypes = SpendingType::latest()->get();
-        return view('cms.admin.finance.spending.edit', compact('spending', 'spendingTypes'));
+        $banks = BankOwner::all();
+
+        return view('cms.admin.finance.spending.edit', compact('spending', 'spendingTypes', 'banks'));
     }
 
     public function update(Request $request, Spending $spending)
@@ -106,12 +115,16 @@ class SpendingController extends Controller
 
         try {
             DB::transaction(function () use ($request, $spending) {
+                $bank = BankOwner::where('id', $request->bank)->first();
+
                 $spending->information = $request->information;
                 $spending->spending_type_id = $request->spending_type_id;
                 $spending->amount = $request->amount;
                 $spending->method  = $request->method;
-                $spending->bank = $request->method == 'transfer' ? $request->bank : null;
+                $spending->bank = $request->method == 'Transfer' ? $bank->name : null;
+                $spending->bank_owner_id = $request->method == 'Transfer' ? $request->bank : null;
                 $spending->qty = $request->qty ?? 1;
+                $spending->total_amount = $request->amount * ($request->qty ?? 1);
                 $spending->date = $request->date;
                 $spending->save();
             });

@@ -115,7 +115,14 @@
                             <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                         </div>
                     </a>
-                    <ul class="@if (Route::is('income*') || Route::is('loan*') || Route::is('spending*') || Route::is('type-spending.index')) side-menu__sub-open @endif">
+                    <ul class="@if (Route::is('cash-flow*') || Route::is('income*') || Route::is('loan*') || Route::is('spending*') || Route::is('type-spending.index')) side-menu__sub-open @endif">
+                        <li>
+                            <a href="{{ route('cash-flow.index') }}"
+                                class="side-menu {{ Route::is('cash-flow*') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Cash Flow </div>
+                            </a>
+                        </li>
                         <li>
                             <a href="{{ route('income.index') }}"
                                 class="side-menu {{ Route::is('income*') ? 'side-menu--active' : '' }}">

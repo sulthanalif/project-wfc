@@ -19,4 +19,24 @@ class BankOwner extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function incomes()
+    {
+        return $this->hasMany(Income::class);
+    }
+
+    public function spendings()
+    {
+        return $this->hasMany(Spending::class);
+    }
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    public function loanPayments()
+    {
+        return $this->hasMany(LoanPayment::class);
+    }
 }

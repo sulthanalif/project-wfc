@@ -22,11 +22,18 @@ class Spending extends Model
         'method',
         'qty',
         'bank',
-        'date'
+        'date',
+        'bank_owner_id',
+        'total_amount',
     ];
 
     public function spendingType()
     {
         return $this->belongsTo(SpendingType::class);
+    }
+
+    public function bankOwner()
+    {
+        return $this->belongsTo(BankOwner::class);
     }
 }

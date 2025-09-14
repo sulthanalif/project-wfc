@@ -73,17 +73,18 @@
                                 <label for="method" class="form-label">Metode <span class="text-danger">*</span></label>
                                 <select class="form-select" id="method" name="method" required>
                                     <option disabled selected>Pilih...</option>
-                                    <option value="transfer" {{ old('method', $spending->method) == 'transfer' ? 'selected' : ''}}>Transfer</option>
-                                    <option value="tunai" {{ old('method', $spending->method) == 'tunai' ? 'selected' : ''}}>Tunai</option>
+                                    <option value="Transfer" {{ old('method', $spending->method) == 'Transfer' ? 'selected' : ''}}>Transfer</option>
+                                    <option value="Tunai" {{ old('method', $spending->method) == 'Tunai' ? 'selected' : ''}}>Tunai</option>
                                 </select>
                             </div>
                             <div class="mt-3" id="bank-field" style="display: none">
                                 <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
                                 <select class="form-select" id="bank" name="bank">
                                     <option disabled selected>Pilih...</option>
-                                    <option value="BRI" {{ old('bank', $spending->bank) == 'BRI' ? 'selected' : ''}}>BRI</option>
-                                    <option value="BCA" {{ old('bank', $spending->bank) == 'BCA' ? 'selected' : ''}}>BCA</option>
-                                    <option value="Mandiri" {{ old('bank', $spending->bank) == 'Mandiri' ? 'selected' : ''}}>Mandiri</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{ $bank->id }}" {{ old('bank', $spending->bank) == $bank->id ? 'selected' : ''}}>{{ $bank->name }} -
+                                            {{ $bank->account_number }} ({{ $bank->account_name }})</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -108,7 +109,7 @@
         const bankField = document.getElementById('bank-field');
 
         methodSelect.addEventListener('change', (event) => {
-            if (event.target.value === 'transfer') {
+            if (event.target.value === 'Transfer') {
                 bankField.style.display = 'block';
             } else {
                 bankField.style.display = 'none';

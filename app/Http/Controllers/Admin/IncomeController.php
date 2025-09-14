@@ -7,6 +7,7 @@ use App\Models\Income;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\BankOwner;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -33,7 +34,9 @@ class IncomeController extends Controller
 
     public function create()
     {
-        return view('cms.admin.finance.income.create');
+        $banks = BankOwner::all();
+        
+        return view('cms.admin.finance.income.create', compact('banks'));
     }
 
     public function store(Request $request)
@@ -52,11 +55,14 @@ class IncomeController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
+                $bank = BankOwner::where('id', $request->bank)->first();
+
                 $income = new Income();
                 $income->information = $request->information;
                 $income->amount = $request->amount;
                 $income->method  = $request->method;
-                $income->bank = $request->method == 'transfer' ? $request->bank : null;
+                $income->bank = $request->method == 'Transfer' ? $bank->name : null;
+                $income->bank_owner_id = $request->method == 'Transfer' ? $request->bank : null;
                 $income->date = $request->date;
                 $income->save();
             });
@@ -77,7 +83,9 @@ class IncomeController extends Controller
 
     public function edit(Income $income)
     {
-        return view('cms.admin.finance.income.edit', compact('income'));
+        $banks = BankOwner::all();
+
+        return view('cms.admin.finance.income.edit', compact('income', 'banks'));
     }
 
     public function update(Request $request, Income $income)
@@ -96,10 +104,13 @@ class IncomeController extends Controller
 
         try {
             DB::transaction(function () use ($request, $income) {
+                $bank = BankOwner::where('id', $request->bank)->first();
+                
                 $income->information = $request->information;
                 $income->amount = $request->amount;
                 $income->method  = $request->method;
-                $income->bank = $request->method == 'transfer' ? $request->bank : null;
+                $income->bank = $request->method == 'Transfer' ? $bank->name : null;
+                $income->bank_owner_id = $request->method == 'Transfer' ? $request->bank : null;
                 $income->date = $request->date;
                 $income->save();
             });

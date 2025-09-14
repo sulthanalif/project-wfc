@@ -19,9 +19,11 @@
                     <div class="grid grid-cols-12 gap-4">
                         <div class="col-span-12 lg:col-span-6 intro-y">
                             <div>
-                                <label for="information" class="form-label">Nama Pemasukan <span class="text-danger">*</span></label>
+                                <label for="information" class="form-label">Nama Pemasukan <span
+                                        class="text-danger">*</span></label>
                                 <input id="information" name="information" type="text" class="form-control w-full"
-                                    placeholder="Masukkan Nama Pemasukan" value="{{ old('information', $income->information) }}" required>
+                                    placeholder="Masukkan Nama Pemasukan"
+                                    value="{{ old('information', $income->information) }}" required>
                                 @error('information')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -29,9 +31,11 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="date" class="form-label">Tanggal Pemasukan <span class="text-danger">*</span></label>
+                                <label for="date" class="form-label">Tanggal Pemasukan <span
+                                        class="text-danger">*</span></label>
                                 <input id="date" name="date" type="date" class="form-control w-full"
-                                    placeholder="Masukkan Jumlah Pemasukan" value="{{ old('date', $income->date) }}" required>
+                                    placeholder="Masukkan Jumlah Pemasukan" value="{{ old('date', $income->date) }}"
+                                    required>
                                 @error('date')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -41,9 +45,11 @@
                         </div>
                         <div class="col-span-12 lg:col-span-6 intro-y mt-3 lg:mt-0">
                             <div class="">
-                                <label for="amount" class="form-label">Jumlah Pemasukan <span class="text-danger">*</span></label>
+                                <label for="amount" class="form-label">Jumlah Pemasukan <span
+                                        class="text-danger">*</span></label>
                                 <input id="amount" name="amount" type="number" class="form-control w-full"
-                                    placeholder="Masukkan Jumlah Pemasukan" value="{{ old('amount', $income->amount) }}" required>
+                                    placeholder="Masukkan Jumlah Pemasukan" value="{{ old('amount', $income->amount) }}"
+                                    required>
                                 @error('amount')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -54,17 +60,23 @@
                                 <label for="method" class="form-label">Metode <span class="text-danger">*</span></label>
                                 <select class="form-select" id="method" name="method" required>
                                     <option disabled selected>Pilih...</option>
-                                    <option value="transfer" {{ old('method', $income->method) == 'transfer' ? 'selected' : ''}}>Transfer</option>
-                                    <option value="tunai" {{ old('method', $income->method) == 'tunai' ? 'selected' : ''}}>Tunai</option>
+                                    <option value="Transfer"
+                                        {{ old('method', $income->method) == 'Transfer' ? 'selected' : '' }}>Transfer
+                                    </option>
+                                    <option value="Tunai"
+                                        {{ old('method', $income->method) == 'Tunai' ? 'selected' : '' }}>Tunai</option>
                                 </select>
                             </div>
                             <div class="mt-3" id="bank-field" style="display: none">
                                 <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
                                 <select class="form-select" id="bank" name="bank">
                                     <option disabled selected>Pilih...</option>
-                                    <option value="BRI" {{ old('bank', $income->bank) == 'BRI' ? 'selected' : ''}}>BRI</option>
-                                    <option value="BCA" {{ old('bank', $income->bank) == 'BCA' ? 'selected' : ''}}>BCA</option>
-                                    <option value="Mandiri" {{ old('bank', $income->bank) == 'Mandiri' ? 'selected' : ''}}>Mandiri</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{ $bank->id }}"
+                                            {{ old('bank', $income->bank) == $bank->id ? 'selected' : '' }}>
+                                            {{ $bank->name }} -
+                                            {{ $bank->account_number }} ({{ $bank->account_name }})</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -74,8 +86,8 @@
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
                         <a href="{{ route('income.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
-                    </form>
-                    <!-- END: Form Layout -->
+                </form>
+                <!-- END: Form Layout -->
             </div>
         </div>
     </div>
@@ -89,7 +101,7 @@
         const bankField = document.getElementById('bank-field');
 
         methodSelect.addEventListener('change', (event) => {
-            if (event.target.value === 'transfer') {
+            if (event.target.value === 'Transfer') {
                 bankField.style.display = 'block';
             } else {
                 bankField.style.display = 'none';

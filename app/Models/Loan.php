@@ -18,6 +18,8 @@ class Loan extends Model
     protected $fillable = [
         'borrower_name',
         'amount',
+        'method',
+        'bank_owner_id',
         'date',
         'description',
     ];
@@ -25,5 +27,10 @@ class Loan extends Model
     public function loanPayments()
     {
         return $this->hasMany(LoanPayment::class, 'loan_id');
+    }
+
+    public function bankOwner()
+    {
+        return $this->belongsTo(BankOwner::class, 'bank_owner_id');
     }
 }

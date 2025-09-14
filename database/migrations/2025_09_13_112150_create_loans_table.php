@@ -15,6 +15,11 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('borrower_name');
             $table->decimal('amount', 20, 2);
+            $table->string('method');
+            $table->foreignId('bank_owner_id')
+                ->nullable()
+                ->constrained('bank_owners')
+                ->onDelete('cascade');
             $table->date('date');
             $table->text('description')->nullable();
             $table->timestamps();

@@ -20,6 +20,12 @@ class Income extends Model
         'amount',
         'date',
         'method',
-        'bank'
+        'bank',
+        'bank_owner_id',
     ];
+
+    public function bankOwner()
+    {
+        return $this->belongsTo(BankOwner::class);
+    }
 }

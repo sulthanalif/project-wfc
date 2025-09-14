@@ -18,7 +18,8 @@
                     <div class="grid grid-cols-12 gap-4">
                         <div class="col-span-12 lg:col-span-6 intro-y">
                             <div>
-                                <label for="information" class="form-label">Nama Pengeluaran <span class="text-danger">*</span></label>
+                                <label for="information" class="form-label">Nama Pengeluaran <span
+                                        class="text-danger">*</span></label>
                                 <input id="information" name="information" type="text" class="form-control w-full"
                                     placeholder="Masukkan Nama Pengeluaran" required>
                                 @error('information')
@@ -28,7 +29,8 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="date" class="form-label">Tanggal Pengeluaran <span class="text-danger">*</span></label>
+                                <label for="date" class="form-label">Tanggal Pengeluaran <span
+                                        class="text-danger">*</span></label>
                                 <input id="date" name="date" type="date" class="form-control w-full"
                                     placeholder="Masukkan Jumlah Pengeluaran" required>
                                 @error('date')
@@ -38,7 +40,8 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="spending_type_id" class="form-label">Kategori Pengeluaran <span class="text-danger">*</span></label>
+                                <label for="spending_type_id" class="form-label">Kategori Pengeluaran <span
+                                        class="text-danger">*</span></label>
                                 <select class="tom-select" id="spending_type_id" name="spending_type_id" required>
                                     <option disabled selected>Pilih...</option>
                                     @foreach ($spendingTypes as $spendingType)
@@ -49,7 +52,8 @@
                         </div>
                         <div class="col-span-12 lg:col-span-6 intro-y mt-3 lg:mt-0">
                             <div class="">
-                                <label for="amount" class="form-label">Harga Pengeluaran (Satuan) <span class="text-danger">*</span></label>
+                                <label for="amount" class="form-label">Harga Pengeluaran (Satuan) <span
+                                        class="text-danger">*</span></label>
                                 <input id="amount" name="amount" type="number" class="form-control w-full"
                                     placeholder="Masukkan Harga Pengeluaran (Satuan)" required>
                                 @error('amount')
@@ -61,7 +65,7 @@
                             <div class="mt-3">
                                 <label for="qty" class="form-label">Jumlah Yang Dibeli (Qty) </label>
                                 <input id="qty" name="qty" type="number" class="form-control w-full"
-                                    placeholder="Masukkan Jumlah Yang Dibeli" >
+                                    placeholder="Masukkan Jumlah Yang Dibeli">
                                 @error('qty')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -72,17 +76,18 @@
                                 <label for="method" class="form-label">Metode <span class="text-danger">*</span></label>
                                 <select class="form-select" id="method" name="method" required>
                                     <option disabled selected>Pilih...</option>
-                                    <option value="transfer">Transfer</option>
-                                    <option value="tunai">Tunai</option>
+                                    <option value="Tunai">Tunai</option>
+                                    <option value="Transfer">Transfer</option>
                                 </select>
                             </div>
                             <div class="mt-3" id="bank-field" style="display: none">
                                 <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
                                 <select class="form-select" id="bank" name="bank">
                                     <option disabled selected>Pilih...</option>
-                                    <option value="BRI">BRI</option>
-                                    <option value="BCA">BCA</option>
-                                    <option value="Mandiri">Mandiri</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{ $bank->id }}">{{ $bank->name }} -
+                                            {{ $bank->account_number }} ({{ $bank->account_name }})</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -92,8 +97,8 @@
                         <button type="submit" class="btn btn-primary w-24">Simpan</button>
                         <a href="{{ route('spending.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
-                    </form>
-                    <!-- END: Form Layout -->
+                </form>
+                <!-- END: Form Layout -->
             </div>
         </div>
     </div>
@@ -107,7 +112,7 @@
         const bankField = document.getElementById('bank-field');
 
         methodSelect.addEventListener('change', (event) => {
-            if (event.target.value === 'transfer') {
+            if (event.target.value === 'Transfer') {
                 bankField.style.display = 'block';
             } else {
                 bankField.style.display = 'none';
