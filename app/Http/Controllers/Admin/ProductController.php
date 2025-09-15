@@ -189,7 +189,9 @@ class ProductController extends Controller
     {
         if ($product) {
             $subProducts = $product->subProduct()->get();
-            $itemSubProduct = SubProduct::get();
+
+            // return response()->json($subProducts);
+            $itemSubProduct = SubProduct::whereNotIn('id', $subProducts->pluck('sub_product_id'))->get();
             return view('cms.admin.products.detail', compact('product', 'subProducts', 'itemSubProduct'));
         } else {
             return back()->with('error', 'Data Tidak Ditemukan!');

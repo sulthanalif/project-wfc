@@ -179,7 +179,7 @@
                 qtyInput.required = true;
 
                 qtyInput.value = selectedItem.remaining; // Otomatis isi jumlah dengan sisa
-                qtyInput.max = selectedItem.remaining;   // Batasi jumlah maksimal
+                // qtyInput.max = selectedItem.remaining;   // Batasi jumlah maksimal
 
                 const unitSpan = document.createElement('span');
                 unitSpan.textContent = selectedItem.unit;

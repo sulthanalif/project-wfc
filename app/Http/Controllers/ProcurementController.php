@@ -75,7 +75,8 @@ class ProcurementController extends Controller
                 'unit'        => $data['unit'],
                 'needed'      => $needed,
                 'procurement' => $procured,
-                'remaining'   => $remaining,
+                'remaining'   => $procured < $needed ? $remaining : 0,
+                'over' =>   $procured > $needed ? $procured - $needed : 0,
             ];
         }
 

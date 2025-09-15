@@ -79,6 +79,7 @@
                         <th class="text-center whitespace-nowrap">JUMLAH</th>
                         <th class="text-center whitespace-nowrap">JUMLAH PENGADAAN</th>
                         <th class="text-center whitespace-nowrap">JUMLAH SISA</th>
+                        <th class="text-center whitespace-nowrap">JUMLAH LEBIH</th>
                         {{-- <th class="text-center whitespace-nowrap">TOTAL</th>
                         <th class="text-center whitespace-nowrap">METODE</th>
                         <th class="text-center whitespace-nowrap">TANGGAL</th> --}}
@@ -114,6 +115,9 @@
                                 </td>
                                 <td align='center'>
                                     <span class="text-slate-500">{{ $data['remaining'] }}</span>
+                                </td>
+                                <td align='center'>
+                                    <span class="text-slate-500">{{ $data['over'] }}</span>
                                 </td>
                                 {{-- <td>
                                     <p class="text-slate-500 flex items-center whitespace-nowrap">Rp.
