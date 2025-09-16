@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\Spending;
 use App\Models\SubProduct;
 use App\Models\OrderDetail;
+use App\Models\SpendingType;
 use Illuminate\Http\Request;
 use App\Helpers\PaginationHelper;
 use Illuminate\Support\Facades\DB;
@@ -463,5 +464,69 @@ class ReportController extends Controller
             'instalmentStats',
             // 'agentsName'
         ));
+    }
+
+    public function stockSubProduct()
+    {
+        $spendingTypeId = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
+
+        $orderDetails = OrderDetail::whereHas('order', function ($query) {
+            $query->where('status', 'accepted');
+        })->with('product.subProduct.subProduct')->get();
+
+        $neededSubProducts = [];
+        foreach ($orderDetails as $detail) {
+            if (!$detail->product || !$detail->product->subProduct) {
+                continue;
+            }
+
+            foreach ($detail->product->subProduct as $sub) {
+                if (!$sub->subProduct) {
+                    continue;
+                }
+                $subProductId = $sub->subProduct->id;
+                $calculatedQty = $detail->qty * $sub->amount;
+
+                if (!isset($neededSubProducts[$subProductId])) {
+                    $neededSubProducts[$subProductId] = [
+                        'id'    => $subProductId,
+                        'name'  => $sub->subProduct->name,
+                        'unit'  => $sub->subProduct->unit,
+                        'needed' => 0,
+                    ];
+                }
+                $neededSubProducts[$subProductId]['needed'] += $calculatedQty;
+            }
+        }
+
+        // =========================================================================
+        // LANGKAH 2: GABUNGKAN DATA & HITUNG SISA BERDASARKAN KOLOM 'information'
+        // =========================================================================
+        $finalData = [];
+        foreach ($neededSubProducts as $subProductId => $data) {
+            $subProductName = $data['name'];
+            $needed = $data['needed'];
+
+            // Cari total pengadaan untuk item ini berdasarkan namanya di kolom 'information'
+            $procured = Spending::where('spending_type_id', $spendingTypeId)
+                                ->where('information', 'Pengadaan: ' . $subProductName)
+                                ->sum('qty'); // Gunakan sum() untuk total yang akurat
+
+            $remaining = $needed - $procured;
+
+            $finalData[$subProductId] = [
+                'id'          => $data['id'],
+                'name'        => $data['name'],
+                'unit'        => $data['unit'],
+                // 'needed'      => $needed,
+                'procurement' => $procured,
+                // 'remaining'   => $procured < $needed ? $remaining : 0,
+                // 'over' =>   $procured > $needed ? $procured - $needed : 0,
+            ];
+        }
+
+        $products = $finalData;
+
+        return view('cms.admin.reports.stock-sub', compact('products'));
     }
 }

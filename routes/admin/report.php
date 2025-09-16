@@ -9,3 +9,4 @@ Route::get('/agent-order', [ReportController::class, 'agentOrder'])->name('ragen
 Route::get('/instalment', [ReportController::class, 'instalment'])->name('instalment');
 Route::get('/requirement', [ReportController::class, 'requirement'])->name('requirement');
 Route::get('/daily', [ReportController::class, 'daily'])->name('daily');
+Route::get('/stock-sub-product', [ReportController::class, 'stockSubProduct'])->name('stockSubProduct');

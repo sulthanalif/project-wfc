@@ -48,6 +48,7 @@
                 <a href="javascript:;" class="side-menu @if (Route::is('totalDeposit') ||
                         Route::is('rproductDetail') ||
                         Route::is('ragentOrder') ||
+                        Route::is('stockSubProduct') ||
                         Route::is('instalment') ||
                         Route::is('daily') ||
                         Route::is('requirement')) side-menu--active @endif">
@@ -59,6 +60,7 @@
                 <ul class="@if (Route::is('totalDeposit') ||
                         Route::is('rproductDetail') ||
                         Route::is('ragentOrder') ||
+                        Route::is('stockSubProduct') ||
                         Route::is('instalment') ||
                         Route::is('daily') ||
                         Route::is('requirement')) side-menu__sub-open @endif">
@@ -102,6 +104,13 @@
                             class="side-menu {{ Route::is('requirement') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Sub Produk </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('stockSubProduct') }}"
+                            class="side-menu {{ Route::is('stockSubProduct') ? 'side-menu--active' : '' }}">
+                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                            <div class="side-menu__title"> Stock Sub Product </div>
                         </a>
                     </li>
                 </ul>
