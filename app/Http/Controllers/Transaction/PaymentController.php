@@ -189,6 +189,23 @@ class PaymentController extends Controller
         }
     }
 
+    public function changePaymentVerify(Request $request, Payment $payment)
+    {
+        try {
+            DB::transaction(function () use ($request, $payment) {
+                $payment->is_confirmed = !$payment->is_confirmed;
+                $payment->save();
+            });
+            return redirect()->back()->with('success', 'Status Pembayaran Berhasil Diverifikasi');
+        } catch (\Throwable $th) {
+            $data = [
+                'message' => $th->getMessage(),
+                'status' => 400
+            ];
+            return view('cms.error', compact('data'));
+        }
+    }
+
     public function storePayment(Request $request, Order $order)
     {
         $validator = Validator::make($request->all(), [

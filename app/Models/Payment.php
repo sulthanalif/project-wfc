@@ -28,6 +28,7 @@ class Payment extends Model
         'date',
         'status',
         'photo',
+        'is_confirmed',
     ];
 
     public function order()

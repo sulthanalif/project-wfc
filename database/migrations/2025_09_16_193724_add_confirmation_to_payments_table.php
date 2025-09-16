@@ -12,13 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->foreignId('bank_owner_id')
-                ->nullable()
-                ->constrained('bank_owners')
-                ->onDelete('cascade')
-                ->after('bank');
-            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending')->after('bank_owner_id');
-            $table->string('photo')->nullable()->after('date');
+            $table->boolean('is_confirmed')->default(false)->after('status');
         });
     }
 
@@ -28,9 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('bank_owner_id');
-            $table->dropColumn('status');
-            $table->dropColumn('photo');
+            $table->dropColumn('is_confirmed');
         });
     }
 };

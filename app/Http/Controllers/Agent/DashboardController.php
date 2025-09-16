@@ -25,7 +25,8 @@ class DashboardController extends Controller
                 $totalPriceOrder += $order->total_price;
 
                 //total deposit
-                foreach ($order->payment as $payment) {
+                $payments = $order->payment->where('status', 'accepted');
+                foreach ($payments as $payment) {
                     $totalDeposit += $payment->pay;
                 }
             }

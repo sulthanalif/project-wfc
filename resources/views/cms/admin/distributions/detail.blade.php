@@ -59,6 +59,9 @@
                         <div class="flex items-center mt-3"> <i data-lucide="user" class="w-4 h-4 text-slate-500 mr-2"></i>
                             Oleh: {{ $distribution->driver }}
                         </div>
+                        <div class="flex items-center mt-3"> <i data-lucide="file" class="w-4 h-4 text-slate-500 mr-2"></i>
+                            Cetak Surat: {{ $distribution->print_count > 0 ? $distribution->print_count . ' kali' : 'Belum Pernah Dicetak' }}
+                        </div>
                     </div>
                 </div>
                 <div class="col-span-12 lg:col-span-4">

@@ -20,6 +20,7 @@ use App\Exports\ReportInstalmentExport;
 use App\Exports\ReportRequirementExport;
 use App\Exports\ReportTotalDepositExport;
 use App\Exports\ReportProductDetailExport;
+use App\Models\Distribution;
 
 class ReportController extends Controller
 {
@@ -48,7 +49,8 @@ class ReportController extends Controller
                     $totalPriceOrder += $order->total_price;
 
                     //total deposit
-                    foreach ($order->payment as $payment) {
+                    $payments = $order->payment->where('status', 'accepted');
+                    foreach ($payments as $payment) {
                         $totalDeposit += $payment->pay;
                     }
                 }
@@ -206,6 +208,7 @@ class ReportController extends Controller
     {
         $filterAgent = $request->get('agent');
         $filterDate = $request->get('date');
+        $filterVerify = $request->get('verify');
 
         $agentsName = Order::whereHas('payment', function ($q) {
             $q->where('pay', '>', 0);
@@ -213,17 +216,21 @@ class ReportController extends Controller
             return User::find($agentId)->agentProfile->name;
         })->toArray();
 
-        // return response()->json($agentsName);
-        $payments = Payment::with('order')->where('status', 'accepted')->orderBy('created_at', 'desc')->wherehas('order.agent.agentProfile', function ($q) use ($filterAgent, $filterDate) {
-            if ($filterAgent && $filterDate) {
-                $q->where('name', 'like', '%' . $filterAgent . '%')
-                    ->whereDate('date', $filterDate);
-            } elseif ($filterAgent && !$filterDate) {
-                $q->where('name', 'like', '%' . $filterAgent . '%');
-            } elseif (!$filterAgent && $filterDate) {
-                $q->whereDate('date', $filterDate);
-            }
-        })->get();
+        $payments = Payment::with('order')
+            ->where('status', 'accepted')
+            ->orderBy('created_at', 'desc')
+            ->whereHas('order.agent.agentProfile', function ($q) use ($filterAgent, $filterDate) {
+                if ($filterAgent) {
+                    $q->where('name', 'like', '%' . $filterAgent . '%');
+                }
+                if ($filterDate) {
+                    $q->whereDate('date', $filterDate);
+                }
+            })
+            ->when(isset($filterVerify), function ($query) use ($filterVerify) {
+                $query->where('is_confirmed', (bool)$filterVerify);
+            })
+            ->get();
 
         $orders = Order::where('status', 'accepted')->get();
 
@@ -235,7 +242,7 @@ class ReportController extends Controller
         foreach ($payments as $payment) {
             $pay += $payment->pay;
             $total_price_remaining = $total_price - $pay;
-            $remaining_pay += $payment->order->payment_status == 'paid' ? 0 : $total_price_remaining;
+            $remaining_pay = $payment->order->payment_status == 'paid' ? 0 : $total_price_remaining;
         }
 
         $stats = [
@@ -449,6 +456,68 @@ class ReportController extends Controller
             return Excel::download(new ReportInstalmentExport($payments, $instalmentStats), 'Laporan_Rincian_Cicilan_' . now()->format('dmY') . '.xlsx');
         }
 
+        // --- DISTRIBUTION ---
+        $distributions = Distribution::with('order', 'detail')
+            ->whereDate('date', Carbon::today())
+            ->get();
+
+        $distributionData = [];
+
+        foreach ($distributions as $distribution) {
+            $agentName = $distribution->order && $distribution->order->agent && $distribution->order->agent->agentProfile
+                ? $distribution->order->agent->agentProfile->name : 'Agent Tidak Tersedia';
+            $packageName = 'Paket Tidak Tersedia';
+            if ($distribution->order && $distribution->order->detail) {
+                foreach ($distribution->order->detail as $detail) {
+                    if ($detail->product) {
+                        $packageName = $detail->product->name;
+                    }
+                }
+            }
+
+            // Total pesanan paket (jumlah qty dari semua detail order untuk paket ini pada order terkait)
+            $totalOrderQty = 0;
+            if ($distribution->order && $distribution->order->detail) {
+                foreach ($distribution->order->detail as $detail) {
+                    if ($detail->product && $detail->product->name == $packageName) {
+                        $totalOrderQty += $detail->qty;
+                    }
+                }
+            }
+
+            $totalDistributionQty = 0;
+            if ($distribution->detail) {
+                foreach ($distribution->detail as $distDetail) {
+                    $totalDistributionQty += $distDetail->qty;
+                }
+            }
+
+            $key = $agentName . '|' . $packageName;
+            if (isset($distributionData[$key])) {
+                $distributionData[$key]['total_distribution'] += $totalDistributionQty;
+            } else {
+                $distributionData[$key] = [
+                    'agent_name' => $agentName,
+                    'package' => $packageName,
+                    'total_order' => $totalOrderQty,
+                    'total_distribution' => $totalDistributionQty,
+                ];
+            }
+        }
+        // Re-index array numerically for view/export
+        $distributionData = array_values($distributionData);
+        $totalOrderAll = array_sum(array_column($distributionData, 'total_order')) ?? 0;
+        $totalDistributionAll = array_sum(array_column($distributionData, 'total_distribution')) ?? 0;
+
+        $distributionStats = [
+            'totalOrderAll' => $totalOrderAll,
+            'totalDistributionAll' => $totalDistributionAll,
+        ];
+
+        // if ($isExport && $feature === 'distribution') {
+        //     return Excel::download(new ReportDistributionExport($distributionData, $distributionStats), 'Laporan_Rincian_Distribusi_' . now()->format('dmY') . '.xlsx');
+        // }
+
         // AGENT NAMES for filtering
         // $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
         //     $q->whereNotNull('name');
@@ -462,6 +531,9 @@ class ReportController extends Controller
             'agentStats',
             'payments',
             'instalmentStats',
+            'distributions',
+            'distributionData',
+            'distributionStats',
             // 'agentsName'
         ));
     }
@@ -509,8 +581,8 @@ class ReportController extends Controller
 
             // Cari total pengadaan untuk item ini berdasarkan namanya di kolom 'information'
             $procured = Spending::where('spending_type_id', $spendingTypeId)
-                                ->where('information', 'Pengadaan: ' . $subProductName)
-                                ->sum('qty'); // Gunakan sum() untuk total yang akurat
+                ->where('information', 'Pengadaan: ' . $subProductName)
+                ->sum('qty'); // Gunakan sum() untuk total yang akurat
 
             $remaining = $needed - $procured;
 

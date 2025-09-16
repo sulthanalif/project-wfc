@@ -10,12 +10,12 @@
         @hasrole('admin|super_admin')
             <a href="{{ route('payment.detail', ['user' => $user->id, 'order' => $order->id, 'export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4" data-lucide="download"></i> Export</a>
         @endhasrole
-        @if ($order->payment_status !== 'paid')
+        {{-- @if ($order->payment_status !== 'paid')
             <a class="btn btn-primary btn-sm py-2 px-3 shadow-md flex items-center ml-2" href="javascript:;"
                 data-tw-toggle="modal" data-tw-target="#payment-confirmation-modal">
                 Setor </a>
             @include('cms.admin.payment.modal.payment')
-        @endif
+        @endif --}}
         <a href="{{ route('payment.show', $user) }}" class="btn px-2 box"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
     </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
@@ -29,6 +29,7 @@
                         <th class="text-center whitespace-nowrap">METODE</th>
                         <th class="text-center whitespace-nowrap" width="10%">JUMLAH BAYAR</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
+                        <th class="text-center whitespace-nowrap">TERVERIFIKASI</th>
                         <th class="text-center whitespace-nowrap">KETERANGAN</th>
                         <th class="text-center whitespace-nowrap">BUKTI</th>
                         @hasrole('finance_admin|super_admin|admin')
@@ -40,7 +41,7 @@
                     @if ($order->payment->isEmpty())
                         <tr>
                             @hasrole('finance_admin|super_admin|admin')
-                                <td colspan="8" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                                <td colspan="9" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                             @endhasrole
                             @hasrole('agent')
                                 <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
@@ -81,6 +82,15 @@
                                     @else
                                         <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
                                                 class="w-4 h-4 mr-2"></i> Pending</div>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if ($payment->is_confirmed)
+                                        <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-circle" class="w-4 h-4 mr-2"></i> </div>
+                                    @else
+                                        <div class="flex items-center justify-center text-danger"> <i
+                                                data-lucide="x-circle" class="w-4 h-4 mr-2"></i> </div>
                                     @endif
                                 </td>
                                 <td>

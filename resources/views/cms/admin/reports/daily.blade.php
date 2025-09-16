@@ -21,6 +21,9 @@
                                 <option value="instalment"
                                     {{ request()->get('feature') == 'instalment' ? 'selected' : '' }}>
                                     Setoran</option>
+                                <option value="distribution"
+                                    {{ request()->get('feature') == 'distribution' ? 'selected' : '' }}>
+                                    Distribusi</option>
                             </select>
                         </div>
 
@@ -104,6 +107,35 @@
                             </div>
                         </div>
                     @endif
+
+                    @if (!$feature || $feature == 'distribution')
+                        <div class="grid grid-cols-12 gap-6 mt-5">
+                            {{-- <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                                <div class="report-box zoom-in">
+                                    <div class="box p-5">
+                                        <div class="flex">
+                                            <i data-lucide="package" class="report-box__icon text-primary"></i>
+                                        </div>
+                                        <div class="text-2xl font-bold leading-8 mt-6">{{ $distributionStats['totalOrderAll'] }}
+                                        </div>
+                                        <div class="text-base text-slate-500 mt-1">Total Pesanan</div>
+                                    </div>
+                                </div>
+                            </div> --}}
+                            <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                                <div class="report-box zoom-in">
+                                    <div class="box p-5">
+                                        <div class="flex">
+                                            <i data-lucide="package" class="report-box__icon text-primary"></i>
+                                        </div>
+                                        <div class="text-2xl font-bold leading-8 mt-6">{{ $distributionStats['totalDistributionAll'] }}
+                                        </div>
+                                        <div class="text-base text-slate-500 mt-1">Total Distribusi Produk</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <!-- END: Laporan Harian -->
             </div>
@@ -119,6 +151,10 @@
 
         @if (!$feature || $feature == 'instalment')
             @include('cms.admin.reports.partial.daily-instalment')
+        @endif
+
+        @if (!$feature || $feature == 'distribution')
+            @include('cms.admin.reports.partial.daily-distribution' )
         @endif
     </div>
 @endsection

@@ -76,7 +76,7 @@
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">NAMA BANK</th>
                         <th class="text-center whitespace-nowrap">PEMASUKAN</th>
-                        <th class="text-center whitespace-nowrap">PESANAN</th>
+                        <th class="text-center whitespace-nowrap">SETORAN</th>
                         <th class="text-center whitespace-nowrap">PENGELUARAN</th>
                         <th class="text-center whitespace-nowrap">PIUTANG</th>
                         <th class="text-center whitespace-nowrap">SALDO</th>
