@@ -62,6 +62,7 @@
                         <th class="whitespace-nowrap">NAMA USER</th>
                         <th class="text-center whitespace-nowrap">JABATAN</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
+                        <th class="text-center whitespace-nowrap">STATUS ACCESS</th>
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
@@ -118,6 +119,17 @@
                                     @else
                                         <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
                                                 class="w-4 h-4 mr-2"></i> Tidak Aktif</div>
+                                    @endif
+                                </td>
+                                <td class="w-40">
+                                    @if ($user->is_open_access == 1)
+                                        <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#upstat-access-confirmation-modal{{ $user->id }}"> Terbuka </a> </div>
+                                    @else
+                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
+                                                class="w-4 h-4 mr-2"></i> <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#upstat-access-confirmation-modal{{ $user->id }}">  Terkunci </a> </div>
                                     @endif
                                 </td>
                                 @if ($user->roles->first()->name == 'agent')
@@ -193,6 +205,39 @@
                                             </div>
                                             <div class="px-5 pb-8 text-center">
                                                 <form action="{{ route('user.status', $user) }}" method="post">
+                                                    @csrf
+                                                    @method('put')
+                                                    @if ($users instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                        <input type="hidden" name="page"
+                                                            value="{{ $users->currentPage() }}">
+                                                    @endif
+                                                    {{-- <input type="hidden" name="active" value {{ ($user->active == 1) ? 0 : 1 }}> --}}
+                                                    <button type="submit" class="btn btn-warning w-24">Ubah</button>
+                                                    <button type="button" data-tw-dismiss="modal"
+                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="upstat-access-confirmation-modal{{ $user->id }}" class="modal" tabindex="-1"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-0">
+                                            <div class="p-5 text-center">
+                                                <i data-lucide="x-circle" class="w-16 h-16 text-warning mx-auto mt-3"></i>
+                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                <div class="text-slate-500 mt-2">
+                                                    Apakah anda yakin untuk mengubah status data ini?
+                                                    <br>
+                                                    Proses tidak akan bisa diulangi.
+                                                </div>
+                                            </div>
+                                            <div class="px-5 pb-8 text-center">
+                                                <form action="{{ route('user.status.access', $user) }}" method="post">
                                                     @csrf
                                                     @method('put')
                                                     @if ($users instanceof \Illuminate\Pagination\LengthAwarePaginator)

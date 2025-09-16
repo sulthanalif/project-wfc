@@ -122,7 +122,7 @@
                             $package = optional($product->package->package);
                             $period = optional($package->period);
                         @endphp
-                        @if ($period->access_date && \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($period->access_date)))
+                        @if (($period->access_date && \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($period->access_date))) || Auth::user()->is_open_access)
                             <a class="flex items-center lg:ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
                                 data-tw-target="#add-product-modal">
                                 <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah

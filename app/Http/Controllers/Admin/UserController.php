@@ -291,6 +291,14 @@ class UserController extends Controller
         return redirect()->route('user.index')->with('success', 'Data Berhasil ' . ($user->active == 1 ? 'Diaktifkan' : 'Dinonaktifkan'));
     }
 
+    public function changeStatusAccess(User $user)
+    {
+        $user->is_open_access = !$user->is_open_access;
+        $user->save();
+
+        return redirect()->route('user.index')->with('success', 'Data Berhasil ' . ($user->is_open_access == 1 ? 'Diberikan' : 'Dikunci'));
+    }
+
     /**
      * Hapus pengguna.
      *

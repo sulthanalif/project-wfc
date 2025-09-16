@@ -43,7 +43,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at',
         'email',
         'password',
-        'active'
+        'active',
+        'is_open_access',
     ];
 
     /**
@@ -70,6 +71,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return Attribute::make(
             get: fn () => $this->roles->first()->name,
+        );
+    }
+
+    public function statusAccess(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->is_open_access ? 'Open Access' : 'Closed Access',
         );
     }
 
