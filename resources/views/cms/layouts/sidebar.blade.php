@@ -170,6 +170,7 @@
                             Route::is('sub-product*') ||
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
+                            Route::is('rewards*') ||
                             Route::is('bank-owner*') ||
                             Route::is('getAdministration')) side-menu--active @endif">
                         <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
@@ -185,6 +186,7 @@
                             Route::is('sub-product*') ||
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
+                            Route::is('rewards*') ||
                             Route::is('bank-owner*') ||
                             Route::is('getAdministration')) side-menu__sub-open @endif">
                         <li>
@@ -213,6 +215,13 @@
                                 class="side-menu {{ Route::is('options.index') ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="side-menu__title"> Periode </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('rewards.index') }}"
+                                class="side-menu {{ Route::is('rewards.index') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Reward </div>
                             </a>
                         </li>
                         @hasrole('super_admin|admin|finance_admin')

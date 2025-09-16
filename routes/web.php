@@ -8,29 +8,30 @@ use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\RewardController;
 use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
 use App\Http\Controllers\AccessDateController;
-use App\Http\Controllers\Admin\BankOwnerController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\LandingpageController;
+use App\Http\Controllers\ReviewAgentController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\AdministrationController;
 // use App\Models\Administration;
+use App\Http\Controllers\AdministrationController;
+use App\Http\Controllers\Admin\BankOwnerController;
 use App\Http\Controllers\Agent\DashboardController;
 use App\Http\Controllers\Mail\NotificationController;
 use App\Http\Controllers\Transaction\OrderController;
 use App\Http\Controllers\Admin\DistributionController;
 use App\Http\Controllers\Transaction\PaymentController;
 use App\Http\Controllers\Admin\DashboardAdminController;
+use App\Http\Controllers\CountPriceTransactionController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Transaction\DetailOrderController;
 use App\Http\Controllers\Admin\ExportDeliveryOrderController;
-use App\Http\Controllers\CountPriceTransactionController;
-use App\Http\Controllers\ReviewAgentController;
 use App\Http\Controllers\Transaction\ExportInvoiceController;
 
 // use App\Http\Controllers\Auth\AuthController;
@@ -115,6 +116,7 @@ Route::group(['middleware' => 'auth',], function () {
         require __DIR__ . '/admin/masterSupplier.php';
         // require __DIR__ . '/admin/masterReview.php';
         require __DIR__ . '/admin/masterLandingpage.php';
+        require __DIR__ . '/admin/masterReward.php';
         require __DIR__ . '/admin/options.php';
 
         Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
@@ -165,6 +167,10 @@ Route::group(['middleware' => 'auth',], function () {
         //kelola sub agent
         Route::resource('sub-agent', SubAgentController::class);
     });
+
+    // Route::group(['middleware' => 'role:admin|super_admin'], function () {
+    //     Route::resource('reward', RewardController::class);
+    // });
 
     //agent
     Route::group(['middleware' => ['role:agent', 'verified']], function () {
