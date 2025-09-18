@@ -23,9 +23,9 @@ class CashFlowController extends Controller
             $income = Income::where('bank_owner_id', $bank->id)
                 ->where('method', 'transfer')
                 ->sum('amount');
-            $loanPayment = LoanPayment::where('method', 'transfer')
-                ->where('bank_owner_id', $bank->id)
-                ->sum('pay');
+            // $loanPayment = LoanPayment::where('method', 'transfer')
+            //     ->where('bank_owner_id', $bank->id)
+            //     ->sum('pay');
             $order = $bank->payments()
                     ->where('status', 'accepted')
                     ->where('bank_owner_id', $bank->id)
@@ -39,17 +39,17 @@ class CashFlowController extends Controller
                 ->sum('amount');
             $cashFlows[] = [
                 'method' => $bank->name,
-                'incomes' => $loanPayment + $income,
+                'incomes' => $income,
                 'orders' => $order,
                 'spendings' => $spending,
                 'loans' => $loan,
-                'balance' => ($loanPayment + $income + $order) - ($spending + $loan),
+                'balance' => ($income + $order) - ($spending + $loan),
             ];
         }
 
         // Ambil data tunai
         $incomeCash = Income::where('method', 'Tunai')->sum('amount');
-        $loanPaymentCash = LoanPayment::where('method', 'Tunai')->sum('pay');
+        // $loanPaymentCash = LoanPayment::where('method', 'Tunai')->sum('pay');
         $orderCash = Payment::where('status', 'accepted')
             ->where('method', 'Tunai')
             ->sum('pay');
@@ -58,11 +58,11 @@ class CashFlowController extends Controller
 
         $cashFlows[] = [
             'method' => 'Tunai',
-            'incomes' => $loanPaymentCash + $incomeCash,
+            'incomes' => $incomeCash,
             'orders' => $orderCash,
             'spendings' => $spendingCash,
             'loans' => $loanCash,
-            'balance' => ($loanPaymentCash + $incomeCash + $orderCash) - ($spendingCash + $loanCash),
+            'balance' => ($incomeCash + $orderCash) - ($spendingCash + $loanCash),
         ];
 
         return view('cms.admin.finance.cash-flow.index', compact('cashFlows'));

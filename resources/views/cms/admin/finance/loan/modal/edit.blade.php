@@ -45,6 +45,36 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="grid grid-cols-12 gap-3 mt-3">
+                            <div class="col-span-6">
+                                <label for="upd_method_{{ $loan->id }}" class="form-label">Metode Pembayaran <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" id="upd_method_{{ $loan->id }}" name="upd_method" required>
+                                    <option value="Tunai">Tunai</option>
+                                    <option value="Transfer">Transfer</option>
+                                </select>
+                                @error('upd_method')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="col-span-6" id="upd_bank-field-{{ $loan->id }}" style="display: none">
+                                <label for="upd_bank_{{ $loan->id }}" class="form-label">Bank <span class="text-danger">*</span></label>
+                                <select class="form-select" id="upd_bank_{{ $loan->id }}" name="upd_bank">
+                                    <option value="">Pilih...</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{ $bank->id }}">{{ $bank->name }} -
+                                            {{ $bank->account_number }} ({{ $bank->account_name }})</option>
+                                    @endforeach
+                                </select>
+                                @error('bank')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="mt-3 mb-3">
                             <label for="description" class="form-label">Keterangan <span
                                     class="text-danger">*</span></label>
@@ -69,4 +99,26 @@
 
 @push('custom-scripts')
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const methodSelect = document.getElementById('upd_method_{{ $loan->id }}');
+            const bankField = document.getElementById('upd_bank-field-{{ $loan->id }}');
+    
+            // Show/hide on page load
+            if (methodSelect.value === 'Transfer') {
+                bankField.style.display = 'block';
+            } else {
+                bankField.style.display = 'none';
+            }
+    
+            methodSelect.addEventListener('change', function (event) {
+                if (event.target.value === 'Transfer') {
+                    bankField.style.display = 'block';
+                } else {
+                    bankField.style.display = 'none';
+                }
+            });
+        });
+    </script>
 @endpush

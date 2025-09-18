@@ -21,6 +21,7 @@ class LoanPayment extends Model
         'date',
         'method',
         'bank_owner_id',
+        'is_confirmed',
         'description',
         'photo',
     ];

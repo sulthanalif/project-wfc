@@ -20,6 +20,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('bank_owners')
                 ->onDelete('cascade');
+            $table->enum('status_payment', ['unpaid', 'paid', 'pending'])->default('unpaid');
             $table->date('date');
             $table->text('description')->nullable();
             $table->timestamps();

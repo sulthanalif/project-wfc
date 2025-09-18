@@ -102,10 +102,11 @@
                                 </td>
                                 <td>
                                     <span class="text-slate-500 flex items-center justify-center">
-                                        {{ $income->method == 'tunai' ? 'Tunai' : 'Transfer' }}
-                                        @if ($income->method == 'transfer')
-                                            ({{ $income->bank }})
-                                        @endif
+                                        <p class="text-center">
+                                            {{ $income->method }}
+                                            <br />
+                                            {{ $income->method == 'Transfer' && $income->bankOwner ? $income->bankOwner->name . ' - ' . $loan->bankOwner->account_number : '' }}
+                                        </p>
                                     </span>
                                 </td>
                                 <td>

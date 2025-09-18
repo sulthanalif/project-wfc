@@ -17,6 +17,7 @@ Route::resource('/procurement', ProcurementController::class);
 
 Route::post('/loan/{loan}/payment', [LoanController::class, 'storePayment'])->name('loan.storePayment');
 Route::delete('/loan/{loan}/payment/{payment}', [LoanController::class, 'deletePayment'])->name('loan.deletePayment');
+Route::put('/changePaymentVerify/{payment}', [LoanController::class, 'verifyPayment'])->name('loan.verifyPayment');
 
 Route::get('/export-spending', [SpendingController::class, 'export'])->name('spending.export');
 Route::get('/export-income', [IncomeController::class, 'export'])->name('income.export');

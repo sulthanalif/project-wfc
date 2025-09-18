@@ -21,6 +21,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('bank_owners')
                 ->onDelete('cascade');
+            $table->boolean('is_confirmed')->default(false);
             $table->string('photo')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();

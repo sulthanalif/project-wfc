@@ -24,8 +24,8 @@
                             <div class="col-span-6">
                                 <label for="amount" class="form-label">Jumlah Pinjaman <span
                                         class="text-danger">*</span></label>
-                                <input id="amount" name="amount" type="number"
-                                    class="form-control w-full" placeholder="Masukkan Jumlah Pinjaman" required>
+                                <input id="amount" name="amount" type="number" class="form-control w-full"
+                                    placeholder="Masukkan Jumlah Pinjaman" required>
                                 @error('amount')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -38,6 +38,36 @@
                                 <input id="date" name="date" type="date" class="form-control w-full"
                                     max="{{ date('Y-m-d') }}" required>
                                 @error('date')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-12 gap-3 mt-3">
+                            <div class="col-span-6">
+                                <label for="method" class="form-label">Metode Pembayaran <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" id="method" name="method" required>
+                                    <option value="Tunai">Tunai</option>
+                                    <option value="Transfer">Transfer</option>
+                                </select>
+                                @error('method')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="col-span-6" id="bank-field" style="display: none">
+                                <label for="bank" class="form-label">Bank <span class="text-danger">*</span></label>
+                                <select class="form-select" id="bank" name="bank">
+                                    <option value="">Pilih...</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{ $bank->id }}">{{ $bank->name }} -
+                                            {{ $bank->account_number }} ({{ $bank->account_name }})</option>
+                                    @endforeach
+                                </select>
+                                @error('bank')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -68,4 +98,17 @@
 
 @push('custom-scripts')
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
+
+    <script>
+        const methodSelect = document.getElementById('method');
+        const bankField = document.getElementById('bank-field');
+
+        methodSelect.addEventListener('change', (event) => {
+            if (event.target.value === 'Transfer') {
+                bankField.style.display = 'block';
+            } else {
+                bankField.style.display = 'none';
+            }
+        });
+    </script>
 @endpush

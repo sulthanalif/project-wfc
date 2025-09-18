@@ -27,6 +27,7 @@
                         <th class="text-center whitespace-nowrap" width="10%">JUMLAH BAYAR</th>
                         <th class="text-center whitespace-nowrap">KETERANGAN</th>
                         <th class="text-center whitespace-nowrap">BUKTI</th>
+                        <th class="text-center whitespace-nowrap">TERVERIFIKASI</th>
                         @hasrole('finance_admin|super_admin')
                             <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
@@ -36,7 +37,7 @@
                     @if ($loan->loanPayments->isEmpty())
                         <tr>
                             @hasrole('finance_admin|super_admin')
-                                <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                                <td colspan="8" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                             @endhasrole
                         </tr>
                     @else
@@ -96,14 +97,37 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td class="text-center">
+                                    @if ($payment->is_confirmed)
+                                        <span
+                                            class="bg-success/20 text-success font-medium rounded-full text-xs px-2 py-1">Terverifikasi</span>
+                                    @else
+                                        <span
+                                            class="bg-warning/20 text-warning font-medium rounded-full text-xs px-2 py-1">Belum
+                                            Terverifikasi</span>
+                                    @endif
+                                </td>
                                 @hasrole('finance_admin|super_admin')
                                     <td class="table-report__action">
                                         <div class="flex justify-center items-center">
-                                            <a class="flex items-center mr-3 text-danger" href="javascript:;"
-                                                data-tw-toggle="modal"
-                                                data-tw-target="#delete-confirmation-modal{{ $payment->id }}">
-                                                <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                            @include('cms.admin.finance.loan.modal.delete', ['payment' => $payment])
+                                            @if (!$payment->is_confirmed)
+                                                <div class="flex justify-center items-center">
+                                                    <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                        data-tw-target="#verify-modal-{{ $payment->id }}"> <i
+                                                            data-lucide="pencil" class="w-4 h-4 mr-1"></i> Verifikasi </a>
+                                                </div>
+                                                @include('cms.admin.finance.loan.modal.verify', [
+                                                    'payment' => $payment,
+                                                ])
+
+                                                <a class="flex items-center mr-3 text-danger" href="javascript:;"
+                                                    data-tw-toggle="modal"
+                                                    data-tw-target="#delete-confirmation-modal{{ $payment->id }}">
+                                                    <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                                @include('cms.admin.finance.loan.modal.delete', [
+                                                    'payment' => $payment,
+                                                ])
+                                            @endif
                                             {{-- @if ($payment->status == 'pending')
                                                 <a class="flex items-center mr-3 text-secondary" href="javascript:;"
                                                     data-tw-toggle="modal"

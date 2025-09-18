@@ -46,7 +46,8 @@
     </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#create-modal" class="btn btn-primary shadow-md mr-2">Tambah Piutang</a>
+            <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#create-modal"
+                class="btn btn-primary shadow-md mr-2">Tambah Piutang</a>
             @include('cms.admin.finance.loan.modal.create')
 
             <div class="dropdown mr-2">
@@ -103,6 +104,8 @@
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">NAMA PEMINJAM</th>
                         <th class="text-center whitespace-nowrap">JUMLAH</th>
+                        <th class="text-center whitespace-nowrap">METODE</th>
+                        <th class="text-center whitespace-nowrap">STATUS PEMBAYARAN</th>
                         <th class="text-center whitespace-nowrap">TANGGAL</th>
                         <th class="text-center whitespace-nowrap">KETERANGAN</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
@@ -120,13 +123,43 @@
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td>
-                                    <a class="text-slate-500 flex items-center mr-3" href="{{ route('loan.show', $loan)}}"> <i
-                                            data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+                                    <a class="text-slate-500 flex items-center mr-3"
+                                        href="{{ route('loan.show', $loan) }}"> <i data-lucide="external-link"
+                                            class="w-4 h-4 mr-2"></i>
                                         {{ $loan->borrower_name }} </a>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 flex items-center justify-center mr-3">Rp.
                                         {{ number_format($loan->amount, 0, ',', '.') }} </p>
+                                </td>
+                                <td>
+                                    <span class="text-slate-500 flex items-center justify-center">
+                                        <p class="text-center">
+                                            {{ $loan->method }}
+                                            <br />
+                                            {{ $loan->method == 'Transfer' && $loan->bankOwner ? $loan->bankOwner->name . ' - ' . $loan->bankOwner->account_number : '' }}
+                                        </p>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-slate-500 flex items-center justify-center">
+                                        @if ($loan->status_payment == 'unpaid')
+                                            <div
+                                                class="flex items-center justify-center bg-danger/20 text-danger rounded-full px-3 py-1">
+                                                <i data-lucide="x-circle" class="w-4 h-4 mr-2"></i> Belum Dibayar
+                                            </div>
+                                        @elseif ($loan->status_payment == 'pending')
+                                            <div
+                                                class="flex items-center justify-center bg-warning/20 text-warning rounded-full px-3 py-1">
+                                                <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Dicicil
+                                            </div>
+                                        @else
+                                            <div
+                                                class="flex items-center justify-center bg-success/20 text-success rounded-full px-3 py-1">
+                                                <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Lunas
+                                            </div>
+                                        @endif
+                                    </span>
                                 </td>
                                 <td>
                                     <span
@@ -138,8 +171,8 @@
                                 <td class="table-report__action w-56">
                                     <div class="flex justify-center items-center">
                                         <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#edit-modal{{ $loan->id }}"> <i
-                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
+                                            data-tw-target="#edit-modal{{ $loan->id }}"> <i data-lucide="edit"
+                                                class="w-4 h-4 mr-1"></i> Ubah </a>
                                         @include('cms.admin.finance.loan.modal.edit', ['loan' => $loan])
                                         <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
                                             data-tw-target="#delete-confirmation-modal{{ $loan->id }}"> <i

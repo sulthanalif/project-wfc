@@ -96,30 +96,31 @@
                                     <span class="text-slate-500">{{ $spending->information }}</span>
                                 </td>
                                 <td>
-                                    <span class="text-slate-500">{{ $spending->spendingType->name }}</span>
+                                    <span class="text-slate-500 flex items-center justify-center">{{ $spending->spendingType->name }}</span>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 flex items-center whitespace-nowrap">Rp.
+                                    <p class="text-slate-500 flex items-center justify-center whitespace-nowrap">Rp.
                                         {{ number_format($spending->amount, 0, ',', '.') }} </p>
                                 </td>
                                 <td>
-                                    <span class="text-slate-500">{{ $spending->qty ?? 1 }}</span>
+                                    <span class="text-slate-500 flex items-center justify-center">{{ $spending->qty ?? 1 }}</span>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 flex items-center whitespace-nowrap">Rp.
+                                    <p class="text-slate-500 flex items-center justify-center whitespace-nowrap">Rp.
                                         {{ number_format($spending->amount * ($spending->qty ?? 1), 0, ',', '.') }} </p>
                                 </td>
                                 <td>
-                                <span class="text-slate-500">
-                                    {{ $spending->method == 'tunai' ? 'Tunai' : 'Transfer' }}
-                                    @if ($spending->method == 'transfer')
-                                        ({{ $spending->bank }})
-                                    @endif
-                                </span>
+                                    <span class="text-slate-500 flex items-center justify-center">
+                                        <p class="text-center">
+                                            {{ $spending->method }}
+                                            <br />
+                                            {{ $spending->method == 'Transfer' && $spending->bankOwner ? $spending->bankOwner->name . ' - ' . $spending->bankOwner->account_number : '' }}
+                                        </p>
+                                    </span>
                                 </td>
                                 <td>
                                     <span
-                                        class="text-slate-500">{{ \Carbon\Carbon::parse($spending->date)->format('d-m-Y') }}</span>
+                                        class="text-slate-500 flex items-center justify-center">{{ \Carbon\Carbon::parse($spending->date)->format('d-m-Y') }}</span>
                                 </td>
                                 <td class="table-report__action">
                                     <div class="flex justify-center items-center">

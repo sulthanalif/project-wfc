@@ -20,6 +20,7 @@ class Loan extends Model
         'amount',
         'method',
         'bank_owner_id',
+        'status_payment',
         'date',
         'description',
     ];
