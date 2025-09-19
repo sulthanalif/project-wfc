@@ -70,4 +70,9 @@ class Product extends Model
             }
         })->sum('total');
     }
+
+    public function productReturnDetail()
+    {
+        return $this->hasMany(ProductReturnDetail::class);
+    }
 }

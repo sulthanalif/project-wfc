@@ -20,12 +20,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:;" class="menu @if (Route::is('order*') || Route::is('distribution*')) menu--active @endif">
+                    <a href="javascript:;" class="menu @if (Route::is('order*') || Route::is('distribution*') || Route::is('payment*') || Route::is('return*')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="shopping-bag"></i> </div>
                         <div class="menu__title"> Transaksi <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                         </div>
                     </a>
-                    <ul class="@if (Route::is('order*') || Route::is('distribution*') || Route::is('payment*')) menu__sub-open @endif">
+                    <ul class="@if (Route::is('order*') || Route::is('distribution*') || Route::is('payment*') || Route::is('return*')) menu__sub-open @endif">
                         <li>
                             <a href="{{ route('order.index') }}"
                                 class="menu {{ Route::is('order*') ? 'menu--active' : '' }}">
@@ -47,6 +47,13 @@
                                 <div class="menu__title"> Pendistribusian </div>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('return.index') }}"
+                                class="menu {{ Route::is('return*') ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Pengembalian </div>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="menu__devider my-4"></li>
@@ -55,7 +62,8 @@
                             Route::is('rproductDetail') ||
                             Route::is('ragentOrder') ||
                             Route::is('instalment') ||
-                            Route::is('requirement')) menu--active @endif">
+                            Route::is('requirement') ||
+                            Route::is('stockSubProduct')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="file-text"></i> </div>
                         <div class="menu__title"> Laporan <i data-lucide="chevron-down" class="menu__sub-icon "></i></div>
                     </a>
@@ -63,7 +71,8 @@
                             Route::is('rproductDetail') ||
                             Route::is('instalment') ||
                             Route::is('ragentOrder') ||
-                            Route::is('requirement')) menu__sub-open @endif">
+                            Route::is('requirement') ||
+                            Route::is('stockSubProduct')) menu__sub-open @endif">
                         {{-- <li>
                             <a href="javascript:;" class="menu">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
@@ -126,16 +135,33 @@
                                 <div class="menu__title"> Sub Produk </div>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('stockSubProduct') }}"
+                                class="menu {{ Route::is('stockSubProduct') ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Stock Sub Produk </div>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 @hasrole('finance_admin|super_admin')
                     <li>
-                        <a href="javascript:;" class="menu @if (Route::is('income*') || Route::is('spending*') || Route::is('type-spending.index')) menu--active @endif">
+                        <a href="javascript:;" class="menu @if (Route::is('income*') ||
+                                Route::is('loan*') ||
+                                Route::is('cash-flow*') ||
+                                Route::is('procurement*') ||
+                                Route::is('spending*') ||
+                                Route::is('type-spending.index')) menu--active @endif">
                             <div class="menu__icon"> <i data-lucide="dollar-sign"></i> </div>
                             <div class="menu__title"> Keuangan <i data-lucide="chevron-down" class="menu__sub-icon "></i>
                             </div>
                         </a>
-                        <ul class="@if (Route::is('cash-flow*') || Route::is('income*') || Route::is('loan*') || Route::is('spending*') || Route::is('type-spending.index')) menu__sub-open @endif">
+                        <ul class="@if (Route::is('cash-flow*') ||
+                                Route::is('procurement*') ||
+                                Route::is('income*') ||
+                                Route::is('loan*') ||
+                                Route::is('spending*') ||
+                                Route::is('type-spending.index')) menu__sub-open @endif">
                             <li>
                                 <a href="{{ route('cash-flow.index') }}"
                                     class="menu {{ Route::is('cash-flow*') ? 'menu--active' : '' }}">
@@ -162,6 +188,13 @@
                                     class="menu {{ Route::is('spending*') ? 'menu--active' : '' }}">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                     <div class="menu__title"> Pengeluaran </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('procurement.index') }}"
+                                    class="menu {{ Route::is('procurement*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Pengadaan </div>
                                 </a>
                             </li>
                             <li>
@@ -334,12 +367,35 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('order.index') }}"
-                            class="menu {{ Route::is('order*') ? 'menu--active' : '' }}">
+                        <a href="javascript:;" class="menu @if (Route::is('order*') || Route::is('payment-agent*') || Route::is('return*')) menu--active @endif">
                             <div class="menu__icon"> <i data-lucide="shopping-bag"></i> </div>
-                            <div class="menu__title"> Transaksi
+                            <div class="menu__title"> Transaksi <i data-lucide="chevron-down"
+                                    class="menu__sub-icon "></i>
                             </div>
                         </a>
+                        <ul class="@if (Route::is('order*') || Route::is('payment-agent*') || Route::is('return*')) menu__sub-open @endif">
+                            <li>
+                                <a href="{{ route('order.index') }}"
+                                    class="menu {{ Route::is('order*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Pesanan </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('payment-agent.index') }}"
+                                    class="menu {{ Route::is('payment-agent*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Pembayaran </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('return.index') }}"
+                                    class="menu {{ Route::is('return*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Pengembalian </div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="menu__devider my-6"></li>
                     <li>

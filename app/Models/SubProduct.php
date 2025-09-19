@@ -27,4 +27,8 @@ class SubProduct extends Model
         return $this->hasMany(ProductSubProduct::class);
     }
 
+    public function productReturnDetail()
+    {
+        return $this->hasMany(ProductReturn::class);
+    }
 }

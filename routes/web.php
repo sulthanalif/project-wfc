@@ -33,6 +33,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Transaction\DetailOrderController;
 use App\Http\Controllers\Admin\ExportDeliveryOrderController;
 use App\Http\Controllers\Transaction\ExportInvoiceController;
+use App\Http\Controllers\Transaction\ProductReturnController;
 
 // use App\Http\Controllers\Auth\AuthController;
 // use App\Http\Controllers\DashboardController;
@@ -66,9 +67,6 @@ Route::get('/testview', function () {
 
 Route::group(['middleware' => 'auth',], function () {
     Route::get('/agent', [DashboardController::class, 'noActive'])->name('nonactive');
-
-
-
 
     //super_admin, finance_admin, admin
     Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
@@ -147,6 +145,9 @@ Route::group(['middleware' => 'auth',], function () {
         Route::get('/payment-agent/{user}/{order}', [PaymentController::class, 'showPaymentAgent'])->name('payment-agent.detail');
         Route::post('/payment-agent/{order}', [PaymentController::class, 'storePaymentAgent'])->name('storePaymentAgent');
         Route::put('/payment-agent/{payment}', [PaymentController::class, 'updatePaymentAgent'])->name('updatePaymentAgent');
+
+        //product return
+        Route::resource('return', ProductReturnController::class);
     });
     Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin'], function () {
         require __DIR__ . '/transaction/payment.php';
