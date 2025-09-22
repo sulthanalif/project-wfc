@@ -67,4 +67,60 @@ class CashFlowController extends Controller
 
         return view('cms.admin.finance.cash-flow.index', compact('cashFlows'));
     }
+
+    public function create()
+    {
+        $banks = BankOwner::all();
+        return view('cms.admin.finance.cash-flow.create', compact('banks'));
+    }
+
+    public function transferCash(Request $request)
+    {
+        // Validate request
+        $request->validate([
+            'from_bank_id' => 'required|exists:bank_owners,id',
+            'to_bank_id' => 'required|exists:bank_owners,id|different:from_bank_id',
+            'amount' => 'required|numeric|min:1',
+            'description' => 'nullable|string'
+        ]);
+
+        try {
+            // Get bank details
+            $fromBank = BankOwner::findOrFail($request->from_bank_id);
+            $toBank = BankOwner::findOrFail($request->to_bank_id);
+
+            // Create spending record for source bank
+            $spending = new Spending();
+            $spending->information =  "Transfer to {$toBank->name} " . ($request->description ? " : {$request->description}" : '');
+            $spending->amount = $request->amount;
+            $spending->method = 'transfer';
+            $spending->bank_owner_id = $fromBank->id;
+            $spending->qty = 1;
+            $spending->bank = $fromBank->name;
+            $spending->date = now();
+            $spending->total_amount = $request->amount;
+            $spending->save();
+
+            // Create income record for destination bank
+            $income = new Income();
+            $income->bank_owner_id = $toBank->id;
+            $income->amount = $request->amount;
+            $income->information =  "Transfer from {$fromBank->name} " . ($request->description ? " : {$request->description}" : '');
+            $income->date = now();
+            $income->method = 'transfer';
+            $income->bank = $toBank->name;
+            $income->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pindah Kas Berhasil'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal Pindah Kas: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

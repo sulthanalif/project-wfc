@@ -22,6 +22,7 @@
     </div> --}}
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
+            <a href="{{ route('cash-flow.create') }}" class="btn btn-primary shadow-md mr-2">Pindah Kas</a>
             {{-- <div class="dropdown mr-2">
                 <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
                     <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4"
