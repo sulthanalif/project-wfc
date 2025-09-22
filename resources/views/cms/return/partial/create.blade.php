@@ -13,46 +13,17 @@
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
             <div class="intro-y box p-5">
-                <form id="orderForm" action="{{ route('return.store') }}" method="post">
+                <form id="returnForm" action="{{ route('return.store') }}" method="post">
                     @csrf
 
-                    @hasrole('super_admin|admin')
-                        <div class="mt-3">
-                            <label for="agent_id" class="form-label">Dari Agent <span class="text-danger">*</span></label>
-                            <select class="tom-select mt-2 sm:mr-2" id="agent_id" name="agent_id" required>
-                                <option value="">Pilih...</option>
-                                {{-- @foreach ($agents as $agent)
-                                    <option value="{{ $agent->id }}">{{ $agent->agentProfile->name }}</option>
-                                @endforeach --}}
-                            </select>
-                        </div>
-                    @endhasrole
-                    @hasrole('agent')
-                        <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
-                    @endhasrole
-
-                    <div class="mt-3">
-                        <label for="order_id" class="form-label">Nomor Pesanan <span class="text-danger">*</span></label>
-                        <select class="tom-select mt-2 sm:mr-2" id="order_id" name="order_id" required>
-                            <option value="">Pilih...</option>
-                            {{-- @foreach ($packages as $package)
-                                <option value="{{ $package->id }}">{{ $package->name }}</option>
-                            @endforeach --}}
-                        </select>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                        <div>
-                            <label for="status_item" class="form-label">Status Item <span
+                    <div class="grid grid-cols-12 gap-3 mt-3">
+                        <div class="col-span-6">
+                            <label for="return_number" class="form-label">No. Pengembalian <span
                                     class="text-danger">*</span></label>
-                            <select class="tom-select mt-2 sm:mr-2" id="status_item" name="status_item" required>
-                                <option value="">Pilih...</option>
-                                {{-- @foreach ($packages as $package)
-                                <option value="{{ $package->id }}">{{ $package->name }}</option>
-                            @endforeach --}}
-                            </select>
+                            <input id="return_number" name="return_number" value="{{ $returnNumber }}" type="text"
+                                class="form-control w-full" readonly>
                         </div>
-                        <div>
+                        <div class="col-span-6">
                             <label for="return_date" class="form-label">Tanggal Pengembalian <span
                                     class="text-danger">*</span></label>
                             <input id="return_date" name="return_date" type="date" class="form-control w-full"
@@ -60,22 +31,53 @@
                         </div>
                     </div>
 
-                    <div class="mt-3">
-                        <label for="package_id" class="form-label">Pilih Paket <span class="text-danger">*</span></label>
-                        <select class="tom-select mt-2 sm:mr-2" id="package_id" name="package_id" required>
-                            <option value="">Pilih...</option>
-                            {{-- @foreach ($packages as $package)
-                                <option value="{{ $package->id }}">{{ $package->name }}</option>
-                            @endforeach --}}
-                        </select>
+                    @hasrole('super_admin|admin')
+                        <div class="grid grid-cols-12 gap-3 mt-3">
+                            <div class="col-span-6">
+                                <label for="agent_id" class="form-label">Dari Agent <span class="text-danger">*</span></label>
+                                <select class="tom-select mt-2 sm:mr-2" id="agent_id" name="agent_id" required>
+                                    <option value="">Pilih...</option>
+                                    @foreach ($agents as $agent)
+                                        <option value="{{ $agent->id }}">{{ $agent->agentProfile->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-span-6" id="order_fields" style="display: none;">
+                                <label for="order_id_item" class="form-label">Nomor Pesanan <span
+                                        class="text-danger">*</span></label>
+                                <select class="tom-select mt-2 sm:mr-2" id="order_id_item" name="order_id_item" required>
+                                </select>
+                            </div>
+                        </div>
+                    @endhasrole
+                    @hasrole('agent')
+                        <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
+                    @endhasrole
+
+                    <div class="grid grid-cols-12 gap-3 mt-3">
+                        <div class="col-span-6" id="product_fields" style="display: none;">
+                            <label for="product_id_item" class="form-label">Pilih Paket <span
+                                    class="text-danger">*</span></label>
+                            <select class="tom-select mt-2" id="product_id_item" name="product_id_item" required>
+                            </select>
+                        </div>
+                        <div class="col-span-6" id="sub_product_fields" style="display: none;">
+                            <label for="sub_product_id_item" class="form-label">Pilih Produk <span
+                                    class="text-danger">*</span></label>
+                            <select class="tom-select mt-2" id="sub_product_id_item" name="sub_product_id_item" required>
+                            </select>
+                            <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
+                        </div>
                     </div>
 
-                    <div class="mt-3" id="product_fields" style="display: none;">
-                        <label for="product_id_item" class="form-label">Pilih Item <span
-                                class="text-danger">*</span></label>
-                        <select class="tom-select mt-2 sm:mr-2" id="product_id_item" name="product_id_item" required>
-                        </select>
-                        <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
+                    <div class="mt-3">
+                        <label for="note" class="form-label">Keterangan <span class="text-danger">*</span></label>
+                        <textarea id="note" name="note" class="editor"> </textarea>
+                        @error('note')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
                     </div>
 
                     <div class="row mt-3">
@@ -83,11 +85,10 @@
                             <table class="table table-report">
                                 <thead>
                                     <tr class="text-center">
-                                        <th>Nama</th>
-                                        <th>Harga</th>
+                                        <th>Nomor Pesanan</th>
+                                        <th>Paket</th>
+                                        <th>Produk</th>
                                         <th>Jumlah</th>
-                                        <th>Sub Total</th>
-                                        <th>Sub Agent</th>
                                         <th>#</th>
                                     </tr>
                                 </thead>
@@ -96,9 +97,8 @@
                                 </tbody>
                                 <tfoot>
                                     <tr class="text-center">
-                                        <th colspan="2">TOTAL</th>
-                                        <th class="qty">0</th>
-                                        <th class="totalHarga">0</th>
+                                        <th colspan="3">TOTAL</th>
+                                        <th class="totalQty">0</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -106,7 +106,7 @@
                     </div>
 
                     <div class="text-left mt-5">
-                        <input type="hidden" name="total_price" value="0">
+                        <input type="hidden" name="total_qty" id="total_qty" value="0">
                         <input type="hidden" name="products" id="productData" value="">
                         <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Simpan</button>
                         <a href="{{ route('return.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
@@ -120,243 +120,250 @@
 
 @push('custom-scripts')
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    {{-- <script>
-        const currentDate = '{{ now()->format('Y-m-d') }}'; // Blade templating to get current date
-        const dateInput = document.getElementById('order_date');
-
-        dateInput.value = currentDate;
-
-        // Constants
-        const INITIAL_PRICE = 0;
-        const INITIAL_QUANTITY = 0;
-
-        // Global variables (reduced usage)
-        let totalHarga = INITIAL_PRICE;
-        let qty = INITIAL_QUANTITY;
-        let productSelect;
-
-        // Event listeners
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
-            productSelect = document.getElementById('package_id');
-            productSelect.addEventListener('change', handlePackageChange);
-        });
+            const currentDate = '{{ now()->format('Y-m-d') }}';
+            const dateInput = document.getElementById('return_date');
 
-        function handlePackageChange(event) {
-            const packageId = event.target.value;
+            if (dateInput) {
+                dateInput.value = currentDate;
+            }
+
+            const agentSelect = document.getElementById('agent_id');
+            const orderFields = document.getElementById('order_fields');
+            const orderSelect = document.getElementById('order_id_item');
             const productFields = document.getElementById('product_fields');
+            const productSelect = document.getElementById('product_id_item');
+            const subProductFields = document.getElementById('sub_product_fields');
+            const subProductSelect = document.getElementById('sub_product_id_item');
+            const transaksiItemTable = document.querySelector('.transaksiItem');
+            const totalQtyElement = document.querySelector('.totalQty');
+            const productDataInput = document.getElementById('productData');
 
-            if (packageId) {
-                productFields.style.display = 'block';
-                populateProducts(packageId);
-            } else {
-                productFields.style.display = 'none';
-                clearProductSelection();
-            }
-        }
-
-        function populateProducts(packageId) {
-            productSelect = document.getElementById('product_id_item');
-            productSelect.innerHTML = '<option disabled>Pilih Item...</option>';
-
-            @foreach ($packages as $package)
-                if ('{{ $package->id }}' == packageId) {
-                    @foreach ($package->product as $product)
-                        var option = document.createElement('option');
-                        option.value = '{{ $product->product->id }}';
-                        option.textContent =
-                            "{{ $product->product->name }} {{ $product->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - Rp. {{ number_format($product->product->total_price, 0, ',', '.') }}";
-                        option.dataset.harga = '{{ $product->product->total_price }}';
-                        productSelect.tomselect.addOption(option);
-                        // productSelect.appendChild(option);
-                    @endforeach
-                }
-            @endforeach
-        }
-
-        function addItem() {
-            const selectedOption = productSelect.selectedOptions[0];
-
-            if (!selectedOption) {
-                alert('Silahkan pilih item terlebih dahulu!');
-                return;
-            }
-
-            const itemId = selectedOption.value;
-            const itemName = selectedOption.textContent.trim().split(' - ')[0];
-            const harga = selectedOption.textContent.trim().split(' - ')[1].replace(/[^0-9]/g, '');
-            const itemPrice = parseInt(harga, 10);
-
-            const itemQuantity = 1;
-            const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
-            $('.transaksiItem').append(newRow);
-
-            updateTotals(itemPrice);
-            qty += itemQuantity;
-            $('.qty').html(qty.toString());
-        }
-
-        function createTableRow(id, name, price, quantity) {
-            const subtotal = price * quantity;
-
-            const row = `<tr>
-                <input value="${id}" id="product-id" name="product-id" type="hidden">
-                <td>${name}</td>
-                <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
-                <td class="text-center"><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}" id="product-qty"></td>
-                <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
-                <td id="sub_agent_fields">
-                    <select class="tom-select sub_agent_item" name="sub_agent_item">
-                        <option disabled selected>Pilih Sub Agent...</option>
-                    </select>
-                </td>
-                <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button></td>
-                </tr>`;
-
-            const tableRow = $(row);
-            setTimeout(() => {
-                const agentId = $('#agent_id').val();
-                if (agentId) {
-                    populateSubAgentsInRow(agentId, tableRow.find('.sub_agent_item'));
-                }
-            }, 0);
-
-            return tableRow;
-        }
-
-        function populateSubAgentsInRow(agentId, subAgentSelect) {
-            subAgentSelect.html('<option disabled selected>Pilih Sub Agent...</option>');
-
-            // Assuming the agents data is embedded directly in the script
-            const agents = [
-                @foreach ($agents as $agent)
+            const ordersData = [
+                @foreach ($orders as $order)
                     {
-                        id: '{{ $agent->id }}',
-                        subAgents: [
-                            @foreach ($agent->subAgent as $subAgent)
-                                {
-                                    id: '{{ $subAgent->id }}',
-                                    name: '{{ $subAgent->name }}',
-                                    phone_number: '{{ $subAgent->phone_number }}'
-                                },
-                            @endforeach
-                        ]
+                        id: '{{ $order->id }}',
+                        agent_id: '{{ $order->agent_id }}',
+                        order_number: '{{ $order->order_number }}'
                     },
                 @endforeach
             ];
 
-            const selectedAgent = agents.find(agent => agent.id === agentId);
-            if (selectedAgent) {
-                selectedAgent.subAgents.forEach(subAgent => {
-                    const option = document.createElement('option');
-                    option.value = subAgent.id;
-                    option.textContent = `${subAgent.name} - ${subAgent.phone_number}`;
-                    subAgentSelect.append(option);
+            const orderDetailsData = [
+                @foreach ($orders as $order)
+                    @foreach ($order->detail as $detail)
+                        {
+                            order_id: '{{ $order->id }}',
+                            id: '{{ $detail->id }}',
+                            product_id: '{{ $detail->product_id }}',
+                            product_name: '{{ $detail->product->name }}',
+                        },
+                    @endforeach
+                @endforeach
+            ];
+
+            const productsData = [
+                @foreach ($products as $product)
+                    @foreach ($product->subProduct as $subProduct)
+                        {
+                            product_id: '{{ $product->id }}',
+                            sub_product_id: '{{ $subProduct->id }}',
+                            sub_product_name: '{{ $subProduct->subProduct->name }}',
+                        },
+                    @endforeach
+                @endforeach
+            ];
+
+            let addedItems = [];
+            let totalQty = 0;
+
+            function updateSummary() {
+                totalQty = addedItems.reduce((sum, item) => sum + parseInt(item.quantity), 0);
+                totalQtyElement.textContent = totalQty;
+                document.getElementById('total_qty').value = totalQty;
+                productDataInput.value = JSON.stringify(addedItems);
+            }
+
+            window.removeItem = (index) => {
+                addedItems.splice(index, 1);
+                renderItemsTable();
+            }
+
+            function renderItemsTable() {
+                transaksiItemTable.innerHTML = '';
+                addedItems.forEach((item, index) => {
+                    const row = `
+                        <tr class="text-center">
+                            <td>
+                                ${item.order_number}
+                                <input type="hidden" name="item_order_number[]" value="${item.item_order_number}">
+                            </td>
+                            <td>
+                                ${item.product_name}
+                                <input type="hidden" name="item_product[]" value="${item.item_product}">
+                            </td>
+                            <td>
+                                ${item.sub_product_name}
+                                <input type="hidden" name="item_sub_product[]" value="${item.item_sub_product}">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control text-center" value="${item.quantity}" min="1" onchange="updateItemQty(${index}, this.value)">
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(${index})">
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    transaksiItemTable.innerHTML += row;
+                });
+                updateSummary();
+            }
+
+            window.updateItemQty = (index, newQty) => {
+                const item = addedItems[index];
+                const validatedQty = Math.max(1, parseInt(newQty));
+                item.quantity = validatedQty;
+                renderItemsTable();
+            }
+
+            // Function to handle adding a new item to the table
+            window.addItem = () => {
+                const orderId = orderSelect.value;
+                const subProductId = subProductSelect.value;
+                if (!orderId || !subProductId) {
+                    alert('Harap pilih Nomor Pesanan dan Produk terlebih dahulu.');
+                    return;
+                }
+
+                const orderDetail = orderDetailsData.find(item =>
+                    item.order_id === orderId
+                );
+
+                if (!orderDetail) {
+                    alert('Data detail pesanan tidak ditemukan.');
+                    return;
+                }
+
+                const product = productsData.find(p => p.sub_product_id === subProductId);
+                const order = ordersData.find(o => o.id === orderId);
+
+                if (!product || !order) {
+                    alert('Data produk atau pesanan tidak ditemukan.');
+                    return;
+                }
+
+                const existingItemIndex = addedItems.findIndex(item =>
+                    item.item_sub_product === product.sub_product_id
+                );
+
+                if (existingItemIndex > -1) {
+                    alert('Produk ini sudah ditambahkan.');
+                    return;
+                }
+
+                addedItems.push({
+                    order_number: order.order_number,
+                    item_order_number: order.id,
+                    product_name: orderDetail.product_name,
+                    item_product: orderDetail.product_id,
+                    sub_product_name: product.sub_product_name,
+                    item_sub_product: product.sub_product_id,
+                    quantity: 1,
+                });
+                renderItemsTable();
+            };
+
+            function populateOrders(agentId) {
+                orderSelect.innerHTML = '<option value="">Pilih No Pesanan...</option>';
+
+                ordersData.forEach(order => {
+                    if (order.agent_id == agentId) {
+                        const option = document.createElement('option');
+                        option.value = order.id;
+                        option.textContent = order.order_number;
+                        orderSelect.tomselect.addOption(option);
+                    }
                 });
             }
-        }
 
-        function updateTotals(priceChange, quantityChange = 0) {
-            totalHarga += priceChange;
+            function populateProducts(orderId) {
+                productSelect.innerHTML = '<option value="">Pilih Produk...</option>';
+                if (orderId) {
+                    const filteredProducts = orderDetailsData.filter(detail => detail.order_id === orderId);
+                    filteredProducts.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.product_id;
+                        option.textContent = `${product.product_name}`;
+                        productSelect.tomselect.addOption(option);
+                    });
 
-            if (isNaN(totalHarga) || totalHarga < 0) {
-                totalHarga = 0;
+                    productFields.style.display = 'block';
+                } else {
+                    productFields.style.display = 'none';
+                }
             }
 
-            qty += quantityChange;
+            function populateSubProducts(productId) {
+                subProductSelect.innerHTML = '<option value="">Pilih Sub Produk...</option>';
+                if (productId) {
+                    const filteredSubProducts = productsData.filter(subProduct => subProduct.product_id ===
+                        productId);
+                    filteredSubProducts.forEach(subProduct => {
+                        const option = document.createElement('option');
+                        option.value = subProduct.sub_product_id;
+                        option.textContent = `${subProduct.sub_product_name}`;
+                        subProductSelect.tomselect.addOption(option);
+                    });
 
-            $('.qty').html(qty.toString());
-            $('[name=total_price]').val(totalHarga);
-            $('.totalHarga').html(formatRupiah(totalHarga.toString()));
-        }
-
-        function updateQty(input, priceChange) {
-            const newQuantity = parseInt($(input).val());
-            const row = $(input).closest('tr');
-
-            if (isNaN(newQuantity) || newQuantity <= 0) {
-                alert('Jumlah item tidak valid!');
-                $(input).val(1);
-                return;
+                    subProductFields.style.display = 'block';
+                } else {
+                    subProductFields.style.display = 'none';
+                }
             }
 
-            const initialQuantity = parseInt($(input).data('initialValue'));
-            const itemPrice = parseInt(row.find('td:nth-child(3)').text().replace(/[^0-9,-]/g, ''));
-
-            const quantityChange = newQuantity - initialQuantity;
-            const newPrice = itemPrice * newQuantity;
-
-            if (priceChange == null) {
-                const oldPrice = itemPrice * initialQuantity;
-                priceChange = newPrice - oldPrice;
-            }
-
-            row.find('.quantityInput').val(newQuantity);
-
-            row.find('td:nth-child(5)').text(newPrice.toLocaleString('id-ID', {
-                style: 'currency',
-                currency: 'IDR'
-            }));
-
-            updateTotals(priceChange, quantityChange);
-            $(input).data('initialValue', newQuantity);
-        }
-
-        function removeItem(button) {
-            const row = $(button).closest('tr');
-            const itemPrice = parseInt(row.find('td:nth-child(3)').text().replace(/[^0-9,-]/g, ''));
-            const quantity = parseInt(row.find('.quantityInput').val());
-
-            const totalPrice = itemPrice * quantity;
-            const priceChange = -totalPrice;
-
-            updateTotals(-totalPrice);
-            qty -= quantity;
-            if (qty < 0) {
-                qty = 0;
-            }
-            $('.qty').html(qty.toString());
-            row.remove();
-        }
-
-        // Helper functions (optional)
-        function clearProductSelection() {
-            productSelect.selectedIndex = 0;
-        }
-
-        function clearSubAgentSelection() {
-            const subAgentSelect = document.getElementById('sub_agent_item');
-            subAgentSelect.innerHTML = '<option disabled selected>Pilih Sub Agent...</option>';
-        }
-
-        function formatRupiah(number) {
-            const formatter = new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR'
-            });
-            return formatter.format(number);
-        }
-
-        function simpan(event) {
-            const productData = [];
-            $('.transaksiItem tr').each(function() {
-                const productId = $(this).find('#product-id').val();
-                const subTotal = parseInt($(this).find('td:nth-child(5)').text().replace(/[^0-9,-]/g, ''));
-                const qty = $(this).find('#product-qty').val();
-                const subAgentId = $(this).find('.sub_agent_item').val();
-
-                productData.push({
-                    productId: productId,
-                    subTotal: subTotal,
-                    qty: qty,
-                    subAgentId: subAgentId
+            if (agentSelect) {
+                agentSelect.addEventListener('change', () => {
+                    const agentId = agentSelect.value;
+                    if (agentId) {
+                        orderFields.style.display = 'block';
+                        populateOrders(agentId);
+                    } else {
+                        orderFields.style.display = 'none';
+                        orderSelect.tomselect.clear();
+                    }
                 });
-            });
+            }
 
-            $('#productData').val(JSON.stringify(productData));
+            if (orderSelect) {
+                orderSelect.addEventListener('change', () => {
+                    const orderId = orderSelect.value;
+                    populateProducts(orderId);
+                });
+            }
 
-            $('#orderForm').submit();
-        }
-    </script> --}}
+            if (productSelect) {
+                productSelect.addEventListener('change', () => {
+                    const productId = productSelect.value;
+                    populateSubProducts(productId);
+                });
+            }
+
+            window.simpan = (event) => {
+                event.preventDefault(); // Mencegah form dari submit secara default
+
+                const addedItems = JSON.parse(document.getElementById('productData').value || '[]');
+
+                if (addedItems.length === 0) {
+                    alert('Harap tambahkan setidaknya satu produk untuk dikembalikan.');
+                    return;
+                }
+
+                const form = document.getElementById('returnForm');
+                form.submit();
+            };
+        });
+    </script>
 @endpush

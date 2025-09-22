@@ -16,6 +16,7 @@ class ProductReturn extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'return_number',
         'user_id',
         'order_id',
         'status',

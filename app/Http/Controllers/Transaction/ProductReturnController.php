@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use App\Helpers\GenerateRandomString;
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\ProductReturn;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProductReturnController extends Controller
@@ -25,7 +29,30 @@ class ProductReturnController extends Controller
      */
     public function create()
     {
-        return view('cms.return.partial.create');
+        $user = auth()->user();
+        $returns = ProductReturn::all()->count();
+        $returnNumber = GenerateRandomString::make(8) . now()->format('dmY') . '-' . ($returns + 1);
+
+        if (!$user->hasRole('agent')) {
+            $agents = User::whereHas('roles', function ($query) {
+                $query->where('name', 'agent');
+            })
+                ->where('active', 1)
+                ->where('email_verified_at', '!=', null)
+                ->where('email_verified_at', '!=', '')
+                ->get();
+        }
+
+        $orders = Order::with('detail')
+            ->where('status', '!=', 'pending')
+            ->where('status', '!=', 'reject')
+            ->where('status', '!=', 'canceled')
+            // ->where('delivery_status', 'success')
+            ->get();
+
+        $products = Product::with(['detail', 'subProduct'])->get();
+
+        return view('cms.return.partial.create', compact(['agents', 'returnNumber', 'orders', 'products']));
     }
 
     /**
@@ -33,7 +60,8 @@ class ProductReturnController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $products = $request->products;
+        dd($products);
     }
 
     /**
