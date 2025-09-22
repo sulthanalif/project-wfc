@@ -55,6 +55,7 @@
                 <a href="javascript:;" class="side-menu @if (Route::is('totalDeposit') ||
                         Route::is('rproductDetail') ||
                         Route::is('ragentOrder') ||
+                        Route::is('ragentReward') ||
                         Route::is('stockSubProduct') ||
                         Route::is('instalment') ||
                         Route::is('daily') ||
@@ -67,6 +68,7 @@
                 <ul class="@if (Route::is('totalDeposit') ||
                         Route::is('rproductDetail') ||
                         Route::is('ragentOrder') ||
+                        Route::is('ragentReward') ||
                         Route::is('stockSubProduct') ||
                         Route::is('instalment') ||
                         Route::is('daily') ||
@@ -90,6 +92,13 @@
                             class="side-menu {{ Route::is('rproductDetail') ? 'side-menu--active' : '' }}">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                             <div class="side-menu__title"> Perpaket </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('ragentReward') }}"
+                            class="side-menu {{ Route::is('ragentReward') ? 'side-menu--active' : '' }}">
+                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                            <div class="side-menu__title"> Reward Agen </div>
                         </a>
                     </li>
                     <li>

@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Reward;
 use App\Models\Payment;
 use App\Models\Spending;
 use App\Models\SubProduct;
 use App\Models\OrderDetail;
+use App\Models\Distribution;
 use App\Models\SpendingType;
 use Illuminate\Http\Request;
 use App\Helpers\PaginationHelper;
@@ -20,7 +22,6 @@ use App\Exports\ReportInstalmentExport;
 use App\Exports\ReportRequirementExport;
 use App\Exports\ReportTotalDepositExport;
 use App\Exports\ReportProductDetailExport;
-use App\Models\Distribution;
 
 class ReportController extends Controller
 {
@@ -202,6 +203,84 @@ class ReportController extends Controller
         return view('cms.admin.reports.agent-order', compact('stats', 'datas', 'agentsName'));
         // return response()->json(compact('stats', 'paginationData'));
         // routenya 'report/product-detail'
+    }
+
+    public function agentReward(Request $request)
+    {
+        $getAgent = $request->get('agent');
+
+        // 1. Ambil semua reward yang aktif dan urutkan dari target terbesar
+        $activeRewards = Reward::whereHas('period', function ($query) {
+            $query->where('start_date', '<=', now())->where('end_date', '>=', now());
+        })->orderBy('target_qty', 'desc')->get();
+
+        $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
+            $q->where('name', '!=', null)
+                ->orderBy('name', 'asc');
+        })->where('active', 1)->get();
+
+        $agents = User::role('agent')->whereHas('agentProfile', function ($q) use ($getAgent) {
+            $q->where('name', 'like', '%' . $getAgent . '%');
+        })->get();
+
+        $datas = [];
+
+        foreach ($agents as $agent) {
+            $totalProduct = 0;
+            // $totalPrice tidak lagi digunakan
+
+            foreach ($agent->order as $order) {
+                if ($order->status == 'accepted') {
+                    // $totalPrice += $order->total_price; <-- tidak lagi digunakan
+
+                    foreach ($order->detail as $detail) {
+                        $totalProduct += $detail->qty;
+                    }
+                }
+            }
+
+            // 2. Tentukan reward untuk agen berdasarkan total produk
+            $agentRewardTitle = 'Tidak ada reward'; // Default value
+            foreach ($activeRewards as $reward) {
+                if ($totalProduct >= $reward->target_qty) {
+                    $agentRewardTitle = $reward->title;
+                    break; // <-- Hentikan loop karena reward tertinggi sudah didapat
+                }
+            }
+
+            // Masukkan data HANYA JIKA agen mendapatkan reward
+            if ($agentRewardTitle !== 'Tidak ada reward') {
+                $datas[] = [
+                    'agent_name' => $agent->agentProfile->name,
+                    'total_product' => $totalProduct,
+                    'reward' => $agentRewardTitle
+                ];
+            }
+        }
+
+         // Mengurutkan hasil dari total_product terbanyak
+        if (!empty($datas)) {
+            array_multisort(array_column($datas, 'total_product'), SORT_DESC, $datas);
+        }
+
+        $totalProductAll = 0;
+        if (is_array($datas) && !empty($datas)) {
+            $totalProductAll = array_sum(array_column($datas, 'total_product'));
+        }
+
+        $stats = [
+            'totalProductAll' => $totalProductAll,
+        ];
+
+        // untuk export, routenya harus "route('productDetail', ['export' => 1])"
+        if ($request->get('export') == 1) {
+            // Perlu penyesuaian pada class Export jika masih menggunakan totalPrice
+            return Excel::download(new ReportAgentOrderExport($datas, $stats), 'Laporan_Reward_Agent_' . now()->format('dmY') . '.xlsx');
+        }
+
+        // return response()->json(compact('datas', 'stats'));
+
+        return view('cms.admin.reports.agent-reward', compact('datas'));
     }
 
     public function instalment(Request $request)
