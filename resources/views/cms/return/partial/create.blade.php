@@ -89,6 +89,7 @@
                                         <th>Paket</th>
                                         <th>Produk</th>
                                         <th>Jumlah</th>
+                                        <th>Keterangan Produk</th>
                                         <th>#</th>
                                     </tr>
                                 </thead>
@@ -168,7 +169,7 @@
                     @foreach ($product->subProduct as $subProduct)
                         {
                             product_id: '{{ $product->id }}',
-                            sub_product_id: '{{ $subProduct->id }}',
+                            sub_product_id: '{{ $subProduct->subProduct->id }}',
                             sub_product_name: '{{ $subProduct->subProduct->name }}',
                         },
                     @endforeach
@@ -211,6 +212,15 @@
                                 <input type="number" class="form-control text-center" value="${item.quantity}" min="1" onchange="updateItemQty(${index}, this.value)">
                             </td>
                             <td>
+                                <select class="form-control" onchange="updateItemNote(${index}, this.value)">
+                                    <option value="" ${item.item_note === '' ? 'selected' : ''}>Pilih Keterangan</option>
+                                    <option value="damaged" ${item.item_note === 'damaged' ? 'selected' : ''}>Rusak</option>
+                                    <option value="expired" ${item.item_note === 'expired' ? 'selected' : ''}>Kadaluarsa</option>
+                                    <option value="overstock" ${item.item_note === 'overstock' ? 'selected' : ''}>Kelebihan</option>
+                                    <option value="other" ${item.item_note === 'other' ? 'selected' : ''}>Lainnya</option>
+                                </select>
+                            </td>
+                            <td>
                                 <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(${index})">
                                     Hapus
                                 </button>
@@ -221,6 +231,11 @@
                 });
                 updateSummary();
             }
+
+            window.updateItemNote = (index, newNote) => {
+                addedItems[index].item_note = newNote;
+                updateSummary();
+            };
 
             window.updateItemQty = (index, newQty) => {
                 const item = addedItems[index];
@@ -272,6 +287,7 @@
                     sub_product_name: product.sub_product_name,
                     item_sub_product: product.sub_product_id,
                     quantity: 1,
+                    item_note: ''
                 });
                 renderItemsTable();
             };

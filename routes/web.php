@@ -148,6 +148,10 @@ Route::group(['middleware' => 'auth',], function () {
 
         //product return
         Route::resource('return', ProductReturnController::class);
+        Route::put('/return/{return}/change-status', [ProductReturnController::class, 'changeStatus'])->name('return.changeStatus');
+        Route::post('/return/{return}/add-item', [ProductReturnController::class, 'addItem'])->name('return.item.create');
+        Route::put('/return/{return}/{item}/edit-item', [ProductReturnController::class, 'editItem'])->name('return.item.update');
+        Route::delete('/return/{return}/{item}/delete', [ProductReturnController::class, 'destroyItem'])->name('return.item.destroy');
     });
     Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin'], function () {
         require __DIR__ . '/transaction/payment.php';

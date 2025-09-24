@@ -17,6 +17,7 @@ class ProductReturnDetail extends Model
 
     protected $fillable = [
         'product_return_id',
+        'order_id',
         'product_id',
         'sub_product_id',
         'status_product',
@@ -26,6 +27,11 @@ class ProductReturnDetail extends Model
     public function productReturn()
     {
         return $this->belongsTo(ProductReturn::class, 'product_return_id');
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     public function product()

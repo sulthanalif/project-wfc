@@ -15,7 +15,6 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('return_number');
             $table->uuid('user_id')->constrained('users')->onDelete('cascade');
-            $table->uuid('order_id')->constrained('orders')->onDelete('cascade');
             $table->enum('status', ['pending', 'processed', 'finished', 'rejected'])->default('pending');
             $table->date('date_in')->nullable();
             $table->date('date_out')->nullable();

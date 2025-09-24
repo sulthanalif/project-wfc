@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('product_return_details', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('product_return_id')->constrained('product_returns')->onDelete('cascade');
+            $table->uuid('order_id')->constrained('orders')->onDelete('cascade');
             $table->uuid('product_id')->constrained('products')->onDelete('cascade');
             $table->uuid('sub_product_id')->constrained('sub_products')->onDelete('cascade')->nullable();
             $table->enum('status_product', ['damaged', 'expired', 'overstock', 'other']);

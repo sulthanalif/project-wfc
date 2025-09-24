@@ -29,6 +29,6 @@ class SubProduct extends Model
 
     public function productReturnDetail()
     {
-        return $this->hasMany(ProductReturn::class);
+        return $this->hasMany(ProductReturnDetail::class);
     }
 }

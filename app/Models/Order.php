@@ -53,8 +53,8 @@ class Order extends Model
         return $this->detail->pluck('qty')->sum() === $this->distributions->pluck('detail')->flatten()->pluck('qty')->sum();
     }
 
-    public function productReturn()
+    public function productReturnDetail()
     {
-        return $this->hasMany(ProductReturn::class);
+        return $this->hasMany(ProductReturnDetail::class);
     }
 }

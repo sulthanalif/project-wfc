@@ -8,12 +8,12 @@
             <h2 class="w-auto relative text-lg font-medium">
                 Pengembalian Barang
             </h2>
-            <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
+            {{-- <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
                 @hasrole('admin|super_admin')
                     <a href="{{ route('return.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
                             data-lucide="download"></i> Export</a>
                 @endhasrole
-            </div>
+            </div> --}}
         </div>
     </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
@@ -62,18 +62,17 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
+                        <th class="text-center whitespace-nowrap">NOMOR PENGEMBALIAN</th>
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">DARI AGEN</th>
                         @endhasrole
-                        <th class="text-center whitespace-nowrap">NOMOR PESANAN</th>
-                        <th class="text-center whitespace-nowrap">PAKET</th>
-                        <th class="text-center whitespace-nowrap">ITEM</th>
-                        <th class="text-center whitespace-nowrap">STATUS ITEM</th>
+                        <th class="text-center whitespace-nowrap">TOTAL ITEM</th>
                         <th class="text-center whitespace-nowrap">STATUS PENGEMBALIAN</th>
                         <th class="text-center whitespace-nowrap">TANGGAL PENGAJUAN</th>
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">TANGGAL PENGEMBALIAN</th>
                         @endhasrole
+                        <th class="text-center whitespace-nowrap">KETERANGAN</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
                 </thead>
@@ -88,48 +87,84 @@
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
+                                <td>
+                                    <a class="text-slate-500 flex items-center mr-3 font-bold"
+                                        href="{{ route('return.show', $return->id) }}"> <i data-lucide="external-link"
+                                            class="w-4 h-4 mr-2"></i> {{ $return->return_number }} </a>
+                                </td>
                                 @hasrole('super_admin|admin')
                                     <td class="text-center capitalize">
-                                        Nama Pembuat Pengajuan
+                                        <p class="font-normal whitespace-nowrap text-center">
+                                            {{ $return->user->agentProfile->name ?? 'N/A' }}
+                                        </p>
                                     </td>
                                 @endhasrole
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">
-                                        Nomor Pesanan
-                                    </p>
-                                </td>
-                                <td class="text-center">
                                     <p class="font-normal whitespace-nowrap text-center">
-                                        Paket yang Dikembalikan
-                                    </p>
-                                </td>
-                                <td class="text-center">
-                                    <p class="font-normal whitespace-nowrap text-center">
-                                        Item yang Dikembalikan
+                                        {{ $return->productReturnDetail->count() }} Item
                                     </p>
                                 </td>
                                 <td>
-                                    <div class="flex items-center justify-center text-success"> <i
-                                            data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Diterima </div>
-                                </td>
-                                <td>
-                                    <div class="flex items-center justify-center text-success"> <i
-                                            data-lucide="check-square" class="w-4 h-4 mr-2"></i> Lunas </div>
+                                    @if ($return->status == 'pending')
+                                        <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
+                                                class="w-4 h-4 mr-2"></i> <strong>Pending</strong> </div>
+                                    @elseif ($return->status == 'processed')
+                                        <div class="flex items-center justify-center text-primary"> <i data-lucide="loader"
+                                                class="w-4 h-4 mr-2"></i> <strong>Diproses</strong> </div>
+                                    @elseif ($return->status == 'finished')
+                                        <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+                                            <strong>Selesai</strong>
+                                        </div>
+                                    @else
+                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-circle"
+                                                class="w-4 h-4 mr-2"></i> <strong>Ditolak</strong> </div>
+                                    @endif
                                 </td>
                                 <td>
                                     <p class="font-normal whitespace-nowrap text-center">
-                                        Tanggal Pengajuan
+                                        {{ $return->date_in }}
                                     </p>
                                 </td>
                                 @hasrole('super_admin|admin')
                                     <td>
                                         <p class="font-normal whitespace-nowrap text-center">
-                                            Tanggal Pengembalian
+                                            {{ $return->date_out ?? 'N/A' }}
                                         </p>
                                     </td>
                                 @endhasrole
+                                <td>
+                                    <p class="font-normal whitespace-nowrap text-center">
+                                        {!! $return->notes ?? 'N/A' !!}
+                                    </p>
+                                </td>
                                 <td class="table-report__action w-56">
+                                    @if ($return->status == 'finished')
+                                        <div class="flex items-center justify-center text-success"> <i
+                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> </div>
+                                    @elseif ($return->status == 'pending' || $return->status == 'processed')
+                                        @hasrole('super_admin|admin')
+                                            <div class="flex justify-center items-center">
+                                                <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                    data-tw-target="#change-status-modal-{{ $return->id }}">
+                                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                            </div>
+                                            @include('cms.return.modal.status', ['return' => $return])
+                                        @endhasrole
 
+                                        @hasrole('agent')
+                                            <div class="flex items-center justify-center text-success"> <i
+                                                    data-lucide="check-square" class="w-4 h-4 mr-2"></i> </div>
+                                        @endhasrole
+                                    @else
+                                        <div class="flex justify-center items-center">
+                                            <a class="flex items-center text-danger" href="javascript:;"
+                                                data-tw-toggle="modal"
+                                                data-tw-target="#delete-confirmation-modal-{{ $return->id }}"> <i
+                                                    data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                            @include('cms.return.modal.delete', ['return' => $return])
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
