@@ -90,7 +90,9 @@
                         <th class="text-center whitespace-nowrap">TERVERIFIKASI</th>
                         <th class="text-center whitespace-nowrap">BUKTI</th>
                         <th class="text-center whitespace-nowrap">WAKTU</th>
+                        @role('super_admin|finance_admin')
                         <th class="text-center whitespace-nowrap">AKSI</th>
+                        @endrole
                     </tr>
                 </thead>
                 <tbody>
@@ -160,6 +162,7 @@
                                     <p class="text-slate-500 text-center items-center mr-3"> {{ $payment->created_at }}
                                     </p>
                                 </td>
+                                @role('super_admin|finance_admin')
                                 <td class="table-report__action w-56">
                                     @if (!$payment->is_confirmed)
                                         <div class="flex justify-center items-center">
@@ -170,6 +173,7 @@
                                         @include('cms.admin.payment.modal.verify', ['payment' => $payment])
                                     @endif
                                 </td>
+                                @endrole
                             </tr>
                         @endforeach
                     @endif
