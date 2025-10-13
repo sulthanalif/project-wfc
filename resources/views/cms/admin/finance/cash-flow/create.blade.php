@@ -41,7 +41,7 @@
                                     <select class="tom-select sm:mr-2" id="from_bank_id" name="from_bank_id" required>
                                         <option disabled selected value="">Pilih bank asal...</option>
                                         @foreach ($banks as $bank)
-                                            <option value="{{ $bank->id }}">{{ $bank->bank_name }} - {{ $bank->account_number }}</option>
+                                            <option value="{{ $bank->id }}">{{ $bank->name }} - {{ $bank->account_number }}</option>
                                         @endforeach
                                     </select>
                                     @error('from_bank_id')
@@ -54,7 +54,7 @@
                                     <select class="tom-select mt-2 sm:mr-2" id="to_bank_id" name="to_bank_id" required>
                                         <option disabled selected value="">Pilih bank tujuan...</option>
                                         @foreach ($banks as $bank)
-                                            <option value="{{ $bank->id }}">{{ $bank->bank_name }} - {{ $bank->account_number }}</option>
+                                            <option value="{{ $bank->id }}">{{ $bank->name }} - {{ $bank->account_number }}</option>
                                         @endforeach
                                     </select>
                                     @error('to_bank_id')
