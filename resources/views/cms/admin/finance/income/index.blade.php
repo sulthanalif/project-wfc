@@ -105,7 +105,7 @@
                                         <p class="text-center">
                                             {{ $income->method }}
                                             <br />
-                                            {{ $income->method == 'Transfer' && $income->bankOwner ? $income->bankOwner->name . ' - ' . $loan->bankOwner->account_number : '' }}
+                                            {{ $income->method == 'Transfer' && $income->bankOwner ? $income->bankOwner->name . ' - ' . $income->bankOwner->account_number : '' }}
                                         </p>
                                     </span>
                                 </td>
