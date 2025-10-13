@@ -153,8 +153,8 @@ Route::group(['middleware' => 'auth',], function () {
         Route::put('/return/{return}/{item}/edit-item', [ProductReturnController::class, 'editItem'])->name('return.item.update');
         Route::delete('/return/{return}/{item}/delete', [ProductReturnController::class, 'destroyItem'])->name('return.item.destroy');
     });
-    Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|finance_admin'], function () {
-        require __DIR__ . '/transaction/payment.php';
+    require __DIR__ . '/transaction/payment.php';
+    Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin'], function () {
         require __DIR__ . '/transaction/status.php';
 
 
