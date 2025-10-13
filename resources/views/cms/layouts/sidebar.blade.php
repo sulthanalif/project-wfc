@@ -20,6 +20,7 @@
                     </div>
                 </a>
                 <ul class="@if (Route::is('order*') || Route::is('distribution*') || Route::is('payment*') || Route::is('return*')) side-menu__sub-open @endif">
+                    @if(Auth::user()->hasRole('super_admin|admin'))
                     <li>
                         <a href="{{ route('order.index') }}"
                             class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
@@ -27,6 +28,7 @@
                             <div class="side-menu__title"> Pesanan </div>
                         </a>
                     </li>
+                    @endif
                     <li>
                         <a href="{{ route('payment.index') }}"
                             class="side-menu {{ Route::is('payment*') ? 'side-menu--active' : '' }}">
@@ -34,6 +36,7 @@
                             <div class="side-menu__title"> Pembayaran </div>
                         </a>
                     </li>
+                    @if(Auth::user()->hasRole('super_admin|admin'))
                     <li>
                         <a href="{{ route('distribution.index') }}"
                             class="side-menu {{ Route::is('distribution*') ? 'side-menu--active' : '' }}">
@@ -48,6 +51,7 @@
                             <div class="side-menu__title"> Pengembalian </div>
                         </a>
                     </li>
+                    @endif
                 </ul>
             </li>
             {{-- <li class="side-nav__devider my-4"></li> --}}
