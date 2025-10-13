@@ -32,7 +32,7 @@
                         <th class="text-center whitespace-nowrap">TERVERIFIKASI</th>
                         <th class="text-center whitespace-nowrap">KETERANGAN</th>
                         <th class="text-center whitespace-nowrap">BUKTI</th>
-                        @hasrole('finance_admin|super_admin|admin')
+                        @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">AKSI</th>
                         @endhasrole
                     </tr>
@@ -125,7 +125,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                @hasrole('finance_admin|super_admin')
+                                @hasrole('admin|super_admin')
                                     <td class="table-report__action">
                                         <div class="flex justify-center items-center">
                                             @if ($payment->status == 'pending')
