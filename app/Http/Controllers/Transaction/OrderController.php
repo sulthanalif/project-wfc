@@ -182,22 +182,50 @@ class OrderController extends Controller
 
                 $order->save();
                 // Membuat OrderDetail untuk setiap produk
-                foreach ($products as $product) {
+
+                // Group products by product_id and sub_agent_id, then merge quantities and subTotals
+                $grouped = collect($products)->groupBy(function ($item) {
+                    return $item['productId'] . '|' . $item['subAgentId'];
+                })->map(function ($group) {
+                    $first = $group->first();
+                    return [
+                        'productId'   => $first['productId'],
+                        'subAgentId'  => $first['subAgentId'],
+                        'qty'         => $group->sum('qty'),
+                        'subTotal'    => $group->sum('subTotal'),
+                    ];
+                })->values()->toArray();
+
+                foreach ($grouped as $product) {
                     // Mendapatkan detail produk berdasarkan productId
                     $productDetail = Product::findOrFail($product['productId']);
 
                     // Membuat OrderDetail untuk setiap produk
                     OrderDetail::create([
-                        'order_id' => $order->id,
-                        // 'sub_agent_id' => $request->sub_agent_item,
-                        'sub_agent_id' => $product['subAgentId'],
-                        // 'name' => $productDetail->name,
-                        'product_id' => $product['productId'],
-                        // 'price' => $productDetail->price,
-                        'sub_price' => $product['subTotal'],
-                        'qty' => $product['qty']
+                        'order_id'    => $order->id,
+                        'sub_agent_id'=> $product['subAgentId'],
+                        'product_id'  => $product['productId'],
+                        'sub_price'   => $product['subTotal'],
+                        'qty'         => $product['qty']
                     ]);
                 }
+
+                // foreach ($products as $product) {
+                //     // Mendapatkan detail produk berdasarkan productId
+                //     $productDetail = Product::findOrFail($product['productId']);
+
+                //     // Membuat OrderDetail untuk setiap produk
+                //     OrderDetail::create([
+                //         'order_id' => $order->id,
+                //         // 'sub_agent_id' => $request->sub_agent_item,
+                //         'sub_agent_id' => $product['subAgentId'],
+                //         // 'name' => $productDetail->name,
+                //         'product_id' => $product['productId'],
+                //         // 'price' => $productDetail->price,
+                //         'sub_price' => $product['subTotal'],
+                //         'qty' => $product['qty']
+                //     ]);
+                // }
             });
             if ($order) {
                 return redirect()->route('order.index')->with('success', 'Pesanan Telah Dibuat');

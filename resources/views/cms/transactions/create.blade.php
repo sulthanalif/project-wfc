@@ -167,14 +167,33 @@
             const itemName = selectedOption.textContent.trim().split(' - ')[0];
             const harga = selectedOption.textContent.trim().split(' - ')[1].replace(/[^0-9]/g, '');
             const itemPrice = parseInt(harga, 10);
-            
-            const itemQuantity = 1;
-            const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
-            $('.transaksiItem').append(newRow);
 
-            updateTotals(itemPrice);
-            qty += itemQuantity;
-            $('.qty').html(qty.toString());
+            // Check if the product already exists in the list
+            let existingRow = null;
+            $('.transaksiItem tr').each(function() {
+                const productId = $(this).find('#product-id').val();
+                const subAgentSelected = $(this).find('.sub_agent_item').val();
+                if (productId === itemId && !subAgentSelected) {
+                    existingRow = $(this);
+                    return false; // break the loop
+                }
+            });
+
+            if (existingRow) {
+                // Product exists and no sub-agent selected, increment quantity
+                const quantityInput = existingRow.find('.quantityInput');
+                const newQuantity = parseInt(quantityInput.val()) + 1;
+                quantityInput.val(newQuantity).trigger('change');
+            } else {
+                // Product does not exist or sub-agent is selected, add new row
+                const itemQuantity = 1;
+                const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
+                $('.transaksiItem').append(newRow);
+
+                updateTotals(itemPrice);
+                qty += itemQuantity;
+                $('.qty').html(qty.toString());
+            }
         }
 
         function createTableRow(id, name, price, quantity) {
