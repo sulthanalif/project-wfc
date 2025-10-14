@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\BankOwner;
-use App\Models\Income;
 use App\Models\Loan;
-use App\Models\LoanPayment;
+use App\Models\Income;
 use App\Models\Payment;
 use App\Models\Spending;
+use App\Models\BankOwner;
+use App\Models\LoanPayment;
+use App\Models\SpendingType;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class CashFlowController extends Controller
 {
@@ -89,11 +90,16 @@ class CashFlowController extends Controller
             $fromBank = BankOwner::findOrFail($request->from_bank_id);
             $toBank = BankOwner::findOrFail($request->to_bank_id);
 
+            $spendingType = SpendingType::firstOrCreate([
+                'name' => 'Transfer'
+            ]);
+
             // Create spending record for source bank
             $spending = new Spending();
+            $spending->spending_type_id = $spendingType->id;
             $spending->information =  "Transfer to {$toBank->name} " . ($request->description ? " : {$request->description}" : '');
             $spending->amount = $request->amount;
-            $spending->method = 'transfer';
+            $spending->method = 'Transfer';
             $spending->bank_owner_id = $fromBank->id;
             $spending->qty = 1;
             $spending->bank = $fromBank->name;
@@ -107,14 +113,16 @@ class CashFlowController extends Controller
             $income->amount = $request->amount;
             $income->information =  "Transfer from {$fromBank->name} " . ($request->description ? " : {$request->description}" : '');
             $income->date = now();
-            $income->method = 'transfer';
+            $income->method = 'Transfer';
             $income->bank = $toBank->name;
             $income->save();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Pindah Kas Berhasil'
-            ]);
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Pindah Kas Berhasil'
+            // ]);
+
+            return redirect()->route('cash-flow.index')->with('success', 'Pindah Kas Berhasil');
 
         } catch (\Exception $e) {
             return response()->json([

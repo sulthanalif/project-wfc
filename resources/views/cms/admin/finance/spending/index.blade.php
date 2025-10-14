@@ -112,9 +112,9 @@
                                 <td>
                                     <span class="text-slate-500 flex items-center justify-center">
                                         <p class="text-center">
-                                            {{ $spending->method }}
+                                            {{ ucfirst($spending->method) }}
                                             <br />
-                                            {{ $spending->method == 'Transfer' && $spending->bankOwner ? $spending->bankOwner->name . ' - ' . $spending->bankOwner->account_number : '' }}
+                                            {{ strtolower($spending->method) == 'transfer' && $spending->bankOwner ? $spending->bankOwner->name . ' - ' . $spending->bankOwner->account_number : '' }}
                                         </p>
                                     </span>
                                 </td>

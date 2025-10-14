@@ -81,7 +81,7 @@
                         <th class="text-center whitespace-nowrap">PENGELUARAN</th>
                         <th class="text-center whitespace-nowrap">PIUTANG</th>
                         <th class="text-center whitespace-nowrap">SALDO</th>
-                        <th class="text-center whitespace-nowrap">AKSI</th>
+                        {{-- <th class="text-center whitespace-nowrap">AKSI</th> --}}
                     </tr>
                 </thead>
                 <tbody>
