@@ -102,36 +102,43 @@ class DetailOrderController extends Controller
 
     public function addItems(Request $request, Order $order)
     {
-        // return response()->json($request->all());
         $products = json_decode($request->products, true);
 
         if ($products == null) {
             return back()->with('error', 'Produk Tidak Boleh Kosong');
-            // dd('Produk Tidak Valid');
         }
 
         try {
             DB::transaction(function () use ($request, $order, $products, &$updateOrder) {
 
-                // Membuat OrderDetail untuk setiap produk
+                // Membuat atau memperbarui OrderDetail untuk setiap produk
                 foreach ($products as $product) {
                     // Mendapatkan detail produk berdasarkan productId
                     $productDetail = Product::findOrFail($product['productId']);
 
-                    // Membuat OrderDetail untuk setiap produk
-                    OrderDetail::create([
-                        'order_id' => $order->id,
-                        // 'sub_agent_id' => $request->sub_agent_item,
-                        'sub_agent_id' => $product['subAgentId'],
-                        // 'name' => $productDetail->name,
-                        'product_id' => $product['productId'],
-                        // 'price' => $productDetail->price,
-                        'sub_price' => $product['subTotal'],
-                        'qty' => $product['qty']
-                    ]);
+                    // Cek apakah sudah ada OrderDetail dengan product_id dan sub_agent_id yang sama
+                    $existingDetail = OrderDetail::where('order_id', $order->id)
+                        ->where('product_id', $product['productId'])
+                        ->where('sub_agent_id', $product['subAgentId'])
+                        ->first();
+
+                    if ($existingDetail) {
+                        // Jika sudah ada, tambahkan qty-nya
+                        $existingDetail->qty += $product['qty'];
+                        $existingDetail->sub_price += $product['subTotal'];
+                        $existingDetail->save();
+                    } else {
+                        // Jika belum ada, buat OrderDetail baru
+                        OrderDetail::create([
+                            'order_id' => $order->id,
+                            'sub_agent_id' => $product['subAgentId'],
+                            'product_id' => $product['productId'],
+                            'sub_price' => $product['subTotal'],
+                            'qty' => $product['qty']
+                        ]);
+                    }
                 }
 
-                // $access_date = AccessDate::first();
                 $updateOrder = $order->update([
                     'total_price' => $order->total_price + $request->total_price,
                 ]);
@@ -146,6 +153,7 @@ class DetailOrderController extends Controller
                     }
                 }
             });
+
             if ($updateOrder) {
                 return redirect()->back()->with('success', 'Item Telah Ditambahkan');
             } else {

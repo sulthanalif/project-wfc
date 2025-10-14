@@ -132,12 +132,33 @@
             const itemName = selectedOption.textContent.trim().split(' - ')[0];
             const itemPrice = parseInt(selectedOption.dataset.harga);
             const itemQuantity = 1;
-            const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
-            $('.transaksiItem').append(newRow);
 
-            updateTotals(itemPrice);
-            qty += itemQuantity;
-            $('.qty').html(qty.toString());
+            // Check if product with same id and sub agent already exists
+            let existingRow = null;
+            $('.transaksiItem tr').each(function() {
+                const existingProductId = $(this).find('#product-id').val();
+                const existingSubAgentId = $(this).find('.sub_agent_item').val() || '';
+                
+                if (existingProductId === itemId && existingSubAgentId === '') {
+                    existingRow = $(this);
+                    return false; // break the loop
+                }
+            });
+
+            if (existingRow) {
+                // Update quantity in existing row
+                const currentQty = parseInt(existingRow.find('#product-qty').val());
+                const newQty = currentQty + itemQuantity;
+                existingRow.find('#product-qty').val(newQty);
+                updateQty(existingRow.find('#product-qty')[0], itemPrice);
+            } else {
+                // Create new row
+                const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
+                $('.transaksiItem').append(newRow);
+                updateTotals(itemPrice);
+                qty += itemQuantity;
+                $('.qty').html(qty.toString());
+            }
         }
 
         function createTableRow(id, name, price, quantity) {
