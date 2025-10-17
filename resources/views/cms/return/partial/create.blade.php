@@ -52,6 +52,18 @@
                     @endhasrole
                     @hasrole('agent')
                         <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
+                        <div class="grid grid-cols-12 gap-3 mt-3">
+                            <div class="col-span-6" id="order_fields">
+                                <label for="order_id_item" class="form-label">Nomor Pesanan <span
+                                        class="text-danger">*</span></label>
+                                <select class="tom-select mt-2 sm:mr-2" id="order_id_item" name="order_id_item" required>
+                                    <option value="">Pilih...</option>
+                                    @foreach ($orders as $order)
+                                        <option value="{{ $order->id }}">{{ $order->order_number }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     @endhasrole
 
                     <div class="grid grid-cols-12 gap-3 mt-3">
@@ -292,19 +304,6 @@
                 renderItemsTable();
             };
 
-            function populateOrders(agentId) {
-                orderSelect.innerHTML = '<option value="">Pilih No Pesanan...</option>';
-
-                ordersData.forEach(order => {
-                    if (order.agent_id == agentId) {
-                        const option = document.createElement('option');
-                        option.value = order.id;
-                        option.textContent = order.order_number;
-                        orderSelect.tomselect.addOption(option);
-                    }
-                });
-            }
-
             function populateProducts(orderId) {
                 productSelect.innerHTML = '<option value="">Pilih Produk...</option>';
                 if (orderId) {
@@ -340,12 +339,38 @@
                 }
             }
 
+            // Handle role agent: auto trigger order population on load
+            @hasrole('agent')
+                const agentId = '{{ auth()->user()->id }}';
+                // Populate orders dropdown for agent on page load
+                (function(){
+                    orderFields.style.display = 'block';
+                    orderSelect.innerHTML = '<option value="">Pilih No Pesanan...</option>';
+                    ordersData.forEach(order => {
+                        if (order.agent_id == agentId) {
+                            const option = document.createElement('option');
+                            option.value = order.id;
+                            option.textContent = order.order_number;
+                            orderSelect.tomselect.addOption(option);
+                        }
+                    });
+                })();
+            @endhasrole
+
             if (agentSelect) {
                 agentSelect.addEventListener('change', () => {
                     const agentId = agentSelect.value;
                     if (agentId) {
                         orderFields.style.display = 'block';
-                        populateOrders(agentId);
+                        orderSelect.innerHTML = '<option value="">Pilih No Pesanan...</option>';
+                        ordersData.forEach(order => {
+                            if (order.agent_id == agentId) {
+                                const option = document.createElement('option');
+                                option.value = order.id;
+                                option.textContent = order.order_number;
+                                orderSelect.tomselect.addOption(option);
+                            }
+                        });
                     } else {
                         orderFields.style.display = 'none';
                         orderSelect.tomselect.clear();

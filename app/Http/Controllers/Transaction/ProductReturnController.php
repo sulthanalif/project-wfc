@@ -35,7 +35,7 @@ class ProductReturnController extends Controller
         $user = auth()->user();
         $returns = ProductReturn::all()->count();
         $returnNumber = GenerateRandomString::make(8) . now()->format('dmY') . '-' . ($returns + 1);
-
+        $agents = collect();
         if (!$user->hasRole('agent')) {
             $agents = User::whereHas('roles', function ($query) {
                 $query->where('name', 'agent');
@@ -79,7 +79,7 @@ class ProductReturnController extends Controller
             'products.*.item_product' => 'required|string',
             'products.*.item_sub_product' => 'required|string',
             'products.*.quantity' => 'required|numeric|min:1',
-            'products.*.item_note' => 'nullable|string',
+            'products.*.item_note' => 'required|string',
         ]);
 
         if ($validator->fails()) {

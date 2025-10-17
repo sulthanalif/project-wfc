@@ -154,7 +154,7 @@ Route::group(['middleware' => 'auth',], function () {
         Route::delete('/return/{return}/{item}/delete', [ProductReturnController::class, 'destroyItem'])->name('return.item.destroy');
     });
     require __DIR__ . '/transaction/payment.php';
-    Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|finance_admin'], function () {
+    Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|finance_admin|agent'], function () {
         require __DIR__ . '/transaction/status.php';
 
 
