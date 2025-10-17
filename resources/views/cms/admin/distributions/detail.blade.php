@@ -113,33 +113,75 @@
                                 $details = $distribution->detail;
                                 $data = [];
                                 $tampilkan = [];
-                                foreach ($details as $d) {
-                                    if (!$d->orderDetail->sub_agent_id) {
-                                        $query = $d->orderDetail->order->agent->agentProfile;
-                                        $data[] = [
-                                            'name' => $query->name,
-                                            'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
-                                            'address' => $query->address
-                                                ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}"
-                                                : 'Alamat Belum Diisi',
-                                        ];
-                                    } else {
-                                        $data[] = $d->orderDetail->subAgent->agentProfile;
+
+                                // Tambahan: jika tidak ada detail sama sekali, tampilkan placeholder kosong
+                                if ($details->isEmpty()) {
+                                    $tampilkan = [
+                                        'name' => 'Tidak ada penerima',
+                                        'phone_number' => '-',
+                                        'address' => '-',
+                                    ];
+                                } else {
+                                    foreach ($details as $d) {
+                                        // Cek apakah orderDetail ada
+                                        if (!$d->orderDetail) {
+                                            continue;
+                                        }
+
+                                        if (!$d->orderDetail->sub_agent_id) {
+                                            // Cek apakah order atau agent atau agentProfile ada
+                                            if (
+                                                $d->orderDetail->order &&
+                                                $d->orderDetail->order->agent &&
+                                                $d->orderDetail->order->agent->agentProfile
+                                            ) {
+                                                $query = $d->orderDetail->order->agent->agentProfile;
+                                                $data[] = [
+                                                    'name' => $query->name,
+                                                    'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
+                                                    'address' => $query->address
+                                                        ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}"
+                                                        : 'Alamat Belum Diisi',
+                                                ];
+                                            }
+                                        } else {
+                                            // Cek apakah subAgent atau agentProfile ada
+                                            if (
+                                                $d->orderDetail->subAgent &&
+                                                $d->orderDetail->subAgent->agentProfile
+                                            ) {
+                                                $data[] = $d->orderDetail->subAgent->agentProfile;
+                                            }
+                                        }
+                                    }
+
+                                    foreach (array_filter($data) as $d) {
+                                        $tampilkan = $d;
+                                    }
+
+                                    // Fallback jika masih kosong
+                                    if (empty($tampilkan)) {
+                                        $firstDetail = $details->first();
+                                        if (
+                                            $firstDetail &&
+                                            $firstDetail->orderDetail &&
+                                            $firstDetail->orderDetail->subAgent
+                                        ) {
+                                            $sub = $firstDetail->orderDetail->subAgent;
+                                            $tampilkan = [
+                                                'name' => $sub->name ?? 'Tidak ada penerima',
+                                                'phone_number' => $sub->phone_number ?? '-',
+                                                'address' => $sub->address ?? '-',
+                                            ];
+                                        } else {
+                                            $tampilkan = [
+                                                'name' => 'Tidak ada penerima',
+                                                'phone_number' => '-',
+                                                'address' => '-',
+                                            ];
+                                        }
                                     }
                                 }
-
-                                foreach (array_filter($data) as $d) {
-                                    $tampilkan = $d;
-                                }
-
-                                if ($tampilkan == null) {
-                                    $tampilkan = [
-                                        'name' => $details->first()->orderDetail->subAgent->name,
-                                        'phone_number' => $details->first()->orderDetail->subAgent->phone_number,
-                                        'address' => $details->first()->orderDetail->subAgent->address,
-                                    ];
-                                }
-
                             @endphp
                             <div class="flex items-center"> <i data-lucide="clipboard"
                                     class="w-4 h-4 text-slate-500 mr-2"></i>
