@@ -82,7 +82,7 @@
                                 <select class="form-select" id="bank" name="bank">
                                     <option disabled selected>Pilih...</option>
                                     @foreach ($banks as $bank)
-                                        <option value="{{ $bank->id }}" {{ old('bank', $spending->bank) == $bank->id ? 'selected' : ''}}>{{ $bank->name }} -
+                                        <option value="{{ $bank->id }}" {{ old('bank', $spending->bank_owner_id) == $bank->id ? 'selected' : ''}}>{{ $bank->name }} -
                                             {{ $bank->account_number }} ({{ $bank->account_name }})</option>
                                     @endforeach
                                 </select>
@@ -108,12 +108,18 @@
         const methodSelect = document.getElementById('method');
         const bankField = document.getElementById('bank-field');
 
-        methodSelect.addEventListener('change', (event) => {
-            if (event.target.value === 'Transfer') {
+        function toggleBankField() {
+            if (!methodSelect || !bankField) return;
+            if (methodSelect.value === 'Transfer') {
                 bankField.style.display = 'block';
             } else {
                 bankField.style.display = 'none';
             }
-        });
+        }
+
+        methodSelect.addEventListener('change', toggleBankField);
+
+        // jalankan sekali saat skrip dieksekusi untuk menangani nilai awal
+        toggleBankField();
     </script>
 @endpush
