@@ -200,6 +200,7 @@
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
                             Route::is('rewards*') ||
+                            Route::is('tutorial*') ||
                             Route::is('bank-owner*') ||
                             Route::is('getAdministration')) side-menu--active @endif">
                         <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
@@ -212,6 +213,7 @@
                             Route::is('options.index') ||
                             Route::is('package*') ||
                             Route::is('product*') ||
+                            Route::is('tutorial*') ||
                             Route::is('sub-product*') ||
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
@@ -276,6 +278,15 @@
                                 <div class="side-menu__title"> Sub Agen </div>
                             </a>
                         </li>
+                        @hasrole('super_admin')
+                        <li>
+                            <a href="{{ route('tutorial.index') }}"
+                                class="side-menu @if (Route::is('tutorial*')) side-menu--active @endif">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Tutorials </div>
+                            </a>
+                        </li>
+                        @endhasrole
                         <li>
                             <a href="{{ route('user.index') }}"
                                 class="side-menu @if (Route::is('user*') || Route::is('getAdministration')) side-menu--active @endif">
@@ -447,6 +458,15 @@
                         <div class="side-menu__icon"> <i data-lucide="users"></i> </div>
                         <div class="side-menu__title">
                             Sub Agen
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('tutorial.page') }}"
+                        class="side-menu {{ Route::is('tutorial.page*') ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"> <i data-lucide="book-open"></i> </div>
+                        <div class="side-menu__title">
+                            Tutorial
                         </div>
                     </a>
                 </li>

@@ -12,6 +12,7 @@ use App\Http\Controllers\RewardController;
 use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
 use App\Http\Controllers\AccessDateController;
+use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\LandingpageController;
 use App\Http\Controllers\ReviewAgentController;
@@ -190,10 +191,15 @@ Route::group(['middleware' => 'auth',], function () {
         require __DIR__ . '/agent/administration.php';
     });
 
-    // //option
-    // Route::group(['middleware' => 'role:admin|super_admin'], function () {
-    //     require __DIR__ . '/admin/options.php';
-    // });
+    Route::group(['prefix' => 'master', 'middleware' => 'role:super_admin'], function () {
+        Route::resource('tutorial', TutorialController::class);
+    });
+
+    Route::group(['middleware' => 'role:admin|admin_finance|agent'], function () {
+        Route::get('tutorial', [TutorialController::class, 'tutorialPage'])->name('tutorial.page');
+    });
+
+
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
