@@ -25,9 +25,9 @@
                     @foreach ($subProducts as $sub)
                         <tr>
                             <td class="!py-4 whitespace-nowrap">{{ $sub->subProduct?->name ?? '-' }}</td>
-                            <td class="text-center">{{ $sub->amount }}</td>
-                            <td class="text-center">{{ $sub->subProduct->unit }}</td>
-                            <td class="text-center">Rp. {{ number_format($sub->subProduct->price, 0, ',', '.') }}</td>
+                            <td class="text-center">{{ $sub->amount ?? '-' }}</td>
+                            <td class="text-center">{{ $sub->subProduct?->unit ?? '-' }}</td>
+                            <td class="text-center">Rp. {{ number_format($sub->subProduct->price ?? 0, 0, ',', '.') }}</td>
                             <td class="table-report__action">
                                 <div class="flex justify-center items-center">
                                     <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
