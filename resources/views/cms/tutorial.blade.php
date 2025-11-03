@@ -19,6 +19,7 @@
                         <thead>
                             <tr>
                                 <th class="whitespace-nowrap">JUDUL</th>
+                                <th class="text-center whitespace-nowrap">DESCRIPSI</th>
                                 <th class="text-center whitespace-nowrap">LINK YOUTUBE</th>
                                 <th class="text-center whitespace-nowrap">AKSI</th>
                             </tr>
@@ -28,6 +29,9 @@
                                 <tr class="intro-x">
                                     <td>
                                         <span class="font-medium">{{ $tutorial->title }}</span>
+                                    </td>
+                                    <td class="text-center max-w-xs break-words">
+                                        <span class="text-gray-500">{{ $tutorial->description }}</span>
                                     </td>
                                     <td class="text-center">
                                         <a href="{{ $tutorial->link }}" target="_blank" class="text-theme-1 underline">Tonton Video</a>
