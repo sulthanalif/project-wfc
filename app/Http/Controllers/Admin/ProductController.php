@@ -276,42 +276,45 @@ class ProductController extends Controller
 
                 //supplier
                 if ($request->filled('supplier_id')) {
-                    $productSupplier = ProductSupplier::where('product_id', $product->id)
-                        ->first();
+                    $existingSupplier = ProductSupplier::where('product_id', $product->id)->first();
 
-                    if ($productSupplier) {
-                        $productSupplier->update([
-                            'supplier_id' => $request->supplier_id
-                        ]);
+                    if ($existingSupplier) {
+                        // JANGAN pakai $existingSupplier->update()!
+                        // Tembak langsung ke DB pakai query builder.
+                        // Ini TIDAK akan memicu event 'updating' atau 'saving'
+                        ProductSupplier::where('product_id', $product->id)
+                                    ->update(['supplier_id' => $request->supplier_id]);
                     } else {
+                        // Create() aman, kita asumsikan event 'creating' tidak bermasalah
                         ProductSupplier::create([
                             'product_id' => $product->id,
                             'supplier_id' => $request->supplier_id
                         ]);
                     }
                 } else {
-                    // Hapus relasi
-                    $product->supplier()->delete();
+                    // Hapus relasi pakai query builder juga biar aman
+                    ProductSupplier::where('product_id', $product->id)->delete();
                 }
 
                 //package
                 if ($request->filled('package_id')) {
-                    $productPackage = ProductPackage::where('product_id', $product->id)
-                        ->first();
+                    $existingPackage = ProductPackage::where('product_id', $product->id)->first();
 
-                    if ($productPackage) {
-                        $productPackage->update([
-                            'package_id' => $request->package_id
-                        ]);
+                    if ($existingPackage) {
+                        // JANGAN pakai $existingPackage->update()!
+                        // Tembak langsung ke DB pakai query builder.
+                        ProductPackage::where('product_id', $product->id)
+                                    ->update(['package_id' => $request->package_id]);
                     } else {
+                        // Create() aman
                         ProductPackage::create([
                             'product_id' => $product->id,
                             'package_id' => $request->package_id
                         ]);
                     }
                 } else {
-                    // Hapus relasi
-                    $product->package()->delete();
+                    // Hapus relasi pakai query builder juga biar aman
+                    ProductPackage::where('product_id', $product->id)->delete();
                 }
 
                 $orders = $product->order()->get();
