@@ -24,7 +24,7 @@
                 @else
                     @foreach ($subProducts as $sub)
                         <tr>
-                            <td class="!py-4 whitespace-nowrap">{{ $sub->subProduct->name }}</td>
+                            <td class="!py-4 whitespace-nowrap">{{ $sub->subProduct?->name ?? '-' }}</td>
                             <td class="text-center">{{ $sub->amount }}</td>
                             <td class="text-center">{{ $sub->subProduct->unit }}</td>
                             <td class="text-center">Rp. {{ number_format($sub->subProduct->price, 0, ',', '.') }}</td>
