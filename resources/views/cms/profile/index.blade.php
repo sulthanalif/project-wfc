@@ -63,13 +63,14 @@
         <div id="berkas" class="tab-pane active" role="tabpanel" aria-labelledby="berkas-tab">
             <div class="grid grid-cols-12 gap-6">
                 <!-- BEGIN: Berkas -->
-                <div class="intro-y box col-span-12">
+                    <div class="intro-y box col-span-12">
                         <div
                             class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                             <h2 class="font-medium text-base mr-auto">
                                 Berkas
                             </h2>
-                            <a href="javascript:;" class="btn btn-outline-secondary hidden sm:flex"
+                            <!-- Button visible on all screens -->
+                            <a href="javascript:;" class="btn btn-outline-secondary"
                             data-tw-toggle="modal"
                             data-tw-target="#update-files-modal"> <i data-lucide="edit"
                                 class="w-4 h-4 mr-2"></i> Ubah </a>
