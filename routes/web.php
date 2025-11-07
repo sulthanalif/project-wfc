@@ -119,11 +119,15 @@ Route::group(['middleware' => 'auth',], function () {
         require __DIR__ . '/admin/options.php';
 
         Route::get('/administration/{user}', [AdministrationController::class, 'getAdministration'])->name('getAdministration');
-        Route::put('/administration/{user}', [AdministrationController::class, 'update'])->name('updateAdministration');
+        
 
         //count price
         Route::get('/countPrice/{order}', [CountPriceTransactionController::class, 'count'])->name('countPrice');
         Route::get('/countAll', [CountPriceTransactionController::class, 'countAll'])->name('countAll');
+    });
+
+    Route::group(['prefix' => 'master', 'middleware' => 'role:admin|super_admin|agent'], function (){
+        Route::put('/administration/{user}', [AdministrationController::class, 'update'])->name('updateAdministration');
     });
 
     //finance_admin, super_admin

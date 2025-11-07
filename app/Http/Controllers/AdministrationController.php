@@ -101,10 +101,10 @@ class AdministrationController extends Controller
         try {
             DB::transaction(function () use ($request, $user) {
                 if ($request->hasFile('ktp') && $request->hasFile('sPerjanjian')) {
-                    if ($user->administration->ktp && file_exists(storage_path('app/public/images/administration/' . $user->administration->ktp))) {
+                    if ($user->administration && $user->administration->ktp && file_exists(storage_path('app/public/images/administration/' . $user->administration->ktp))) {
                         unlink(storage_path('app/public/images/administration/' . $user->administration->ktp));
                     }
-                    if ($user->administration->sPerjanjian && file_exists(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian))) {
+                    if ($user->administration && $user->administration->sPerjanjian && file_exists(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian))) {
                         unlink(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian));
                     }
 
@@ -152,7 +152,7 @@ class AdministrationController extends Controller
             return redirect()->back()->with('success', 'Data Sukses Diunggah!');
         } catch (\Exception $e) {
             $data = [
-                'message' => $e->getMessage(),
+                'message' => $e->getMessage() . $e->getLine(),
                 'status' => 400
             ];
             return view('cms.error', compact('data'));
