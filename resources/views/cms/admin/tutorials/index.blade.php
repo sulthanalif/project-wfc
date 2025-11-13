@@ -1,19 +1,20 @@
+
 @extends('cms.layouts.app', [
-    'title' => 'Bank',
+    'title' => 'Tutorial',
 ])
 
 @section('content')
     <div class="intro-y flex items-center mt-8">
         <h2 class="text-lg font-medium mr-auto">
-            Bank
+            Tutorial
         </h2>
     </div>
 
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             <a href="javascript:;" class="btn btn-primary shadow-md mr-2" data-tw-toggle="modal"
-                data-tw-target="#create-confirmation-modal">Tambah Bank</a>
-            @include('cms.admin.banks.modal.create')
+                data-tw-target="#create-confirmation-modal">Tambah Tutorial</a>
+            @include('cms.admin.tutorials.modal.create')
 
             <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $datas->firstItem() }} hingga
                 {{ $datas->lastItem() }} dari {{ $datas->total() }} data</div>
@@ -29,9 +30,11 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA BANK</th>
-                        <th class="text-center whitespace-nowrap">NOMOR REKENING</th>
-                        <th class="text-center whitespace-nowrap">ATAS NAMA</th>
+                        <th class="text-center whitespace-nowrap">JUDUL</th>
+                        <th class="text-center whitespace-nowrap">DESKRIPSI</th>
+                        <th class="text-center whitespace-nowrap">ROLE</th>
+                        <th class="text-center whitespace-nowrap">LINK</th>
+                        <th class="text-center whitespace-nowrap">STATUS</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
                 </thead>
@@ -48,27 +51,38 @@
                                         {{ $loop->iteration }}</p>
                                 </td>
                                 <td>
-                                    <p class="font-bold whitespace-nowrap flex items-center">{{ $data->name }}</p>
+                                    <p class="font-bold whitespace-nowrap flex items-center">{{ $data->title }}</p>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 whitespace-nowrap flex items-center justify-center">
-                                        {{ $data->account_number }}
+                                        {{ Str::limit($data->description, 20, '...') }}
                                     </p>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 whitespace-nowrap flex items-center justify-center">
-                                        {{ $data->account_name }}
+                                        {{ $data->role }}
                                     </p>
                                 </td>
+                                 <td>
+                                    <p class="text-slate-500 whitespace-nowrap flex items-center justify-center">
+                                        {{ $data->link }}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="text-slate-500 whitespace-nowrap text-center">
+                                        {{ $data->status == 1 ? 'Aktif' : 'Tidak Akrif' }}
+                                    </p>
+                                </td>
+                               
                                 <td class="flex items-center justify-center">
                                     <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
                                         data-tw-target="#edit-confirmation-modal{{ $data->id }}">
                                         <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
-                                        @include('cms.admin.banks.modal.edit')
+                                        @include('cms.admin.tutorials.modal.edit')
                                     <a class="flex items-center mr-3 text-danger" href="javascript:;" data-tw-toggle="modal"
                                         data-tw-target="#delete-confirmation-modal{{ $data->id }}">
                                         <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                        @include('cms.admin.banks.modal.delete')
+                                        @include('cms.admin.tutorials.modal.delete')
                                 </td>
                             </tr>
                         @endforeach
