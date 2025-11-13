@@ -25,6 +25,7 @@
                 <thead>
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
+                        <th class="text-center whitespace-nowrap">INVOICE</th>
                         <th class="text-center whitespace-nowrap">TANGGAL</th>
                         <th class="text-center whitespace-nowrap">METODE</th>
                         <th class="text-center whitespace-nowrap" width="10%">JUMLAH BAYAR</th>
@@ -52,6 +53,9 @@
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-center">{{ $payment->invoice_number }}</p>
                                 </td>
                                 <td class="text-center">
                                     {{ \Carbon\Carbon::parse($payment->date)->format('d M Y') }}
