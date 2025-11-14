@@ -117,24 +117,38 @@
                     </div>
                     @hasrole('agent')
                         @php
-                            // Cek apakah order kosong
+                            // 1. Cek apakah keranjang kosong (Kondisi "Pengecualian Utama")
                             $isEmptyOrder = $order->detail->isEmpty();
 
-                            // Ambil data periode dengan aman (Null Safe) dari produk pertama (jika ada)
+                            // 2. Ambil data periode dengan aman (Null Safe)
+                            // Hamba gunakan ?-> agar tidak error jika null
                             $firstDetail = $order->detail->first();
                             $period = $firstDetail?->product?->package?->package?->period;
 
-                            // Cek apakah masih dalam masa periode (jika produk & periode ada)
-                            $isWithinPeriod = $period && 
-                                            $period->access_date && 
-                                            \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($period->access_date));
-                            
-                            // Cek akses user
+                            // 3. Cek Status Periode
+                            $isWithinPeriod = false;
+                            if ($period && $period->access_date) {
+                                $isWithinPeriod = \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($period->access_date));
+                            }
+
+                            // 4. Cek Hak Akses User
                             $hasOpenAccess = Auth::user()->is_open_access;
+
+                            // 5. LOGIKA PENENTU (THE GOLDEN RULE 👑)
+                            $showButton = false;
+
+                            if ($isEmptyOrder) {
+                                // HUKUM 1: Kalau kosong, abaikan semua aturan lain, IZINKAN tambah.
+                                $showButton = true;
+                            } else {
+                                // HUKUM 2: Kalau ada isi, user HARUS punya akses DAN masih dalam periode.
+                                // Jika Access False -> Tombol Hilang (walau periode valid).
+                                // Jika Periode Habis -> Tombol Hilang (walau access true).
+                                $showButton = $hasOpenAccess && $isWithinPeriod;
+                            }
                         @endphp
 
-                        {{-- Tampilkan tombol jika: Order Kosong ATAU Punya Akses Khusus ATAU Masih Dalam Periode --}}
-                        @if ($isEmptyOrder || $hasOpenAccess || $isWithinPeriod)
+                        @if ($showButton)
                             <a class="flex items-center lg:ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
                                 data-tw-target="#add-product-modal">
                                 <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah
