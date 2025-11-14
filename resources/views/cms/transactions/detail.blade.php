@@ -117,12 +117,24 @@
                     </div>
                     @hasrole('agent')
                         @php
-                            $detail = optional($order->detail->first());
-                            $product = optional($detail->product);
-                            $package = optional($product->package->package);
-                            $period = optional($package->period);
+                            // Cek apakah order kosong
+                            $isEmptyOrder = $order->detail->isEmpty();
+
+                            // Ambil data periode dengan aman (Null Safe) dari produk pertama (jika ada)
+                            $firstDetail = $order->detail->first();
+                            $period = $firstDetail?->product?->package?->package?->period;
+
+                            // Cek apakah masih dalam masa periode (jika produk & periode ada)
+                            $isWithinPeriod = $period && 
+                                            $period->access_date && 
+                                            \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($period->access_date));
+                            
+                            // Cek akses user
+                            $hasOpenAccess = Auth::user()->is_open_access;
                         @endphp
-                        @if (($period->access_date && \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($period->access_date))) || Auth::user()->is_open_access)
+
+                        {{-- Tampilkan tombol jika: Order Kosong ATAU Punya Akses Khusus ATAU Masih Dalam Periode --}}
+                        @if ($isEmptyOrder || $hasOpenAccess || $isWithinPeriod)
                             <a class="flex items-center lg:ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
                                 data-tw-target="#add-product-modal">
                                 <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah
@@ -395,10 +407,16 @@
                                         </td>
                                         <td>
                                             @hasrole('agent')
+                                                @php
+                                                    // Ambil period dengan aman di dalam loop
+                                                    $itemPeriod = $item->product?->package?->package?->period;
+                                                @endphp
+
                                                 @if (
-                                                    $item->product->package->package->period->access_date &&
-                                                        \Carbon\Carbon::now()->lessThanOrEqualTo(
-                                                            \Carbon\Carbon::parse($item->product->package->package->period->access_date)))
+                                                    $itemPeriod && 
+                                                    $itemPeriod->access_date &&
+                                                    \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($itemPeriod->access_date))
+                                                )
                                                     <a href="javascript:;" class="btn btn-primary btn-sm"
                                                         data-tw-toggle="modal"
                                                         data-tw-target="#detail-confirmation-modal{{ $item->id }}">
