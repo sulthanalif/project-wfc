@@ -144,7 +144,8 @@
                                 // HUKUM 2: Kalau ada isi, user HARUS punya akses DAN masih dalam periode.
                                 // Jika Access False -> Tombol Hilang (walau periode valid).
                                 // Jika Periode Habis -> Tombol Hilang (walau access true).
-                                $showButton = $hasOpenAccess && $isWithinPeriod;
+                                // $showButton = $hasOpenAccess && $isWithinPeriod;
+                                $showButton =  $isWithinPeriod;
                             }
                         @endphp
 
