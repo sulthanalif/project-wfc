@@ -14,7 +14,7 @@ class TutorialController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         if ($perPages == 'all') {
             $datas = Tutorial::latest()->get();

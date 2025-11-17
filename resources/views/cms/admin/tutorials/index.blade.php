@@ -16,6 +16,15 @@
                 data-tw-target="#create-confirmation-modal">Tambah Tutorial</a>
             @include('cms.admin.tutorials.modal.create')
 
+             <div class="w-auto relative text-slate-500 ml-2">
+                <select id="records_per_page" class="form-control box">
+                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+
             <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $datas->firstItem() }} hingga
                 {{ $datas->lastItem() }} dari {{ $datas->total() }} data</div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
@@ -95,4 +104,15 @@
 
 @push('custom-scripts')
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+        });
+    </script>
 @endpush
