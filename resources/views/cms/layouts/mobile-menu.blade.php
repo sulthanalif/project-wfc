@@ -412,6 +412,15 @@
                             <div class="menu__title"> Sub Agen </div>
                         </a>
                     </li>
+                    <li>
+                    <a href="{{ route('tutorial.page') }}"
+                        class="menu {{ Route::is('tutorial.page*') ? 'menu--active' : '' }}">
+                        <div class="menu__icon"> <i data-lucide="book-open"></i> </div>
+                        <div class="menu__title">
+                            Tutorial
+                        </div>
+                    </a>
+                </li>
                 @endif
             </ul>
         </div>
