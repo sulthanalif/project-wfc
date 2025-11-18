@@ -147,6 +147,11 @@
                                             @endif
 
                                             @if ($payment->status == 'accepted')
+                                                <a class="flex items-center mr-3 text-secondary" href="javascript:;"
+                                                    data-tw-toggle="modal"
+                                                    data-tw-target="#confirm-confirmation-modal{{ $payment->id }}">
+                                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
+                                                @include('cms.admin.payment.modal.confirm')
                                                 <a class="flex items-center mr-3 text-success" target="_blank"
                                                     href="{{ route('getInvoice', ['order' => $order, 'payment' => $payment]) }}">
                                                     <i data-lucide="printer" class="w-4 h-4 mr-1"></i> Cetak </a>
