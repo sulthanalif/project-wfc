@@ -33,12 +33,12 @@
             </div>
             <div class="w-auto relative text-slate-500 mt-2 lg:mt-0">
                 <select id="records_per_status" class="form-control box">
+                    <option value="all" {{ request()->get('status') == 'all' ? 'selected' : '' }}>All</option>
                     <option value="accepted" {{ request()->get('status') == "accepted" ? 'selected' : '' }}>Diterima</option>
                     <option value="stop" {{ request()->get('status') == "stop" ? 'selected' : '' }}>Mundur</option>
                     <option value="pending" {{ request()->get('status') == "pending" ? 'selected' : '' }}>Pending</option>
                     <option value="reject" {{ request()->get('status') == "reject" ? 'selected' : '' }}>Ditolak</option>
                     <option value="canceled" {{ request()->get('status') == "canceled" ? 'selected' : '' }}>Dibatalkan</option>
-                    <option value="all" {{ request()->get('status') == 'all' ? 'selected' : '' }}>All</option>
                 </select>
             </div>
 
