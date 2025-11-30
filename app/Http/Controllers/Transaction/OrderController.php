@@ -159,7 +159,7 @@ class OrderController extends Controller
         $periode = Period::where('is_active', 1)->first();
 
         if ($user->roleName == 'agent') {
-            if ($user->order()?->exists() && $user->order()?->first()->created_at < $periode->end_date) return back()->with('error', 'Selesaikan dulu pesanan pada periode ini');
+            if ($user->order()?->where('status', '!=', 'reject')->exists() && $user->order()?->where('status', '!=', 'reject')->first()->created_at < $periode->end_date) return back()->with('error', 'Selesaikan dulu pesanan pada periode ini');
         }
 
         $products = json_decode($request->products, true);
