@@ -154,8 +154,13 @@
                                 data-tw-target="#add-product-modal">
                                 <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah
                             </a>
-                            @include('cms.transactions.modal.add-product')
+                        @elseif($hasOpenAccess && !$showButton)
+                            <a class="flex items-center lg:ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
+                                data-tw-target="#add-product-modal">
+                                <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah
+                            </a>
                         @endif
+                        @include('cms.transactions.modal.add-product')
                     @endhasrole
                 </div>
                 <div class="overflow-auto lg:overflow-visible -mt-3">
@@ -296,11 +301,22 @@
                                         <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}
                                         </td>
                                         @hasrole('agent')
-                                            @if (
-                                                $item->product->package->package->period->access_date &&
-                                                    \Carbon\Carbon::now()->lessThanOrEqualTo(
-                                                        \Carbon\Carbon::parse($item->product->package->package->period->access_date)))
-                                                <a href="javascript:;" class="btn btn-primary btn-sm" data-tw-toggle="modal"
+                                            @php
+                                                // Ambil period dengan aman di dalam loop
+                                                $itemPeriod = $item->product?->package?->package?->period;
+
+                                                // Cek apakah masih dalam periode
+                                                $isItemWithinPeriod = $itemPeriod && $itemPeriod->access_date && \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($itemPeriod->access_date));
+
+                                                // Logika gabungan: Akses diberikan jika MASIH DALAM PERIODE ATAU user punya OPEN ACCESS
+                                                $canModifyItem = $isItemWithinPeriod || Auth::user()->is_open_access;
+
+
+                                            @endphp
+
+                                            @if ($canModifyItem) {{-- Menggunakan logika gabungan --}}
+                                                <a href="javascript:;" class="btn btn-primary btn-sm"
+                                                    data-tw-toggle="modal"
                                                     data-tw-target="#detail-confirmation-modal{{ $item->id }}">
                                                     <i data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah
                                                 </a>
@@ -311,7 +327,7 @@
                                                         data-tw-target="#delete-confirmation-modal{{ $item->id }}">
                                                         <i data-lucide="trash" class="w-4 h-4 mr-2"></i> Hapus
                                                     </a>
-                                                    <!-- BEGIN: Delete Confirmation Modal -->
+                                                    {{-- Pastikan ini sesuai dengan kode Anda. Saya memasukkan kodenya di bawah tag a Hapus --}}
                                                     <div id="delete-confirmation-modal{{ $item->id }}" class="modal"
                                                         tabindex="-1" aria-hidden="true">
                                                         <div class="modal-dialog">
@@ -342,8 +358,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <!-- END: Delete Confirmation Modal -->
-                                                @endif
+                                                    @endif
                                             @endif
 
                                             @include('cms.transactions.modal.detail-modal')
@@ -422,65 +437,68 @@
                                         </td>
                                         <td>
                                             @hasrole('agent')
-                                                @php
-                                                    // Ambil period dengan aman di dalam loop
-                                                    $itemPeriod = $item->product?->package?->package?->period;
-                                                @endphp
+                                            @php
+                                                // Ambil period dengan aman di dalam loop
+                                                $itemPeriod = $item->product?->package?->package?->period;
 
-                                                @if (
-                                                    $itemPeriod && 
-                                                    $itemPeriod->access_date &&
-                                                    \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($itemPeriod->access_date))
-                                                )
-                                                    <a href="javascript:;" class="btn btn-primary btn-sm"
+                                                // Cek apakah masih dalam periode
+                                                $isItemWithinPeriod = $itemPeriod && $itemPeriod->access_date && \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($itemPeriod->access_date));
+
+                                                // Logika gabungan: Akses diberikan jika MASIH DALAM PERIODE ATAU user punya OPEN ACCESS
+                                                $canModifyItem = $isItemWithinPeriod || Auth::user()->is_open_access;
+
+
+                                            @endphp
+
+                                            @if ($canModifyItem) {{-- Menggunakan logika gabungan --}}
+                                                <a href="javascript:;" class="btn btn-primary btn-sm"
+                                                    data-tw-toggle="modal"
+                                                    data-tw-target="#detail-confirmation-modal{{ $item->id }}">
+                                                    <i data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah
+                                                </a>
+
+                                                @if ($item->qty == 0)
+                                                    <a href="javascript:;" class="btn btn-danger btn-sm"
                                                         data-tw-toggle="modal"
-                                                        data-tw-target="#detail-confirmation-modal{{ $item->id }}">
-                                                        <i data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah
+                                                        data-tw-target="#delete-confirmation-modal{{ $item->id }}">
+                                                        <i data-lucide="trash" class="w-4 h-4 mr-2"></i> Hapus
                                                     </a>
-
-                                                    @if ($item->qty == 0)
-                                                        <a href="javascript:;" class="btn btn-danger btn-sm"
-                                                            data-tw-toggle="modal"
-                                                            data-tw-target="#delete-confirmation-modal{{ $item->id }}">
-                                                            <i data-lucide="trash" class="w-4 h-4 mr-2"></i> Hapus
-                                                        </a>
-                                                        <!-- BEGIN: Delete Confirmation Modal -->
-                                                        <div id="delete-confirmation-modal{{ $item->id }}" class="modal"
-                                                            tabindex="-1" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-body p-0">
-                                                                        <div class="p-5 text-center">
-                                                                            <i data-lucide="x-circle"
-                                                                                class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                                                            <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                                                            <div class="text-slate-500 mt-2">
-                                                                                Apakah anda yakin untuk menghapus data ini? <br>
-                                                                                Proses tidak akan bisa diulangi.
-                                                                            </div>
+                                                    {{-- Pastikan ini sesuai dengan kode Anda. Saya memasukkan kodenya di bawah tag a Hapus --}}
+                                                    <div id="delete-confirmation-modal{{ $item->id }}" class="modal"
+                                                        tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-body p-0">
+                                                                    <div class="p-5 text-center">
+                                                                        <i data-lucide="x-circle"
+                                                                            class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                                                        <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                                                        <div class="text-slate-500 mt-2">
+                                                                            Apakah anda yakin untuk menghapus data ini? <br>
+                                                                            Proses tidak akan bisa diulangi.
                                                                         </div>
-                                                                        <div class="px-5 pb-8 text-center">
-                                                                            <form action="#" method="post">
-                                                                                @csrf
-                                                                                @method('delete')
-                                                                                <input type="hidden" name="page"
-                                                                                    value="{{ $item->id }}">
-                                                                                <button type="submit"
-                                                                                    class="btn btn-danger w-24">Hapus</button>
-                                                                                <button type="button" data-tw-dismiss="modal"
-                                                                                    class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                                                            </form>
-                                                                        </div>
+                                                                    </div>
+                                                                    <div class="px-5 pb-8 text-center">
+                                                                        <form action="#" method="post">
+                                                                            @csrf
+                                                                            @method('delete')
+                                                                            <input type="hidden" name="page"
+                                                                                value="{{ $item->id }}">
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger w-24">Hapus</button>
+                                                                            <button type="button" data-tw-dismiss="modal"
+                                                                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                                                        </form>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <!-- END: Delete Confirmation Modal -->
+                                                    </div>
                                                     @endif
-                                                @endif
+                                            @endif
 
-                                                @include('cms.transactions.modal.detail-modal')
-                                            @endhasrole
+                                            @include('cms.transactions.modal.detail-modal')
+                                        @endhasrole
                                         </td>
                                     </tr>
                                     @php
