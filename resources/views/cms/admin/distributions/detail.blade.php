@@ -224,7 +224,7 @@
                                 $total_qty = 0;
                                 $total_rupiah = 0;
                             @endphp
-                            @foreach ($distribution->detail as $item)
+                            @foreach ($distribution->detail->sortBy('order_number') as $item)
                                 <tr>
                                     <td>
                                         {{ $item->orderDetail->sub_agent_id ? $item->orderDetail->subAgent->name : $distribution->order->agent->agentProfile->name }}

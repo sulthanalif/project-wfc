@@ -19,6 +19,7 @@ class DistributionDetail extends Model
         'distribution_id',
         'order_detail_id',
         'qty',
+        'order_number',
     ];
 
     public function distribution()

@@ -109,7 +109,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($distribution->detail as $detail)
+                    @foreach ($distribution->detail->sortBy('order_number') as $detail)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>

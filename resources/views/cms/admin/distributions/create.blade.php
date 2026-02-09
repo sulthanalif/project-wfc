@@ -74,9 +74,10 @@
                                 <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
                             </div>
                         </div>
-                        <div class="col-span-12 lg:col-span-6 mt-3 lg:mt-0" >
+                        <div class="col-span-12 lg:col-span-6 mt-3 lg:mt-0">
                             <div>
-                                <label for="method" class="form-label">Metode Distribusi <span class="text-danger">*</span></label>
+                                <label for="method" class="form-label">Metode Distribusi <span
+                                        class="text-danger">*</span></label>
                                 <select class="tom-select" id="method" name="method" onchange="changeMethod()" required>
                                     <option value="">Pilih Metode</option>
                                     <option value="diantar">Diantar</option>
@@ -114,6 +115,7 @@
                                         <th>Nama Sub Agent</th>
                                         <th>Nama Produk</th>
                                         <th>Jumlah</th>
+                                        <th>Urutan</th>
                                         <th>#</th>
                                     </tr>
                                 </thead>
@@ -165,8 +167,7 @@
                 policeNumberFields.style.display = 'none';
                 driverLabel.innerHTML = `Dijemput Oleh<span
                                         class="text-danger">*</span>`;
-            } else {
-            }
+            } else {}
         }
 
         function handleOrderChange(event) {
@@ -211,7 +212,7 @@
                             value: '{{ $products->id }}',
                             text: "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} {{ $products->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - {{ $products->qty - $qty }}",
                             qty: '{{ $products->qty - $qty }}',
-                            disabled: {{ ($products->qty - $qty == 0) ? 'true' : 'false' }}
+                            disabled: {{ $products->qty - $qty == 0 ? 'true' : 'false' }}
                         };
 
                         productSelect.tomselect.addOption(option);
@@ -233,19 +234,39 @@
             const itemQuantity = parseInt(qty, 10);
 
             const existingRow = document.querySelector(`#product-item tr input[value="${itemId}"]`);
+            
             if (!existingRow) {
-                const newRow = createTableRow(itemId, itemSubAgent, itemName, itemQuantity);
+                const orderNumber = document.querySelectorAll('#product-item tr').length + 1;
+                const newRow = createTableRow(itemId, itemSubAgent, itemName, itemQuantity, orderNumber);
                 document.getElementById('product-item').appendChild(newRow);
             }
         }
 
-        function createTableRow(id, subAgent, name, quantity) {
+        function createTableRow(id, subAgent, name, quantity, orderNumber) {
             const row = document.createElement('tr');
             row.innerHTML = `<tr>
                 <input value="${id}" id="product-id" name="product-id" type="hidden">
                 <td>${subAgent}</td>
                 <td>${name}</td>
-                <td class="text-center"><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}" id="product-qty" max="${quantity}"></td>
+                <td class="text-center">
+                    <input 
+                        type="number" 
+                        min="1" 
+                        value="${quantity}" 
+                        class="quantityInput" 
+                        onchange="updateQty(this)"
+                        data-initial-value="${quantity}" 
+                        id="product-qty"
+                        max="${quantity}">
+                </td>
+                <td class="text-center">
+                    <input 
+                        type="number" 
+                        class="orderInput" 
+                        name="order_number[]" 
+                        value="${orderNumber}" 
+                        readonly>
+                </td>
                 <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button></td>
                 </tr>`;
             return row;
@@ -255,10 +276,19 @@
             const row = $(button).closest('tr');
 
             row.remove();
+
+            reorderOrderNumbers();
         }
 
         function clearProductSelection() {
             productSelect.selectedIndex = 0;
+        }
+
+        function reorderOrderNumbers() {
+            document.querySelectorAll('#product-item tr').forEach((row, index) => {
+                const orderInput = row.querySelector('.orderInput');
+                orderInput.value = index + 1;
+            });
         }
 
         function simpan(event) {
@@ -266,10 +296,12 @@
             $('#product-item tr').each(function() {
                 const productId = $(this).find('#product-id').val();
                 const qty = $(this).find('#product-qty').val();
+                const orderNumber = $(this).find('.orderInput').val();
 
                 productData.push({
                     productId: productId,
-                    qty: qty
+                    qty: qty,
+                    orderNumber: orderNumber
                 });
             });
 

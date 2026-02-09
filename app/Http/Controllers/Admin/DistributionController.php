@@ -93,7 +93,8 @@ class DistributionController extends Controller
                         $distributionDetail = new DistributionDetail([
                             'distribution_id' => $distribution->id,
                             'order_detail_id' => $product['productId'],
-                            'qty' => $product['qty']
+                            'qty' => $product['qty'],
+                            'order_number' => $product['orderNumber'],
                         ]);
                         $distributionDetail->save();
                     }
