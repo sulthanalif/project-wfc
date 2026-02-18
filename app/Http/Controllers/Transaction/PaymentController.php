@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Helpers\ValidateRole;
 use App\Mail\NotificationPayment;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -263,8 +264,15 @@ class PaymentController extends Controller
                     $order->save();
                 }
 
-                Mail::to($order->agent->email)->send(new NotificationPayment($payment));
+                // Mail::to($order->agent->email)->send(new NotificationPayment($payment));
             });
+
+            try {
+                Mail::to($order->agent->email)->send(new NotificationPayment($payment));
+            } catch (\Exception $e) {
+                // Log error email tapi jangan hentikan proses redirect sukses
+                Log::error("Email gagal kirim: " . $e->getMessage());
+            }
             return redirect()->back()->with('success', 'Pembayaran berhasil ditambahkan');
         } catch (\Throwable $th) {
             $data = [
@@ -327,8 +335,15 @@ class PaymentController extends Controller
                     $order->save();
                 }
 
-                Mail::to($order->agent->email)->send(new NotificationPayment($payment));
+                // Mail::to($order->agent->email)->send(new NotificationPayment($payment));
             });
+
+            try {
+                Mail::to($order->agent->email)->send(new NotificationPayment($payment));
+            } catch (\Exception $e) {
+                // Log error email tapi jangan hentikan proses redirect sukses
+                Log::error("Email gagal kirim: " . $e->getMessage());
+            }
             return redirect()->back()->with('success', 'Pembayaran berhasil ditambahkan');
         } catch (\Throwable $th) {
             $data = [
