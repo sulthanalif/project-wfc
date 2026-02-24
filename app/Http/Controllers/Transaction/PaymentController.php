@@ -223,7 +223,7 @@ class PaymentController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $order) {
+            DB::transaction(function () use ($request, $order, &$payment) {
                 $paymentCount = Payment::where('order_id', $order->id)->count();
                 $invoiceNumber = 'INV' . GenerateRandomString::make(5) . ($paymentCount + 1) . now()->format('dmY');
                 $bank = BankOwner::where('id', $request->bank)->first();
@@ -299,7 +299,7 @@ class PaymentController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $order) {
+            DB::transaction(function () use ($request, $order, &$payment) {
                 $paymentCount = Payment::where('order_id', $order->id)->count();
                 $invoiceNumber = 'INV' . GenerateRandomString::make(5) . ($paymentCount + 1) . now()->format('dmY');
                 $bank = BankOwner::where('id', $request->bank)->first();
