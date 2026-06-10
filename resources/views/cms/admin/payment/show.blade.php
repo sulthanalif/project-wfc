@@ -45,7 +45,9 @@
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">NOMOR PESANAN</th>
-                        <th class="text-center whitespace-nowrap" width="30%">TOTAL HARGA</th>
+                        <th class="text-center whitespace-nowrap">TOTAL TAGIHAN</th>
+                        <th class="text-center whitespace-nowrap">TOTAL PEMBAYARAN</th>
+                        <th class="text-center whitespace-nowrap">SISA PEMBAYARAN</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
                     </tr>
                 </thead>
@@ -57,6 +59,11 @@
                     @else
                         @foreach ($orders as $order)
                             <tr class="intro-x">
+                                @php
+                                    $totalPrice = $order->total_price;
+                                    $totalPayment = $order->payment()->where('status', 'accepted')->sum('pay');
+                                    $remainingPayment = $totalPrice - $totalPayment;
+                                @endphp
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
@@ -67,7 +74,17 @@
                                 </td>
                                 <td class="text-center">
                                     <p>
-                                        Rp. {{ number_format($order->total_price, 0, ',', '.') }}
+                                        Rp. {{ number_format($totalPrice, 0, ',', '.') }}
+                                    </p>
+                                </td>
+                                <td class="text-center">
+                                    <p>
+                                        Rp. {{ number_format($totalPayment, 0, ',', '.') }}
+                                    </p>
+                                </td>
+                                <td class="text-center">
+                                    <p>
+                                        Rp. {{ number_format($remainingPayment, 0, ',', '.') }}
                                     </p>
                                 </td>
                                 <td>

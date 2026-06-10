@@ -48,7 +48,9 @@
                     <tr>
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">NAMA AGEN</th>
-                        <th class="text-center whitespace-nowrap" width="30%">TOTAL HARGA</th>
+                        <th class="text-center whitespace-nowrap">TOTAL TAGIHAN</th>
+                        <th class="text-center whitespace-nowrap">TOTAL PEMBAYARAN</th>
+                        <th class="text-center whitespace-nowrap">SISA PEMBAYARAN</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
                     </tr>
                 </thead>
@@ -62,6 +64,10 @@
                             <tr class="intro-x">
                                 @php
                                     $totalPrice = $order->sum('total_price');
+                                    $totalPayment = $order->sum(function ($o) {
+                                        return $o->payment()->where('status', 'accepted')->sum('pay');
+                                    });
+                                    $remainingPayment = $totalPrice - $totalPayment;
 
                                     $allPaid = $order->every(function ($o) {
                                         return $o->payment_status === 'paid';
@@ -83,7 +89,17 @@
                                         Rp. {{ number_format($totalPrice, 0, ',', '.') }}
                                     </p>
                                 </td>
-                                <td>
+                                <td class="text-center">
+                                    <p>
+                                        Rp. {{ number_format($totalPayment, 0, ',', '.') }}
+                                    </p>
+                                </td>
+                                <td class="text-center">
+                                    <p>
+                                        Rp. {{ number_format($remainingPayment, 0, ',', '.') }}
+                                    </p>
+                                </td>
+                                <td class="text-center">
                                     @if ($allPaid)
                                         <div class="flex items-center justify-center text-success"> <i
                                                 data-lucide="check-square" class="w-4 h-4 mr-2"></i> Lunas </div>

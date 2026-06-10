@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ReportController;
 
 Route::get('/total-deposit', [ReportController::class, 'totalDeposit'])->name('totalDeposit');
 Route::get('/product-detail', [ReportController::class, 'productDetail'])->name('rproductDetail');
+Route::get('/agent-product-detail/{productId}', [ReportController::class, 'agentProductDetail'])->name('ragentProductDetail');
 Route::get('/agent-order', [ReportController::class, 'agentOrder'])->name('ragentOrder');
 Route::get('/agent-reward', [ReportController::class, 'agentReward'])->name('ragentReward');
 Route::get('/instalment', [ReportController::class, 'instalment'])->name('instalment');

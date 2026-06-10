@@ -75,14 +75,14 @@
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
-
                                 <td>
-                                    <p class="text-slate-500 flex items-center mr-3"> {{ $item['package'] }} </p>
+                                    <a class="text-slate-500 flex items-center mr-3" href="{{ route('ragentProductDetail', $item['product_id']) }}"> <i
+                                            data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+                                        {{ $item['package'] }} </a>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 text-center">{{ $item['total_product'] }}</p>
                                 </td>
-
                             </tr>
                         @endforeach
                     @endif

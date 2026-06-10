@@ -22,6 +22,7 @@ use App\Exports\ReportInstalmentExport;
 use App\Exports\ReportRequirementExport;
 use App\Exports\ReportTotalDepositExport;
 use App\Exports\ReportProductDetailExport;
+use App\Models\Product;
 
 class ReportController extends Controller
 {
@@ -103,12 +104,18 @@ class ReportController extends Controller
             if ($item->status == 'accepted') {
                 foreach ($item->detail as $order) {
                     if ($order->product) {
+                        $productId = $order->product_id;
                         $packageName = $order->product->name;
 
-                        if (isset($datas[$packageName])) {
-                            $datas[$packageName]['total_product'] += $order->qty;
+                        if ($order->product->is_safe_point == 1) {
+                            $packageName .= ' (Titik Aman)';
+                        }
+
+                        if (isset($datas[$productId])) {
+                            $datas[$productId]['total_product'] += $order->qty;
                         } else {
-                            $datas[$packageName] = [
+                            $datas[$productId] = [
+                                'product_id' => $productId,
                                 'package' => $packageName,
                                 'total_product' => $order->qty,
                             ];
@@ -143,6 +150,26 @@ class ReportController extends Controller
         return view('cms.admin.reports.product-detail', compact('stats', 'datas'));
         // return response()->json(compact('stats', 'paginationData'));
         // routenya 'report/product-detail'
+    }
+
+    public function agentProductDetail(Request $request, $productId)
+    {
+        $product = Product::where('id', $productId)->with(['order.order'])->get();
+        $orders = Order::whereHas('detail', function ($q) use ($productId) {
+            $q->where('product_id', $productId);
+        })->with(['agent.agentProfile', 'detail'])->get()
+            ->groupBy('agent_id')
+            ->map(function ($group) use ($productId) {
+                return (object) [
+                    'agent' => $group->first()->agent,
+                    'totalProduct' => $group->sum(function ($order) use ($productId) {
+                        return $order->detail->where('product_id', $productId)->sum('qty');
+                    }),
+                ];
+            })
+            ->values();
+
+        return view('cms.admin.reports.partial.agent-product-detail', compact('product', 'orders'));
     }
 
     public function agentOrder(Request $request)
