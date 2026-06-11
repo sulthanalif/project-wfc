@@ -373,6 +373,29 @@ class ReportController extends Controller
             $query->where('status', 'accepted');
         })->with('product.subProduct.subProduct')->get();
 
+        // Ambil distribusi yang dicetak (print_count > 0) untuk menghitung sub-produk
+        $printedDistributions = Distribution::where('print_count', '>', 0)
+            ->with('detail.orderDetail.product.subProduct.subProduct')
+            ->get();
+
+        // Hitung total sub-product yang sudah didistribusikan berdasarkan distribution details
+        $distributedSubProducts = [];
+        foreach ($printedDistributions as $dist) {
+            foreach ($dist->detail as $distDetail) {
+                $orderDetail = $distDetail->orderDetail;
+                if (!$orderDetail || !$orderDetail->product) {
+                    continue;
+                }
+                foreach ($orderDetail->product->subProduct as $sub) {
+                    if (!$sub->subProduct) {
+                        continue;
+                    }
+                    $subProductId = $sub->subProduct->id;
+                    $distributedSubProducts[$subProductId] = ($distributedSubProducts[$subProductId] ?? 0) + ($distDetail->qty * $sub->amount);
+                }
+            }
+        }
+
         $datas = [];
         $datasubs = [];
 
@@ -386,7 +409,6 @@ class ReportController extends Controller
             $qty = $detail->qty;
 
             // 2. Agregasi data produk utama menggunakan ID produk sebagai key array
-            // Ini jauh lebih cepat daripada looping untuk mencari data yang sudah ada
             if (!isset($datas[$productId])) {
                 $datas[$productId] = [
                     'product_id'   => $productId,
@@ -406,11 +428,6 @@ class ReportController extends Controller
                         continue;
                     }
 
-                    // Get spending data efficiently with a single query
-                    // $spending = Spending::where('information', 'like', '%' . $sub->name . '%')
-                    //     ->select(DB::raw('COALESCE(SUM(qty), 0) as total_qty'))
-                    //     ->first();
-
                     $subProductId = $sub->subProduct->id;
                     $subProductAmount = $sub->amount;
                     $calculatedQty = $qty * $subProductAmount;
@@ -427,6 +444,19 @@ class ReportController extends Controller
                     }
                     $datasubs[$subProductId]['qty'] += $calculatedQty;
                     $datasubs[$subProductId]['price'] += $calculatedQty * $sub->subProduct->price;
+                }
+            }
+        }
+
+        // Kurangi sub-product yang sudah didistribusikan (print_count > 0)
+        if (!empty($distributedSubProducts)) {
+            $subIds = array_keys($distributedSubProducts);
+            $subPrices = SubProduct::whereIn('id', $subIds)->pluck('price', 'id')->toArray();
+            foreach ($distributedSubProducts as $subId => $distQty) {
+                if (isset($datasubs[$subId])) {
+                    $datasubs[$subId]['qty'] = max(0, $datasubs[$subId]['qty'] - $distQty);
+                    $unitPrice = $subPrices[$subId] ?? 0;
+                    $datasubs[$subId]['price'] = $datasubs[$subId]['qty'] * $unitPrice;
                 }
             }
         }
