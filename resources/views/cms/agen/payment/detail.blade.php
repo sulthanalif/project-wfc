@@ -113,12 +113,6 @@
                                                 <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Edit </a>
                                             @include('cms.agen.payment.modal.update-detail')
                                         @endif
-
-                                        @if ($payment->status == 'accepted')
-                                            <a class="flex items-center mr-3 text-success" target="_blank"
-                                                href="{{ route('getInvoice', ['order' => $order, 'payment' => $payment]) }}">
-                                                <i data-lucide="printer" class="w-4 h-4 mr-1"></i> Cetak </a>
-                                        @endif
                                     </div>
                                 </td>
                             </tr>

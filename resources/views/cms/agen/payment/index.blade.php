@@ -44,6 +44,7 @@
                         <th class="text-center whitespace-nowrap">TOTAL TAGIHAN</th>
                         <th class="text-center whitespace-nowrap">TOTAL PEMBAYARAN</th>
                         <th class="text-center whitespace-nowrap">SISA PEMBAYARAN</th>
+                        <th class="text-center whitespace-nowrap">PERSENTASE</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
                     </tr>
                 </thead>
@@ -82,6 +83,11 @@
                                 <td class="text-center">
                                     <p>
                                         Rp. {{ number_format($remainingPayment, 0, ',', '.') }}
+                                    </p>
+                                </td>
+                                <td class="text-center">
+                                    <p>
+                                        {{ $totalPrice > 0 ? number_format(($totalPayment / $totalPrice) * 100, 2) : 0 }}%
                                     </p>
                                 </td>
                                 <td>
