@@ -21,9 +21,13 @@ class DashboardAdminController extends Controller
     public function index(Request $request)
     {
         $agents = User::role('agent')->count();
-        $products = Product::all()->count();
+        $products = Product::whereHas('package.package.period', function ($query) {
+                $query->where('is_active', 1);
+            })->count();
         $orders = Order::where('status', 'pending')->count();
-        $ordersDetail = Order::with('detail')->get();
+        $ordersDetail = Order::where('status', 'accepted')->whereHas('detail.product.package.package.period', function ($query) {
+            $query->where('is_active', 1);
+        })->get();
         $productSales = 0;
         foreach ($ordersDetail as $order) {
             foreach ($order->detail as $detail) {

@@ -108,7 +108,7 @@
                                 </td>
                                 <td>
                                     <p class="text-slate-500 whitespace-nowrap text-center">
-                                        {{ $reward->is_active == 1 ? 'Aktif' : 'Tidak Akrif' }}
+                                        {{ $reward->period->is_active == 1 ? 'Aktif' : 'Tidak Aktif' }}
                                     </p>
                                 </td>
                                 <td class="table-report__action w-56">

@@ -15,14 +15,19 @@ class DashboardController extends Controller
     public function index()
     {
         $agent = Auth::user();
-        $myOrders = Order::where('agent_id', $agent->id)->where('status', 'accepted')->count();
+        $ordersCount = Order::where('agent_id', $agent->id)->where('status', 'accepted')->whereHas('detail.product.package.package.period', function ($query) {
+            $query->where('is_active', 1);
+        })->count();
+        $myOrders = Order::where('agent_id', $agent->id)->where('status', 'accepted')->whereHas('detail.product.package.package.period', function ($query) {
+            $query->where('is_active', 1);
+        })->get();
         $subAgents = SubAgent::where('agent_id', $agent->id)->count();
         $totalPriceOrder = 0;
         $totalDeposit = 0;
         $totalProduct = 0;
 
         //total price order
-        foreach ($agent->order as $order) {
+        foreach ($myOrders as $order) {
             if ($order->status == 'accepted') {
                 $totalPriceOrder += $order->total_price;
 
@@ -39,7 +44,8 @@ class DashboardController extends Controller
         }
 
         $activeRewards = Reward::whereHas('period', function ($query) {
-            $query->where('start_date', '<=', now())->where('end_date', '>=', now());
+            // $query->where('start_date', '<=', now())->where('end_date', '>=', now());
+            $query->where('is_active', 1);
         })->orderBy('target_qty', 'desc')->get();
 
         $agentRewardTitle = 'Tidak ada reward';
@@ -51,9 +57,6 @@ class DashboardController extends Controller
             }
         }
         
-
-
-
         $datas[] = [
             'agent_name' => $agent->agentProfile->name,
             'total_price_order' => $totalPriceOrder,
@@ -64,7 +67,6 @@ class DashboardController extends Controller
             'reward' => $agentRewardTitle,
         ];
 
-
         if (is_array($datas)) {
             $totalPriceOrderAll = array_sum(array_column($datas, 'total_price_order'));
             $totalDepositAll = array_sum(array_column($datas, 'total_deposit'));
@@ -73,7 +75,7 @@ class DashboardController extends Controller
         }
 
         $stats = [
-            'totalOrder' => $myOrders,
+            'totalOrder' => $ordersCount,
             'totalPriceOrder' => $totalPriceOrderAll,
             'totalDeposit' => $totalDepositAll,
             'totalRemaining' => $totalRemainingAll,
