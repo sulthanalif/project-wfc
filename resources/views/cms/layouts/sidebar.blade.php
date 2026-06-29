@@ -137,7 +137,7 @@
             </li>
             @hasrole('finance_admin|super_admin')
                 <li>
-                    <a href="javascript:;" class="side-menu @if (Route::is('income*') || Route::is('spending*') || Route::is('procurement*') || Route::is('type-spending.index')) side-menu--active @endif">
+                    <a href="javascript:;" class="side-menu @if (Route::is('cash-flow*') || Route::is('income*') || Route::is('loan*') || Route::is('spending*') || Route::is('procurement*') || Route::is('type-spending.index')) side-menu--active @endif">
                         <div class="side-menu__icon"> <i data-lucide="dollar-sign"></i> </div>
                         <div class="side-menu__title">
                             Keuangan
@@ -278,6 +278,13 @@
                                 <div class="side-menu__title"> Sub Agen </div>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('user.index') }}"
+                                class="side-menu @if (Route::is('user*') || Route::is('getAdministration')) side-menu--active @endif">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Users </div>
+                            </a>
+                        </li>
                         @hasrole('super_admin')
                         <li>
                             <a href="{{ route('tutorial.index') }}"
@@ -287,16 +294,9 @@
                             </a>
                         </li>
                         @endhasrole
-                        <li>
-                            <a href="{{ route('user.index') }}"
-                                class="side-menu @if (Route::is('user*') || Route::is('getAdministration')) side-menu--active @endif">
-                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="side-menu__title"> Users </div>
-                            </a>
-                        </li>
                     </ul>
                 </li>
-                @hasrole('super_admin')
+                @hasrole('super_admin|admin')
                     <li>
                         <a href="javascript:;" class="side-menu @if (Route::is('landingpage*')) side-menu--active @endif">
                             <div class="side-menu__icon"> <i data-lucide="settings"></i> </div>
@@ -344,7 +344,7 @@
                                 <a href="{{ route('landingpage.contact') }}"
                                     class="side-menu {{ Route::is('landingpage.contact') ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="side-menu__title"> Contact </div>
+                                    <div class="side-menu__title"> Kontak </div>
                                 </a>
                             </li>
                         </ul>

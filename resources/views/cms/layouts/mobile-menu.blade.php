@@ -61,45 +61,29 @@
                     <a href="javascript:;" class="menu @if (Route::is('totalDeposit') ||
                             Route::is('rproductDetail') ||
                             Route::is('ragentOrder') ||
+                            Route::is('ragentReward') ||
+                            Route::is('stockSubProduct') ||
                             Route::is('instalment') ||
-                            Route::is('requirement') ||
-                            Route::is('stockSubProduct')) menu--active @endif">
+                            Route::is('daily') ||
+                            Route::is('requirement')) menu--active @endif">
                         <div class="menu__icon"> <i data-lucide="file-text"></i> </div>
                         <div class="menu__title"> Laporan <i data-lucide="chevron-down" class="menu__sub-icon "></i></div>
                     </a>
                     <ul class="@if (Route::is('totalDeposit') ||
                             Route::is('rproductDetail') ||
-                            Route::is('instalment') ||
                             Route::is('ragentOrder') ||
-                            Route::is('requirement') ||
-                            Route::is('stockSubProduct')) menu__sub-open @endif">
-                        {{-- <li>
-                            <a href="javascript:;" class="menu">
+                            Route::is('ragentReward') ||
+                            Route::is('stockSubProduct') ||
+                            Route::is('instalment') ||
+                            Route::is('daily') ||
+                            Route::is('requirement')) menu__sub-open @endif">
+                        <li>
+                            <a href="{{ route('daily') }}"
+                                class="menu {{ Route::is('daily') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Setoran <i data-lucide="chevron-down" class="menu__sub-icon "></i>
-                                </div>
+                                <div class="menu__title"> Harian </div>
                             </a>
-                            <ul class="">
-                                <li>
-                                    <a href="#" class="menu">
-                                        <div class="menu__icon"> <i data-lucide="zap"></i> </div>
-                                        <div class="menu__title">Total Cicilan</div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="menu">
-                                        <div class="menu__icon"> <i data-lucide="zap"></i> </div>
-                                        <div class="menu__title">Rincian Cicilan</div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="menu">
-                                        <div class="menu__icon"> <i data-lucide="zap"></i> </div>
-                                        <div class="menu__title">Rincian Perpaket</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li> --}}
+                        </li>
                         <li>
                             <a href="{{ route('totalDeposit') }}"
                                 class="menu {{ Route::is('totalDeposit') ? 'menu--active' : '' }}">
@@ -112,6 +96,13 @@
                                 class="menu {{ Route::is('rproductDetail') ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="menu__title"> Perpaket </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('ragentReward') }}"
+                                class="menu {{ Route::is('ragentReward') ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="menu__title"> Reward Agen </div>
                             </a>
                         </li>
                         <li>
@@ -216,6 +207,9 @@
                                 Route::is('sub-product*') ||
                                 Route::is('sub-agent*') ||
                                 Route::is('supplier*') ||
+                                Route::is('rewards*') ||
+                                Route::is('tutorial*') ||
+                                Route::is('bank-owner*') ||
                                 Route::is('getAdministration')) menu--active @endif">
                             <div class="menu__icon"> <i data-lucide="box"></i> </div>
                             <div class="menu__title"> Master <i data-lucide="chevron-down" class="menu__sub-icon "></i>
@@ -228,6 +222,9 @@
                                 Route::is('sub-product*') ||
                                 Route::is('sub-agent*') ||
                                 Route::is('supplier*') ||
+                                Route::is('rewards*') ||
+                                Route::is('tutorial*') ||
+                                Route::is('bank-owner*') ||
                                 Route::is('getAdministration')) menu__sub-open @endif">
                             <li>
                                 <a href="{{ route('sub-product.index') }}"
@@ -258,6 +255,21 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="{{ route('rewards.index') }}"
+                                    class="menu {{ Route::is('rewards*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Reward </div>
+                                </a>
+                            </li>
+                            </li>
+                            <li>
+                                <a href="{{ route('bank-owner.index') }}"
+                                    class="menu {{ Route::is('bank-owner*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Bank </div>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('supplier.index') }}"
                                     class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
@@ -278,9 +290,18 @@
                                     <div class="menu__title"> Users </div>
                                 </a>
                             </li>
+                            @hasrole('super_admin')
+                            <li>
+                                <a href="{{ route('tutorial.index') }}"
+                                    class="menu @if (Route::is('tutorial*') || Route::is('getAdministration')) menu--active @endif">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Tutorials </div>
+                                </a>
+                            </li>
+                            @endhasrole
                         </ul>
                     </li>
-                    @hasrole('super_admin')
+                    @hasrole('super_admin|admin')
                         <li>
                             <a href="javascript:;" class="menu @if (Route::is('landingpage*')) menu--active @endif">
                                 <div class="menu__icon"> <i data-lucide="settings"></i> </div>
