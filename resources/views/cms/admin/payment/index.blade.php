@@ -6,11 +6,12 @@
     <h2 class="grid grid-cols-12 mt-12">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap">
             <h2 class="w-auto relative text-lg font-medium">
-            Pembayaran Paket
+                Pembayaran Paket
             </h2>
             <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
                 @hasrole('admin|super_admin')
-                    <a href="{{ route('payment.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4" data-lucide="download"></i> Export</a>
+                    <a href="{{ route('payment.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
+                            data-lucide="download"></i> Export</a>
                 @endhasrole
             </div>
         </div>
@@ -76,12 +77,18 @@
                                     $hasPending = $order->contains(function ($o) {
                                         return $o->payment_status === 'pending';
                                     });
+                                    $firstDetail = $order->first()?->detail->first();
+                                    $period = $firstDetail?->product?->package?->package?->period;
+                                    $accessDate = $period?->access_date
+                                        ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
+                                        : null;
                                 @endphp
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td>
-                                    <a class="text-slate-500 flex items-center mr-3" href="{{ route('payment.show', ['user' => $order->first()->agent_id])}}"> <i
+                                    <a class="text-slate-500 flex items-center mr-3"
+                                        href="{{ route('payment.show', ['user' => $order->first()->agent_id]) }}"> <i
                                             data-lucide="external-link" class="w-4 h-4 mr-2"></i>
                                         {{ $order->first()->agent->agentProfile->name }} </a>
                                 </td>
@@ -115,6 +122,13 @@
                                     @else
                                         <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
                                                 class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
+                                    @endif
+                                    @if ($order->contains(function ($item) { return $item->payment_status !== 'paid'; }) && $accessDate !== null)
+                                        @if ($accessDate < 0)
+                                            <span class="text-danger text-sm capitalize">lebih {{ abs($accessDate) }} hari</span>
+                                        @elseif ($accessDate <= 30)
+                                            <span class="text-warning text-sm capitalize">{{ $accessDate }} hari lagi</span>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>

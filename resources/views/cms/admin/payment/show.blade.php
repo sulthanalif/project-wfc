@@ -8,7 +8,8 @@
             Pembayaran Paket #{{ $user->agentProfile->name }}
         </h2>
         @hasrole('admin|super_admin')
-            <a href="{{ route('payment.show', ['user' => $user->id, 'export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4" data-lucide="download"></i> Export</a>
+            <a href="{{ route('payment.show', ['user' => $user->id, 'export' => 'true']) }}" class="btn btn-sm btn-primary"><i
+                    class="w-4 h-4" data-lucide="download"></i> Export</a>
         @endhasrole
         <a href="{{ route('payment.index') }}" class="btn px-2 box"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
     </div>
@@ -64,14 +65,19 @@
                                     $totalPrice = $order->total_price;
                                     $totalPayment = $order->payment()->where('status', 'accepted')->sum('pay');
                                     $remainingPayment = $totalPrice - $totalPayment;
+                                    $period = $order->detail->first()?->product?->package?->package?->period;
+                                    $accessDate = $period->access_date
+                                        ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
+                                        : null;
                                 @endphp
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('payment.detail', ['user' => $user->id, 'order' => $order->id])}}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $order->order_number }} </a>
+                                        href="{{ route('payment.detail', ['user' => $user->id, 'order' => $order->id]) }}">
+                                        <i data-lucide="external-link" class="w-4 h-4 mr-2"></i> {{ $order->order_number }}
+                                    </a>
                                 </td>
                                 <td class="text-center">
                                     <p>
@@ -103,6 +109,13 @@
                                     @else
                                         <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
                                                 class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
+                                    @endif
+                                    @if ($order->payment_status !== 'paid' && $accessDate !== null)
+                                        @if ($accessDate < 0)
+                                            <span class="text-danger text-sm capitalize">lebih {{ abs($accessDate) }} hari</span>
+                                        @elseif ($accessDate <= 30)
+                                            <span class="text-warning text-sm capitalize">{{ $accessDate }} hari lagi</span>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>

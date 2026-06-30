@@ -60,6 +60,10 @@
                                     $totalPrice = $order->total_price;
                                     $totalPayment = $order->payment()->where('status', 'accepted')->sum('pay');
                                     $remainingPayment = $totalPrice - $totalPayment;
+                                    $period = $order->detail->first()?->product?->package?->package?->period;
+                                    $accessDate = $period->access_date
+                                        ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
+                                        : null;
                                 @endphp
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
@@ -100,6 +104,13 @@
                                     @else
                                         <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
                                                 class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
+                                    @endif
+                                    @if ($order->payment_status !== 'paid' && $accessDate !== null)
+                                        @if ($accessDate < 0)
+                                            <span class="text-danger text-sm capitalize">lebih {{ abs($accessDate) }} hari</span>
+                                        @elseif ($accessDate <= 30)
+                                            <span class="text-warning text-sm capitalize">{{ $accessDate }} hari lagi</span>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>

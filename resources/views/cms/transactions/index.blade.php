@@ -10,7 +10,8 @@
             </h2>
             <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
                 @hasrole('admin|super_admin')
-                    <a href="{{ route('order.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4" data-lucide="download"></i> Export</a>
+                    <a href="{{ route('order.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
+                            data-lucide="download"></i> Export</a>
                 @endhasrole
                 @hasrole('admin|super_admin')
                     <a href="{{ route('countAll') }}" class="btn btn-sm btn-primary">Hitung Ulang Pesanan</a>
@@ -34,11 +35,13 @@
             <div class="w-auto relative text-slate-500 mt-2 lg:mt-0">
                 <select id="records_per_status" class="form-control box">
                     <option value="all" {{ request()->get('status') == 'all' ? 'selected' : '' }}>All</option>
-                    <option value="accepted" {{ request()->get('status') == "accepted" ? 'selected' : '' }}>Diterima</option>
-                    <option value="stop" {{ request()->get('status') == "stop" ? 'selected' : '' }}>Mundur</option>
-                    <option value="pending" {{ request()->get('status') == "pending" ? 'selected' : '' }}>Pending</option>
-                    <option value="reject" {{ request()->get('status') == "reject" ? 'selected' : '' }}>Ditolak</option>
-                    <option value="canceled" {{ request()->get('status') == "canceled" ? 'selected' : '' }}>Dibatalkan</option>
+                    <option value="accepted" {{ request()->get('status') == 'accepted' ? 'selected' : '' }}>Diterima
+                    </option>
+                    <option value="stop" {{ request()->get('status') == 'stop' ? 'selected' : '' }}>Mundur</option>
+                    <option value="pending" {{ request()->get('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="reject" {{ request()->get('status') == 'reject' ? 'selected' : '' }}>Ditolak</option>
+                    <option value="canceled" {{ request()->get('status') == 'canceled' ? 'selected' : '' }}>Dibatalkan
+                    </option>
                 </select>
             </div>
 
@@ -83,6 +86,12 @@
                         </tr>
                     @else
                         @foreach ($orders as $order)
+                            @php
+                                $period = $order->detail->first()?->product?->package?->package?->period;
+                                $accessDate = $period->access_date
+                                    ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
+                                    : null;
+                            @endphp
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
@@ -131,6 +140,13 @@
                                         <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
                                                 class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
                                     @endif
+                                    @if ($order->payment_status !== 'paid' && $accessDate !== null)
+                                        @if ($accessDate < 0)
+                                            <span class="text-danger text-sm capitalize">lebih {{ abs($accessDate) }} hari</span>
+                                        @elseif ($accessDate <= 30)
+                                            <span class="text-warning text-sm capitalize">{{ $accessDate }} hari lagi</span>
+                                        @endif
+                                    @endif
                                 </td>
                                 <td>
 
@@ -149,7 +165,7 @@
                                 </td>
                                 @hasrole('super_admin|admin')
                                     <td class="table-report__action w-56">
-                                        @if ($order->payment_status == 'paid')
+                                        @if ($order->payment_status === 'paid')
                                             <div class="flex items-center justify-center text-success"> <i
                                                     data-lucide="check-square" class="w-4 h-4 mr-2"></i> </div>
                                         @elseif ($order->status === 'canceled')
@@ -162,7 +178,8 @@
                                         @else
                                             @if ($order->payment_status !== 'pending')
                                                 <div class="flex justify-center items-center">
-                                                    <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                                    <a class="flex items-center mr-3" href="javascript:;"
+                                                        data-tw-toggle="modal"
                                                         data-tw-target="#change-confirmation-modal{{ $order->id }}">
                                                         <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
                                                 </div>
