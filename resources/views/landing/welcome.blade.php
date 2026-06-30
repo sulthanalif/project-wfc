@@ -225,6 +225,101 @@
     </section>
     <!-- end product -->
 
+    <!-- benefit section -->
+    <section class="section testimonial">
+        <!-- start container -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <div class="title text-center mb-5">
+                        <h6 class="mb-0 fw-bold text-primary">Benefit</h6>
+                        <h2 class="f-40">{{ $benefit->title }}</h2>
+                        <p class="text-muted">{{ $benefit->subtitle }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-start">
+                <div class="col-lg-6 ">
+                    <h6 class="mb-0 fw-bold text-primary">Agen</h6>
+                    <h2 class="fw-bold">Keuntungan Menjadi Agen</h2>
+                    <div class="text-muted mt-4">
+                        {!! $benefit->benefit_agen !!}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h6 class="mb-0 fw-bold text-primary">Mitra</h6>
+                    <h2 class="fw-bold">Keuntungan Menjadi Mitra</h2>
+                    <div class="text-muted mt-4">
+                        {!! $benefit->benefit_mitra !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end container -->
+    </section>
+    <!-- end section -->
+
+    <!-- start reward -->
+    <section class="section testimonial">
+        <!-- start container -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <div class="title text-center mb-5">
+                        <h6 class="mb-0 fw-bold text-primary">Reward</h6>
+                        <h2 class="f-40">Bonus</h2>
+                        <p class="text-muted">Bonus yang bisa didapatkan</p>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="testi-slider" id="testi-slider">
+                        @if ($rewards->isEmpty())
+                            <div class="item">
+                                <div class="testi-box position-relative overflow-hidden justify-content-center">
+                                    <h4 class="text-center fw-bold p-5">Belum ada reward</h4>
+                                </div>
+                            </div>
+                        @else
+                            @foreach ($rewards as $reward)
+                                <div class="item">
+                                    <div class="testi-box position-relative overflow-hidden">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-5 text-center px-1">
+                                                @if ($reward->image === 'image.jpg' || $reward->image == null)
+                                                    <img src="{{ asset('assets/logo2.png') }}" alt="Gambar Produk"
+                                                        class="img-fluid">
+                                                @else
+                                                    <img src="{{ route('getImage', ['path' => 'reward', 'imageName' => $reward->image]) }}"
+                                                        alt="" class="img-fluid object-fit-contain"
+                                                        style="max-height: 200px">
+                                                @endif
+                                            </div>
+                                            <div class="col-md-7">
+                                                <div class="p-4">
+                                                    <div class="border-bottom border-primary pb-1">
+                                                        <h5 class="fw-bold f-24 lh-sm">
+                                                            {{ $reward->title }}<br>
+                                                            <span class="text-muted fw-normal f-16">(Target: {{ $reward->target_qty }})</span>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="text-muted mt-2">
+                                                        {!! $reward->description !!}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end container -->
+    </section>
+    <!-- end reward -->
+
     <!-- slider section -->
     <section class="section app-slider bg-light" id="app">
         <!-- start container -->
@@ -352,7 +447,6 @@
         </div>
         <!-- end container -->
     </section>
-
     <!-- end testimonial -->
 
     <!-- contact section -->

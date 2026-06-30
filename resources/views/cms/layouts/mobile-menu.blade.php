@@ -331,10 +331,10 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('supplier.index') }}"
-                                        class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
+                                    <a href="{{ route('landingpage.benefit') }}"
+                                        class="menu {{ Route::is('landingpage.benefit') ? 'menu--active' : '' }}">
                                         <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                        <div class="menu__title"> Supplier </div>
+                                        <div class="menu__title"> Benefit </div>
                                     </a>
                                 </li>
                                 <li>

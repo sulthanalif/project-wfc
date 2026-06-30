@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\Landingpage\BenefitController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\ReviewController;
+// use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\Landingpage\HeaderController;
 use App\Http\Controllers\Admin\Landingpage\ContactController;
 use App\Http\Controllers\Admin\Landingpage\GalleryController;
@@ -16,6 +17,10 @@ Route::put('/landing-page/header/{header}', [HeaderController::class, 'update'])
 //profile
 Route::get('/landing-page/profile', [ProfileController::class, 'index'])->name('landingpage.profile');
 Route::put('/landing-page/profile/{profile}', [ProfileController::class, 'update'])->name('landingpage.profile.update');
+
+//benefit
+Route::get('/landing-page/benefit', [BenefitController::class, 'index'])->name('landingpage.benefit');
+Route::put('/landing-page/benefit/{benefit}', [BenefitController::class, 'update'])->name('landingpage.benefit.update');
 
 //detail profile
 Route::get('/landing-page/detail-profile', [DetailProfileController::class, 'index'])->name('landingpage.detailProfile');

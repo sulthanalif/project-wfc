@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Benefit;
 use App\Models\User;
 use App\Models\Header;
 use App\Models\Contact;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\DetailProfile;
 use App\Models\Review;
 use App\Models\ReviewPage;
+use App\Models\Reward;
 
 class LandingpageController extends Controller
 {
@@ -21,9 +23,13 @@ class LandingpageController extends Controller
         $products = Product::paginate(5);
         $reviewPage = ReviewPage::first();
         $reviews = Review::where('publish', 1)->get();
+        $rewards = Reward::whereHas('period', function ($query) {
+            $query->where('is_active', 1);
+        })->get();
 
         $header = Header::first();
         $profile = Profile::first();
+        $benefit = Benefit::first();
         $gallery = Gallery::first();
         $contact = Contact::first();
 
@@ -31,8 +37,10 @@ class LandingpageController extends Controller
             'products',
             'reviewPage',
             'reviews',
+            'rewards',
             'header',
             'profile',
+            'benefit',
             'gallery',
             'contact'
         ));

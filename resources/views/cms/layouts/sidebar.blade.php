@@ -327,6 +327,13 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="{{ route('landingpage.benefit') }}"
+                                    class="side-menu {{ Route::is('landingpage.benefit') ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="side-menu__title"> Benefit </div>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('landingpage.gallery') }}"
                                     class="side-menu {{ Route::is('landingpage.gallery') ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>

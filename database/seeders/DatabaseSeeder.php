@@ -14,17 +14,18 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             //landingpage
-            HeaderSeeder::class,
-            ProfileSeeder::class,
-            DetailProfileSeeder::class,
-            GallerySeeder::class,
-            ContactSeeder::class,
-            ReviewPageSeeder::class,
+            // HeaderSeeder::class,
+            // ProfileSeeder::class,
+            // DetailProfileSeeder::class,
+            // GallerySeeder::class,
+            // ContactSeeder::class,
+            // ReviewPageSeeder::class,
+            BenefitSeeder::class,
 
-            RoleAndPermissionSeeder::class,
-            AdminSeeder::class,
-            SpendingTypeSeeder::class,
-            BankOwnerSeeder::class,
+            // RoleAndPermissionSeeder::class,
+            // AdminSeeder::class,
+            // SpendingTypeSeeder::class,
+            // BankOwnerSeeder::class,
             // UserSeeder::class,
             // ProductPackageSeeder::class
         ]);
