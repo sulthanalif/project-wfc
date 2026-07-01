@@ -20,15 +20,40 @@
                     </div>
                 </a>
                 <ul class="@if (Route::is('order*') || Route::is('distribution*') || Route::is('payment*') || Route::is('return*')) side-menu__sub-open @endif">
-                    @if(Auth::user()->hasRole('super_admin|admin'))
                     <li>
-                        <a href="{{ route('order.index') }}"
-                            class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
+                        <a href="javascript:;" class="side-menu @if (Route::is('order*')) side-menu--active @endif">
                             <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Pesanan </div>
+                            <div class="side-menu__title">
+                                Pesanan
+                                <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                            </div>
                         </a>
+                        <ul class="@if (Route::is('order*')) side-menu__sub-open @endif">
+                            <li>
+                                <a href="{{ route('order.full.index') }}"
+                                    class="side-menu {{ Route::is('order.full*') ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-lucide="chevron-right"></i> </div>
+                                    <div class="side-menu__title"> Full </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('order.aman.index') }}"
+                                    class="side-menu {{ Route::is('order.aman*') ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-lucide="chevron-right"></i> </div>
+                                    <div class="side-menu__title"> TItik Aman </div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    @endif
+                    {{-- @if (Auth::user()->hasRole('super_admin|admin'))
+                        <li>
+                            <a href="{{ route('order.index') }}"
+                                class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Pesanan </div>
+                            </a>
+                        </li>
+                    @endif --}}
                     <li>
                         <a href="{{ route('payment.index') }}"
                             class="side-menu {{ Route::is('payment*') ? 'side-menu--active' : '' }}">
@@ -36,21 +61,21 @@
                             <div class="side-menu__title"> Pembayaran </div>
                         </a>
                     </li>
-                    @if(Auth::user()->hasRole('super_admin|admin'))
-                    <li>
-                        <a href="{{ route('distribution.index') }}"
-                            class="side-menu {{ Route::is('distribution*') ? 'side-menu--active' : '' }}">
-                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Pendistribusian </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('return.index') }}"
-                            class="side-menu {{ Route::is('return*') ? 'side-menu--active' : '' }}">
-                            <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="side-menu__title"> Pengembalian </div>
-                        </a>
-                    </li>
+                    @if (Auth::user()->hasRole('super_admin|admin'))
+                        <li>
+                            <a href="{{ route('distribution.index') }}"
+                                class="side-menu {{ Route::is('distribution*') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Pendistribusian </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('return.index') }}"
+                                class="side-menu {{ Route::is('return*') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Pengembalian </div>
+                            </a>
+                        </li>
                     @endif
                 </ul>
             </li>
@@ -137,14 +162,24 @@
             </li>
             @hasrole('finance_admin|super_admin')
                 <li>
-                    <a href="javascript:;" class="side-menu @if (Route::is('cash-flow*') || Route::is('income*') || Route::is('loan*') || Route::is('spending*') || Route::is('procurement*') || Route::is('type-spending.index')) side-menu--active @endif">
+                    <a href="javascript:;" class="side-menu @if (Route::is('cash-flow*') ||
+                            Route::is('income*') ||
+                            Route::is('loan*') ||
+                            Route::is('spending*') ||
+                            Route::is('procurement*') ||
+                            Route::is('type-spending.index')) side-menu--active @endif">
                         <div class="side-menu__icon"> <i data-lucide="dollar-sign"></i> </div>
                         <div class="side-menu__title">
                             Keuangan
                             <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                         </div>
                     </a>
-                    <ul class="@if (Route::is('cash-flow*') || Route::is('income*') || Route::is('procurement*') || Route::is('loan*') || Route::is('spending*') || Route::is('type-spending.index')) side-menu__sub-open @endif">
+                    <ul class="@if (Route::is('cash-flow*') ||
+                            Route::is('income*') ||
+                            Route::is('procurement*') ||
+                            Route::is('loan*') ||
+                            Route::is('spending*') ||
+                            Route::is('type-spending.index')) side-menu__sub-open @endif">
                         <li>
                             <a href="{{ route('cash-flow.index') }}"
                                 class="side-menu {{ Route::is('cash-flow*') ? 'side-menu--active' : '' }}">
@@ -286,13 +321,13 @@
                             </a>
                         </li>
                         @hasrole('super_admin')
-                        <li>
-                            <a href="{{ route('tutorial.index') }}"
-                                class="side-menu @if (Route::is('tutorial*')) side-menu--active @endif">
-                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="side-menu__title"> Tutorials </div>
-                            </a>
-                        </li>
+                            <li>
+                                <a href="{{ route('tutorial.index') }}"
+                                    class="side-menu @if (Route::is('tutorial*')) side-menu--active @endif">
+                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="side-menu__title"> Tutorials </div>
+                                </a>
+                            </li>
                         @endhasrole
                     </ul>
                 </li>

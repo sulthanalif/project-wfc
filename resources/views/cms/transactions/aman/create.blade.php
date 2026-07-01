@@ -1,11 +1,11 @@
 @extends('cms.layouts.app', [
-    'title' => 'Tambah Pesanan',
+    'title' => 'Tambah Pesanan Titik Aman',
 ])
 
 @section('content')
     <div class="intro-y flex items-center mt-8">
         <h2 class="text-lg font-medium mr-auto">
-            Tambah Pesanan
+            Tambah Pesanan Titik Aman
         </h2>
     </div>
 
@@ -13,16 +13,32 @@
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
             <div class="intro-y box p-5">
-                <form id="orderForm" action="{{ route('order.store') }}" method="post">
+                <form id="orderForm" action="{{ route('order.full.store') }}" method="post">
                     @csrf
                     <div>
                         <label for="order_number" class="form-label">No. Pesanan <span class="text-danger">*</span></label>
                         <input id="order_number" name="order_number" value="{{ $orderNumber }}" type="text"
                             class="form-control w-full" placeholder="Masukkan Nama Lengkap Sub Agent" readonly>
                     </div>
-
-                    <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
-                    <input type="date" name="order_date" value="{{ date('Y-m-d') }}" hidden>
+                    @hasrole('super_admin|admin')
+                        <div class="mt-3">
+                            <label for="agent_id" class="form-label">Dari Agent <span class="text-danger">*</span></label>
+                            <select class="tom-select mt-2 sm:mr-2" id="agent_id" name="agent_id" required>
+                                <option value="">Pilih...</option>
+                                @foreach ($agents as $agent)
+                                    <option value="{{ $agent->id }}">{{ $agent->agentProfile->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mt-3">
+                            <label for="order_date" class="form-label">Tanggal Pesanan <span
+                                    class="text-danger">*</span></label>
+                            <input id="order_date" name="order_date" type="date" class="form-control w-full">
+                        </div>
+                    @endhasrole
+                    @hasrole('agent')
+                        <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
+                    @endhasrole
 
                     <div class="mt-3">
                         <label for="package_id" class="form-label">Pilih Paket <span class="text-danger">*</span></label>
@@ -87,6 +103,11 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
+        const currentDate = '{{ now()->format('Y-m-d') }}'; // Blade templating to get current date
+        const dateInput = document.getElementById('order_date');
+
+        dateInput.value = currentDate;
+
         // Constants
         const INITIAL_PRICE = 0;
         const INITIAL_QUANTITY = 0;
@@ -125,12 +146,13 @@
             @foreach ($packages as $package)
                 if ('{{ $package->id }}' == packageId) {
                     @foreach ($package->product as $product)
-                        var option = document.createElement('option');
-                        option.value = '{{ $product->product->id }}';
-                        option.textContent =
-                            "{{ $product->product->name }} {{ $product->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - Rp. {{ number_format($product->product->price, 0, ',', '.') }}/hari";
-                        option.dataset.harga = '{{ $product->product->total_price }}';
-                        productSelect.tomselect.addOption(option);
+                        @if(optional($product->product)->is_safe_point == 1)
+                            var option = document.createElement('option');
+                            option.value = '{{ $product->product->id }}';
+                            option.textContent = "{{ $product->product->name }} (Titik Aman) - Rp. {{ number_format($product->product->total_price, 0, ',', '.') }}";
+                            option.dataset.harga = '{{ $product->product->total_price }}';
+                            productSelect.tomselect.addOption(option);
+                        @endif
                     @endforeach
                 }
             @endforeach
@@ -146,14 +168,35 @@
 
             const itemId = selectedOption.value;
             const itemName = selectedOption.textContent.trim().split(' - ')[0];
-            const itemPrice = parseInt(selectedOption.dataset.harga);
-            const itemQuantity = 1;
-            const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
-            $('.transaksiItem').append(newRow);
+            const harga = selectedOption.textContent.trim().split(' - ')[1].replace(/[^0-9]/g, '');
+            const itemPrice = parseInt(harga, 10);
 
-            updateTotals(itemPrice);
-            qty += itemQuantity;
-            $('.qty').html(qty.toString());
+            // Check if the product already exists in the list
+            let existingRow = null;
+            $('.transaksiItem tr').each(function() {
+                const productId = $(this).find('#product-id').val();
+                const subAgentSelected = $(this).find('.sub_agent_item').val();
+                if (productId === itemId && !subAgentSelected) {
+                    existingRow = $(this);
+                    return false; // break the loop
+                }
+            });
+
+            if (existingRow) {
+                // Product exists and no sub-agent selected, increment quantity
+                const quantityInput = existingRow.find('.quantityInput');
+                const newQuantity = parseInt(quantityInput.val()) + 1;
+                quantityInput.val(newQuantity).trigger('change');
+            } else {
+                // Product does not exist or sub-agent is selected, add new row
+                const itemQuantity = 1;
+                const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
+                $('.transaksiItem').append(newRow);
+
+                updateTotals(itemPrice);
+                qty += itemQuantity;
+                $('.qty').html(qty.toString());
+            }
         }
 
         function createTableRow(id, name, price, quantity) {
@@ -188,18 +231,22 @@
             subAgentSelect.html('<option disabled selected>Pilih Sub Agent...</option>');
 
             // Assuming the agents data is embedded directly in the script
-            const agents = [{
-                id: '{{ $agents->id }}',
-                subAgents: [
-                    @foreach ($agents->subAgent as $subAgent)
-                        {
-                            id: '{{ $subAgent->id }}',
-                            name: '{{ $subAgent->name }}',
-                            phone_number: '{{ $subAgent->phone_number }}'
-                        },
-                    @endforeach
-                ]
-            }, ];
+            const agents = [
+                @foreach ($agents as $agent)
+                    {
+                        id: '{{ $agent->id }}',
+                        subAgents: [
+                            @foreach ($agent->subAgent as $subAgent)
+                                {
+                                    id: '{{ $subAgent->id }}',
+                                    name: '{{ $subAgent->name }}',
+                                    phone_number: '{{ $subAgent->phone_number }}'
+                                },
+                            @endforeach
+                        ]
+                    },
+                @endforeach
+            ];
 
             const selectedAgent = agents.find(agent => agent.id === agentId);
             if (selectedAgent) {
