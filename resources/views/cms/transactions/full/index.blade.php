@@ -16,6 +16,9 @@
                 @hasrole('admin|super_admin')
                     <a href="{{ route('countAll') }}" class="btn btn-sm btn-primary">Hitung Ulang Pesanan</a>
                 @endhasrole
+                @hasrole('admin|super_admin')
+                    <button type="button" id="bulkConvertBtn" class="btn btn-sm btn-warning hidden">Ubah ke Titik Aman</button>
+                @endhasrole
             </div>
         </div>
     </div>
@@ -65,6 +68,9 @@
             <table class="table table-report -mt-2">
                 <thead>
                     <tr>
+                        @hasrole('admin|super_admin')
+                            <th class="text-center whitespace-nowrap"><input type="checkbox" id="selectAllOrders"></th>
+                        @endhasrole
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">NOMOR PESANAN</th>
                         @hasrole('super_admin|admin')
@@ -93,6 +99,11 @@
                                     : null;
                             @endphp
                             <tr class="intro-x">
+                                @hasrole('admin|super_admin')
+                                    <td class="text-center">
+                                        <input type="checkbox" class="order-checkbox" value="{{ $order->id }}">
+                                    </td>
+                                @endhasrole
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
@@ -290,6 +301,13 @@
         </div>
         <!-- END: Data List -->
 
+        @hasrole('admin|super_admin')
+            <form id="bulkConvertForm" action="{{ route('order.bulkConvertToSafePoint') }}" method="post" class="hidden">
+                @csrf
+                <input type="hidden" name="order_ids" id="orderIdsInput">
+            </form>
+        @endhasrole
+
         <!-- BEGIN: Pagination -->
         @if ($orders instanceof \Illuminate\Pagination\LengthAwarePaginator)
             <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
@@ -303,6 +321,42 @@
 @push('custom-scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const selectAll = document.getElementById('selectAllOrders');
+            const bulkBtn = document.getElementById('bulkConvertBtn');
+            const checkboxes = document.querySelectorAll('.order-checkbox');
+            const form = document.getElementById('bulkConvertForm');
+            const orderIdsInput = document.getElementById('orderIdsInput');
+
+            if (selectAll) {
+                selectAll.addEventListener('change', function() {
+                    checkboxes.forEach(cb => cb.checked = this.checked);
+                    toggleBulkButton();
+                });
+            }
+
+            checkboxes.forEach(cb => cb.addEventListener('change', toggleBulkButton));
+
+            function toggleBulkButton() {
+                const selected = Array.from(checkboxes).some(cb => cb.checked);
+                bulkBtn.classList.toggle('hidden', !selected);
+            }
+
+            if (bulkBtn) {
+                bulkBtn.addEventListener('click', function() {
+                    const selectedIds = Array.from(checkboxes)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+
+                    if (!selectedIds.length) {
+                        alert('Pilih minimal satu pesanan terlebih dahulu.');
+                        return;
+                    }
+
+                    orderIdsInput.value = selectedIds.join(',');
+                    form.submit();
+                });
+            }
+
             document.getElementById('records_per_page').addEventListener('change', function() {
                 const perPage = this.value;
                 const urlParams = new URLSearchParams(window.location.search);

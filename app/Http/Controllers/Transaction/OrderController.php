@@ -331,6 +331,48 @@ class OrderController extends Controller
         }
     }
 
+    public function bulkConvertToSafePoint(Request $request)
+    {
+        $orderIds = array_filter(array_map('trim', explode(',', $request->get('order_ids', ''))));
+
+        if (empty($orderIds)) {
+            return back()->with('error', 'Pilih minimal satu pesanan.');
+        }
+
+        try {
+            DB::transaction(function () use ($orderIds) {
+                foreach ($orderIds as $orderId) {
+                    $order = Order::find($orderId);
+                    if (!$order) {
+                        continue;
+                    }
+
+                    foreach ($order->detail as $detail) {
+                        $product = Product::find($detail->product_id);
+                        if (!$product || !$product->is_safe_point) {
+                            $safePointProduct = Product::where('name', 'like', "%{$product->name}%")
+                                ->where('is_safe_point', true)
+                                ->first();
+
+                            if ($safePointProduct) {
+                                $detail->product_id = $safePointProduct->id;
+                                $detail->sub_price = $safePointProduct->total_price * $detail->qty;
+                                $detail->save();
+                            }
+                        }
+                    }
+
+                    $order->total_price = $order->detail->sum('sub_price');
+                    $order->save();
+                }
+            });
+
+            return back()->with('success', 'Pesanan berhasil diubah ke produk titik aman.');
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+    }
+
     public function getOrderStats()
     {
         try {

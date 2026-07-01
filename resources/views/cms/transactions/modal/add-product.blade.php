@@ -23,7 +23,7 @@
                         <div class="mt-3" id="product_fields" style="display: none;">
                             <label for="product_id_item" class="form-label">Pilih Item <span
                                     class="text-danger">*</span></label>
-                            <select class="form-select mt-2 sm:mr-2" id="product_id_item" name="product_id_item"
+                            <select class="tom-select mt-2 sm:mr-2" id="product_id_item" name="product_id_item"
                                 required>
                             </select>
                             <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
@@ -104,7 +104,10 @@
 
         function populateProducts(packageId) {
             productSelect = document.getElementById('product_id_item');
-            productSelect.innerHTML = '<option disabled>Pilih Item...</option>';
+            if (productSelect.tomselect) {
+                productSelect.tomselect.clear();
+            }
+            productSelect.innerHTML = '<option value="" disabled selected>Pilih Item...</option>';
 
             @foreach ($packages as $package)
                 if ('{{ $package->id }}' == packageId) {
@@ -114,7 +117,7 @@
                         option.textContent =
                             "{{ $product->product->name }} {{ $product->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - Rp. {{ number_format($product->product->price, 0, ',', '.') }}/hari";
                         option.dataset.harga = '{{ $product->product->total_price }}';
-                        productSelect.appendChild(option);
+                        productSelect.tomselect.addOption(option);
                     @endforeach
                 }
             @endforeach

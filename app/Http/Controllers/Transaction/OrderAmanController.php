@@ -30,6 +30,9 @@ class OrderAmanController extends Controller
             ->whereHas('detail.product', function ($query) {
                 $query->where('is_safe_point', true);
             })
+            ->whereDoesntHave('detail.product', function ($query) {
+                $query->where('is_safe_point', false);
+            })
             ->with(['detail.product', 'agent.agentProfile']);
 
         if (ValidateRole::check('agent')) {

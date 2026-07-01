@@ -117,44 +117,20 @@
                     </div>
                     @hasrole('agent')
                         @php
-                            // 1. Cek apakah keranjang kosong (Kondisi "Pengecualian Utama")
                             $isEmptyOrder = $order->detail->isEmpty();
-
-                            // 2. Ambil data periode dengan aman (Null Safe)
-                            // Hamba gunakan ?-> agar tidak error jika null
                             $firstDetail = $order->detail->first();
                             $period = $firstDetail?->product?->package?->package?->period;
 
-                            // 3. Cek Status Periode
                             $isWithinPeriod = false;
-                            if ($period && $period->access_date) {
+                            if ($period?->access_date) {
                                 $isWithinPeriod = \Carbon\Carbon::now()->lessThanOrEqualTo(\Carbon\Carbon::parse($period->access_date));
                             }
 
-                            // 4. Cek Hak Akses User
-                            $hasOpenAccess = Auth::user()->is_open_access;
-
-                            // 5. LOGIKA PENENTU (THE GOLDEN RULE 👑)
-                            $showButton = false;
-
-                            if ($isEmptyOrder) {
-                                // HUKUM 1: Kalau kosong, abaikan semua aturan lain, IZINKAN tambah.
-                                $showButton = true;
-                            } else {
-                                // HUKUM 2: Kalau ada isi, user HARUS punya akses DAN masih dalam periode.
-                                // Jika Access False -> Tombol Hilang (walau periode valid).
-                                // Jika Periode Habis -> Tombol Hilang (walau access true).
-                                // $showButton = $hasOpenAccess && $isWithinPeriod;
-                                $showButton =  $isWithinPeriod;
-                            }
+                            $hasOpenAccess = optional(Auth::user())->is_open_access ?? false;
+                            $canAddProduct = $isEmptyOrder || $hasOpenAccess || $isWithinPeriod;
                         @endphp
 
-                        @if ($showButton)
-                            <a class="flex items-center lg:ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
-                                data-tw-target="#add-product-modal">
-                                <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah
-                            </a>
-                        @elseif($hasOpenAccess && !$showButton)
+                        @if ($canAddProduct)
                             <a class="flex items-center lg:ml-auto text-primary" href="javascript:;" data-tw-toggle="modal"
                                 data-tw-target="#add-product-modal">
                                 <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah

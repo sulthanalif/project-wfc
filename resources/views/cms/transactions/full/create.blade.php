@@ -138,6 +138,9 @@
 
         function populateProducts(packageId) {
             productSelect = document.getElementById('product_id_item');
+            if (productSelect.tomselect) {
+                productSelect.tomselect.clear();
+            }
             productSelect.innerHTML = '<option value="" disabled selected>Pilih Item...</option>';
 
             @foreach ($packages as $package)

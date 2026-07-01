@@ -30,9 +30,6 @@ class OrderFullController extends Controller
             ->whereHas('detail.product', function ($query) {
                 $query->where('is_safe_point', false);
             })
-            ->whereDoesntHave('detail.product', function ($query) {
-                $query->where('is_safe_point', true);
-            })
             ->with(['detail.product', 'agent.agentProfile']);
 
         if (ValidateRole::check('agent')) {
