@@ -15,81 +15,118 @@ class DashboardController extends Controller
     public function index()
     {
         $agent = Auth::user();
-        $ordersCount = Order::where('agent_id', $agent->id)->where('status', 'accepted')->whereHas('detail.product.package.package.period', function ($query) {
-            $query->where('is_active', 1);
-        })->count();
-        $myOrders = Order::where('agent_id', $agent->id)->where('status', 'accepted')->whereHas('detail.product.package.package.period', function ($query) {
-            $query->where('is_active', 1);
-        })->get();
-        $subAgents = SubAgent::where('agent_id', $agent->id)->count();
+        $subAgents = SubAgent::where('agent_id', $agent->id)->get();
+
+        $agentOrders = Order::where('agent_id', $agent->id)
+            ->where('status', 'accepted')
+            ->whereHas('detail.product.package.package.period', function ($query) {
+                $query->where('is_active', 1);
+            })
+            ->whereHas('detail', function ($detailQuery) {
+                $detailQuery->whereNull('sub_agent_id');
+            })
+            ->get();
+
+        $ordersCount = $agentOrders->count();
+
+        $stats = [
+            'totalOrder' => $ordersCount,
+            'totalPriceOrder' => 0,
+            'totalDeposit' => 0,
+            'totalRemaining' => 0,
+            'totalSubAgent' => $subAgents->count(),
+            'totalProduct' => 0,
+            'reward' => 'Tidak ada reward',
+            'reward_image' => '',
+            'reward_data' => [],
+        ];
+
+        $rewardData = [
+            'agent' => $this->buildRewardSummary(
+                optional($agent->agentProfile)->name ?? $agent->email,
+                $agentOrders,
+                fn ($detail) => is_null($detail->sub_agent_id)
+            ),
+        ];
+
+        foreach ($subAgents as $subAgent) {
+            $subAgentOrders = Order::where('status', 'accepted')
+                ->whereHas('detail.product.package.package.period', function ($query) {
+                    $query->where('is_active', 1);
+                })
+                ->whereHas('detail', function ($detailQuery) use ($subAgent) {
+                    $detailQuery->where('sub_agent_id', $subAgent->id);
+                })
+                ->get();
+
+            $rewardData['sub_agents'][] = $this->buildRewardSummary(
+                $subAgent->name,
+                $subAgentOrders,
+                fn ($detail) => (string) $detail->sub_agent_id === (string) $subAgent->id
+            );
+        }
+
+        $stats['totalPriceOrder'] = $rewardData['agent']['total_price_order'];
+        $stats['totalDeposit'] = $rewardData['agent']['total_deposit'];
+        $stats['totalRemaining'] = $rewardData['agent']['total_remaining_payment'];
+        $stats['totalProduct'] = $rewardData['agent']['total_product'];
+        $stats['reward'] = $rewardData['agent']['reward'];
+        $stats['reward_image'] = $rewardData['agent']['reward_image'];
+        $stats['reward_data'] = $rewardData;
+
+        return view('cms.agen.index', compact('stats'));
+    }
+
+    private function buildRewardSummary(string $name, $orders, ?callable $detailFilter = null): array
+    {
         $totalPriceOrder = 0;
         $totalDeposit = 0;
         $totalProduct = 0;
 
-        //total price order
-        foreach ($myOrders as $order) {
-            if ($order->status == 'accepted') {
-                $totalPriceOrder += $order->total_price;
+        foreach ($orders as $order) {
+            if ($order->status !== 'accepted') {
+                continue;
+            }
 
-                //total deposit
-                $payments = $order->payment->where('status', 'accepted');
-                foreach ($payments as $payment) {
-                    $totalDeposit += $payment->pay;
-                }
+            $details = $order->detail;
+            if ($detailFilter) {
+                $details = $details->filter($detailFilter);
+            }
 
-                foreach ($order->detail as $detail) {
-                    $totalProduct += $detail->qty;
-                }
+            foreach ($details as $detail) {
+                $totalPriceOrder += (float) $detail->sub_price;
+                $totalProduct += (int) $detail->qty;
+            }
+
+            foreach ($order->payment->where('status', 'accepted') as $payment) {
+                $totalDeposit += (float) $payment->pay;
             }
         }
 
         $activeRewards = Reward::whereHas('period', function ($query) {
-            // $query->where('start_date', '<=', now())->where('end_date', '>=', now());
             $query->where('is_active', 1);
         })->orderBy('target_qty', 'desc')->get();
 
-        $agentRewardTitle = 'Tidak ada reward';
+        $rewardTitle = 'Tidak ada reward';
+        $rewardImage = '';
+
         foreach ($activeRewards as $reward) {
             if ($totalProduct >= $reward->target_qty) {
-                $agentRewardTitle = $reward->title;
+                $rewardTitle = $reward->title;
                 $rewardImage = $reward->image;
-                break; // <-- Hentikan loop karena reward tertinggi sudah didapat
+                break;
             }
         }
-        
-        $datas[] = [
-            'agent_name' => $agent->agentProfile->name,
+
+        return [
+            'name' => $name,
             'total_price_order' => $totalPriceOrder,
             'total_deposit' => $totalDeposit,
             'total_remaining_payment' => $totalPriceOrder - $totalDeposit,
-            'reward_image' => $rewardImage ?? '',
             'total_product' => $totalProduct,
-            'reward' => $agentRewardTitle,
+            'reward' => $rewardTitle,
+            'reward_image' => $rewardImage,
         ];
-
-        if (is_array($datas)) {
-            $totalPriceOrderAll = array_sum(array_column($datas, 'total_price_order'));
-            $totalDepositAll = array_sum(array_column($datas, 'total_deposit'));
-            $totalRemainingAll = array_sum(array_column($datas, 'total_remaining_payment'));
-            $totalProductAll = array_sum(array_column($datas, 'total_product'));
-        }
-
-        $stats = [
-            'totalOrder' => $ordersCount,
-            'totalPriceOrder' => $totalPriceOrderAll,
-            'totalDeposit' => $totalDepositAll,
-            'totalRemaining' => $totalRemainingAll,
-            'totalSubAgent' => $subAgents,
-            'totalProduct' => $totalProductAll,
-            'reward' => $agentRewardTitle,
-            'reward_image' => $rewardImage ?? '',
-        ];
-
-        // return response()->json([
-        //     'stats' => $stats
-        // ]);
-
-        return view('cms.agen.index', compact('stats'));
     }
 
     public function noActive()

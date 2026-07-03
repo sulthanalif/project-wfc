@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="grid grid-cols-12 gap-6">
-        <div class="col-span-12 2xl:col-span-9">
+        <div class="col-span-12">
             <div class="grid grid-cols-12 gap-6">
                 <!-- BEGIN: General Report -->
                 <div class="col-span-12 mt-8">
@@ -31,7 +31,8 @@
                                     <div class="flex">
                                         <i data-lucide="credit-card" class="report-box__icon text-success"></i>
                                     </div>
-                                    <div class="text-2xl font-medium leading-8 mt-6">Rp. {{ number_format($stats['totalDeposit'], 0, ',', '.') }}</div>
+                                    <div class="text-2xl font-medium leading-8 mt-6">Rp.
+                                        {{ number_format($stats['totalDeposit'], 0, ',', '.') }}</div>
                                     <div class="text-base text-slate-500 mt-1">Total Pembayaran</div>
                                 </div>
                             </div>
@@ -42,7 +43,8 @@
                                     <div class="flex">
                                         <i data-lucide="credit-card" class="report-box__icon text-danger"></i>
                                     </div>
-                                    <div class="text-2xl font-medium leading-8 mt-6">Rp. {{ number_format($stats['totalRemaining'], 0, ',', '.') }}</div>
+                                    <div class="text-2xl font-medium leading-8 mt-6">Rp.
+                                        {{ number_format($stats['totalRemaining'], 0, ',', '.') }}</div>
                                     <div class="text-base text-slate-500 mt-1">Sisa Pembayaran</div>
                                 </div>
                             </div>
@@ -62,58 +64,90 @@
                 </div>
                 <!-- END: General Report -->
                 <!-- BEGIN: Sales Report -->
-                <div class="col-span-12 lg:col-span-6 mt-8">
+                <div class="col-span-12 mt-8">
                     <div class="intro-y block sm:flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
                             Reward Status
                         </h2>
                     </div>
-                    <div class="intro-y box p-5 mt-12 sm:mt-5">
-                        <div class="flex flex-col md:flex-row md:items-center">
-                            <div class="flex">
-                                <div class="text-center">
-                                    <div class="text-primary dark:text-slate-300 text-2xl xl:text-3xl font-bold">
-                                        {{ $stats['totalProduct'] ?? 0 }}
-                                    </div>
-                                    <div class="mt-1 text-slate-600 font-medium">Total Products</div>
-                                </div>
-                                <div class="w-px h-16 border border-r border-dashed border-slate-200 dark:border-darkmode-300 mx-6 xl:mx-8">
-                                </div>
-                                <div class="flex-1">
-                                    @if ($stats['reward'] == 'Tidak ada reward')
-                                        <div class="text-slate-500 text-lg xl:text-xl font-medium mb-1">
-                                            <i data-lucide="alert-circle" class="w-5 h-5 inline-block mr-1 text-warning"></i>
-                                            Belum mencapai target reward
-                                        </div>
-                                    @else
-                                        <div class="text-success text-lg xl:text-xl font-medium mb-1">
-                                            <i data-lucide="award" class="w-5 h-5 inline-block mr-1"></i>
-                                            Selamat! Anda mendapatkan reward:
-                                        </div>
-                                        <div class="text-primary text-xl xl:text-2xl font-bold">
-                                            {{ $stats['reward'] ?? '' }}
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
+                    @php
+                        $rewardData = $stats['reward_data'] ?? [];
+                        $agentReward = $rewardData['agent'] ?? null;
+                        $subAgentRewards = $rewardData['sub_agents'] ?? [];
+                        $rewardList = [];
 
-                        <div class="mt-8 flex justify-center">
-                            <div class="relative h-[275px] w-[275px]">
-                                @if ($stats['reward_image'])
-                                    <img 
-                                        alt="Reward Image" 
-                                        class="tooltip rounded-lg shadow-lg object-cover w-full h-full"
-                                        src="{{ route('getImage', ['path' => 'reward', 'imageName' => $stats['reward_image']]) }}"
-                                        title="{{ $stats['reward'] }}"
-                                    >
-                                @endif
+                        if ($agentReward && $agentReward['reward'] != 'Tidak ada reward') {
+                            $rewardList[] = $agentReward;
+                        }
+
+                        foreach ($subAgentRewards as $subReward) {
+                            if ($subReward['reward'] != 'Tidak ada reward') {
+                                $rewardList[] = $subReward;
+                            }
+                        }
+                    @endphp
+
+                    @if (empty($rewardList))
+                        <div class="intro-y box p-5 mt-12 sm:mt-5">
+                            <div class="text-slate-500 text-lg xl:text-xl font-medium">
+                                <i data-lucide="alert-circle" class="w-5 h-5 inline-block mr-1 text-warning"></i>
+                                Tidak ada reward yang tersedia saat ini. Silakan tingkatkan performa Anda untuk mendapatkan
+                                reward menarik!
                             </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="grid grid-cols-12 gap-6 my-5">
+                            @foreach ($rewardList as $rewardItem)
+                                <div class="col-span-4 intro-y">
+                                    <div class="report-box zoom-in h-full">
+                                        <div class="box p-5 h-full">
+                                            <div class="flex">
+                                                <div class="text-center">
+                                                    <div
+                                                        class="text-primary dark:text-slate-300 text-2xl xl:text-3xl font-bold">
+                                                        {{ $rewardItem['total_product'] ?? 0 }}
+                                                    </div>
+                                                    <div class="mt-1 text-slate-600 font-medium">
+                                                        Total Products
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="w-px h-16 border border-r border-dashed border-slate-200 dark:border-darkmode-300 mx-6 xl:mx-8">
+                                                </div>
+
+                                                <div class="flex-1">
+                                                    <div class="text-success text-lg xl:text-xl font-medium mb-1">
+                                                        <i data-lucide="award" class="w-5 h-5 inline-block mr-1"></i>
+                                                        {{ $rewardItem['name'] ?? 'Reward' }}
+                                                        mendapatkan reward:
+                                                    </div>
+
+                                                    <div class="text-primary text-xl xl:text-2xl font-bold">
+                                                        {{ $rewardItem['reward'] ?? '' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-6 flex justify-center">
+                                                <div class="relative h-[220px] w-[220px]">
+                                                    @if ($rewardItem['reward_image'])
+                                                        <img alt="Reward Image"
+                                                            class="tooltip rounded-lg shadow-lg object-cover w-full h-full"
+                                                            src="{{ route('getImage', ['path' => 'reward', 'imageName' => $rewardItem['reward_image']]) }}"
+                                                            title="{{ $rewardItem['reward'] }}">
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
                 <!-- END: Sales Report -->
-                
+
                 <!-- END: Weekly Top Products -->
             </div>
         </div>

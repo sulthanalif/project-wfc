@@ -13,7 +13,7 @@
         <div class="intro-y col-span-12">
             <!-- BEGIN: Form Layout -->
             <div class="intro-y box p-5">
-                <form id="orderForm" action="{{ route('order.full.store') }}" method="post">
+                <form id="orderForm" action="{{ route('order.aman.store') }}" method="post">
                     @csrf
                     <div>
                         <label for="order_number" class="form-label">No. Pesanan <span class="text-danger">*</span></label>

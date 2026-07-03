@@ -31,7 +31,74 @@ class RewardController extends Controller
 
     public function show(Reward $reward)
     {
-        return view('cms.admin.rewards.detail', compact('reward'));
+        $period = $reward->period;
+
+        // Collect winners from agents (agent-level details only)
+        $winners = [];
+        $agents = \App\Models\User::role('agent')->where('active', 1)->get();
+        foreach ($agents as $agent) {
+            $orders = \App\Models\Order::where('agent_id', $agent->id)
+                ->where('status', 'accepted')
+                ->when($period, function ($q) use ($period) {
+                    if ($period->start_date && $period->end_date) {
+                        $q->whereBetween('order_date', [$period->start_date, $period->end_date]);
+                    }
+                })
+                ->whereHas('detail', function ($q) {
+                    $q->whereNull('sub_agent_id');
+                })
+                ->get();
+
+            $totalProduct = 0;
+            foreach ($orders as $order) {
+                foreach ($order->detail->whereNull('sub_agent_id') as $detail) {
+                    $totalProduct += (int) $detail->qty;
+                }
+            }
+
+            if ($totalProduct >= $reward->target_qty) {
+                $winners[] = [
+                    'type' => 'agent',
+                    'id' => $agent->id,
+                    'name' => optional($agent->agentProfile)->name ?? $agent->email,
+                    'total_product' => $totalProduct,
+                ];
+            }
+        }
+
+        // Collect winners from sub-agents
+        $subAgents = \App\Models\SubAgent::all();
+        foreach ($subAgents as $subAgent) {
+            $orders = \App\Models\Order::where('status', 'accepted')
+                ->when($period, function ($q) use ($period) {
+                    if ($period->start_date && $period->end_date) {
+                        $q->whereBetween('order_date', [$period->start_date, $period->end_date]);
+                    }
+                })
+                ->whereHas('detail', function ($q) use ($subAgent) {
+                    $q->where('sub_agent_id', $subAgent->id);
+                })
+                ->get();
+
+            $totalProduct = 0;
+            foreach ($orders as $order) {
+                foreach ($order->detail->where('sub_agent_id', $subAgent->id) as $detail) {
+                    $totalProduct += (int) $detail->qty;
+                }
+            }
+
+            if ($totalProduct >= $reward->target_qty) {
+                $winners[] = [
+                    'type' => 'sub_agent',
+                    'id' => $subAgent->id,
+                    'name' => $subAgent->name,
+                    'agent_id' => $subAgent->agent_id,
+                    'total_product' => $totalProduct,
+                ];
+            }
+        }
+
+        return view('cms.admin.rewards.detail', compact('reward', 'winners'));
     }
 
     public function create()
