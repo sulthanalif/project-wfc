@@ -6,6 +6,12 @@ use App\Http\Controllers\Transaction\OrderController;
 use App\Http\Controllers\Transaction\OrderFullController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/order/full/archive', [OrderFullController::class, 'archive'])->name('order.full.archive');
+Route::get('/order/full/archive/{order}', [OrderFullController::class, 'archiveShow'])->name('order.full.archive.show');
+
+Route::get('/order/titik-aman/archive', [OrderAmanController::class, 'archive'])->name('order.aman.archive');
+Route::get('/order/titik-aman/archive/{order}', [OrderAmanController::class, 'archiveShow'])->name('order.aman.archive.show');
+
 Route::get('/order', [OrderController::class, 'index'])->name('order.index');
 Route::get('/order/create', [OrderController::class, 'create'])->name('order.create');
 

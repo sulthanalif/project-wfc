@@ -33,6 +33,9 @@ class OrderAmanController extends Controller
             ->whereDoesntHave('detail.product', function ($query) {
                 $query->where('is_safe_point', false);
             })
+            ->whereHas('detail.product.package.package.period', function ($query) {
+                $query->where('is_active', 1);
+            })
             ->with(['detail.product', 'agent.agentProfile']);
 
         if (ValidateRole::check('agent')) {
@@ -86,6 +89,106 @@ class OrderAmanController extends Controller
         }
 
         return view('cms.transactions.aman.index', compact('orders'));
+    }
+
+    public function archive(Request $request)
+    {
+        $perPages = $request->get('perPage') ?? 5;
+        $status = $request->get('status') ?? 'all';
+
+        $query = Order::query()
+            ->whereHas('detail.product', function ($query) {
+                $query->where('is_safe_point', true);
+            })
+            ->whereDoesntHave('detail.product', function ($query) {
+                $query->where('is_safe_point', false);
+            })
+            ->whereHas('detail.product.package.package.period', function ($query) {
+                $query->where('is_active', 0);
+            })
+            ->with(['detail.product', 'agent.agentProfile']);
+
+        if (ValidateRole::check('agent')) {
+            $query->where('agent_id', Auth::user()->id);
+        }
+
+        if ($status != 'all') {
+            $query->where('status', $status);
+        }
+
+        if ($perPages == 'all') {
+            $orders = $query->orderByDesc('created_at')->get();
+        } else {
+            $perPage = intval($perPages);
+            $orders = $query->orderByDesc('created_at')->paginate($perPage);
+        }
+
+        if (ValidateRole::check('agent')) {
+            return view('cms.transactions.aman.index', compact('orders'));
+        }
+
+        if ($request->get('export') == 'true') {
+            $datas = $query->orderByDesc('created_at')->get()->map(function ($item) {
+                return [
+                    'order_number' => $item->order_number,
+                    'order_date' => $item->order_date,
+                    'total_price' => $item->total_price,
+                    'agent_name' => $item->agent->agentProfile->name,
+                    'status' => $item->status,
+                    'status_payment' => $item->payment_status,
+                    'status_delivery' => $item->isAllItemDistributed() ? 'Sukses' :
+                        ($item->distributions->isNotEmpty() ? 'Sedang Proses' : 'Belum Dikirim'),
+                    'created_at' => $item->created_at,
+                    // 'updated_at' => $item->updated_at,
+                ];
+            });
+            $headers = [
+                'order_number',
+                'order_date',
+                'total_price',
+                'agent_name',
+                'status',
+                'status_payment',
+                'status_delivery',
+                'created_at',
+                // 'updated_at',
+            ];
+
+            // return response()->json($datas);
+            return Excel::download(new ExportDatas($datas, 'Data Pesanan', $headers), 'Data Pesanan.xlsx');
+        }
+
+        return view('cms.transactions.aman.archive', compact('orders'));
+    }
+
+    public function archiveShow(Request $request, Order $order)
+    {
+        $packages = Package::with('product')->whereHas('period', function ($query) {
+            $query->where('is_active', 0);
+        })->get();
+
+        $agents = auth()->user();
+
+        //select agent name
+        $selects = $order->detail()->pluck('sub_agent_id')->unique()->map(function ($subAgentId) use ($order) {
+            $subAgent = $order->agent->subAgent->where('id', $subAgentId)->first();
+            return $subAgent ? $subAgent->name : $order->agent->agentProfile->name;
+        })->toArray();
+
+        //select product
+        $selectProducts = $order->detail->pluck('product_id')->unique()->map(function ($productId) use ($order) {
+            $product = $order->detail->where('product_id', $productId)->first()->product;
+            return [
+                'id' => $product->id,
+                'name' => $product->name
+            ];
+        })->toArray();
+
+        if ($request->get('export') == 'true') {
+            return Excel::download(new DetailOrderExport($order->id), 'Order Detail ' . $order->order_number . '.xlsx');
+        }
+
+        return view('cms.transactions.aman.archive-detail', compact(['order', 'packages', 'agents', 'selects', 'selectProducts']));
     }
 
     public function show(Request $request, Order $order)

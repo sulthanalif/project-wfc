@@ -1,14 +1,18 @@
 @extends('cms.layouts.app', [
-    'title' => 'Pesanan Paket Titik Aman',
+    'title' => 'Arsip Pesanan Paket Titik Aman',
 ])
 
 @section('content')
     <div class="grid grid-cols-12 mt-12">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap">
             <h2 class="w-auto relative text-lg font-medium">
-                Pesanan Paket Titik Aman
+                Arsip Pesanan Paket Titik Aman
             </h2>
             <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
+                <a href="{{ route('order.aman.index') }}" class="btn btn-sm btn-secondary mr-1">
+                    <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="arrow-left"></i>
+                    </span>
+                </a>
                 @hasrole('admin|super_admin')
                     <a href="{{ route('order.aman.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
                             data-lucide="download"></i> Export</a>
@@ -44,10 +48,6 @@
                     </option>
                 </select>
             </div>
-            <a href="{{ route('order.aman.archive') }}" class="btn btn-primary shadow-md ml-2">
-                <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="archive"></i>
-                </span>
-            </a>
 
             @if ($orders instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $orders->firstItem() }} hingga
@@ -78,9 +78,6 @@
                         <th class="text-center whitespace-nowrap">STATUS</th>
                         <th class="text-center whitespace-nowrap">PEMBAYARAN</th>
                         <th class="text-center whitespace-nowrap">PENGIRIMAN</th>
-                        @hasrole('super_admin|admin')
-                            <th class="text-center whitespace-nowrap">AKSI</th>
-                        @endhasrole
                     </tr>
                 </thead>
                 <tbody>
@@ -102,7 +99,7 @@
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('order.aman.show', $order) }}"> <i data-lucide="external-link"
+                                        href="{{ route('order.aman.archive.show', $order) }}"> <i data-lucide="external-link"
                                             class="w-4 h-4 mr-2"></i> {{ $order->order_number }} </a>
                                 </td>
                                 @hasrole('super_admin|admin')
@@ -169,124 +166,7 @@
                                         @endif
                                     @endif
                                 </td>
-                                @hasrole('super_admin|admin')
-                                    <td class="table-report__action w-56">
-                                        @if ($order->payment_status === 'paid')
-                                            <div class="flex items-center justify-center text-success"> <i
-                                                    data-lucide="check-square" class="w-4 h-4 mr-2"></i> </div>
-                                        @elseif ($order->status === 'canceled')
-                                            <div class="flex justify-center items-center">
-                                                <a class="flex items-center text-danger" href="javascript:;"
-                                                    data-tw-toggle="modal"
-                                                    data-tw-target="#delete-confirmation-modal{{ $order->id }}"> <i
-                                                        data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                            </div>
-                                        @else
-                                            @if ($order->payment_status !== 'pending')
-                                                <div class="flex justify-center items-center">
-                                                    <a class="flex items-center mr-3" href="javascript:;"
-                                                        data-tw-toggle="modal"
-                                                        data-tw-target="#change-confirmation-modal{{ $order->id }}">
-                                                        <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah Status </a>
-                                                </div>
-                                            @endif
-                                        @endif
-                                    </td>
-                                @endhasrole
                             </tr>
-
-                            <!-- BEGIN: Change Confirmation Modal -->
-                            <div id="change-confirmation-modal{{ $order->id }}" class="modal" tabindex="-1"
-                                aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-body p-0">
-                                            <div class="p-5 text-center">
-                                                <i data-lucide="alert-circle"
-                                                    class="w-16 h-16 text-warning mx-auto mt-3"></i>
-                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                                <div class="text-slate-500 mt-2">
-                                                    Apakah anda yakin untuk mengubah status pesanan ini?
-                                                    <br>
-                                                    Proses tidak akan bisa diulangi.
-                                                </div>
-                                            </div>
-                                            <div class="px-5 pb-8">
-                                                <form action="{{ route('order.changeOrderStatus', $order) }}"
-                                                    method="post">
-                                                    @csrf
-                                                    <div class="mb-3">
-                                                        <select class="form-select mt-2 sm:mr-2" id="status"
-                                                            name="status" required>
-                                                            <option value="accepted"
-                                                                {{ $order->status == 'accepted' ? 'selected' : '' }}>
-                                                                Diterima</option>
-                                                            <option value="stop"
-                                                                {{ $order->status == 'stop' ? 'selected' : '' }}>Mundur
-                                                            </option>
-                                                            <option value="reject"
-                                                                {{ $order->status == 'reject' ? 'selected' : '' }}>Ditolak
-                                                            </option>
-                                                            <option value="canceled"
-                                                                {{ $order->status == 'canceled' ? 'selected' : '' }}>
-                                                                Dibatalkan</option>
-
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="mb-3" id="desc-fields" style="display: none">
-                                                        <textarea id="description" name="description" class="form-control w-full" placeholder="Masukkan Description "></textarea>
-                                                    </div>
-                                                    @if (request()->perPage != 'all')
-                                                        <input type="hidden" name="page"
-                                                            value="{{ $orders->currentPage() }}">
-                                                    @endif
-                                                    <div class="text-center">
-                                                        <button type="submit" class="btn btn-warning w-24">Ubah</button>
-                                                        <button type="button" data-tw-dismiss="modal"
-                                                            class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- END: Change Confirmation Modal -->
-
-                            <!-- BEGIN: Delete Confirmation Modal -->
-                            <div id="delete-confirmation-modal{{ $order->id }}" class="modal" tabindex="-1"
-                                aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-body p-0">
-                                            <div class="p-5 text-center">
-                                                <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                                <div class="text-slate-500 mt-2">
-                                                    Apakah anda yakin untuk menghapus data ini?
-                                                    <br>
-                                                    Proses tidak akan bisa diulangi.
-                                                </div>
-                                            </div>
-                                            <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('order.destroy', $order) }}" method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    @if ($orders instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                                        <input type="hidden" name="page"
-                                                            value="{{ $orders->currentPage() }}">
-                                                    @endif
-                                                    <button type="submit" class="btn btn-danger w-24">Hapus</button>
-                                                    <button type="button" data-tw-dismiss="modal"
-                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
                 </tbody>
