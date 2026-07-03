@@ -47,14 +47,35 @@ class ProductController extends Controller
         return view('cms.admin.products.index', compact('products'));
     }
 
-    public function archive()
+    public function archive(Request $request)
     {
-        $products = Product::whereHas('package.package.period', function ($query) {
-            $query->where('is_active', 0);
-        })->latest()->paginate(10);
-        dd($products);
+        $perPages = $request->get('perPage') ?? 5;
+
+        if ($perPages == 'all') {
+            $products = Product::whereHas('package.package.period', function ($query) {
+                $query->where('is_active', 0);
+            })->latest()->get();
+        } else {
+            $perPage = intval($perPages);
+            $products = Product::whereHas('package.package.period', function ($query) {
+                $query->where('is_active', 0);
+            })->latest()->paginate($perPage);
+        }
 
         return view('cms.admin.products.archive', compact('products'));
+    }
+
+    public function archiveShow(Product $product)
+    {
+        if ($product) {
+            $subProducts = $product->subProduct()->get();
+
+            // return response()->json($subProducts);
+            $itemSubProduct = SubProduct::whereNotIn('id', $subProducts->pluck('sub_product_id'))->get();
+            return view('cms.admin.products.archive-detail', compact('product', 'subProducts', 'itemSubProduct'));
+        } else {
+            return back()->with('error', 'Data Tidak Ditemukan!');
+        }
     }
 
     public function export()

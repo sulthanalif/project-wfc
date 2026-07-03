@@ -25,10 +25,6 @@
                                 data-tw-target="#import-confirmation-modal"> <i data-lucide="upload"
                                     class="w-4 h-4 mr-2"></i> Import </a>
                         </li>
-                        {{-- <li>
-                            <a href="{{ route('product.archive') }}" class="dropdown-item"> <i data-lucide="archive"
-                                    class="w-4 h-4 mr-2"></i> Arsip </a>
-                        </li> --}}
                     </ul>
                 </div>
             </div>
@@ -40,6 +36,10 @@
                     <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
                 </select>
             </div>
+            <a href="{{ route('product.archive') }}" class="btn btn-primary shadow-md ml-2">
+                <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="archive"></i>
+                </span>
+            </a>
 
             @if ($products instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $products->firstItem() }} hingga

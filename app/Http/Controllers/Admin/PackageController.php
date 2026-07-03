@@ -48,14 +48,31 @@ class PackageController extends Controller
         return view('cms.admin.pakets.index', compact('packages'));
     }
 
-    public function archive()
+    public function archive(Request $request)
     {
-        $packages = Package::whereHas('period', function ($query) {
-            $query->where('is_active', 0);
-        })->latest()->paginate(10);
-        dd($packages);
+        $perPages = $request->get('perPage') ?? 5;
 
-        return view('cms.admin.packages.archive', compact('packages'));
+        if ($perPages == 'all') {
+            $packages = Package::whereHas('period', function ($query) {
+                $query->where('is_active', 0);
+            })->latest()->get();
+        } else {
+            $perPage = intval($perPages);
+            $packages = Package::whereHas('period', function ($query) {
+                $query->where('is_active', 0);
+            })->latest()->paginate($perPage);
+        }
+
+        return view('cms.admin.pakets.archive', compact('packages'));
+    }
+
+    public function archiveShow(Package $package)
+    {
+        if ($package) {
+            return view('cms.admin.pakets.archive-detail', compact('package'));
+        } else {
+            return back()->with('error', 'Data Tidak Ditemukan!');
+        }
     }
 
     public function export()

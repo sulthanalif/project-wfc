@@ -25,10 +25,6 @@
                                 data-tw-target="#import-confirmation-modal"> <i data-lucide="upload"
                                     class="w-4 h-4 mr-2"></i> Import </a>
                         </li>
-                        <li>
-                            <a href="{{ route('package.archive') }}" class="dropdown-item"> <i data-lucide="archive"
-                                    class="w-4 h-4 mr-2"></i> Arsip </a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -40,6 +36,10 @@
                     <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
                 </select>
             </div>
+            <a href="{{ route('package.archive') }}" class="btn btn-primary shadow-md ml-2">
+                <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="archive"></i>
+                </span>
+            </a>
 
             @if ($packages instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $packages->firstItem() }} hingga
@@ -85,11 +85,13 @@
                                             class="w-4 h-4 mr-2"></i> {{ $package->name }} </a>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 whitespace-nowrap text-center">{{ $package->period->description }}
+                                    <p class="text-slate-500 whitespace-nowrap text-center">
+                                        {{ $package->period->description }}
                                     </p>
                                 </td>
                                 <td>
-                                    <p class="text-slate-500 whitespace-nowrap text-center">{{ \Carbon\Carbon::parse($package->period->access_date)->format('d M Y') }}
+                                    <p class="text-slate-500 whitespace-nowrap text-center">
+                                        {{ \Carbon\Carbon::parse($package->period->access_date)->format('d M Y') }}
                                     </p>
                                 </td>
                                 <td class="w-40">
@@ -160,10 +162,10 @@
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
         @if ($packages instanceof \Illuminate\Pagination\LengthAwarePaginator)
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $packages->links('cms.layouts.paginate') }}
-        </div>
-    @endif
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $packages->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
 

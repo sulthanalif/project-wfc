@@ -3,12 +3,17 @@
 ])
 
 @section('content')
-    <h2 class="intro-y text-lg font-medium mt-10">
-        Arsip Paket
-    </h2>
+    <div class="intro-y flex items-center mt-8">
+        <h2 class="text-lg font-medium mr-auto">
+            Arsip Paket
+        </h2>
+        <a href="{{ route('package.index') }}" class="btn btn-secondary mr-1">
+            <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="arrow-left"></i>
+            </span>
+        </a>
+    </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            {{-- <a href="{{ route('package.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Paket</a>
             <div class="dropdown">
                 <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
                     <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="plus"></i>
@@ -25,15 +30,25 @@
                                 data-tw-target="#import-confirmation-modal"> <i data-lucide="upload"
                                     class="w-4 h-4 mr-2"></i> Import </a>
                         </li>
-                        <li>
-                            <a href="{{ route('package.archive') }}" class="dropdown-item"> <i data-lucide="archive"
-                                    class="w-4 h-4 mr-2"></i> Arsip </a>
-                        </li>
                     </ul>
                 </div>
-            </div> --}}
-            <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $packages->firstItem() }} hingga
-                {{ $packages->lastItem() }} dari {{ $packages->total() }} data</div>
+            </div>
+            <div class="w-auto relative text-slate-500 ml-2">
+                <select id="records_per_page" class="form-control box">
+                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+            </div>
+
+            @if ($packages instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $packages->firstItem() }} hingga
+                    {{ $packages->lastItem() }} dari {{ $packages->total() }} data</div>
+            @else
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $packages->count() }} data
+                </div>
+            @endif
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">
@@ -54,15 +69,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($packages as $package)
-                        @if ($package->period->is_active == 0)
+                    @if ($packages->isEmpty())
+                        <tr>
+                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                        </tr>
+                    @else
+                        @foreach ($packages as $package)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('package.show', $package) }}"> <i data-lucide="external-link"
+                                        href="{{ route('package.archiveShow', $package) }}"> <i data-lucide="external-link"
                                             class="w-4 h-4 mr-2"></i> {{ $package->name }} </a>
                                 </td>
                                 <td>
@@ -85,28 +104,76 @@
                                                 <img alt="PAKET SMART WFC" class="tooltip rounded-full"
                                                     src="{{ route('getImage', ['path' => 'package', 'imageName' => $package->image]) }}"
                                                     title="@if ($package->created_at == $package->updated_at) Diupload {{ \Carbon\Carbon::parse($package->created_at)->format('d M Y, H:m:i') }}
-                                            @else
-                                            Diupdate {{ \Carbon\Carbon::parse($package->updated_at)->format('d M Y, H:m:i') }} @endif">
+                                                @else
+                                                Diupdate {{ \Carbon\Carbon::parse($package->updated_at)->format('d M Y, H:m:i') }} @endif">
                                             @endif
                                         </div>
                                     </div>
                                 </td>
                             </tr>
-                        @else
-                            <tr>
-                                <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                            </tr>
-                        @endif
-                    @endforeach
+                        @endforeach
                     @endif
                 </tbody>
             </table>
         </div>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $packages->links('cms.layouts.paginate') }}
-        </div>
+        @if ($packages instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $packages->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
+
+    <!-- BEGIN: Delete Confirmation Modal -->
+    <div id="import-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+                    <form action="{{ route('import.package') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="p-5 text-center">
+                            <div class="modal-header">
+                                <h2 class="font-medium text-base mr-auto">Import Data</h2> <a
+                                    href="{{ route('download.file', ['file' => 'format-paket.xlsx']) }}"
+                                    class="btn btn-outline-secondary"> <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                                    Download Format </a>
+                            </div>
+                            <div class="modal-body text-slate-500 mt-2">
+                                <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative">
+                                    <i data-lucide="file" class="w-4 h-4 mr-2"></i>
+                                    <span id="fileName">
+                                        <span class="text-primary mr-1">Upload a file</span> or drag and drop
+                                    </span>
+                                    <input id="file" name="file" type="file"
+                                        class="w-full h-full top-0 left-0 absolute opacity-0"
+                                        onchange="updateFileName(this)" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-5 pb-8 text-center">
+                            <button type="submit" class="btn btn-primary w-24">Import</button>
+                            <button type="button" data-tw-dismiss="modal"
+                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: Delete Confirmation Modal -->
 @endsection
+
+@push('custom-scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('records_per_page').addEventListener('change', function() {
+                const perPage = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('perPage', perPage);
+                window.location.search = urlParams.toString();
+            });
+        });
+    </script>
+@endpush
