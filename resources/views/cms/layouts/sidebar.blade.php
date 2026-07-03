@@ -234,6 +234,7 @@
                             Route::is('sub-product*') ||
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
+                            Route::is('commissions*') ||
                             Route::is('rewards*') ||
                             Route::is('tutorial*') ||
                             Route::is('bank-owner*') ||
@@ -252,6 +253,7 @@
                             Route::is('sub-product*') ||
                             Route::is('sub-agent*') ||
                             Route::is('supplier*') ||
+                            Route::is('commissions*') ||
                             Route::is('rewards*') ||
                             Route::is('bank-owner*') ||
                             Route::is('getAdministration')) side-menu__sub-open @endif">
@@ -281,6 +283,13 @@
                                 class="side-menu {{ Route::is('options.index') ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="side-menu__title"> Periode </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('commissions.index') }}"
+                                class="side-menu {{ Route::is('commissions.index') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Komisi </div>
                             </a>
                         </li>
                         <li>
@@ -331,67 +340,66 @@
                         @endhasrole
                     </ul>
                 </li>
-                @hasrole('super_admin|admin')
-                    <li>
-                        <a href="javascript:;" class="side-menu @if (Route::is('landingpage*')) side-menu--active @endif">
-                            <div class="side-menu__icon"> <i data-lucide="settings"></i> </div>
-                            <div class="side-menu__title"> Landing Page
-                                <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
-                            </div>
-                        </a>
-                        <ul class="@if (Route::is('landingpage*')) side-menu__sub-open @endif">
-                            <li>
-                                <a href="{{ route('landingpage.header') }}"
-                                    class="side-menu {{ Route::is('landingpage.header') ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="side-menu__title"> Header </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.profile') }}"
-                                    class="side-menu {{ Route::is('landingpage.profile') ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="side-menu__title"> Profile </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.detailProfile') }}"
-                                    class="side-menu {{ Route::is('landingpage.detailProfile') ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="side-menu__title"> Detail Profile </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.benefit') }}"
-                                    class="side-menu {{ Route::is('landingpage.benefit') ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="side-menu__title"> Benefit </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.gallery') }}"
-                                    class="side-menu {{ Route::is('landingpage.gallery') ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="side-menu__title"> Galeri </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.review') }}"
-                                    class="side-menu {{ Route::is('landingpage.review') ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="side-menu__title"> Review </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('landingpage.contact') }}"
-                                    class="side-menu {{ Route::is('landingpage.contact') ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                    <div class="side-menu__title"> Kontak </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                @endhasrole
+
+                <li>
+                    <a href="javascript:;" class="side-menu @if (Route::is('landingpage*')) side-menu--active @endif">
+                        <div class="side-menu__icon"> <i data-lucide="settings"></i> </div>
+                        <div class="side-menu__title"> Landing Page
+                            <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                        </div>
+                    </a>
+                    <ul class="@if (Route::is('landingpage*')) side-menu__sub-open @endif">
+                        <li>
+                            <a href="{{ route('landingpage.header') }}"
+                                class="side-menu {{ Route::is('landingpage.header') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Header </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('landingpage.profile') }}"
+                                class="side-menu {{ Route::is('landingpage.profile') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Profile </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('landingpage.detailProfile') }}"
+                                class="side-menu {{ Route::is('landingpage.detailProfile') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Detail Profile </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('landingpage.benefit') }}"
+                                class="side-menu {{ Route::is('landingpage.benefit') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Benefit </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('landingpage.gallery') }}"
+                                class="side-menu {{ Route::is('landingpage.gallery') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Galeri </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('landingpage.review') }}"
+                                class="side-menu {{ Route::is('landingpage.review') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Review </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('landingpage.contact') }}"
+                                class="side-menu {{ Route::is('landingpage.contact') ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title"> Kontak </div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             @endhasrole
         </ul>
     @endhasrole

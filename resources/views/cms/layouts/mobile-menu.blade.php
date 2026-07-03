@@ -229,6 +229,7 @@
                                 Route::is('sub-product*') ||
                                 Route::is('sub-agent*') ||
                                 Route::is('supplier*') ||
+                                Route::is('commissions*') ||
                                 Route::is('rewards*') ||
                                 Route::is('tutorial*') ||
                                 Route::is('bank-owner*') ||
@@ -244,6 +245,7 @@
                                 Route::is('sub-product*') ||
                                 Route::is('sub-agent*') ||
                                 Route::is('supplier*') ||
+                                Route::is('commissions*') ||
                                 Route::is('rewards*') ||
                                 Route::is('tutorial*') ||
                                 Route::is('bank-owner*') ||
@@ -277,53 +279,59 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="{{ route('commissions.index') }}"
+                                    class="menu {{ Route::is('commissions*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Komisi </div>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('rewards.index') }}"
                                     class="menu {{ Route::is('rewards*') ? 'menu--active' : '' }}">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                     <div class="menu__title"> Reward </div>
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ route('bank-owner.index') }}"
+                                    class="menu {{ Route::is('bank-owner*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Bank </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('supplier.index') }}"
+                                    class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Supplier </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('sub-agent.index') }}"
+                                    class="menu {{ Route::is('sub-agent*') ? 'menu--active' : '' }}">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Sub Agen </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('user.index') }}"
+                                    class="menu @if (Route::is('user*') || Route::is('getAdministration')) menu--active @endif">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Users </div>
+                                </a>
+                            </li>
+                            @hasrole('super_admin')
+                                <li>
+                                    <a href="{{ route('tutorial.index') }}"
+                                        class="menu @if (Route::is('tutorial*') || Route::is('getAdministration')) menu--active @endif">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Tutorials </div>
+                                    </a>
+                                </li>
+                            @endhasrole
+                        </ul>
                     </li>
-                    <li>
-                        <a href="{{ route('bank-owner.index') }}"
-                            class="menu {{ Route::is('bank-owner*') ? 'menu--active' : '' }}">
-                            <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="menu__title"> Bank </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('supplier.index') }}"
-                            class="menu {{ Route::is('supplier*') ? 'menu--active' : '' }}">
-                            <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="menu__title"> Supplier </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('sub-agent.index') }}"
-                            class="menu {{ Route::is('sub-agent*') ? 'menu--active' : '' }}">
-                            <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="menu__title"> Sub Agen </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('user.index') }}"
-                            class="menu @if (Route::is('user*') || Route::is('getAdministration')) menu--active @endif">
-                            <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                            <div class="menu__title"> Users </div>
-                        </a>
-                    </li>
-                    @hasrole('super_admin')
-                        <li>
-                            <a href="{{ route('tutorial.index') }}"
-                                class="menu @if (Route::is('tutorial*') || Route::is('getAdministration')) menu--active @endif">
-                                <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="menu__title"> Tutorials </div>
-                            </a>
-                        </li>
-                    @endhasrole
-                </ul>
-                </li>
-                @hasrole('super_admin|admin')
+
                     <li>
                         <a href="javascript:;" class="menu @if (Route::is('landingpage*')) menu--active @endif">
                             <div class="menu__icon"> <i data-lucide="settings"></i> </div>
@@ -340,7 +348,7 @@
                             </li>
                             <li>
                                 <a href="{{ route('landingpage.profile') }}"
-                                    class="menu {{ Route::is('product.index') ? 'menu--active' : '' }}">
+                                    class="menu {{ Route::is('landingpage.profile') ? 'menu--active' : '' }}">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                     <div class="menu__title"> Profile </div>
                                 </a>
@@ -383,7 +391,6 @@
                         </ul>
                     </li>
                 @endhasrole
-            @endhasrole
             </ul>
         </div>
     @endhasrole
