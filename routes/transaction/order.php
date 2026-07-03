@@ -12,6 +12,9 @@ Route::get('/order/full/archive/{order}', [OrderFullController::class, 'archiveS
 Route::get('/order/titik-aman/archive', [OrderAmanController::class, 'archive'])->name('order.aman.archive');
 Route::get('/order/titik-aman/archive/{order}', [OrderAmanController::class, 'archiveShow'])->name('order.aman.archive.show');
 
+Route::get('/order/archive', [OrderController::class, 'archive'])->name('order.archive');
+Route::get('/order/archive/{order}', [OrderController::class, 'archiveShow'])->name('order.archive.show');
+
 Route::get('/order', [OrderController::class, 'index'])->name('order.index');
 Route::get('/order/create', [OrderController::class, 'create'])->name('order.create');
 
