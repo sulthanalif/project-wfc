@@ -27,7 +27,9 @@ class ExportInvoiceController extends Controller
 
         // return response()->json($data);
 
-        $pdf = Pdf::loadView('cms.transactions.export.invoice', $data);
+        $pdf = Pdf::loadView('cms.transactions.export.invoice', $data)
+            ->setPaper('a6', 'portrait');
+
         return $pdf->stream('invoice-'. $payment->invoice_number .'.pdf');
     }
 

@@ -6,17 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <style>
+        @page {
+            size: A6 portrait;
+            margin: 6mm;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            font-size: 11px;
+            color: #000;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            width: 100%;
+            margin: 0;
+            padding: 6px;
             border: 1px solid #ccc;
+            box-sizing: border-box;
         }
 
         .text-center {
@@ -40,22 +48,23 @@
         }
 
         .lh-sm {
-            line-height: 1.25;
+            line-height: 1.15;
         }
 
         .lh-md {
-            line-height: 1.5;
+            line-height: 1.3;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
+            font-size: 10px;
         }
 
         th,
         td {
-            padding: 8px;
+            padding: 4px;
             border: 1px solid #ccc;
         }
 
@@ -66,6 +75,7 @@
         .table-borderless th,
         .table-borderless td {
             border: none;
+            padding: 2px;
         }
 
         .table-dark th {
@@ -73,21 +83,17 @@
             color: #fff;
         }
 
-        .text-center {
-            text-align: center;
-        }
-
         .px-5 {
-            padding-left: 3rem;
-            padding-right: 3rem;
+            padding-left: .75rem;
+            padding-right: .75rem;
         }
 
         .mt-4 {
-            margin-top: 1.5rem;
+            margin-top: .5rem;
         }
 
         .mb-4 {
-            margin-bottom: 1.5rem;
+            margin-bottom: .5rem;
         }
 
         .text-bold {
@@ -95,12 +101,17 @@
         }
 
         .fh-cat {
-            font-size: 12px;
+            font-size: 10px;
         }
 
         a {
             text-decoration: none;
             color: black;
+        }
+
+        h3 {
+            font-size: 12px;
+            margin: 4px 0;
         }
     </style>
 </head>
@@ -111,12 +122,13 @@
             <h3 class="fw-bold">FAKTUR PEMBAYARAN ANGSURAN</h3>
             <table class="table table-borderless">
                 <thead>
-                    <td class="fw-bold text-start">CV. WIDA NUGRAHA</td>
+                    <td class="fw-bold text-start">CV. WFC Jaya Barokah</td>
                     <td class="fw-bold text-end">PAKET SMART WFC</td>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="text-start">Jl. Cipareuag No. 5, Sukadana<br>Kec. Cimanggung, Kab. Sumedang, <br>
+                        <td class="text-start">Dsn. Babakan Limus RT 001 RW 011,<br>Ds. Cihanjuang, Kec.
+                            Cimanggung,<br>Kab. Sumedang,
                             Jawa Barat 45364<br>Telp. 081262760289</td>
                         <td class="text-end">WhatsApp Admin Paket : <br>
                             <a href="https://wa.me/6282319961011">0823 1996 1011</a> ,
@@ -203,10 +215,10 @@
                 </tr>
                 <tr>
                     <td class="text-center"><span style="border-bottom: 1px solid black;">(
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</span>
                     </td>
                     <td class="text-center"><span style="border-bottom: 1px solid black;">(
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</span>
                     </td>
                 </tr>
             </table>
