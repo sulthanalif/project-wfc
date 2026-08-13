@@ -32,19 +32,29 @@ class PaymentController extends Controller
             $user = Auth::user();
 
             if ($perPages == 'all') {
-                $orders = Order::where('agent_id', $user->id)->where('status', ['accepted', 'stop'])->orderByDesc('created_at')->get();
+                $orders = Order::where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->orderByDesc('created_at')->get();
             } else {
                 $perPage = intval($perPages);
-                $orders = Order::where('agent_id', $user->id)->where('status', ['accepted', 'stop'])->orderByDesc('created_at')->paginate($perPage);
+                $orders = Order::where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->orderByDesc('created_at')->paginate($perPage);
             }
 
             return view('cms.agen.payment.index', compact('orders', 'user'));
         } else {
+            $allGrouped = Order::with('agent.agentProfile')
+                ->whereIn('status', ['accepted', 'stop'])
+                ->get()
+                ->groupBy('agent_id');
+
             if ($perPages == 'all') {
-                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->groupBy('agent_id')->get();
+                $orders = $allGrouped;
             } else {
                 $perPage = intval($perPages);
-                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->groupBy('agent_id')->paginate($perPage);
+                $page = request()->get('page', 1);
+                $items = $allGrouped->slice(($page - 1) * $perPage, $perPage)->values();
+                $orders = new \Illuminate\Pagination\LengthAwarePaginator($items, $allGrouped->count(), $perPage, $page, [
+                    'path' => request()->url(),
+                    'query' => request()->query(),
+                ]);
             }
 
             if ($request->get('export') == 'true') {
@@ -84,10 +94,10 @@ class PaymentController extends Controller
         })->get();
 
         if ($perPages == 'all') {
-            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->where('status', ['accepted', 'stop'])->get();
+            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->get();
         } else {
             $perPage = intval($perPages);
-            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->where('status', ['accepted', 'stop'])->paginate($perPage);
+            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->paginate($perPage);
         }
 
         if ($request->get('export') == 'true') {
