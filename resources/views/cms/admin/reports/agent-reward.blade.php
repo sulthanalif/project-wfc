@@ -53,9 +53,9 @@
                     @endforeach
                 </select>
             </div> --}}
-            <a href="{{ route('ragentOrder', array_merge(request()->except('page'), ['export' => 1])) }}"
+            {{-- <a href="{{ route('ragentOrder', array_merge(request()->except('page'), ['export' => 1])) }}"
                 class="btn btn-primary shadow-md mr-2"> <i data-lucide="file"
-                    class="w-4 h-4 mr-3"></i> Export </a>
+                    class="w-4 h-4 mr-3"></i> Export </a> --}}
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" class="form-control w-56 box pr-10" placeholder="Search..." id="filter">

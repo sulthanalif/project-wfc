@@ -22,6 +22,7 @@ use App\Exports\ReportInstalmentExport;
 use App\Exports\ReportRequirementExport;
 use App\Exports\ReportTotalDepositExport;
 use App\Exports\ReportProductDetailExport;
+use App\Exports\ReportStockSubExport;
 use App\Models\Product;
 
 class ReportController extends Controller
@@ -367,34 +368,11 @@ class ReportController extends Controller
 
     public function requirement(Request $request)
     {
-        // 1. Ambil semua detail order yang statusnya 'accepted' dalam satu query
-        // Ini adalah langkah optimisasi utama untuk menghindari N+1 problem
+        // 1. Ambil semua detail order yang statusnya 'accepted'
+        // Ambil order detail lengkap sekaligus untuk menghindari N+1
         $orderDetails = OrderDetail::whereHas('order', function ($query) {
             $query->where('status', 'accepted');
-        })->with('product.subProduct.subProduct')->get();
-
-        // Ambil distribusi yang dicetak (print_count > 0) untuk menghitung sub-produk
-        $printedDistributions = Distribution::where('print_count', '>', 0)
-            ->with('detail.orderDetail.product.subProduct.subProduct')
-            ->get();
-
-        // Hitung total sub-product yang sudah didistribusikan berdasarkan distribution details
-        $distributedSubProducts = [];
-        foreach ($printedDistributions as $dist) {
-            foreach ($dist->detail as $distDetail) {
-                $orderDetail = $distDetail->orderDetail;
-                if (!$orderDetail || !$orderDetail->product) {
-                    continue;
-                }
-                foreach ($orderDetail->product->subProduct as $sub) {
-                    if (!$sub->subProduct) {
-                        continue;
-                    }
-                    $subProductId = $sub->subProduct->id;
-                    $distributedSubProducts[$subProductId] = ($distributedSubProducts[$subProductId] ?? 0) + ($distDetail->qty * $sub->amount);
-                }
-            }
-        }
+        })->with('order', 'product.subProduct.subProduct')->get();
 
         $datas = [];
         $datasubs = [];
@@ -448,18 +426,7 @@ class ReportController extends Controller
             }
         }
 
-        // Kurangi sub-product yang sudah didistribusikan (print_count > 0)
-        if (!empty($distributedSubProducts)) {
-            $subIds = array_keys($distributedSubProducts);
-            $subPrices = SubProduct::whereIn('id', $subIds)->pluck('price', 'id')->toArray();
-            foreach ($distributedSubProducts as $subId => $distQty) {
-                if (isset($datasubs[$subId])) {
-                    $datasubs[$subId]['qty'] = max(0, $datasubs[$subId]['qty'] - $distQty);
-                    $unitPrice = $subPrices[$subId] ?? 0;
-                    $datasubs[$subId]['price'] = $datasubs[$subId]['qty'] * $unitPrice;
-                }
-            }
-        }
+        // Tidak mengurangi berdasarkan distribusi — hanya menampilkan kebutuhan dari pesanan accepted
 
         // Kalkulasi total
         $totalSubProductAll = array_sum(array_column($datasubs, 'qty'));
@@ -674,10 +641,11 @@ class ReportController extends Controller
         ));
     }
 
-    public function stockSubProduct()
+    public function stockSubProduct(Request $request)
     {
-        $spendingTypeId = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
+        $spendingType = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
 
+        // Hitung kebutuhan sub-product dari order yang diterima
         $orderDetails = OrderDetail::whereHas('order', function ($query) {
             $query->where('status', 'accepted');
         })->with('product.subProduct.subProduct')->get();
@@ -707,33 +675,56 @@ class ReportController extends Controller
             }
         }
 
-        // =========================================================================
-        // LANGKAH 2: GABUNGKAN DATA & HITUNG SISA BERDASARKAN KOLOM 'information'
-        // =========================================================================
+        // Hitung jumlah sub-product yang sudah didistribusikan
+        $distributedSubProducts = [];
+        $distributions = Distribution::whereIn('status', ['delivered'])
+            ->with('detail.orderDetail.product.subProduct.subProduct')
+            ->get();
+
+        foreach ($distributions as $dist) {
+            foreach ($dist->detail as $distDetail) {
+                $orderDetail = $distDetail->orderDetail;
+                if (!$orderDetail || !$orderDetail->product) {
+                    continue;
+                }
+                foreach ($orderDetail->product->subProduct as $sub) {
+                    if (!$sub->subProduct) {
+                        continue;
+                    }
+                    $subProductId = $sub->subProduct->id;
+                    $distributedSubProducts[$subProductId] = ($distributedSubProducts[$subProductId] ?? 0) + ($distDetail->qty * $sub->amount);
+                }
+            }
+        }
+
+        // Gabungkan data dan hitung stok = pengadaan - didistribusikan
         $finalData = [];
         foreach ($neededSubProducts as $subProductId => $data) {
             $subProductName = $data['name'];
-            $needed = $data['needed'];
 
-            // Cari total pengadaan untuk item ini berdasarkan namanya di kolom 'information'
-            $procured = Spending::where('spending_type_id', $spendingTypeId)
+            $procured = Spending::where('spending_type_id', $spendingType->id)
                 ->where('information', 'Pengadaan: ' . $subProductName)
-                ->sum('qty'); // Gunakan sum() untuk total yang akurat
+                ->sum('qty');
 
-            $remaining = $needed - $procured;
+            $distributed = $distributedSubProducts[$subProductId] ?? 0;
+            $stock = $procured - $distributed;
 
             $finalData[$subProductId] = [
                 'id'          => $data['id'],
                 'name'        => $data['name'],
                 'unit'        => $data['unit'],
-                // 'needed'      => $needed,
+                'needed'      => $data['needed'],
                 'procurement' => $procured,
-                // 'remaining'   => $procured < $needed ? $remaining : 0,
-                // 'over' =>   $procured > $needed ? $procured - $needed : 0,
+                'distributed' => $distributed,
+                'stock'       => $stock,
             ];
         }
 
         $products = $finalData;
+
+        if ($request->get('export') == 1) {
+            return Excel::download(new ReportStockSubExport($finalData), 'Laporan_Stock_SubProduct_' . now()->format('dmY') . '.xlsx');
+        }
 
         return view('cms.admin.reports.stock-sub', compact('products'));
     }

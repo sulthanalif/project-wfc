@@ -137,10 +137,10 @@
                                         <a class="flex items-center text-success mr-3" href="javascript:;" data-tw-toggle="modal"
                                         data-tw-target="#approve-confirmation-modal{{ $distribution->id }}"> <i
                                             data-lucide="check" class="w-4 h-4 mr-1"></i> Approve </a>
-                                        @endif
                                         <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
                                             data-tw-target="#delete-confirmation-modal{{ $distribution->id }}"> <i
                                                 data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

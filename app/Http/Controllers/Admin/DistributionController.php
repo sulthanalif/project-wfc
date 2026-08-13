@@ -42,11 +42,22 @@ class DistributionController extends Controller
     {
         $datas = Order::whereIn('status', ['accepted', 'stop'])->wherein('delivery_status', ['pending'])->get();
 
-
-        $distributionNumber = 'D-' . GenerateRandomString::make(8) . now()->format('dmY');
+        $distributionNumber = $this->generateUniqueDistributionNumber();
 
         return view('cms.admin.distributions.create', compact('datas', 'distributionNumber'));
         // return response()->json($datas);
+    }
+
+    /**
+     * Generate a unique distribution number.
+     */
+    private function generateUniqueDistributionNumber()
+    {
+        do {
+            $number = 'D-' . GenerateRandomString::make(8) . now()->format('dmY');
+        } while (Distribution::where('distribution_number', $number)->exists());
+
+        return $number;
     }
 
     /**

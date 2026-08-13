@@ -1,5 +1,5 @@
 @extends('cms.layouts.app', [
-    'title' => 'Laporan Total Deposit',
+    'title' => 'Laporan Total Stok Sub Produk',
 ])
 
 @section('content')
@@ -10,7 +10,7 @@
                 <div class="col-span-12 mt-8">
                     <div class="intro-y flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
-                            Laporan Total Setoran
+                            Laporan Total Stok Sub Produk
                         </h2>
                     </div>
                 </div>
@@ -19,7 +19,7 @@
         </div>
 
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
-            <a href="{{ route('totalDeposit', array_merge(request()->except('page'), ['export' => 1])) }}"
+            <a href="{{ route('stockSubProduct', ['export' => 1]) }}"
                 class="btn btn-primary shadow-md mr-2"> <i data-lucide="file"
                     class="w-4 h-4 mr-3"></i> Export </a>
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
@@ -36,8 +36,10 @@
                   <tr>
                       <th class="text-center whitespace-nowrap">#</th>
                       <th class="text-center whitespace-nowrap">ITEM</th>
-                      {{-- <th class="text-center whitespace-nowrap">HARGA</th> --}}
                       <th class="text-center whitespace-nowrap">SATUAN</th>
+                      <th class="text-center whitespace-nowrap">KEBUTUHAN</th>
+                      <th class="text-center whitespace-nowrap">PENGADAAN</th>
+                      <th class="text-center whitespace-nowrap">TERDISTRIBUSI</th>
                       <th class="text-center whitespace-nowrap">JUMLAH STOK</th>
 
                   </tr>
@@ -59,9 +61,17 @@
                               <td align='center'>
                                   <span class="text-slate-500">{{ $data['unit'] }}</span>
                               </td>
-
+                              <td align='center'>
+                                  <span class="text-slate-500">{{ $data['needed'] ?? 0 }}</span>
+                              </td>
                               <td align='center'>
                                   <span class="text-slate-500">{{ $data['procurement'] ?? 0 }}</span>
+                              </td>
+                              <td align='center'>
+                                  <span class="text-slate-500">{{ $data['distributed'] ?? 0 }}</span>
+                              </td>
+                              <td align='center'>
+                                  <span class="text-slate-500">{{ $data['stock'] ?? 0 }}</span>
                               </td>
                           </tr>
                       @endforeach

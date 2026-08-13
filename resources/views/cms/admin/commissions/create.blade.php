@@ -55,16 +55,16 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mt-3">
-                                <label for="term" class="form-label">Target <span class="text-danger">*</span></label>
+                            {{-- <div class="mt-3">
+                                <label for="term" class="form-label">Target <span class="text-danger">*</span></label> --}}
                                 <input id="term" name="term" type="number" class="form-control w-full"
-                                    placeholder="Masukkan Target" required>
-                                @error('term')
+                                    placeholder="Masukkan Target" required value="1" hidden>
+                                {{-- @error('term')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                            </div>
+                            </div> --}}
                             <div class="mt-3">
                                 <label for="reward" class="form-label">Bonus <span class="text-danger">*</span></label>
                                 <input id="reward" name="reward" type="text" class="form-control w-full"

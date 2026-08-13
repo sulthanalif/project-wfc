@@ -6,26 +6,26 @@
     <h2 class="intro-y text-lg font-medium mt-10">
         Pengadaan
     </h2>
-    <div class="grid grid-cols-12 gap-6 mt-5">
+    {{-- <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
             <div class="report-box zoom-in">
                 <div class="box p-5">
                     <div class="flex">
                         <i data-lucide="credit-card" class="report-box__icon text-danger"></i>
                     </div>
-                    <div class="text-2xl font-bold leading-8 mt-6">
+                    <div class="text-2xl font-bold leading-8 mt-6"> --}}
                         {{-- Rp.{{ number_format($totaldata, 0, ',', '.') }} --}}
-                        0
+                        {{-- 0
                     </div>
                     <div class="text-base text-slate-500 mt-1">Total Pengadaan</div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             <a href="{{ route('procurement.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Pengadaan</a>
-            <div class="dropdown">
+            {{-- <div class="dropdown">
                 <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
                     <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="plus"></i>
                     </span>
@@ -33,18 +33,18 @@
                 <div class="dropdown-menu w-40">
                     <ul class="dropdown-content">
                         <li>
-                            {{-- <a href="{{ route('data.export') }}" class="dropdown-item"> <i data-lucide="download"
-                                    class="w-4 h-4 mr-2"></i> Export </a> --}}
+                            <a href="{{ route('data.export') }}" class="dropdown-item"> <i data-lucide="download"
+                                    class="w-4 h-4 mr-2"></i> Export </a>
                         </li>
-                        {{-- <li>
+                        <li>
                             <a href="javascript:;" class="dropdown-item" data-tw-toggle="modal"
                                 data-tw-target="#import-confirmation-modal"> <i data-lucide="upload"
                                     class="w-4 h-4 mr-2"></i> Import </a>
-                        </li> --}}
+                        </li>
                     </ul>
                 </div>
-            </div>
-            <div class="w-auto relative text-slate-500 ml-2">
+            </div> --}}
+            <div class="w-auto relative text-slate-500 ml-2 mr-2">
                 <select id="records_per_page" class="form-control box">
                     <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
                     <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>

@@ -156,7 +156,7 @@ class CommissionController extends Controller
                 if ($isPercentage) {
                     $totalBonus = $totalPrice * $bonusPercentage / 100;
                 } else {
-                    $totalBonus = $bonusValue;
+                    $totalBonus = $bonusValue * $totalProduct; // Assuming the bonus is per product if it's a fixed value
                 }
 
                 $winners[] = [

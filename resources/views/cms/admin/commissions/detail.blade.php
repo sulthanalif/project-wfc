@@ -26,11 +26,11 @@
                     <span class="font-medium mr-2">Paket:</span>
                     {{ $commission->package->name }}
                 </div>
-                <div class="flex items-center mb-2">
+                {{-- <div class="flex items-center mb-2">
                     <i data-lucide="target" class="w-4 h-4 mr-2 text-slate-500"></i>
                     <span class="font-medium mr-2">Target:</span>
                     {{ $commission->term }}
-                </div>
+                </div> --}}
                 <div class="flex items-center">
                     <i data-lucide="award" class="w-4 h-4 mr-2 text-slate-500"></i>
                     <span class="font-medium mr-2">Bonus:</span>

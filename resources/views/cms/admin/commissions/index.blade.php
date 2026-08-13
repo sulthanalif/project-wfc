@@ -47,7 +47,7 @@
                         <th class="text-center whitespace-nowrap">#</th>
                         <th class="text-center whitespace-nowrap">JUDUL KOMISI</th>
                         <th class="text-center whitespace-nowrap">PAKET</th>
-                        <th class="text-center whitespace-nowrap">TARGET</th>
+                        {{-- <th class="text-center whitespace-nowrap">TARGET</th> --}}
                         <th class="text-center whitespace-nowrap">BONUS</th>
                         <th class="text-center whitespace-nowrap">AKSI</th>
                     </tr>
@@ -72,9 +72,9 @@
                                 <td>
                                     <p class="text-slate-500 text-center">{{ $commission->package->name }} </p>
                                 </td>
-                                <td>
+                                {{-- <td>
                                     <p class="text-slate-500 text-center">{{ $commission->term }}</p>
-                                </td>
+                                </td> --}}
                                 <td>
                                     <p class="text-slate-500 whitespace-nowrap text-center">
                                         {{ $commission->reward }}
