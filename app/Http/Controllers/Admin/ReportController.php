@@ -707,7 +707,7 @@ class ReportController extends Controller
                 ->sum('qty');
 
             $distributed = $distributedSubProducts[$subProductId] ?? 0;
-            $stock = $procured - $distributed;
+            $stock = $procured - ($data['needed'] - $distributed);
 
             $finalData[$subProductId] = [
                 'id'          => $data['id'],
