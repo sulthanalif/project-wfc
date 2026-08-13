@@ -145,6 +145,50 @@
                             @endforeach
                         </div>
                     @endif
+
+                    {{-- Commission table (show only total_bonus > 0) --}}
+                    @php
+                        $commissionRows = $commissionData['rows'] ?? [];
+                        $commissionFiltered = [];
+                        foreach ($commissionRows as $r) {
+                            if (isset($r['total_bonus']) && $r['total_bonus'] > 0) {
+                                $commissionFiltered[] = $r;
+                            }
+                        }
+                    @endphp
+
+                    <div class="col-span-12 mt-6">
+                        <h2 class="text-lg font-medium truncate mr-5">Komisi</h2>
+
+                        @if (empty($commissionFiltered))
+                            <div class="intro-y box p-5 mt-3">
+                                <div class="text-slate-500">Belum ada komisi yang diperoleh.</div>
+                            </div>
+                        @else
+                            <div class="intro-y box p-5 mt-3">
+                                <div class="overflow-x-auto">
+                                    <table class="table table-report -mt-2">
+                                        <thead>
+                                            <tr>
+                                                <th class="whitespace-nowrap">Judul Komisi</th>
+                                                <th class="text-center">Total Produk</th>
+                                                <th class="text-right">Total Bonus</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($commissionFiltered as $row)
+                                                <tr class="intro-x">
+                                                    <td>{{ $row['title'] ?? '-' }}</td>
+                                                    <td class="text-center">{{ $row['total_product'] ?? 0 }}</td>
+                                                    <td class="text-right">Rp. {{ number_format($row['total_bonus'] ?? 0, 0, ',', '.') }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
                 <!-- END: Sales Report -->
 

@@ -115,11 +115,12 @@ class CommissionController extends Controller
         foreach ($agents as $agent) {
             $agentName = optional($agent->agentProfile)->name ?? $agent->email;
 
-            // Get agent's direct orders
+            // Get agent's direct orders (exclude details assigned to sub-agents)
             $agentOrderDetails = OrderDetail::whereHas('order', function ($query) use ($agent) {
                     $query->where('status', 'accepted')
                         ->where('agent_id', $agent->id);
                 })
+                ->whereNull('sub_agent_id')
                 ->whereHas('product.package.package', function ($query) use ($packageId) {
                     $query->where('id', $packageId)
                         ->whereHas('period', function ($query) {
@@ -279,15 +280,16 @@ class CommissionController extends Controller
         foreach ($agents as $agent) {
             $agentName = optional($agent->agentProfile)->name ?? $agent->email;
 
-            // Get agent's direct orders
+            // Get agent's direct orders (exclude details assigned to sub-agents)
             $agentOrderDetails = OrderDetail::whereHas('order', function ($query) use ($agent) {
                     $query->where('status', 'accepted')
                         ->where('agent_id', $agent->id);
                 })
+                ->whereNull('sub_agent_id')
                 ->whereHas('product.package.package', function ($query) use ($packageId) {
                     $query->where('id', $packageId)
                         ->whereHas('period', function ($query) {
-                            $query->where('is_active', 0);
+                            $query->where('is_active', 1);
                         });
                 })
                 ->with('product')
