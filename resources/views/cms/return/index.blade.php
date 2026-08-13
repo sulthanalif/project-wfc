@@ -61,19 +61,19 @@
             <table class="table table-report -mt-2">
                 <thead>
                     <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NOMOR PENGEMBALIAN</th>
+                        <th class="text-center">#</th>
+                        <th class="text-center">NOMOR PENGEMBALIAN</th>
                         @hasrole('super_admin|admin')
-                            <th class="text-center whitespace-nowrap">DARI AGEN</th>
+                            <th class="text-center">DARI AGEN</th>
                         @endhasrole
-                        <th class="text-center whitespace-nowrap">TOTAL ITEM</th>
-                        <th class="text-center whitespace-nowrap">STATUS PENGEMBALIAN</th>
-                        <th class="text-center whitespace-nowrap">TANGGAL PENGAJUAN</th>
+                        <th class="text-center">TOTAL ITEM</th>
+                        <th class="text-center">STATUS PENGEMBALIAN</th>
+                        <th class="text-center">TANGGAL PENGAJUAN</th>
                         @hasrole('super_admin|admin')
-                            <th class="text-center whitespace-nowrap">TANGGAL PENGEMBALIAN</th>
+                            <th class="text-center">TANGGAL PENGEMBALIAN</th>
                         @endhasrole
-                        <th class="text-center whitespace-nowrap">KETERANGAN</th>
-                        <th class="text-center whitespace-nowrap">AKSI</th>
+                        <th class="text-center">KETERANGAN</th>
+                        <th class="text-center">AKSI</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,13 +94,13 @@
                                 </td>
                                 @hasrole('super_admin|admin')
                                     <td class="text-center capitalize">
-                                        <p class="font-normal whitespace-nowrap text-center">
+                                        <p class="text-center">
                                             {{ $return->user->agentProfile->name ?? 'N/A' }}
                                         </p>
                                     </td>
                                 @endhasrole
                                 <td>
-                                    <p class="font-normal whitespace-nowrap text-center">
+                                    <p class="text-center">
                                         {{ $return->productReturnDetail->count() }} Item
                                     </p>
                                 </td>
@@ -122,23 +122,23 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <p class="font-normal whitespace-nowrap text-center">
-                                        {{ $return->date_in }}
+                                    <p class="text-center">
+                                        {{ \Carbon\Carbon::parse($return->date_in)->format('d M Y') }}
                                     </p>
                                 </td>
                                 @hasrole('super_admin|admin')
                                     <td>
-                                        <p class="font-normal whitespace-nowrap text-center">
-                                            {{ $return->date_out ?? 'N/A' }}
+                                        <p class="text-center">
+                                            {{ \Carbon\Carbon::parse($return->date_out)->format('d M Y') ?? 'N/A' }}
                                         </p>
                                     </td>
                                 @endhasrole
                                 <td>
-                                    <p class="font-normal whitespace-nowrap text-center">
+                                    <p class="text-center">
                                         {!! $return->notes ?? 'N/A' !!}
                                     </p>
                                 </td>
-                                <td class="table-report__action w-56">
+                                <td class="table-report__action">
                                     @if ($return->status == 'finished')
                                         <div class="flex items-center justify-center text-success"> <i
                                                 data-lucide="check-square" class="w-4 h-4 mr-2"></i> </div>
