@@ -41,10 +41,10 @@ class PaymentController extends Controller
             return view('cms.agen.payment.index', compact('orders', 'user'));
         } else {
             if ($perPages == 'all') {
-                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->get()->groupBy('agent_id');
+                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->groupBy('agent_id')->get();
             } else {
                 $perPage = intval($perPages);
-                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->paginate($perPage)->groupBy('agent_id');
+                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->groupBy('agent_id')->paginate($perPage);
             }
 
             if ($request->get('export') == 'true') {
