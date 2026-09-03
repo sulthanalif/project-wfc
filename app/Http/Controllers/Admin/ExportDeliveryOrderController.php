@@ -19,7 +19,8 @@ class ExportDeliveryOrderController extends Controller
             'contact' => Contact::first()
         ];
 
-        $pdf = Pdf::loadView('cms.admin.distributions.export.distribution-order', $data);
+        $pdf = Pdf::loadView('cms.admin.distributions.export.distribution-order', $data)
+            ->setPaper('a5', 'portrait');
         return $pdf->stream('distribution-order-' . $distribution->distribution_number . '.pdf');
     }
 
@@ -38,7 +39,9 @@ class ExportDeliveryOrderController extends Controller
         // return $pdf->stream('distribution-order-' . $distribution->distribution_number . '.pdf');
 
         return response()->streamDownload(function () use ($data) {
-            echo Pdf::loadView('cms.admin.distributions.export.distribution-order', $data)->stream();
+            echo Pdf::loadView('cms.admin.distributions.export.distribution-order', $data)
+                ->setPaper('a5', 'portrait')
+                ->stream();
         }, 'distribution-order-' . $distribution->distribution_number . '.pdf');
     }
 }

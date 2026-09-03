@@ -8,25 +8,13 @@
             Detail Distribusi
         </h2>
         <div class="flex">
-            <div class="dropdown mr-2">
-                <button class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
-                    <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="plus"></i> </span>
+            <form action="{{ route('export.printed', ['distribution' => $distribution]) }}" method="POST">
+                @csrf
+                <button type="submit" class="btn box mr-2">
+                    <i data-lucide="printer" class="w-5 h-5 mr-1"></i>
+                    Cetak Surat
                 </button>
-                <div class="dropdown-menu w-40">
-                    <ul class="dropdown-content">
-                        <li>
-                            <form action="{{ route('export.printed', ['distribution' => $distribution]) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="flex items-center dropdown-item">
-                                    <i data-lucide="file" class="w-4 h-4 mr-2"></i>
-                                    Cetak
-                                    Surat
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            </form>
             <a href="{{ route('distribution.index') }}" class="btn btn-primary w-24 mr-1">Kembali</a>
         </div>
     </div>
@@ -60,7 +48,8 @@
                             Oleh: {{ $distribution->driver }}
                         </div>
                         <div class="flex items-center mt-3"> <i data-lucide="file" class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Cetak Surat: {{ $distribution->print_count > 0 ? $distribution->print_count . ' kali' : 'Belum Pernah Dicetak' }}
+                            Cetak Surat:
+                            {{ $distribution->print_count > 0 ? $distribution->print_count . ' kali' : 'Belum Pernah Dicetak' }}
                         </div>
                     </div>
                 </div>
@@ -146,10 +135,7 @@
                                             }
                                         } else {
                                             // Cek apakah subAgent atau agentProfile ada
-                                            if (
-                                                $d->orderDetail->subAgent &&
-                                                $d->orderDetail->subAgent->agentProfile
-                                            ) {
+                                            if ($d->orderDetail->subAgent && $d->orderDetail->subAgent->agentProfile) {
                                                 $data[] = $d->orderDetail->subAgent->agentProfile;
                                             }
                                         }
@@ -214,7 +200,7 @@
                                 {{-- <th class="whitespace-nowrap text-center">Harga per Item</th> --}}
                                 <th class="whitespace-nowrap text-center">Qty</th>
                                 @hasrole('admin|super_admin|finance_admin')
-                                <th class="whitespace-nowrap text-center">Jumlah Uang</th>
+                                    <th class="whitespace-nowrap text-center">Jumlah Uang</th>
                                 @endhasrole
                                 {{-- <th class="whitespace-nowrap text-center">Total</th> --}}
                             </tr>
@@ -280,7 +266,9 @@
                                     </td> --}}
                                     <td class="text-center">{{ $item->qty }}</td>
                                     @hasrole('admin|super_admin|finance_admin')
-                                    <td class="text-center">{{ number_format($item->orderDetail->product->sumRupiah() * $item->qty, 0, ',', '.') }}</td>
+                                        <td class="text-center">
+                                            {{ number_format($item->orderDetail->product->sumRupiah() * $item->qty, 0, ',', '.') }}
+                                        </td>
                                     @endhasrole
                                     {{-- <td class="text-center">Rp. {{ number_format($item->sub_price, 0, ',', '.') }}</td> --}}
                                 </tr>
@@ -295,7 +283,7 @@
                                 <th colspan="2">TOTAL</th>
                                 <th>{{ $total_qty }}</th>
                                 @hasrole('admin|super_admin|finance_admin')
-                                <th>{{ number_format($total_rupiah, 0, ',', '.') }}</th>
+                                    <th>{{ number_format($total_rupiah, 0, ',', '.') }}</th>
                                 @endhasrole
                             </tr>
                         </tfoot>
