@@ -20,25 +20,8 @@
                         <input id="order_number" name="order_number" value="{{ $orderNumber }}" type="text"
                             class="form-control w-full" placeholder="Masukkan Nama Lengkap Sub Agent" readonly>
                     </div>
-                    @hasrole('super_admin|admin')
-                        <div class="mt-3">
-                            <label for="agent_id" class="form-label">Dari Agent <span class="text-danger">*</span></label>
-                            <select class="tom-select mt-2 sm:mr-2" id="agent_id" name="agent_id" required>
-                                <option value="">Pilih...</option>
-                                @foreach ($agents as $agent)
-                                    <option value="{{ $agent->id }}">{{ $agent->agentProfile->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mt-3">
-                            <label for="order_date" class="form-label">Tanggal Pesanan <span
-                                    class="text-danger">*</span></label>
-                            <input id="order_date" name="order_date" type="date" class="form-control w-full">
-                        </div>
-                    @endhasrole
-                    @hasrole('agent')
-                        <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
-                    @endhasrole
+                    <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
+                    <input type="date" name="order_date" value="{{ date('Y-m-d') }}" hidden>
 
                     <div class="mt-3">
                         <label for="package_id" class="form-label">Pilih Paket <span class="text-danger">*</span></label>
@@ -103,28 +86,32 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
-        const currentDate = '{{ now()->format('Y-m-d') }}'; // Blade templating to get current date
+        const currentDate = '{{ now()->format('Y-m-d') }}';
         const dateInput = document.getElementById('order_date');
+        if (dateInput) dateInput.value = currentDate;
 
-        dateInput.value = currentDate;
-
-        // Constants
         const INITIAL_PRICE = 0;
         const INITIAL_QUANTITY = 0;
 
-        // Global variables (reduced usage)
         let totalHarga = INITIAL_PRICE;
         let qty = INITIAL_QUANTITY;
-        let productSelect;
 
-        // Event listeners
         document.addEventListener('DOMContentLoaded', () => {
-            productSelect = document.getElementById('package_id');
-            productSelect.addEventListener('change', handlePackageChange);
+            const packageSelectEl = document.getElementById('package_id');
+
+            // Gunakan instance TomSelect jika ada, atau fallback ke Vanilla event listener
+            if (packageSelectEl.tomselect) {
+                packageSelectEl.tomselect.on('change', (value) => {
+                    handlePackageChange(value);
+                });
+            } else {
+                packageSelectEl.addEventListener('change', (e) => {
+                    handlePackageChange(e.target.value);
+                });
+            }
         });
 
-        function handlePackageChange(event) {
-            const packageId = event.target.value;
+        function handlePackageChange(packageId) {
             const productFields = document.getElementById('product_fields');
 
             if (packageId) {
@@ -137,86 +124,151 @@
         }
 
         function populateProducts(packageId) {
-            productSelect = document.getElementById('product_id_item');
-            if (productSelect.tomselect) {
-                productSelect.tomselect.clear();
-            }
-            productSelect.innerHTML = '<option value="" disabled selected>Pilih Item...</option>';
+            const itemSelectEl = document.getElementById('product_id_item');
 
-            @foreach ($packages as $package)
-                if ('{{ $package->id }}' == packageId) {
-                    @foreach ($package->product as $product)
-                        @if (!$product->product->is_safe_point)
-                            var option = document.createElement('option');
-                            option.value = '{{ $product->product->id }}';
-                            option.textContent = "{{ $product->product->name }} - Rp. {{ number_format($product->product->total_price, 0, ',', '.') }}";
-                            option.dataset.harga = '{{ $product->product->total_price }}';
-                            productSelect.tomselect.addOption(option);
-                        @endif
-                    @endforeach
+            // 1. Bersihkan option di TomSelect / Select Biasa
+            if (itemSelectEl.tomselect) {
+                itemSelectEl.tomselect.clear();
+                itemSelectEl.tomselect.clearOptions();
+            } else {
+                itemSelectEl.innerHTML = '<option value="" disabled selected>Pilih Item...</option>';
+            }
+
+            // 2. Data produk yang di-render dari Blade
+            const packageData = {
+                @foreach ($packages as $package)
+                    '{{ $package->id }}': [
+                        @foreach ($package->product as $product)
+                            @if (!$product->product->is_safe_point)
+                                {
+                                    id: '{{ $product->product->id }}',
+                                    name: "{{ $product->product->name }}",
+                                    price: {{ $product->product->total_price }}
+                                },
+                            @endif
+                        @endforeach
+                    ],
+                @endforeach
+            };
+
+            const products = packageData[packageId] || [];
+
+            // 3. Masukkan data opsi ke TomSelect / Select Element
+            products.forEach(prod => {
+                const labelText = `${prod.name} - Rp. ${new Intl.NumberFormat('id-ID').format(prod.price)}`;
+
+                if (itemSelectEl.tomselect) {
+                    itemSelectEl.tomselect.addOption({
+                        value: prod.id,
+                        text: labelText,
+                        harga: prod.price
+                    });
+                } else {
+                    const opt = document.createElement('option');
+                    opt.value = prod.id;
+                    opt.textContent = labelText;
+                    opt.dataset.harga = prod.price;
+                    itemSelectEl.appendChild(opt);
                 }
-            @endforeach
+            });
+        }
+
+        function clearProductSelection() {
+            const packageSelectEl = document.getElementById('package_id');
+            if (packageSelectEl.tomselect) {
+                packageSelectEl.tomselect.clear();
+            } else {
+                packageSelectEl.value = '';
+            }
         }
 
         function addItem() {
-            const selectedOption = productSelect.selectedOptions[0];
+            const itemSelectEl = document.getElementById('product_id_item');
+            let itemId, itemName, itemPrice;
 
-            if (!selectedOption) {
-                alert('Silahkan pilih item terlebih dahulu!');
-                return;
+            // 1. Ambil data item terpilih baik dari TomSelect maupun HTML Select biasa
+            if (itemSelectEl.tomselect) {
+                itemId = itemSelectEl.tomselect.getValue();
+                if (!itemId) {
+                    alert('Silahkan pilih item terlebih dahulu!');
+                    return;
+                }
+                const selectedData = itemSelectEl.tomselect.options[itemId];
+                // Mengambil harga yang disimpan di data object
+                itemPrice = parseInt(selectedData.harga || 0, 10);
+                // Mengambil nama produk bersih (sebelum tanda -)
+                itemName = selectedData.text.split(' - ')[0];
+            } else {
+                const selectedOption = itemSelectEl.selectedOptions[0];
+                if (!selectedOption || !selectedOption.value) {
+                    alert('Silahkan pilih item terlebih dahulu!');
+                    return;
+                }
+                itemId = selectedOption.value;
+                itemName = selectedOption.textContent.trim().split(' - ')[0];
+                const hargaText = selectedOption.textContent.trim().split(' - ')[1] || '0';
+                itemPrice = parseInt(hargaText.replace(/[^0-9]/g, ''), 10);
             }
 
-            const itemId = selectedOption.value;
-            const itemName = selectedOption.textContent.trim().split(' - ')[0];
-            const harga = selectedOption.textContent.trim().split(' - ')[1].replace(/[^0-9]/g, '');
-            const itemPrice = parseInt(harga, 10);
-
-            // Check if the product already exists in the list
+            // 2. Cek apakah produk sudah ada di tabel transaksi
             let existingRow = null;
             $('.transaksiItem tr').each(function() {
-                const productId = $(this).find('#product-id').val();
+                const productId = $(this).find('.product-id-input').val();
                 const subAgentSelected = $(this).find('.sub_agent_item').val();
                 if (productId === itemId && !subAgentSelected) {
                     existingRow = $(this);
-                    return false; // break the loop
+                    return false; // Break loop jQuery
                 }
             });
 
             if (existingRow) {
-                // Product exists and no sub-agent selected, increment quantity
+                // Jika produk sudah ada, tambahkan quantity-nya
                 const quantityInput = existingRow.find('.quantityInput');
-                const newQuantity = parseInt(quantityInput.val()) + 1;
-                quantityInput.val(newQuantity).trigger('change');
+                const newQuantity = parseInt(quantityInput.val(), 10) + 1;
+                quantityInput.val(newQuantity);
+                updateQty(quantityInput[0]);
             } else {
-                // Product does not exist or sub-agent is selected, add new row
+                // Jika produk baru, tambahkan baris baru ke tabel
                 const itemQuantity = 1;
                 const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
                 $('.transaksiItem').append(newRow);
 
-                updateTotals(itemPrice);
-                qty += itemQuantity;
-                $('.qty').html(qty.toString());
+                updateTotals(itemPrice, itemQuantity);
+            }
+
+            // Reset pilihan dropdown item setelah berhasil ditambahkan
+            if (itemSelectEl.tomselect) {
+                itemSelectEl.tomselect.clear();
+            } else {
+                itemSelectEl.selectedIndex = 0;
             }
         }
 
         function createTableRow(id, name, price, quantity) {
             const subtotal = price * quantity;
 
+            // Perbaikan: Ganti id="product-id" jadi class="product-id-input" agar tidak ada ID ganda di HTML
             const row = `<tr>
-                <input value="${id}" id="product-id" name="product-id" type="hidden">
-                <td>${name}</td>
-                <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
-                <td class="text-center"><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}" id="product-qty"></td>
-                <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
-                <td id="sub_agent_fields">
-                    <select class="tom-select sub_agent_item" name="sub_agent_item">
-                        <option disabled selected>Pilih Sub Agent...</option>
-                    </select>
-                </td>
-                <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button></td>
-                </tr>`;
+        <input value="${id}" class="product-id-input" name="product_id[]" type="hidden">
+        <td>${name}</td>
+        <td class="text-center" data-price="${price}">${formatRupiah(price)}</td>
+        <td class="text-center">
+            <input type="number" min="1" value="${quantity}" class="quantityInput form-control w-20 text-center mx-auto" onchange="updateQty(this)" data-initial-value="${quantity}">
+        </td>
+        <td class="text-center subtotal-td">${formatRupiah(subtotal)}</td>
+        <td id="sub_agent_fields">
+            <select class="tom-select sub_agent_item form-control" name="sub_agent_id[]">
+                <option value="" disabled selected>Pilih Sub Agent...</option>
+            </select>
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button>
+        </td>
+    </tr>`;
 
             const tableRow = $(row);
+
+            // Populate opsi Sub Agent ke dropdown di dalam baris
             setTimeout(() => {
                 const agentId = $('#agent_id').val();
                 if (agentId) {
@@ -231,22 +283,18 @@
             subAgentSelect.html('<option disabled selected>Pilih Sub Agent...</option>');
 
             // Assuming the agents data is embedded directly in the script
-            const agents = [
-                @foreach ($agents as $agent)
-                    {
-                        id: '{{ $agent->id }}',
-                        subAgents: [
-                            @foreach ($agent->subAgent as $subAgent)
-                                {
-                                    id: '{{ $subAgent->id }}',
-                                    name: '{{ $subAgent->name }}',
-                                    phone_number: '{{ $subAgent->phone_number }}'
-                                },
-                            @endforeach
-                        ]
-                    },
-                @endforeach
-            ];
+            const agents = [{
+                id: '{{ $agents->id }}',
+                subAgents: [
+                    @foreach ($agents->subAgent as $subAgent)
+                        {
+                            id: '{{ $subAgent->id }}',
+                            name: '{{ $subAgent->name }}',
+                            phone_number: '{{ $subAgent->phone_number }}'
+                        },
+                    @endforeach
+                ]
+            }];
 
             const selectedAgent = agents.find(agent => agent.id === agentId);
             if (selectedAgent) {
@@ -322,11 +370,6 @@
             row.remove();
         }
 
-        // Helper functions (optional)
-        function clearProductSelection() {
-            productSelect.selectedIndex = 0;
-        }
-
         function clearSubAgentSelection() {
             const subAgentSelect = document.getElementById('sub_agent_item');
             subAgentSelect.innerHTML = '<option disabled selected>Pilih Sub Agent...</option>';
@@ -341,24 +384,47 @@
         }
 
         function simpan(event) {
-            const productData = [];
-            $('.transaksiItem tr').each(function() {
-                const productId = $(this).find('#product-id').val();
-                const subTotal = parseInt($(this).find('td:nth-child(5)').text().replace(/[^0-9,-]/g, ''));
-                const qty = $(this).find('#product-qty').val();
-                const subAgentId = $(this).find('.sub_agent_item').val();
+            event.preventDefault(); // Mencegah submit bawaan form agar proses JSON selesai dulu
 
-                productData.push({
-                    productId: productId,
-                    subTotal: subTotal,
-                    qty: qty,
-                    subAgentId: subAgentId
-                });
+            const productData = [];
+
+            $('.transaksiItem tr').each(function() {
+                const row = $(this);
+                const productId = row.find('.product-id-input').val();
+
+                // Ambil nominal angka murni dari subtotal
+                const subTotalText = row.find('.subtotal-td').text();
+                const subTotal = parseInt(subTotalText.replace(/[^0-9]/g, ''), 10) || 0;
+
+                const qty = parseInt(row.find('.quantityInput').val(), 10) || 1;
+                const subAgentId = row.find('.sub_agent_item').val() || null;
+
+                // Validasi jika productId tersedia
+                if (productId) {
+                    productData.push({
+                        // Mengirim dua variasi key (camelCase & snake_case) agar cocok dengan Controller
+                        productId: productId,
+                        product_id: productId,
+                        subTotal: subTotal,
+                        sub_total: subTotal,
+                        qty: qty,
+                        quantity: qty,
+                        subAgentId: subAgentId,
+                        sub_agent_id: subAgentId
+                    });
+                }
             });
 
+            if (productData.length === 0) {
+                alert('Harap tambahkan minimal satu produk sebelum menyimpan pesanan!');
+                return false;
+            }
+
+            // Masukkan string JSON ke hidden input
             $('#productData').val(JSON.stringify(productData));
 
-            $('#orderForm').submit();
+            // Submit form secara langsung
+            document.getElementById('orderForm').submit();
         }
     </script>
 @endpush

@@ -7,7 +7,8 @@
             <div class="modal-body p-0">
                 <div class="p-5">
                     {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
-                    <form id="orderForm" action="{{ route('order.addItems', $order) }}" method="post" enctype="multipart/form-data">
+                    <form id="orderForm" action="{{ route('order.addItems', $order) }}" method="post"
+                        enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
                         <div>
@@ -78,19 +79,25 @@
         const INITIAL_PRICE = 0;
         const INITIAL_QUANTITY = 0;
 
-        // Global variables (reduced usage)
         let totalHarga = INITIAL_PRICE;
         let qty = INITIAL_QUANTITY;
-        let productSelect;
 
-        // Event listeners
         document.addEventListener('DOMContentLoaded', () => {
-            productSelect = document.getElementById('package_id');
-            productSelect.addEventListener('change', handlePackageChange);
+            const packageSelectEl = document.getElementById('package_id');
+
+            // Gunakan instance TomSelect jika ada, atau fallback ke Vanilla event listener
+            if (packageSelectEl.tomselect) {
+                packageSelectEl.tomselect.on('change', (value) => {
+                    handlePackageChange(value);
+                });
+            } else {
+                packageSelectEl.addEventListener('change', (e) => {
+                    handlePackageChange(e.target.value);
+                });
+            }
         });
 
-        function handlePackageChange(event) {
-            const packageId = event.target.value;
+        function handlePackageChange(packageId) {
             const productFields = document.getElementById('product_fields');
 
             if (packageId) {
@@ -103,85 +110,151 @@
         }
 
         function populateProducts(packageId) {
-            productSelect = document.getElementById('product_id_item');
-            if (productSelect.tomselect) {
-                productSelect.tomselect.clear();
-            }
-            productSelect.innerHTML = '<option value="" disabled selected>Pilih Item...</option>';
+            const itemSelectEl = document.getElementById('product_id_item');
 
-            @foreach ($packages as $package)
-                if ('{{ $package->id }}' == packageId) {
-                    @foreach ($package->product as $product)
-                        var option = document.createElement('option');
-                        option.value = '{{ $product->product->id }}';
-                        option.textContent =
-                            "{{ $product->product->name }} {{ $product->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - Rp. {{ number_format($product->product->price, 0, ',', '.') }}/hari";
-                        option.dataset.harga = '{{ $product->product->total_price }}';
-                        productSelect.tomselect.addOption(option);
-                    @endforeach
+            // 1. Bersihkan option di TomSelect / Select Biasa
+            if (itemSelectEl.tomselect) {
+                itemSelectEl.tomselect.clear();
+                itemSelectEl.tomselect.clearOptions();
+            } else {
+                itemSelectEl.innerHTML = '<option value="" disabled selected>Pilih Item...</option>';
+            }
+
+            // 2. Data produk yang di-render dari Blade
+            const packageData = {
+                @foreach ($packages as $package)
+                    '{{ $package->id }}': [
+                        @foreach ($package->product as $product)
+                            @if (!$product->product->is_safe_point)
+                                {
+                                    id: '{{ $product->product->id }}',
+                                    name: "{{ $product->product->name }}",
+                                    price: {{ $product->product->total_price }}
+                                },
+                            @endif
+                        @endforeach
+                    ],
+                @endforeach
+            };
+
+            const products = packageData[packageId] || [];
+
+            // 3. Masukkan data opsi ke TomSelect / Select Element
+            products.forEach(prod => {
+                const labelText = `${prod.name} - Rp. ${new Intl.NumberFormat('id-ID').format(prod.price)}`;
+
+                if (itemSelectEl.tomselect) {
+                    itemSelectEl.tomselect.addOption({
+                        value: prod.id,
+                        text: labelText,
+                        harga: prod.price
+                    });
+                } else {
+                    const opt = document.createElement('option');
+                    opt.value = prod.id;
+                    opt.textContent = labelText;
+                    opt.dataset.harga = prod.price;
+                    itemSelectEl.appendChild(opt);
                 }
-            @endforeach
+            });
+        }
+
+        function clearProductSelection() {
+            const packageSelectEl = document.getElementById('package_id');
+            if (packageSelectEl.tomselect) {
+                packageSelectEl.tomselect.clear();
+            } else {
+                packageSelectEl.value = '';
+            }
         }
 
         function addItem() {
-            const selectedOption = productSelect.selectedOptions[0];
+            const itemSelectEl = document.getElementById('product_id_item');
+            let itemId, itemName, itemPrice;
 
-            if (!selectedOption) {
-                alert('Silahkan pilih item terlebih dahulu!');
-                return;
+            // 1. Ambil data item terpilih baik dari TomSelect maupun HTML Select biasa
+            if (itemSelectEl.tomselect) {
+                itemId = itemSelectEl.tomselect.getValue();
+                if (!itemId) {
+                    alert('Silahkan pilih item terlebih dahulu!');
+                    return;
+                }
+                const selectedData = itemSelectEl.tomselect.options[itemId];
+                // Mengambil harga yang disimpan di data object
+                itemPrice = parseInt(selectedData.harga || 0, 10);
+                // Mengambil nama produk bersih (sebelum tanda -)
+                itemName = selectedData.text.split(' - ')[0];
+            } else {
+                const selectedOption = itemSelectEl.selectedOptions[0];
+                if (!selectedOption || !selectedOption.value) {
+                    alert('Silahkan pilih item terlebih dahulu!');
+                    return;
+                }
+                itemId = selectedOption.value;
+                itemName = selectedOption.textContent.trim().split(' - ')[0];
+                const hargaText = selectedOption.textContent.trim().split(' - ')[1] || '0';
+                itemPrice = parseInt(hargaText.replace(/[^0-9]/g, ''), 10);
             }
 
-            const itemId = selectedOption.value;
-            const itemName = selectedOption.textContent.trim().split(' - ')[0];
-            const itemPrice = parseInt(selectedOption.dataset.harga);
-            const itemQuantity = 1;
-
-            // Check if product with same id and sub agent already exists
+            // 2. Cek apakah produk sudah ada di tabel transaksi
             let existingRow = null;
             $('.transaksiItem tr').each(function() {
-                const existingProductId = $(this).find('#product-id').val();
-                const existingSubAgentId = $(this).find('.sub_agent_item').val() || '';
-                
-                if (existingProductId === itemId && existingSubAgentId === '') {
+                const productId = $(this).find('.product-id-input').val();
+                const subAgentSelected = $(this).find('.sub_agent_item').val();
+                if (productId === itemId && !subAgentSelected) {
                     existingRow = $(this);
-                    return false; // break the loop
+                    return false; // Break loop jQuery
                 }
             });
 
             if (existingRow) {
-                // Update quantity in existing row
-                const currentQty = parseInt(existingRow.find('#product-qty').val());
-                const newQty = currentQty + itemQuantity;
-                existingRow.find('#product-qty').val(newQty);
-                updateQty(existingRow.find('#product-qty')[0], itemPrice);
+                // Jika produk sudah ada, tambahkan quantity-nya
+                const quantityInput = existingRow.find('.quantityInput');
+                const newQuantity = parseInt(quantityInput.val(), 10) + 1;
+                quantityInput.val(newQuantity);
+                updateQty(quantityInput[0]);
             } else {
-                // Create new row
+                // Jika produk baru, tambahkan baris baru ke tabel
+                const itemQuantity = 1;
                 const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
                 $('.transaksiItem').append(newRow);
-                updateTotals(itemPrice);
-                qty += itemQuantity;
-                $('.qty').html(qty.toString());
+
+                updateTotals(itemPrice, itemQuantity);
+            }
+
+            // Reset pilihan dropdown item setelah berhasil ditambahkan
+            if (itemSelectEl.tomselect) {
+                itemSelectEl.tomselect.clear();
+            } else {
+                itemSelectEl.selectedIndex = 0;
             }
         }
 
         function createTableRow(id, name, price, quantity) {
             const subtotal = price * quantity;
 
+            // Perbaikan: Ganti id="product-id" jadi class="product-id-input" agar tidak ada ID ganda di HTML
             const row = `<tr>
-                <input value="${id}" id="product-id" name="product-id" type="hidden">
-                <td>${name}</td>
-                <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
-                <td><input type="number" min="1" value="${quantity}" class="quantityInput" onchange="updateQty(this)" data-initial-value="${quantity}" id="product-qty"></td>
-                <td class="text-center">${price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</td>
-                <td id="sub_agent_fields">
-                    <select class="tom-select sub_agent_item" name="sub_agent_item">
-                        <option disabled selected>Pilih Sub Agent...</option>
-                    </select>
-                </td>
-                <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button></td>
-                </tr>`;
+        <input value="${id}" class="product-id-input" name="product_id[]" type="hidden">
+        <td>${name}</td>
+        <td class="text-center" data-price="${price}">${formatRupiah(price)}</td>
+        <td class="text-center">
+            <input type="number" min="1" value="${quantity}" class="quantityInput form-control w-20 text-center mx-auto" onchange="updateQty(this)" data-initial-value="${quantity}">
+        </td>
+        <td class="text-center subtotal-td">${formatRupiah(subtotal)}</td>
+        <td id="sub_agent_fields">
+            <select class="tom-select sub_agent_item form-control" name="sub_agent_id[]">
+                <option value="" disabled selected>Pilih Sub Agent...</option>
+            </select>
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-danger btn-sm removeItem" onclick="removeItem(this)">Hapus</button>
+        </td>
+    </tr>`;
 
             const tableRow = $(row);
+
+            // Populate opsi Sub Agent ke dropdown di dalam baris
             setTimeout(() => {
                 const agentId = $('#agent_id').val();
                 if (agentId) {
@@ -302,24 +375,47 @@
         }
 
         function simpan(event) {
-            const productData = [];
-            $('.transaksiItem tr').each(function() {
-                const productId = $(this).find('#product-id').val();
-                const subTotal = parseInt($(this).find('td:nth-child(5)').text().replace(/[^0-9,-]/g, ''));
-                const qty = $(this).find('#product-qty').val();
-                const subAgentId = $(this).find('.sub_agent_item').val();
+            event.preventDefault(); // Mencegah submit bawaan form agar proses JSON selesai dulu
 
-                productData.push({
-                    productId: productId,
-                    subTotal: subTotal,
-                    qty: qty,
-                    subAgentId: subAgentId
-                });
+            const productData = [];
+
+            $('.transaksiItem tr').each(function() {
+                const row = $(this);
+                const productId = row.find('.product-id-input').val();
+
+                // Ambil nominal angka murni dari subtotal
+                const subTotalText = row.find('.subtotal-td').text();
+                const subTotal = parseInt(subTotalText.replace(/[^0-9]/g, ''), 10) || 0;
+
+                const qty = parseInt(row.find('.quantityInput').val(), 10) || 1;
+                const subAgentId = row.find('.sub_agent_item').val() || null;
+
+                // Validasi jika productId tersedia
+                if (productId) {
+                    productData.push({
+                        // Mengirim dua variasi key (camelCase & snake_case) agar cocok dengan Controller
+                        productId: productId,
+                        product_id: productId,
+                        subTotal: subTotal,
+                        sub_total: subTotal,
+                        qty: qty,
+                        quantity: qty,
+                        subAgentId: subAgentId,
+                        sub_agent_id: subAgentId
+                    });
+                }
             });
 
+            if (productData.length === 0) {
+                alert('Harap tambahkan minimal satu produk sebelum menyimpan pesanan!');
+                return false;
+            }
+
+            // Masukkan string JSON ke hidden input
             $('#productData').val(JSON.stringify(productData));
 
-            $('#orderForm').submit();
+            // Submit form secara langsung
+            document.getElementById('orderForm').submit();
         }
     </script>
 @endpush

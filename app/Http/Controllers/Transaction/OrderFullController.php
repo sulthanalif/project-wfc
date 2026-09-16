@@ -117,7 +117,7 @@ class OrderFullController extends Controller
         }
 
         if (ValidateRole::check('agent')) {
-            return view('cms.transactions.full.index', compact('orders'));
+            return view('cms.transactions.full.archive', compact('orders'));
         }
 
         if ($request->get('export') == 'true') {
@@ -261,7 +261,7 @@ class OrderFullController extends Controller
         $roleName = $roleUser->name;
 
         if ($roleName == 'agent') {
-            return view('cms.transactions.agent.create', [
+            return view('cms.transactions.full.create-agent', [
                 'agents' => $user,
                 'orderNumber' => $orderNumber,
                 'packages' => $packages
@@ -293,8 +293,14 @@ class OrderFullController extends Controller
         $user = Auth::user();
         $periode = Period::where('is_active', 1)->first();
 
-        if ($user->roleName == 'agent') {
-            if ($user->order()?->where('status', '!=', 'reject')->exists() && $user->order()?->where('status', '!=', 'reject')->first()->created_at < $periode->end_date) {
+        if ($user->roleName == 'agent' && $periode) {
+            $hasOrderInActivePeriod = $user->order()
+                ->where('status', '!=', 'reject')
+                ->whereDate('created_at', '>=', $periode->start_date)
+                ->whereDate('created_at', '<=', $periode->end_date)
+                ->exists();
+
+            if ($hasOrderInActivePeriod) {
                 return back()->with('error', 'Selesaikan dulu pesanan pada periode ini');
             }
         }

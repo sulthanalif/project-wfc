@@ -449,11 +449,35 @@
                     </a>
                     <ul class="@if (Route::is('order*') || Route::is('payment-agent*') || Route::is('return*')) side-menu__sub-open @endif">
                         <li>
-                            <a href="{{ route('order.index') }}"
+                            {{-- <a href="{{ route('order.index') }}"
                                 class="side-menu {{ Route::is('order*') ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
                                 <div class="side-menu__title"> Pesanan </div>
+                            </a> --}}
+                            <a href="javascript:;"
+                                class="side-menu @if (Route::is('order*')) side-menu--active @endif">
+                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                <div class="side-menu__title">
+                                    Pesanan
+                                    <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                                </div>
                             </a>
+                            <ul class="@if (Route::is('order*')) side-menu__sub-open @endif">
+                                <li>
+                                    <a href="{{ route('order.full.index') }}"
+                                        class="side-menu {{ Route::is('order.full*') ? 'side-menu--active' : '' }}">
+                                        <div class="side-menu__icon"> <i data-lucide="chevron-right"></i> </div>
+                                        <div class="side-menu__title"> Full </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('order.aman.index') }}"
+                                        class="side-menu {{ Route::is('order.aman*') ? 'side-menu--active' : '' }}">
+                                        <div class="side-menu__icon"> <i data-lucide="chevron-right"></i> </div>
+                                        <div class="side-menu__title"> TItik Aman </div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li>
                             <a href="{{ route('payment-agent.index') }}"

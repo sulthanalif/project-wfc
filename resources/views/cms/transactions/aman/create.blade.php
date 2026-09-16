@@ -89,7 +89,7 @@
                         <input type="hidden" name="total_price" value="0">
                         <input type="hidden" name="products" id="productData" value="">
                         <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Simpan</button>
-                        <a href="{{ route('order.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
+                        <a href="{{ route('order.aman.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
                     </div>
                 </form>
             </div>

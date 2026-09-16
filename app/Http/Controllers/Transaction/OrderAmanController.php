@@ -124,7 +124,7 @@ class OrderAmanController extends Controller
         }
 
         if (ValidateRole::check('agent')) {
-            return view('cms.transactions.aman.index', compact('orders'));
+            return view('cms.transactions.aman.archive', compact('orders'));
         }
 
         if ($request->get('export') == 'true') {
@@ -252,7 +252,7 @@ class OrderAmanController extends Controller
         $roleName = $roleUser->name;
 
         if ($roleName == 'agent') {
-            return view('cms.transactions.agent.create', [
+            return view('cms.transactions.aman.create-agent', [
                 'agents' => $user,
                 'orderNumber' => $orderNumber,
                 'packages' => $packages
