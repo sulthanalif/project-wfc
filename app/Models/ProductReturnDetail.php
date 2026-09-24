@@ -22,6 +22,7 @@ class ProductReturnDetail extends Model
         'sub_product_id',
         'status_product',
         'qty',
+        'proof_image',
     ];
 
     public function productReturn()

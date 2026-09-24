@@ -80,6 +80,7 @@ class ProductReturnController extends Controller
             'products.*.item_sub_product' => 'required|string',
             'products.*.quantity' => 'required|numeric|min:1',
             'products.*.item_note' => 'required|string',
+            'products.*.proof_image' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -97,6 +98,12 @@ class ProductReturnController extends Controller
 
                 if (is_array($products)) {
                     foreach ($products as $productData) {
+                        $proofImagePath = null;
+
+                        if (!empty($productData['proof_image'])) {
+                            $proofImagePath = $this->saveProofImage($productData['proof_image']);
+                        }
+
                         ProductReturnDetail::create([
                             'product_return_id' => $return->id,
                             'order_id' => $request->input('order_id_item'),
@@ -104,6 +111,7 @@ class ProductReturnController extends Controller
                             'sub_product_id' => $productData['item_sub_product'],
                             'status_product' => $productData['item_note'] ?? null,
                             'qty' => $productData['quantity'],
+                            'proof_image' => $proofImagePath,
                         ]);
                     }
                 }
@@ -117,6 +125,55 @@ class ProductReturnController extends Controller
             ];
             return view('cms.error', compact('data'));
         }
+    }
+
+    private function saveProofImage(string $imageData): ?string
+    {
+        if (empty($imageData) || !str_contains($imageData, 'data:image')) {
+            return null;
+        }
+
+        if (!preg_match('/^data:image\/(?<type>jpeg|jpg|png|gif);base64,(?<data>.+)$/i', $imageData, $matches)) {
+            return null;
+        }
+
+        $directory = storage_path('app/public/images/return');
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        $extension = strtolower($matches['type']);
+        $randomString = GenerateRandomString::make(8);
+        $fileName = 'return_' . $randomString . '.' . $extension;
+        $filePath = $directory . DIRECTORY_SEPARATOR . $fileName;
+        $decoded = base64_decode($matches['data'], true);
+
+        if ($decoded === false) {
+            return null;
+        }
+
+        file_put_contents($filePath, $decoded);
+
+        return $fileName;
+    }
+
+    private function saveUploadedProofImage($file): ?string
+    {
+        if (!$file || !$file->isValid()) {
+            return null;
+        }
+
+        $directory = storage_path('app/public/images/return');
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        $extension = strtolower($file->getClientOriginalExtension() ?: 'png');
+        $randomString = GenerateRandomString::make(8);
+        $fileName = 'return_' . $randomString . '.' . $extension;
+        $file->move($directory, $fileName);
+
+        return $fileName;
     }
 
     /**
@@ -161,6 +218,17 @@ class ProductReturnController extends Controller
         try {
             DB::transaction(function () use ($return) {
                 // Hapus detail pengembalian terkait
+                $returnDetails = ProductReturnDetail::where('product_return_id', $return->id)->get();
+
+                foreach ($returnDetails as $item) {
+                    if ($item->proof_image) {
+                        $proofImagePath = storage_path('app/public/images/return/' . $item->proof_image);
+                        if (file_exists($proofImagePath)) {
+                            unlink($proofImagePath);
+                        }
+                    }
+                }
+
                 ProductReturnDetail::where('product_return_id', $return->id)->delete();
 
                 // Hapus pengembalian
@@ -215,6 +283,7 @@ class ProductReturnController extends Controller
             'sub_product_id_item' => 'required|exists:sub_products,id',
             'qty' => 'required|numeric|min:1',
             'status_product' => 'required|in:damaged,expired,overstock,other',
+            'proof_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -223,6 +292,12 @@ class ProductReturnController extends Controller
 
         try {
             DB::transaction(function () use ($request, $return) {
+                $proofImagePath = null;
+
+                if ($request->hasFile('proof_image')) {
+                    $proofImagePath = $this->saveUploadedProofImage($request->file('proof_image'));
+                }
+
                 ProductReturnDetail::create([
                     'product_return_id' => $return->id,
                     'order_id' => $request->input('order_id'),
@@ -230,6 +305,7 @@ class ProductReturnController extends Controller
                     'sub_product_id' => $request->input('sub_product_id_item'),
                     'status_product' => $request->input('status_product'),
                     'qty' => $request->input('qty'),
+                    'proof_image' => $proofImagePath,
                 ]);
             });
 
@@ -276,6 +352,13 @@ class ProductReturnController extends Controller
         try {
             DB::transaction(function () use ($return, $item) {
                 // Hapus detail pengembalian terkait
+                if ($item->proof_image) {
+                    $proofImagePath = storage_path('app/public/images/return/' . $item->proof_image);
+                    if (file_exists($proofImagePath)) {
+                        unlink($proofImagePath);
+                    }
+                }
+
                 $item->delete();
 
                 // Hapus pengembalian jika tidak ada detail yang tersisa

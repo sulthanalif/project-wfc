@@ -102,6 +102,7 @@
                                         <th>Produk</th>
                                         <th>Jumlah</th>
                                         <th>Keterangan Produk</th>
+                                        <th>Bukti Produk</th>
                                         <th>#</th>
                                     </tr>
                                 </thead>
@@ -206,6 +207,10 @@
             function renderItemsTable() {
                 transaksiItemTable.innerHTML = '';
                 addedItems.forEach((item, index) => {
+                    const previewId = `image-preview-${index}`;
+                    const fileNameId = `file-name-${index}`;
+                    const inputId = `image-${index}`;
+
                     const row = `
                         <tr class="text-center">
                             <td>
@@ -231,6 +236,16 @@
                                     <option value="overstock" ${item.item_note === 'overstock' ? 'selected' : ''}>Kelebihan</option>
                                     <option value="other" ${item.item_note === 'other' ? 'selected' : ''}>Lainnya</option>
                                 </select>
+                            </td>
+                            <td>
+                                <div class="px-4 pb-4 mt-5 flex items-center justify-center cursor-pointer relative border border-dashed rounded-md p-3">
+                                    <div id="${previewId}" class="absolute inset-0 hidden items-center justify-center bg-white/80 rounded-md z-10"></div>
+                                    <i data-lucide="image" class="w-4 h-4 mr-2 relative z-20"></i>
+                                    <span id="${fileNameId}" class="relative z-20 text-primary mr-1">Upload a file</span>
+                                    <input id="${inputId}" name="image[]" type="file" accept="image/jpeg,image/png"
+                                        class="w-full h-full top-0 left-0 absolute opacity-0 cursor-pointer z-30"
+                                        onchange="previewFile(this, '${previewId}', '${fileNameId}', ${index})">
+                                </div>
                             </td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(${index})">
@@ -299,7 +314,8 @@
                     sub_product_name: product.sub_product_name,
                     item_sub_product: product.sub_product_id,
                     quantity: 1,
-                    item_note: ''
+                    item_note: '',
+                    proof_image: null
                 });
                 renderItemsTable();
             };
@@ -343,7 +359,7 @@
             @hasrole('agent')
                 const agentId = '{{ auth()->user()->id }}';
                 // Populate orders dropdown for agent on page load
-                (function(){
+                (function() {
                     orderFields.style.display = 'block';
                     orderSelect.innerHTML = '<option value="">Pilih No Pesanan...</option>';
                     ordersData.forEach(order => {
@@ -404,6 +420,65 @@
 
                 const form = document.getElementById('returnForm');
                 form.submit();
+            };
+
+            window.previewFile = (input, previewId, fileNameId, index) => {
+                const file = input.files[0];
+                const preview = document.getElementById(previewId);
+                const fileName = document.getElementById(fileNameId);
+
+                if (!preview || !fileName) {
+                    return;
+                }
+
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('Ukuran gambar lebih dari 2MB. Silahkan pilih gambar yang lebih kecil');
+                        preview.innerHTML = '';
+                        preview.classList.add('hidden');
+                        fileName.textContent = 'Upload a file';
+                        input.value = '';
+                        return;
+                    }
+
+                    const allowedExtensions = ['jpg', 'jpeg', 'png'];
+                    const extension = file.name.split('.').pop().toLowerCase();
+                    if (!allowedExtensions.includes(extension)) {
+                        alert('Hanya file dengan tipe (jpg, jpeg, png) yang diperbolehkan!!');
+                        preview.innerHTML = '';
+                        preview.classList.add('hidden');
+                        fileName.textContent = 'Upload a file';
+                        input.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageData = e.target.result;
+
+                        preview.innerHTML = `<img src="${imageData}" class="w-auto h-40 object-cover rounded">`;
+                        preview.classList.remove('hidden');
+                        preview.classList.add('flex');
+                        fileName.textContent = file.name;
+
+                        if (addedItems[index]) {
+                            addedItems[index].proof_image = imageData;
+                            updateSummary();
+                        }
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.innerHTML = '';
+                    preview.classList.add('hidden');
+                    preview.classList.remove('flex');
+                    fileName.textContent = 'Upload a file';
+
+                    if (addedItems[index]) {
+                        addedItems[index].proof_image = null;
+                        updateSummary();
+                    }
+                }
             };
         });
     </script>

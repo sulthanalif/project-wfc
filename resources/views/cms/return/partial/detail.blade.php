@@ -114,6 +114,7 @@
                                 <th class="whitespace-nowrap text-center !py-5">Item</th>
                                 <th class="whitespace-nowrap text-center">Qty</th>
                                 <th class="whitespace-nowrap text-center">Status Item</th>
+                                <th class="whitespace-nowrap text-center">Bukti Item</th>
                                 @hasrole('agent')
                                     <th class="whitespace-nowrap text-center">Aksi</th>
                                 @endhasrole
@@ -166,6 +167,35 @@
                                             Kelebihan Stok
                                         @else
                                             Lainnya
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if ($item->proof_image)
+                                            <a href="javascript:;" data-tw-toggle="modal"
+                                                data-tw-target="#proof-image-modal-{{ $item->id }}">
+                                                <img alt="Bukti produk" class="tooltip rounded-md cursor-pointer border border-slate-200 shadow-sm transition hover:scale-110"
+                                                    src="{{ route('getImage', ['path' => 'return', 'imageName' => $item->proof_image]) }}"
+                                                    title="{{ $item->proof_image }}" width="60" height="60">
+                                            </a>
+
+                                            <div id="proof-image-modal-{{ $item->id }}" class="modal" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-body p-0">
+                                                            <div class="relative">
+                                                                <button type="button" class="btn btn-secondary btn-sm btn-icon btn-circle absolute right-3 top-3 z-10"
+                                                                    data-tw-dismiss="modal" aria-label="Close">
+                                                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                                                </button>
+                                                                <img src="{{ route('getImage', ['path' => 'return', 'imageName' => $item->proof_image]) }}"
+                                                                    alt="Bukti produk" class="w-full max-h-[80vh] object-contain rounded-md">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            -
                                         @endif
                                     </td>
                                     <td>
