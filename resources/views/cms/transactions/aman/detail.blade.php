@@ -160,7 +160,7 @@
                                 <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah
                             </a>
                         @endif
-                        @include('cms.transactions.modal.add-product')
+                        @include('cms.transactions.modal.add-product-aman')
                     @endhasrole
                 </div>
                 <div class="overflow-auto lg:overflow-visible -mt-3">

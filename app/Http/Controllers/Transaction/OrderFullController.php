@@ -298,10 +298,13 @@ class OrderFullController extends Controller
                 ->where('status', '!=', 'reject')
                 ->whereDate('created_at', '>=', $periode->start_date)
                 ->whereDate('created_at', '<=', $periode->end_date)
+                ->whereHas('detail.product', function ($query) {
+                    $query->where('is_safe_point', false);
+                })
                 ->exists();
 
             if ($hasOrderInActivePeriod) {
-                return back()->with('error', 'Selesaikan dulu pesanan pada periode ini');
+                return back()->with('error', 'Agen sudah memiliki pesanan full pada periode ini. Selesaikan dulu pesanan tersebut');
             }
         }
 

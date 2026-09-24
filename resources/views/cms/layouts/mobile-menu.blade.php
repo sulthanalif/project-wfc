@@ -458,27 +458,6 @@
                                             </li>
                                         </ul>
                                     </li>
-                                    <li>
-                                        <a href="{{ route('payment.index') }}"
-                                            class="menu {{ Route::is('payment*') ? 'menu--active' : '' }}">
-                                            <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                            <div class="menu__title"> Pembayaran </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('distribution.index') }}"
-                                            class="menu {{ Route::is('distribution*') ? 'menu--active' : '' }}">
-                                            <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                            <div class="menu__title"> Pendistribusian </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('return.index') }}"
-                                            class="menu {{ Route::is('return*') ? 'menu--active' : '' }}">
-                                            <div class="menu__icon"> <i data-lucide="activity"></i> </div>
-                                            <div class="menu__title"> Pengembalian </div>
-                                        </a>
-                                    </li>
                                 </ul>
                             </li>
                             <li>

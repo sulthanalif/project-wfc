@@ -235,7 +235,7 @@ class OrderAmanController extends Controller
             return Excel::download(new DetailOrderExport($order->id), 'Order Detail ' . $order->order_number . '.xlsx');
         }
 
-        return view('cms.transactions.full.detail', compact(['order', 'packages', 'agents', 'selects', 'selectProducts']));
+        return view('cms.transactions.aman.detail', compact(['order', 'packages', 'agents', 'selects', 'selectProducts']));
     }
 
     public function create()
@@ -284,9 +284,18 @@ class OrderAmanController extends Controller
         $user = Auth::user();
         $periode = Period::where('is_active', 1)->first();
 
-        if ($user->roleName == 'agent') {
-            if ($user->order()?->where('status', '!=', 'reject')->exists() && $user->order()?->where('status', '!=', 'reject')->first()->created_at < $periode->end_date) {
-                return back()->with('error', 'Selesaikan dulu pesanan pada periode ini');
+        if ($user->roleName == 'agent' && $periode) {
+            $hasOrderInActivePeriod = $user->order()
+                ->where('status', '!=', 'reject')
+                ->whereDate('created_at', '>=', $periode->start_date)
+                ->whereDate('created_at', '<=', $periode->end_date)
+                ->whereHas('detail.product', function ($query) {
+                    $query->where('is_safe_point', true);
+                })
+                ->exists();
+
+            if ($hasOrderInActivePeriod) {
+                return back()->with('error', 'Agen sudah memiliki pesanan titik aman pada periode ini. Selesaikan dulu pesanan tersebut');
             }
         }
 

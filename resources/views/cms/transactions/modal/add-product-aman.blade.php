@@ -1,95 +1,81 @@
-@extends('cms.layouts.app', [
-    'title' => 'Tambah Pesanan',
-])
-
-@section('content')
-    <div class="intro-y flex items-center mt-8">
-        <h2 class="text-lg font-medium mr-auto">
-            Tambah Pesanan
-        </h2>
-    </div>
-
-    <div class="grid grid-cols-12 gap-6 mt-5">
-        <div class="intro-y col-span-12">
-            <!-- BEGIN: Form Layout -->
-            <div class="intro-y box p-5">
-                <form id="orderForm" action="{{ route('order.aman.store') }}" method="post">
-                    @csrf
-                    <div>
-                        <label for="order_number" class="form-label">No. Pesanan <span class="text-danger">*</span></label>
-                        <input id="order_number" name="order_number" value="{{ $orderNumber }}" type="text"
-                            class="form-control w-full" placeholder="Masukkan Nama Lengkap Sub Agent" readonly>
-                    </div>
-                    <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
-                    <input type="date" name="order_date" value="{{ date('Y-m-d') }}" hidden>
-
-                    <div class="mt-3">
-                        <label for="package_id" class="form-label">Pilih Paket <span class="text-danger">*</span></label>
-                        <select class="tom-select mt-2 sm:mr-2" id="package_id" name="package_id" required>
-                            <option value="">Pilih...</option>
-                            @foreach ($packages as $package)
-                                <option value="{{ $package->id }}">{{ $package->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="mt-3" id="product_fields" style="display: none;">
-                        <label for="product_id_item" class="form-label">Pilih Item <span
-                                class="text-danger">*</span></label>
-                        <select class="tom-select mt-2 sm:mr-2" id="product_id_item" name="product_id_item" required>
-                        </select>
-                        <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
-                    </div>
-
-                    <div class="row mt-3">
-                        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-                            <table class="table table-report">
-                                <thead>
-                                    <tr class="text-center">
-                                        <th>Nama</th>
-                                        <th>Harga</th>
-                                        <th>Jumlah</th>
-                                        <th>Sub Total</th>
-                                        <th>Sub Agent</th>
-                                        <th>#</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="transaksiItem">
-
-                                </tbody>
-                                <tfoot>
-                                    <tr class="text-center">
-                                        <th colspan="2">TOTAL</th>
-                                        <th class="qty">0</th>
-                                        <th class="totalHarga">0</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="text-left mt-5">
-                        <input type="hidden" name="total_price" value="0">
-                        <input type="hidden" name="products" id="productData" value="">
-                        <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Simpan</button>
-                        <a href="{{ route('order.aman.index') }}" class="btn btn-outline-secondary w-24 ml-1">Kembali</a>
-                    </div>
-                </form>
+<div id="add-product-modal" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="form-label text-lg font-bold">Tambah Produk</h2>
             </div>
-            <!-- END: Form Layout -->
+            <div class="modal-body p-0">
+                <div class="p-5">
+                    {{-- <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i> --}}
+                    <form id="orderForm" action="{{ route('order.addItems', $order) }}" method="post"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->user()->id }}">
+                        <div>
+                            <label for="package_id" class="form-label">Pilih Paket <span
+                                    class="text-danger">*</span></label>
+                            <select class="tom-select mt-2 sm:mr-2" id="package_id" name="package_id" required>
+                                <option value="">Pilih...</option>
+                                @foreach ($packages as $package)
+                                    <option value="{{ $package->id }}">{{ $package->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mt-3" id="product_fields" style="display: none;">
+                            <label for="product_id_item" class="form-label">Pilih Item <span
+                                    class="text-danger">*</span></label>
+                            <select class="tom-select mt-2 sm:mr-2" id="product_id_item" name="product_id_item"
+                                required>
+                            </select>
+                            <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Tambah</button>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="intro-y col-span-12 overflow-auto">
+                                <table class="table table-report table-responsive">
+                                    <thead>
+                                        <tr class="text-center">
+                                            <th>Produk</th>
+                                            <th>Harga</th>
+                                            <th>Jumlah</th>
+                                            <th>Sub Total</th>
+                                            <th>Sub Agent</th>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="transaksiItem">
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="text-center">
+                                            <th colspan="2">TOTAL</th>
+                                            <th class="qty">0</th>
+                                            <th class="totalHarga">0</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="text-left px-5 mt-3">
+                            <input type="hidden" name="total_price" value="0">
+                            <input type="hidden" name="products" id="productData" value="">
+                            <button type="submit" class="btn btn-primary w-24" onclick="simpan(event)">Simpan</button>
+                            <button type="button" data-tw-dismiss="modal"
+                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-@endsection
+</div>
 
 @push('custom-scripts')
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
-        const currentDate = '{{ now()->format('Y-m-d') }}';
-        const dateInput = document.getElementById('order_date');
-        if (dateInput) dateInput.value = currentDate;
-
+        // Constants
         const INITIAL_PRICE = 0;
         const INITIAL_QUANTITY = 0;
 
@@ -294,7 +280,7 @@
                         },
                     @endforeach
                 ]
-            }];
+            }, ];
 
             const selectedAgent = agents.find(agent => agent.id === agentId);
             if (selectedAgent) {
@@ -368,6 +354,11 @@
             }
             $('.qty').html(qty.toString());
             row.remove();
+        }
+
+        // Helper functions (optional)
+        function clearProductSelection() {
+            productSelect.selectedIndex = 0;
         }
 
         function clearSubAgentSelection() {
