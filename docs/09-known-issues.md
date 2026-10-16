@@ -46,6 +46,48 @@ for r in json.load(open(sys.argv[1])):
 EOF
 ```
 
+## Pagination
+
+Hampir semua halaman daftar memakai pola yang sama:
+
+```php
+$perPages = $request->get('perPage') ?? 5;
+if ($perPages == 'all') { $data = Model::...->get(); }
+else { $data = Model::...->paginate(intval($perPages)); }
+```
+
+```blade
+<select id="records_per_page"> 10 / 25 / 50 / All </select>   {{-- JS mengganti ?perPage= lalu reload --}}
+<input id="filter">                                           {{-- search di browser, layouts/app.blade.php --}}
+@if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
+    {{ $data->links('cms.layouts.paginate') }}
+@endif
+```
+
+### Backend
+
+| # | Masalah | Halaman terdampak | Perbaikan |
+|---|---|---|---|
+| P1 | Opsi `perPage=all` memuat seluruh tabel tanpa batas | Semua halaman yang punya pilihan All (35 view dengan `records_per_page`) | Hapus opsi All atau batasi (misalnya maks 100) |
+| P2 | Pembayaran admin memuat semua pesanan `accepted`/`stop`, `groupBy('agent_id')` di PHP, lalu memotong dengan `LengthAwarePaginator` manual | `transaction/payment` (`PaymentController@index`) | Paginate di database: `User::role('agent')->whereHas('order', ...)->withCount/withSum(...)->paginate()` |
+| P3 | Dashboard admin memanggil `->paginate()->groupBy('agent_id')`. Hasilnya Collection biasa, jadi blok `@if (... instanceof LengthAwarePaginator)` di view tidak pernah benar: tombol halaman tidak tampil dan hanya 10 pesanan pertama yang dikelompokkan. Filter juga memakai `where('status', [...])` (lihat B4). | `admin` (`DashboardAdminController@index`) | Sama dengan P2, paginate per agen |
+| P4 | Laporan menghitung semua data di PHP (`->get()` lalu `map`), pagination di view di-comment. Seluruh baris dirender sekaligus. | Semua `report/*` | Agregasi di SQL (`SUM`, `GROUP BY`) dan `paginate()`; export tetap ambil semua |
+| P5 | Query per baris di view yang di-paginate (N+1), contohnya total bayar per pesanan dihitung di `@php` | `admin/payment/index` (6 query di view), `admin/index` (6), `distributions/index` (3), `payment/show`, `agen/payment/index`, `return/index` (2) | `with()`, `withSum('payment as paid', 'pay')`, `withCount()` di controller |
+| P6 | Relasi yang dipakai view tidak di-eager load: produk (`detail`, `package.package`), user (`roles`, `agentProfile`), distribusi (`order`, `detail.orderDetail.order.agent.agentProfile`, `detail.orderDetail.subAgent`), paket (`period`) | `master/product`, `master/user`, `distribution`, `master/package` | Tambah `->with([...])` sebelum `paginate()` |
+| P7 | Filter `whereHas('...period', is_active)` dengan rantai 4 relasi di setiap request daftar pesanan dan produk | `transaction/order*`, `master/product`, `master/package` | Index pada kolom pivot (`product_packages.product_id`, `package_id`, `order_details.order_id`, `product_id`) karena migration tidak membuat foreign key/index |
+
+### Frontend
+
+| # | Masalah | Halaman terdampak | Perbaikan |
+|---|---|---|---|
+| P8 | Link halaman tidak membawa query string. Pindah ke halaman 2 menghapus `perPage`, `status`, dan filter lain, sehingga kembali ke default. | Semua `->links('cms.layouts.paginate')` kecuali `finance/spending-type` dan `procurement/type` yang sudah `appends(['perPage' => ...])` | Satu baris di setiap controller: `->paginate($perPage)->withQueryString()` |
+| P9 | Default controller `perPage = 5`, tetapi dropdown hanya punya 10/25/50/All. Saat halaman pertama dibuka, dropdown menampilkan 10 padahal yang tampil 5 baris. | 23 tempat di 16 controller (Product, Package, Order*, Distribution, User, SubProduct, Supplier, Spending, SpendingType, Income, Loan, Commission, Reward, SubAgent) | Samakan default ke 10, atau tambah opsi 5 |
+| P10 | Search (`#filter`) hanya menyembunyikan baris di halaman yang sedang tampil. Data di halaman lain tidak ikut dicari, sehingga user mengira data tidak ada. | Semua halaman dengan input Search | Kirim `?search=` ke server dan filter dengan `where(... like ...)`, atau beri label "cari di halaman ini" |
+| P11 | Mengganti `perPage` mempertahankan `?page=` lama. Dari halaman 5 dengan 10 baris, memilih 50 bisa membuka halaman kosong. | Script `records_per_page` di setiap view | Tambah `urlParams.delete('page')` sebelum reload |
+| P12 | Script `records_per_page` dan markup dropdown disalin di setiap view (35 file) | Semua halaman daftar | Pindahkan ke satu partial `cms/layouts/per-page.blade.php` dan script ke `app.blade.php` |
+
+Urutan yang disarankan: P8 dan P11 (satu baris per file, dampaknya langsung terasa), lalu P5 dan P6 di halaman pesanan dan pembayaran, lalu P2 dan P3.
+
 ## Sudah diperbaiki (16 Oktober 2026)
 
 | Masalah | Commit |
