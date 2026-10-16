@@ -66,8 +66,8 @@
                                     $totalPayment = $order->payment()->where('status', 'accepted')->sum('pay');
                                     $remainingPayment = $totalPrice - $totalPayment;
                                     $period = $order->detail->first()?->product?->package?->package?->period;
-                                    $accessDate = $period->access_date
-                                        ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
+                                    $accessDate = $period?->access_date
+                                        ? now()->diffInDays(\Carbon\Carbon::parse($period?->access_date), false)
                                         : null;
                                 @endphp
                                 <td>
