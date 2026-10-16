@@ -342,10 +342,12 @@ class OrderAmanController extends Controller
                         'order_id'    => $order->id,
                         'sub_agent_id'=> $product['subAgentId'],
                         'product_id'  => $product['productId'],
-                        'sub_price'   => $product['subTotal'],
+                        'sub_price'   => $productDetail->total_price * $product['qty'],
                         'qty'         => $product['qty']
                     ]);
                 }
+
+                $order->update(['total_price' => $order->detail()->sum('sub_price')]);
 
                 // foreach ($products as $product) {
                 //     // Mendapatkan detail produk berdasarkan productId

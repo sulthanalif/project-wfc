@@ -125,7 +125,7 @@ class DetailOrderController extends Controller
                     if ($existingDetail) {
                         // Jika sudah ada, tambahkan qty-nya
                         $existingDetail->qty += $product['qty'];
-                        $existingDetail->sub_price += $product['subTotal'];
+                        $existingDetail->sub_price = $productDetail->total_price * $existingDetail->qty;
                         $existingDetail->save();
                     } else {
                         // Jika belum ada, buat OrderDetail baru
@@ -133,14 +133,14 @@ class DetailOrderController extends Controller
                             'order_id' => $order->id,
                             'sub_agent_id' => $product['subAgentId'],
                             'product_id' => $product['productId'],
-                            'sub_price' => $product['subTotal'],
+                            'sub_price' => $productDetail->total_price * $product['qty'],
                             'qty' => $product['qty']
                         ]);
                     }
                 }
 
                 $updateOrder = $order->update([
-                    'total_price' => $order->total_price + $request->total_price,
+                    'total_price' => $order->detail()->sum('sub_price'),
                 ]);
 
                 if ($order->payment()->count() > 0) {
