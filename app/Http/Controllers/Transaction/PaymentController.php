@@ -179,16 +179,7 @@ class PaymentController extends Controller
                 $payment->save();
 
                 $order = Order::find($payment->order_id);
-                $payments = Payment::where('order_id', $payment->order_id)->get();
-                $countPayment = $payments->where('status', 'accepted')->sum('pay');
-
-                if ($countPayment == $order->total_price) {
-                    $order->payment_status = 'paid';
-                    $order->save();
-                } else {
-                    $order->payment_status = 'pending';
-                    $order->save();
-                }
+                $order->recalculatePaymentStatus();
             });
             return redirect()->back()->with('success', 'Status Pembayaran Berhasil Diubah');
         } catch (\Throwable $th) {
@@ -219,6 +210,14 @@ class PaymentController extends Controller
 
     public function storePayment(Request $request, Order $order)
     {
+        if ($order->total_price <= 0) {
+            return back()->with('error', 'Tidak dapat menambahkan pembayaran untuk pesanan dengan total tagihan Rp 0.');
+        }
+
+        if (in_array($order->status, ['canceled', 'reject'])) {
+            return back()->with('error', 'Tidak dapat menambahkan pembayaran untuk pesanan yang dibatalkan atau ditolak.');
+        }
+
         $validator = Validator::make($request->all(), [
             'pay' => ['required', 'numeric'],
             'method' => ['required', 'string'],
@@ -259,20 +258,8 @@ class PaymentController extends Controller
                     'photo' => $photoName
                 ]);
 
-                if ($payment->save()) {
-                    $order->payment_status = 'pending';
-                    $order->save();
-                }
-
-                $existingPayment = $order->payment()->get();
-
-                if ($existingPayment->where('status', 'accepted')->sum('pay') == $order->total_price) {
-                    $order->payment_status = 'paid';
-                    $order->save();
-                } else {
-                    $order->payment_status = 'pending';
-                    $order->save();
-                }
+                $payment->save();
+                $order->recalculatePaymentStatus();
 
                 // Mail::to($order->agent->email)->send(new NotificationPayment($payment));
             });
@@ -295,6 +282,14 @@ class PaymentController extends Controller
 
     public function storePaymentAgent(Request $request, Order $order)
     {
+        if ($order->total_price <= 0) {
+            return back()->with('error', 'Tidak dapat menambahkan pembayaran untuk pesanan dengan total tagihan Rp 0.');
+        }
+
+        if (in_array($order->status, ['canceled', 'reject'])) {
+            return back()->with('error', 'Tidak dapat menambahkan pembayaran untuk pesanan yang dibatalkan atau ditolak.');
+        }
+
         $validator = Validator::make($request->all(), [
             'pay' => ['required', 'numeric'],
             'method' => ['required', 'string'],
@@ -330,20 +325,8 @@ class PaymentController extends Controller
                     'photo' => $photoName
                 ]);
 
-                if ($payment->save()) {
-                    $order->payment_status = 'pending';
-                    $order->save();
-                }
-
-                $existingPayment = $order->payment()->get();
-
-                if ($existingPayment->where('status', 'accepted')->sum('pay') == $order->total_price) {
-                    $order->payment_status = 'paid';
-                    $order->save();
-                } else {
-                    $order->payment_status = 'pending';
-                    $order->save();
-                }
+                $payment->save();
+                $order->recalculatePaymentStatus();
 
                 // Mail::to($order->agent->email)->send(new NotificationPayment($payment));
             });
@@ -375,22 +358,9 @@ class PaymentController extends Controller
                     }
                 }
 
-                $payment->delete();
-
                 $order = Order::find($payment->order_id);
-                $countPayment = Payment::where('order_id', $payment->order_id)->count();
-                if ($countPayment == 0) {
-                    $order->payment_status = 'unpaid';
-                    $order->save();
-                } else {
-                    if ($order->payment()->sum('pay') == $order->total_price) {
-                        $order->payment_status = 'paid';
-                        $order->save();
-                    } else {
-                        $order->payment_status = 'pending';
-                        $order->save();
-                    }
-                }
+                $payment->delete();
+                $order->recalculatePaymentStatus();
             });
             return back()->with('success', 'Berhasil dihapus');
         } catch (\Throwable $th) {

@@ -57,4 +57,19 @@ class Order extends Model
     {
         return $this->hasMany(ProductReturnDetail::class);
     }
+
+    public function recalculatePaymentStatus(): void
+    {
+        $payments = $this->payment()->get();
+        $acceptedPay = $payments->where('status', 'accepted')->sum('pay');
+
+        if ($this->total_price > 0 && $acceptedPay >= $this->total_price) {
+            $this->payment_status = 'paid';
+        } elseif ($payments->whereIn('status', ['accepted', 'pending'])->isNotEmpty()) {
+            $this->payment_status = 'pending';
+        } else {
+            $this->payment_status = 'unpaid';
+        }
+        $this->save();
+    }
 }

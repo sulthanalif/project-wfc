@@ -37,6 +37,22 @@ class DetailOrderController extends Controller
 
                 if ($detail->product_id == $request->product_id) {
                     if ($request->qty <= 0) {
+                        $remainingCount = OrderDetail::where('order_id', $order->id)
+                            ->where('id', '!=', $detail->id)
+                            ->count();
+
+                        if ($remainingCount === 0) {
+                            if ($order->payment()->exists()) {
+                                throw new \Exception('Item tidak dapat dihapus karena pesanan sudah memiliki data pembayaran.');
+                            }
+                            $detail->delete();
+                            $order->status = 'canceled';
+                            $order->total_price = 0;
+                            $order->payment_status = 'unpaid';
+                            $order->save();
+                            return;
+                        }
+
                         $detail->delete();
                     } else {
                         $detail->qty = $request->qty;
@@ -80,18 +96,21 @@ class DetailOrderController extends Controller
                     }
                 }
 
-                $order->total_price = $order->detail->sum('sub_price');
-                $order->save();
-
-                if ($order->payment()->count() > 0) {
-                    if ($order->payment()->sum('pay') == $order->total_price) {
-                        $order->payment_status = 'paid';
-                        $order->save();
-                    } else {
-                        $order->payment_status = 'pending';
-                        $order->save();
+                $remainingCount = $order->detail()->count();
+                if ($remainingCount === 0) {
+                    if ($order->payment()->exists()) {
+                        throw new \Exception('Item tidak dapat dihapus karena pesanan sudah memiliki data pembayaran.');
                     }
+                    $order->status = 'canceled';
+                    $order->total_price = 0;
+                    $order->payment_status = 'unpaid';
+                    $order->save();
+                    return;
                 }
+
+                $order->total_price = $order->detail()->sum('sub_price');
+                $order->save();
+                $order->recalculatePaymentStatus();
             });
 
             return back()->with('success', 'Data Berhasil Diperbaharui!');
@@ -143,15 +162,7 @@ class DetailOrderController extends Controller
                     'total_price' => $order->detail()->sum('sub_price'),
                 ]);
 
-                if ($order->payment()->count() > 0) {
-                    if ($order->payment()->sum('pay') == $order->total_price) {
-                        $order->payment_status = 'paid';
-                        $order->save();
-                    } else {
-                        $order->payment_status = 'pending';
-                        $order->save();
-                    }
-                }
+                $order->recalculatePaymentStatus();
             });
 
             if ($updateOrder) {

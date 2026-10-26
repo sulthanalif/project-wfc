@@ -348,6 +348,7 @@ class ProductController extends Controller
 
                     $order->total_price = $order->detail()->sum('sub_price');
                     $order->save();
+                    $order->recalculatePaymentStatus();
                 }
             });
             if ($update) {

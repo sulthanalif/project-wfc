@@ -218,7 +218,7 @@ class OrderController extends Controller
             'agent_id' => ['required'],
             'order_number' => ['required'],
             'order_date' => ['required'],
-            'total_price' => ['required', 'numeric'],
+            'total_price' => ['required', 'numeric', 'gt:0'],
         ]);
 
         if ($validator->fails()) {
@@ -236,7 +236,7 @@ class OrderController extends Controller
 
         $products = json_decode($request->products, true);
 
-        if ($products == null) {
+        if (empty($products)) {
             return back()->with('error', 'Produk Tidak Boleh Kosong');
         }
 
@@ -282,7 +282,11 @@ class OrderController extends Controller
                     ]);
                 }
 
-                $order->update(['total_price' => $order->detail()->sum('sub_price')]);
+                $totalCalculated = $order->detail()->sum('sub_price');
+                if ($totalCalculated <= 0) {
+                    throw new \Exception('Total pesanan tidak boleh 0.');
+                }
+                $order->update(['total_price' => $totalCalculated]);
 
                 // foreach ($products as $product) {
                 //     // Mendapatkan detail produk berdasarkan productId
