@@ -83,6 +83,11 @@ class ReportController extends Controller
                 'total_deposit'
             );
 
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $agentsQuery->whereHas('agentProfile', fn($q) => $q->where('name', 'like', "%{$search}%"));
+        }
+
         $orderStatsQuery = Order::where('status', 'accepted');
         if ($getAgent && $getAgent !== 'all') {
             $orderStatsQuery->whereHas('agent.agentProfile', fn($q) => $q->where('name', 'like', '%' . $getAgent . '%'));
@@ -143,6 +148,11 @@ class ReportController extends Controller
             ])
             ->groupBy('order_details.product_id', 'products.name', 'products.is_safe_point')
             ->orderBy('products.name', 'asc');
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $productDetailsQuery->where('products.name', 'like', "%{$search}%");
+        }
 
         $totalProductAll = (int) OrderDetail::whereHas('order', fn($q) => $q->where('status', 'accepted'))->sum('qty');
         $totalPriceAll = (float) Order::where('status', 'accepted')->sum('total_price');
@@ -252,6 +262,11 @@ class ReportController extends Controller
                 'total_product'
             );
 
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $agentsQuery->whereHas('agentProfile', fn($q) => $q->where('name', 'like', "%{$search}%"));
+        }
+
         $orderStatsQuery = Order::where('status', 'accepted');
         if ($getAgent && $getAgent !== 'all') {
             $orderStatsQuery->whereHas('agent.agentProfile', fn($q) => $q->where('name', 'like', '%' . $getAgent . '%'));
@@ -326,6 +341,11 @@ class ReportController extends Controller
                     ->selectRaw('coalesce(sum(order_details.qty), 0)'),
                 'total_product'
             );
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $agentsQuery->whereHas('agentProfile', fn($q) => $q->where('name', 'like', "%{$search}%"));
+        }
 
         $agents = $agentsQuery->get();
         $datas = [];
@@ -404,6 +424,15 @@ class ReportController extends Controller
                 $query->where('is_confirmed', (bool)$filterVerify);
             });
 
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $paymentsQuery->where(function ($q) use ($search) {
+                $q->whereHas('order.agent.agentProfile', fn($ap) => $ap->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('order', fn($o) => $o->where('order_number', 'like', "%{$search}%"))
+                    ->orWhere('pay', 'like', "%{$search}%");
+            });
+        }
+
         $totalPrice = (float) Order::where('status', 'accepted')->sum('total_price');
         $pay = (float) (clone $paymentsQuery)->sum('pay');
         $remaining_pay = max(0, $totalPrice - $pay);
@@ -440,6 +469,11 @@ class ReportController extends Controller
             ])
             ->groupBy('sub_products.id', 'sub_products.name', 'sub_products.unit')
             ->orderBy('sub_products.name', 'asc');
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $datasubsQuery->where('sub_products.name', 'like', "%{$search}%");
+        }
 
         $allDataSubs = $datasubsQuery->get()->map(function ($item) {
             return [
@@ -679,6 +713,11 @@ class ReportController extends Controller
             ])
             ->groupBy('sub_products.id', 'sub_products.name', 'sub_products.unit')
             ->orderBy('sub_products.name', 'asc');
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $neededQuery->where('sub_products.name', 'like', "%{$search}%");
+        }
 
         $neededSubProducts = $neededQuery->get();
 

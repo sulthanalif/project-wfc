@@ -49,63 +49,53 @@
                     class="w-4 h-4 mr-3"></i> Export </a>
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter" value="{{ request('search') }}">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
 
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA SUB PRODUK</th>
-                        <th class="text-center whitespace-nowrap">JUMLAH</th>
-                        <th class="text-center whitespace-nowrap">SATUAN</th>
-                        <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
+        <x-table.wrapper>
+            <x-slot:thead>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA SUB PRODUK</th>
+                    <th class="text-center whitespace-nowrap">JUMLAH</th>
+                    <th class="text-center whitespace-nowrap">SATUAN</th>
+                    <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
+                </tr>
+            </x-slot:thead>
+            @if (empty($datasubs) || (is_countable($datasubs) && count($datasubs) === 0))
+                <x-table.empty colspan="5" />
+            @else
+                @foreach ($datasubs as $sub)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $datasubs instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($datasubs->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+
+                        <td>
+                            <p class="text-slate-500 flex items-center mr-3"> {{ $sub['name'] }} </p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center">{{ $sub['qty'] }}</p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center">{{ $sub['unit'] }}</p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center"> Rp.
+                                {{ number_format($sub['price'], 0, ',', '.') }} </p>
+                        </td>
+
                     </tr>
-                </thead>
-                <tbody>
-                    @if (!$datasubs)
-                        <tr>
-                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($datasubs as $sub)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $datasubs instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($datasubs->currentPage() - 1) * $datasubs->perPage() + $loop->iteration : $loop->iteration }}</p>
-                                </td>
-
-                                <td>
-                                    <p class="text-slate-500 flex items-center mr-3"> {{ $sub['name'] }} </p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center">{{ $sub['qty'] }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center">{{ $sub['unit'] }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center"> Rp.
-                                        {{ number_format($sub['price'], 0, ',', '.') }} </p>
-                                </td>
-
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        @if ($datasubs instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $datasubs->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$datasubs" />
         <!-- END: Pagination -->
     </div>
 @endsection

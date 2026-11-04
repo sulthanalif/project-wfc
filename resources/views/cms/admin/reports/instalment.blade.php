@@ -73,121 +73,111 @@
                 class="btn btn-primary shadow-md mr-2"> <i data-lucide="file" class="w-4 h-4 mr-3"></i> Export </a>
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter" value="{{ request('search') }}">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
 
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA AGEN</th>
-                        <th class="text-center whitespace-nowrap">NOMER ORDER</th>
-                        <th class="text-center whitespace-nowrap">JUMLAH</th>
-                        <th class="text-center whitespace-nowrap">TERVERIFIKASI</th>
-                        <th class="text-center whitespace-nowrap">BUKTI</th>
-                        <th class="text-center whitespace-nowrap">WAKTU</th>
-                        @role('super_admin|finance_admin')
-                        <th class="text-center whitespace-nowrap">AKSI</th>
-                        @endrole
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (!$payments)
-                        <tr>
-                            <td colspan="8" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($payments as $payment)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $payments instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($payments->currentPage() - 1) * $payments->perPage() + $loop->iteration : $loop->iteration }}</p>
-                                </td>
+        <x-table.wrapper>
+            <x-slot:thead>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA AGEN</th>
+                    <th class="text-center whitespace-nowrap">NOMER ORDER</th>
+                    <th class="text-center whitespace-nowrap">JUMLAH</th>
+                    <th class="text-center whitespace-nowrap">TERVERIFIKASI</th>
+                    <th class="text-center whitespace-nowrap">BUKTI</th>
+                    <th class="text-center whitespace-nowrap">WAKTU</th>
+                    @role('super_admin|finance_admin')
+                    <th class="text-center whitespace-nowrap">AKSI</th>
+                    @endrole
+                </tr>
+            </x-slot:thead>
+            @if (empty($payments) || (is_countable($payments) && count($payments) === 0))
+                <x-table.empty colspan="8" />
+            @else
+                @foreach ($payments as $payment)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $payments instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($payments->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
 
-                                <td>
-                                    <p class="text-center mr-3">
-                                        {{ $payment->order->agent->agentProfile->name }} </p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center mr-3"> {{ $payment->order->order_number }}
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 flex items-center justify-center"> Rp.
-                                        {{ number_format($payment->pay, 0, ',', '.') }} </p>
-                                </td>
-                                <td class="text-center">
-                                    @if ($payment->is_confirmed)
-                                        <div class="flex items-center justify-center text-success"> <i
-                                                data-lucide="check-circle" class="w-4 h-4 mr-2"></i> </div>
+                        <td>
+                            <p class="text-center mr-3">
+                                {{ $payment->order->agent->agentProfile->name }} </p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center mr-3"> {{ $payment->order->order_number }}
+                            </p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 flex items-center justify-center"> Rp.
+                                {{ number_format($payment->pay, 0, ',', '.') }} </p>
+                        </td>
+                        <td class="text-center">
+                            @if ($payment->is_confirmed)
+                                <div class="flex items-center justify-center text-success"> <i
+                                        data-lucide="check-circle" class="w-4 h-4 mr-2"></i> </div>
+                            @else
+                                <div class="flex items-center justify-center text-danger"> <i data-lucide="x-circle"
+                                        class="w-4 h-4 mr-2"></i> </div>
+                            @endif
+                        </td>
+                        <td class="w-40">
+                            <div class="flex items-center justify-center">
+                                <div class="w-10 h-10 image-fit zoom-in">
+                                    @if ($payment->photo == null)
+                                        <img alt="PAKET SMART WFC" class="rounded-full"
+                                            src="{{ asset('assets/logo2.png') }}">
                                     @else
-                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-circle"
-                                                class="w-4 h-4 mr-2"></i> </div>
+                                        <img alt="PAKET SMART WFC" class="tooltip rounded-full"
+                                            data-tw-toggle="modal"
+                                            data-tw-target="#image-modal-{{ $payment->id }}"
+                                            src="{{ route('getImage', ['path' => 'proofs', 'imageName' => $payment->photo]) }}"
+                                            title="@if ($payment->created_at == $payment->updated_at) Diupload {{ \Carbon\Carbon::parse($payment->created_at)->format('d M Y, H:m:i') }} @else Diupdate {{ \Carbon\Carbon::parse($payment->updated_at)->format('d M Y, H:m:i') }} @endif">
                                     @endif
-                                </td>
-                                <td class="w-40">
-                                    <div class="flex items-center justify-center">
-                                        <div class="w-10 h-10 image-fit zoom-in">
-                                            @if ($payment->photo == null)
-                                                <img alt="PAKET SMART WFC" class="rounded-full"
-                                                    src="{{ asset('assets/logo2.png') }}">
-                                            @else
-                                                <img alt="PAKET SMART WFC" class="tooltip rounded-full"
-                                                    data-tw-toggle="modal"
-                                                    data-tw-target="#image-modal-{{ $payment->id }}"
-                                                    src="{{ route('getImage', ['path' => 'proofs', 'imageName' => $payment->photo]) }}"
-                                                    title="@if ($payment->created_at == $payment->updated_at) Diupload {{ \Carbon\Carbon::parse($payment->created_at)->format('d M Y, H:m:i') }} @else Diupdate {{ \Carbon\Carbon::parse($payment->updated_at)->format('d M Y, H:m:i') }} @endif">
-                                            @endif
-                                            <!-- Image Modal -->
-                                            <div id="image-modal-{{ $payment->id }}" class="modal" tabindex="-1"
-                                                aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content"> <a data-tw-dismiss="modal"
-                                                            href="javascript:;"> <i data-lucide="x"
-                                                                class="w-8 h-8 text-slate-400"></i> </a>
-                                                        <div class="modal-body p-0 flex justify-center items-center">
-                                                            <img src="@if ($payment->photo == null) {{ asset('assets/logo2.png') }} @else {{ route('getImage', ['path' => 'proofs', 'imageName' => $payment->photo]) }} @endif"
-                                                                alt="Proofs Image" class="img-fluid">
-                                                        </div>
-                                                    </div>
+                                    <!-- Image Modal -->
+                                    <div id="image-modal-{{ $payment->id }}" class="modal" tabindex="-1"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content"> <a data-tw-dismiss="modal"
+                                                    href="javascript:;"> <i data-lucide="x"
+                                                        class="w-8 h-8 text-slate-400"></i> </a>
+                                                <div class="modal-body p-0 flex justify-center items-center">
+                                                    <img src="@if ($payment->photo == null) {{ asset('assets/logo2.png') }} @else {{ route('getImage', ['path' => 'proofs', 'imageName' => $payment->photo]) }} @endif"
+                                                        alt="Proofs Image" class="img-fluid">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center items-center mr-3"> {{ $payment->created_at }}
-                                    </p>
-                                </td>
-                                @role('super_admin|finance_admin')
-                                <td class="table-report__action w-56">
-                                    @if (!$payment->is_confirmed)
-                                        <div class="flex justify-center items-center">
-                                            <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
-                                                data-tw-target="#verify-modal-{{ $payment->id }}"> <i
-                                                    data-lucide="pencil" class="w-4 h-4 mr-1"></i> Verifikasi </a>
-                                        </div>
-                                        @include('cms.admin.payment.modal.verify', ['payment' => $payment])
-                                    @endif
-                                </td>
-                                @endrole
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center items-center mr-3"> {{ $payment->created_at }}
+                            </p>
+                        </td>
+                        @role('super_admin|finance_admin')
+                        <td class="table-report__action w-56">
+                            @if (!$payment->is_confirmed)
+                                <div class="flex justify-center items-center">
+                                    <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                        data-tw-target="#verify-modal-{{ $payment->id }}"> <i
+                                            data-lucide="pencil" class="w-4 h-4 mr-1"></i> Verifikasi </a>
+                                </div>
+                                @include('cms.admin.payment.modal.verify', ['payment' => $payment])
+                            @endif
+                        </td>
+                        @endrole
+                    </tr>
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        @if ($payments instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $payments->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$payments" />
         <!-- END: Pagination -->
     </div>
 @endsection

@@ -9,9 +9,22 @@
             <thead>
                 {{ $header }}
             </thead>
+        @elseif(isset($thead))
+            <thead>
+                {{ $thead }}
+            </thead>
         @endif
         <tbody>
             {{ $slot }}
         </tbody>
+        @if(isset($footer))
+            <tfoot>
+                {{ $footer }}
+            </tfoot>
+        @elseif(isset($tfoot))
+            <tfoot>
+                {{ $tfoot }}
+            </tfoot>
+        @endif
     </table>
 </div>

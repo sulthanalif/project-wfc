@@ -59,59 +59,49 @@
                     class="w-4 h-4 mr-3"></i> Export </a>
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter" value="{{ request('search') }}">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
 
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA AGEN</th>
-                        <th class="text-center whitespace-nowrap">TOTAL PRODUK</th>
-                        <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
+        <x-table.wrapper>
+            <x-slot:thead>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA AGEN</th>
+                    <th class="text-center whitespace-nowrap">TOTAL PRODUK</th>
+                    <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
+                </tr>
+            </x-slot:thead>
+            @if (empty($datas) || (is_countable($datas) && count($datas) === 0))
+                <x-table.empty colspan="4" />
+            @else
+                @foreach ($datas as $agent)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $datas instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($datas->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+
+                        <td>
+                            <p class="text-slate-500 flex items-center mr-3"> {{ $agent['agent_name'] }} </p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center">{{ $agent['total_product'] }}</p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center"> Rp.
+                                {{ number_format($agent['total_price'], 0, ',', '.') }} </p>
+                        </td>
+
                     </tr>
-                </thead>
-                <tbody>
-                    @if (!$datas)
-                        <tr>
-                            <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($datas as $agent)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $datas instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($datas->currentPage() - 1) * $datas->perPage() + $loop->iteration : $loop->iteration }}</p>
-                                </td>
-
-                                <td>
-                                    <p class="text-slate-500 flex items-center mr-3"> {{ $agent['agent_name'] }} </p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center">{{ $agent['total_product'] }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center"> Rp.
-                                        {{ number_format($agent['total_price'], 0, ',', '.') }} </p>
-                                </td>
-
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        @if ($datas instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $datas->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$datas" />
         <!-- END: Pagination -->
     </div>
 @endsection
