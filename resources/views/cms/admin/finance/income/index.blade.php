@@ -84,7 +84,7 @@
                         @foreach ($incomes as $income)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $incomes instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($incomes->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <span class="text-slate-500">{{ $income->information }}</span>

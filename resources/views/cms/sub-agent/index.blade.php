@@ -69,7 +69,7 @@
                         @foreach ($subAgents as $subAgent)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $subAgents instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($subAgents->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <div class="flex items-center">

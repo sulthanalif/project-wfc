@@ -43,6 +43,16 @@ class OrderFullController extends Controller
             $query->where('status', $status);
         }
 
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                    ->orWhereHas('agent.agentProfile', function ($ap) use ($search) {
+                        $ap->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         if ($perPages == 'all') {
             $orders = $query->orderByDesc('created_at')->take(100)->get();
         } else {
@@ -107,6 +117,16 @@ class OrderFullController extends Controller
 
         if ($status != 'all') {
             $query->where('status', $status);
+        }
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                    ->orWhereHas('agent.agentProfile', function ($ap) use ($search) {
+                        $ap->where('name', 'like', "%{$search}%");
+                    });
+            });
         }
 
         if ($perPages == 'all') {

@@ -50,7 +50,7 @@
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center flex items-center justify-center">
-                                        {{ $loop->iteration }}</p>
+                                        {{ $datas instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($datas->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <p class="font-bold whitespace-nowrap flex items-center">{{ $data->title }}</p>

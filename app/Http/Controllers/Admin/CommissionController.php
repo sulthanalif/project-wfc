@@ -21,15 +21,24 @@ class CommissionController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
+        $query = Commission::whereHas('package.period', function ($query) {
+            $query->where('is_active', 1);
+        })->latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('reward', 'like', "%{$search}%")
+                    ->orWhere('term', 'like', "%{$search}%")
+                    ->orWhereHas('package.product', fn($p) => $p->where('name', 'like', "%{$search}%"));
+            });
+        }
+
         if ($perPages == 'all') {
-            $commissions = Commission::whereHas('package.period', function ($query) {
-                $query->where('is_active', 1);
-            })->latest()->get();
+            $commissions = $query->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $commissions = Commission::whereHas('package.period', function ($query) {
-                $query->where('is_active', 1);
-            })->latest()->paginate($perPage)->withQueryString();
+            $commissions = $query->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.commissions.index', compact('commissions'));
@@ -243,15 +252,24 @@ class CommissionController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
+        $query = Commission::whereHas('package.period', function ($query) {
+            $query->where('is_active', 0);
+        })->latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('reward', 'like', "%{$search}%")
+                    ->orWhere('term', 'like', "%{$search}%")
+                    ->orWhereHas('package.product', fn($p) => $p->where('name', 'like', "%{$search}%"));
+            });
+        }
+
         if ($perPages == 'all') {
-            $commissions = Commission::whereHas('package.period', function ($query) {
-                $query->where('is_active', 0);
-            })->latest()->get();
+            $commissions = $query->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $commissions = Commission::whereHas('package.period', function ($query) {
-                $query->where('is_active', 0);
-            })->latest()->paginate($perPage)->withQueryString();
+            $commissions = $query->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.commissions.archive', compact('commissions'));

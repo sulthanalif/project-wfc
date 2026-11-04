@@ -70,7 +70,7 @@
                         @foreach ($subProducts as $subProduct)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $subProducts instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($subProducts->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <p class="whitespace-nowrap">{{ $subProduct->name }}</p>

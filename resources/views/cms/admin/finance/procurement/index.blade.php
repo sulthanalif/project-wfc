@@ -88,7 +88,7 @@
                         @foreach ($procurements as $data)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $procurements instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($procurements->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <span class="text-slate-500">{{ $data['name'] }}</span>

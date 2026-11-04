@@ -86,7 +86,7 @@
                         @foreach ($cashFlows as $cashFlow)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $cashFlows instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($cashFlows->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <span class="text-slate-500">{{ $cashFlow['method'] }}</span>

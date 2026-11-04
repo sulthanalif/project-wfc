@@ -54,7 +54,7 @@
                         @foreach ($commissions as $commission)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $commissions instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($commissions->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"

@@ -135,7 +135,7 @@
                                                 $agentName = $agent instanceof \App\Models\User ? ($agent->agentProfile->name ?? $agent->name ?? $agent->email) : ($order->first()?->agent->agentProfile->name ?? 'N/A');
                                             @endphp
                                             <td>
-                                                <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                                <p class="font-medium whitespace-nowrap text-center">{{ $orders instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($orders->firstItem() + $loop->index) : $loop->iteration }}</p>
                                             </td>
                                             <td>
                                                 <a class="text-slate-500 flex items-center mr-3" href="{{ route('payment.show', ['user' => $agentId])}}"> <i

@@ -70,7 +70,7 @@
                         @foreach ($users as $user)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($users->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td class="!py-3.5">
                                     <div class="flex items-center">

@@ -49,7 +49,7 @@
                         @foreach ($rewards as $reward)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $rewards instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($rewards->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td class="w-40">
                                     <div class="flex items-center justify-center">

@@ -78,7 +78,7 @@
                         @foreach ($returns as $return)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $returns instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($returns->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3 font-bold"

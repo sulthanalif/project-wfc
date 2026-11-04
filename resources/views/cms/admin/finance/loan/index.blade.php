@@ -113,7 +113,7 @@
                         @foreach ($loans as $loan)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $loans instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($loans->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"

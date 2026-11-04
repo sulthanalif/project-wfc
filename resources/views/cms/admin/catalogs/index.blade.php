@@ -38,7 +38,7 @@
                         @foreach ($catalogs as $catalog)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $catalogs instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($catalogs->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3" href="javascript:;"

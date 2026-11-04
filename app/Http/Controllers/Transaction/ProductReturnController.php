@@ -40,6 +40,14 @@ class ProductReturnController extends Controller
             $query->where('user_id', auth()->id());
         }
 
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('return_number', 'like', "%{$search}%")
+                    ->orWhereHas('user.agentProfile', fn($ap) => $ap->where('name', 'like', "%{$search}%"));
+            });
+        }
+
         if ($perPages == 'all') {
             $returns = $query->take(100)->get();
         } else {

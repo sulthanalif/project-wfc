@@ -39,6 +39,11 @@ class PaymentController extends Controller
                 ->whereIn('status', ['accepted', 'stop'])
                 ->orderByDesc('created_at');
 
+            if ($request->filled('search')) {
+                $search = trim($request->get('search'));
+                $query->where('order_number', 'like', "%{$search}%");
+            }
+
             if ($perPages == 'all') {
                 $orders = $query->take(100)->get();
             } else {
@@ -64,6 +69,13 @@ class PaymentController extends Controller
                             }], 'pay');
                     }
                 ]);
+
+            if ($request->filled('search')) {
+                $search = trim($request->get('search'));
+                $query->whereHas('agentProfile', function ($ap) use ($search) {
+                    $ap->where('name', 'like', "%{$search}%");
+                });
+            }
 
             if ($perPages == 'all') {
                 $orders = $query->take(100)->get();

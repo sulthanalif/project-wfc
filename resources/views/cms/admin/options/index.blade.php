@@ -45,7 +45,7 @@
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center flex items-center justify-center">
-                                        {{ $loop->iteration }}</p>
+                                        {{ $periods instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($periods->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <p class="font-bold whitespace-nowrap flex items-center">{{ $period->description }}</p>

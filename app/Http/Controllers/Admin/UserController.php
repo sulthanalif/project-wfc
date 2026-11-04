@@ -32,6 +32,20 @@ class UserController extends Controller
 
         $query = User::with(['roles', 'agentProfile', 'adminProfile'])->latest();
 
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('email', 'like', "%{$search}%")
+                    ->orWhereHas('agentProfile', function ($ap) use ($search) {
+                        $ap->where('name', 'like', "%{$search}%")
+                            ->orWhere('phone_number', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('adminProfile', function ($adp) use ($search) {
+                        $adp->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         if ($perPages == 'all') {
             $users = $query->take(100)->get();
         } else {

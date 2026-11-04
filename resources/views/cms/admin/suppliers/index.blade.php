@@ -50,7 +50,7 @@
                         @foreach ($suppliers as $supplier)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $suppliers instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($suppliers->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <div class="flex items-center">

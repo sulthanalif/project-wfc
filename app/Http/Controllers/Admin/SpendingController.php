@@ -18,11 +18,18 @@ class SpendingController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
+        $query = Spending::latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where('information', 'like', "%{$search}%");
+        }
+
         if ($perPages == 'all') {
-            $spendings = Spending::take(100)->get();
+            $spendings = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $spendings = Spending::latest()->paginate($perPage)->withQueryString();
+            $spendings = $query->paginate($perPage)->withQueryString();
         }
         $totalSpending = Spending::selectRaw('SUM(amount * COALESCE(qty, 1)) as total')->value('total');
 

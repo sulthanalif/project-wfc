@@ -83,7 +83,7 @@
                         @foreach ($spendings as $spending)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $spendings instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($spendings->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <span class="text-slate-500">{{ $spending->information }}</span>

@@ -36,6 +36,14 @@ class ProductController extends Controller
             $query->where('is_active', 1);
         })->latest();
 
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('total_price', 'like', "%{$search}%");
+            });
+        }
+
         if ($perPages == 'all') {
             $products = $query->take(100)->get();
         } else {
@@ -53,6 +61,14 @@ class ProductController extends Controller
         $query = Product::with(['detail', 'package.package.period'])->whereHas('package.package.period', function ($query) {
             $query->where('is_active', 0);
         })->latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('total_price', 'like', "%{$search}%");
+            });
+        }
 
         if ($perPages == 'all') {
             $products = $query->take(100)->get();

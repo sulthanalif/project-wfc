@@ -17,11 +17,18 @@ class IncomeController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
+        $query = Income::latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where('information', 'like', "%{$search}%");
+        }
+
         if ($perPages == 'all') {
-            $incomes = Income::take(100)->get();
+            $incomes = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $incomes = Income::latest()->paginate($perPage)->withQueryString();
+            $incomes = $query->paginate($perPage)->withQueryString();
         }
         $totalIncome = Income::sum('amount');
         return view('cms.admin.finance.income.index', compact('incomes', 'totalIncome'));

@@ -42,20 +42,93 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const filter = document.getElementById("filter");
-            const items = document.querySelectorAll("tbody tr");
+            const urlParams = new URLSearchParams(window.location.search);
 
             if (filter) {
-                filter.addEventListener("input", (e) => filterData(e.target.value));
+                if (urlParams.has('search') && !filter.value) {
+                    filter.value = urlParams.get('search');
+                }
+
+                let debounceTimer = null;
+                filter.addEventListener("input", (e) => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        filterData(e.target.value);
+                    }, 150);
+                });
+
+                filter.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        const params = new URLSearchParams(window.location.search);
+                        const val = filter.value.trim();
+                        if (val) {
+                            params.set('search', val);
+                        } else {
+                            params.delete('search');
+                        }
+                        params.delete('page');
+                        window.location.search = params.toString();
+                    } else if (e.key === "Escape") {
+                        filter.value = "";
+                        filterData("");
+                        const params = new URLSearchParams(window.location.search);
+                        if (params.has('search')) {
+                            params.delete('search');
+                            params.delete('page');
+                            window.location.search = params.toString();
+                        }
+                    }
+                });
+
+                const searchIcon = filter.parentElement ? filter.parentElement.querySelector('[data-lucide="search"]') : null;
+                if (searchIcon) {
+                    searchIcon.style.cursor = 'pointer';
+                    searchIcon.setAttribute('title', 'Cari di database (Tekan Enter)');
+                    searchIcon.addEventListener('click', () => {
+                        const params = new URLSearchParams(window.location.search);
+                        const val = filter.value.trim();
+                        if (val) {
+                            params.set('search', val);
+                        } else {
+                            params.delete('search');
+                        }
+                        params.delete('page');
+                        window.location.search = params.toString();
+                    });
+                }
+            }
+
+            function getRowSearchText(row) {
+                let text = '';
+                row.querySelectorAll('td').forEach((td) => {
+                    // Abaikan aksi dan konten modal tersembunyi
+                    if (td.classList.contains('table-report__action') || td.querySelector('.modal')) {
+                        return;
+                    }
+                    text += ' ' + (td.innerText || td.textContent || '');
+                });
+                return text.toLowerCase();
             }
 
             function filterData(search) {
                 let visibleCount = 0;
                 const keyword = search.trim().toLowerCase();
-                const tbody = document.querySelector("tbody");
+                const tbody = document.querySelector(".table-report tbody") || document.querySelector("tbody");
+                if (!tbody) return;
+
+                const items = tbody.querySelectorAll("tr");
 
                 items.forEach((item) => {
                     if (item.id === 'filter-empty-message') return;
-                    if (!keyword || item.innerText.toLowerCase().includes(keyword)) {
+                    if (item.classList.contains('empty-row') || item.innerText.includes('Belum Ada Data')) {
+                        if (keyword) item.classList.add('hidden');
+                        else item.classList.remove('hidden');
+                        return;
+                    }
+
+                    const rowText = getRowSearchText(item);
+                    if (!keyword || rowText.includes(keyword)) {
                         item.classList.remove('hidden');
                         visibleCount++;
                     } else {
@@ -64,7 +137,7 @@
                 });
 
                 const existingMsg = document.getElementById('filter-empty-message');
-                if (keyword && visibleCount === 0 && tbody) {
+                if (keyword && visibleCount === 0) {
                     if (!existingMsg) {
                         const tr = document.createElement('tr');
                         tr.id = 'filter-empty-message';

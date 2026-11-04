@@ -25,27 +25,29 @@ class SubAgentController extends Controller
         $roleUser = $user->roles->first();
         $roleName = $roleUser->name;
 
+        $perPages = $request->get('perPage') ?? 10;
+        $query = SubAgent::query();
+
         if ($roleName == 'agent') {
-            $perPages = $request->get('perPage') ?? 10;
-    
-            if ($perPages == 'all') {
-                $subAgents = SubAgent::where('agent_id', $user->id)->take(100)->get();
-            } else {
-                $perPage = min(max(intval($perPages), 1), 100);
-                $subAgents = SubAgent::where('agent_id', $user->id)->paginate($perPage)->withQueryString();
-            }
-            return view('cms.sub-agent.index', compact('subAgents'));
-        } else {
-            $perPages = $request->get('perPage') ?? 10;
-    
-            if ($perPages == 'all') {
-                $subAgents = SubAgent::take(100)->get();
-            } else {
-                $perPage = min(max(intval($perPages), 1), 100);
-                $subAgents = SubAgent::paginate($perPage)->withQueryString();
-            }
-            return view('cms.sub-agent.index', compact('subAgents'));
+            $query->where('agent_id', $user->id);
         }
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%");
+            });
+        }
+
+        if ($perPages == 'all') {
+            $subAgents = $query->take(100)->get();
+        } else {
+            $perPage = min(max(intval($perPages), 1), 100);
+            $subAgents = $query->paginate($perPage)->withQueryString();
+        }
+        return view('cms.sub-agent.index', compact('subAgents'));
 
     }
 

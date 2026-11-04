@@ -22,11 +22,21 @@ class LoanController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
+        $query = Loan::with('loanPayments')->latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('borrower_name', 'like', "%{$search}%")
+                    ->orWhere('information', 'like', "%{$search}%");
+            });
+        }
+
         if ($perPages == 'all') {
-            $loans = Loan::with('loanPayments')->take(100)->get();
+            $loans = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $loans = Loan::with('loanPayments')->latest()->paginate($perPage)->withQueryString();
+            $loans = $query->paginate($perPage)->withQueryString();
         }
 
         $totalLoans = $loans->sum('amount');
