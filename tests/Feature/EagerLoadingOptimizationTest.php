@@ -20,15 +20,41 @@ class EagerLoadingOptimizationTest extends TestCase
 
         $orders = $response->viewData('orders');
         $this->assertNotNull($orders);
+        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $orders);
 
         if ($orders->isNotEmpty()) {
-            $firstGroup = $orders->first();
-            if ($firstGroup && $firstGroup->isNotEmpty()) {
-                $firstOrder = $firstGroup->first();
+            $firstAgent = $orders->first();
+            $this->assertInstanceOf(\App\Models\User::class, $firstAgent);
+            $this->assertTrue($firstAgent->relationLoaded('agentProfile'));
+            $this->assertTrue($firstAgent->relationLoaded('order'));
+
+            if ($firstAgent->order->isNotEmpty()) {
+                $firstOrder = $firstAgent->order->first();
                 $this->assertTrue(isset($firstOrder->paid_total) || array_key_exists('paid_total', $firstOrder->getAttributes()));
                 $this->assertTrue($firstOrder->relationLoaded('detail'));
-                $this->assertTrue($firstOrder->relationLoaded('agent'));
             }
+        }
+    }
+
+    public function test_admin_dashboard_paginates_orders_per_agent(): void
+    {
+        $admin = User::role('super_admin')->first();
+        if (!$admin) {
+            $this->markTestSkipped('Super admin user not found');
+        }
+
+        $response = $this->actingAs($admin)->get('/admin');
+        $response->assertStatus(200);
+
+        $orders = $response->viewData('orders');
+        $this->assertNotNull($orders);
+        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $orders);
+
+        if ($orders->isNotEmpty()) {
+            $firstAgent = $orders->first();
+            $this->assertInstanceOf(\App\Models\User::class, $firstAgent);
+            $this->assertTrue($firstAgent->relationLoaded('agentProfile'));
+            $this->assertTrue($firstAgent->relationLoaded('order'));
         }
     }
 

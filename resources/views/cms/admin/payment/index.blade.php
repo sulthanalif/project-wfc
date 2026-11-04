@@ -59,38 +59,41 @@
                 <tbody>
                     @if ($orders->isEmpty())
                         <tr>
-                            <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
                         </tr>
                     @else
-                        @foreach ($orders as $agentId => $order)
+                        @foreach ($orders as $agent)
                             <tr class="intro-x">
                                 @php
+                                    $order = $agent instanceof \App\Models\User ? $agent->order : $agent;
                                     $totalPrice = $order->sum('total_price');
                                     $totalPayment = $order->sum(function ($o) {
                                         return $o->paid_total ?? $o->payment()->where('status', 'accepted')->sum('pay');
                                     });
                                     $remainingPayment = $totalPrice - $totalPayment;
 
-                                    $allPaid = $order->every(function ($o) {
+                                    $allPaid = $order->isNotEmpty() && $order->every(function ($o) {
                                         return $o->payment_status === 'paid';
                                     });
                                     $hasPending = $order->contains(function ($o) {
                                         return $o->payment_status === 'pending';
                                     });
-                                    $firstDetail = $order->first()?->detail->first();
+                                    $firstDetail = $order->first()?->detail?->first();
                                     $period = $firstDetail?->product?->package?->package?->period;
                                     $accessDate = $period?->access_date
                                         ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
                                         : null;
+                                    $agentId = $agent instanceof \App\Models\User ? $agent->id : $order->first()?->agent_id;
+                                    $agentName = $agent instanceof \App\Models\User ? ($agent->agentProfile->name ?? $agent->name ?? $agent->email) : ($order->first()?->agent->agentProfile->name ?? 'N/A');
                                 @endphp
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('payment.show', ['user' => $order->first()->agent_id]) }}"> <i
+                                        href="{{ route('payment.show', ['user' => $agentId]) }}"> <i
                                             data-lucide="external-link" class="w-4 h-4 mr-2"></i>
-                                        {{ $order->first()->agent->agentProfile->name }} </a>
+                                        {{ $agentName }} </a>
                                 </td>
                                 <td class="text-center">
                                     <p>

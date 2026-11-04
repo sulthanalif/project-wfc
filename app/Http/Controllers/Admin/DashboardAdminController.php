@@ -44,33 +44,42 @@ class DashboardAdminController extends Controller
 
         $orderPages = $request->get('orderPage') ?? 10;
 
-        $query = Order::with(['agent.agentProfile', 'detail.product.package.package.period'])
-            ->withSum(['payment as paid_total' => function ($query) {
-                $query->where('status', 'accepted');
-            }], 'pay')
-            ->whereIn('status', ['accepted', 'stop']);
+        $orderQuery = User::role('agent')
+            ->whereHas('order', function ($q) {
+                $q->whereIn('status', ['accepted', 'stop']);
+            })
+            ->with([
+                'agentProfile',
+                'order' => function ($q) {
+                    $q->whereIn('status', ['accepted', 'stop'])
+                        ->with('detail.product.package.package.period')
+                        ->withSum(['payment as paid_total' => function ($pq) {
+                            $pq->where('status', 'accepted');
+                        }], 'pay');
+                }
+            ]);
 
         if ($orderPages == 'all') {
-            $orders = $query->get()->groupBy('agent_id');
+            $orders = $orderQuery->get();
         } else {
             $orderPage = intval($orderPages);
-            $orders = $query->paginate($orderPage)->withQueryString()->groupBy('agent_id');
+            $orders = $orderQuery->paginate($orderPage, ['*'], 'page')->withQueryString();
         }
 
-            if ($request->get('export') == 'true') {
-                $datas = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->get()->groupBy('agent_id')->map(function ($item) {
-                    $allPaid = $item->every(function ($o) {
-                        return $o->payment_status === 'paid';
-                    });
-                    $hasPending = $item->contains(function ($o) {
-                        return $o->payment_status === 'pending';
-                    });
-                    return [
-                        'agent' => $item->first()->agent->agentProfile->name,
-                        'total_price' => $item->sum('total_price'),
-                        'status' => $allPaid ? 'Lunas' : ($hasPending ? 'Dicicilkan' : 'Belum Lunas')
-                    ];
+        if ($request->get('export') == 'true') {
+            $datas = Order::with('agent.agentProfile')->whereIn('status', ['accepted', 'stop'])->get()->groupBy('agent_id')->map(function ($item) {
+                $allPaid = $item->every(function ($o) {
+                    return $o->payment_status === 'paid';
                 });
+                $hasPending = $item->contains(function ($o) {
+                    return $o->payment_status === 'pending';
+                });
+                return [
+                    'agent' => $item->first()->agent->agentProfile->name ?? 'N/A',
+                    'total_price' => $item->sum('total_price'),
+                    'status' => $allPaid ? 'Lunas' : ($hasPending ? 'Dicicilkan' : 'Belum Lunas')
+                ];
+            });
 
                 $headers = [
                     'agent',

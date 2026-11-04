@@ -48,28 +48,32 @@ class PaymentController extends Controller
 
             return view('cms.agen.payment.index', compact('orders', 'user'));
         } else {
-            $allGrouped = Order::with(['agent.agentProfile', 'detail.product.package.package.period'])
-                ->withSum(['payment as paid_total' => function ($query) {
-                    $query->where('status', 'accepted');
-                }], 'pay')
-                ->whereIn('status', ['accepted', 'stop'])
-                ->get()
-                ->groupBy('agent_id');
+            $perPages = $request->get('perPage') ?? 10;
+
+            $query = User::role('agent')
+                ->whereHas('order', function ($q) {
+                    $q->whereIn('status', ['accepted', 'stop']);
+                })
+                ->with([
+                    'agentProfile',
+                    'order' => function ($q) {
+                        $q->whereIn('status', ['accepted', 'stop'])
+                            ->with('detail.product.package.package.period')
+                            ->withSum(['payment as paid_total' => function ($pq) {
+                                $pq->where('status', 'accepted');
+                            }], 'pay');
+                    }
+                ]);
 
             if ($perPages == 'all') {
-                $orders = $allGrouped;
+                $orders = $query->get();
             } else {
                 $perPage = intval($perPages);
-                $page = request()->get('page', 1);
-                $items = $allGrouped->slice(($page - 1) * $perPage, $perPage)->values();
-                $orders = new \Illuminate\Pagination\LengthAwarePaginator($items, $allGrouped->count(), $perPage, $page, [
-                    'path' => request()->url(),
-                    'query' => request()->query(),
-                ]);
+                $orders = $query->paginate($perPage)->withQueryString();
             }
 
             if ($request->get('export') == 'true') {
-                $datas = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->get()->groupBy('agent_id')->map(function ($item) {
+                $datas = Order::with('agent.agentProfile')->whereIn('status', ['accepted', 'stop'])->get()->groupBy('agent_id')->map(function ($item) {
                     $allPaid = $item->every(function ($o) {
                         return $o->payment_status === 'paid';
                     });
@@ -77,7 +81,7 @@ class PaymentController extends Controller
                         return $o->payment_status === 'pending';
                     });
                     return [
-                        'agent' => $item->first()->agent->agentProfile->name,
+                        'agent' => $item->first()->agent->agentProfile->name ?? 'N/A',
                         'total_price' => $item->sum('total_price'),
                         'status' => $allPaid ? 'Lunas' : ($hasPending ? 'Dicicilkan' : 'Belum Lunas')
                     ];
