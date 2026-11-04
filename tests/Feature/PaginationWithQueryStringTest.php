@@ -43,4 +43,22 @@ class PaginationWithQueryStringTest extends TestCase
             $this->assertStringContainsString("cms.layouts.per-page", $content, "Missing per-page partial include in {$viewPath}");
         }
     }
+
+    public function test_search_input_contains_page_level_clarification_label(): void
+    {
+        $appLayout = file_get_contents(resource_path('views/cms/layouts/app.blade.php'));
+        $this->assertStringContainsString("Tidak ada data yang cocok di halaman ini.", $appLayout);
+
+        $views = [
+            resource_path('views/cms/transactions/index.blade.php'),
+            resource_path('views/cms/admin/products/index.blade.php'),
+            resource_path('views/cms/admin/catalogs/index.blade.php'),
+            resource_path('views/cms/admin/reports/total-deposit.blade.php'),
+        ];
+
+        foreach ($views as $viewPath) {
+            $content = file_get_contents($viewPath);
+            $this->assertStringContainsString('placeholder="Cari di halaman ini..."', $content, "Missing page-level search placeholder in {$viewPath}");
+        }
+    }
 }

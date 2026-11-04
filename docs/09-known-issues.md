@@ -70,17 +70,16 @@ Tidak ada masalah backend pagination yang belum diperbaiki.
 
 ### Frontend
 
-| # | Masalah | Halaman terdampak | Perbaikan |
-|---|---|---|---|
-| P10 | Search (`#filter`) hanya menyembunyikan baris di halaman yang sedang tampil. Data di halaman lain tidak ikut dicari, sehingga user mengira data tidak ada. | Semua halaman dengan input Search | Kirim `?search=` ke server dan filter dengan `where(... like ...)`, atau beri label "cari di halaman ini" |
+Tidak ada masalah frontend pagination yang belum diperbaiki.
 
-Urutan yang disarankan: P8, P11, P5, P6, P2, P3, P1, P7, P9, P12, dan P4 (selesai), lalu P10.
+Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 
 ## Sudah diperbaiki
 
 | Masalah | Commit |
 |---|---|
-| P4: Agregasi SQL (subquery, join, group by) dan LengthAwarePaginator di semua modul laporan admin (`report/*`), mengaktifkan pagination di view dan export dataset lengkap | `optimalisasi` |
+| P10: Klarifikasi scope pencarian dengan label/placeholder 'Cari di halaman ini...' di seluruh 43 view dan pesan feedback saat filter kosong di `app.blade.php` | `optimalisasi` |
+| P4: Agregasi SQL (subquery, join, group by) dan LengthAwarePaginator di semua modul laporan admin (`report/*`), mengaktifkan pagination di view dan export dataset lengkap | `1b0f2ff` |
 | P12: Partial dropdown bersama `cms/layouts/per-page.blade.php` dan skrip event listener terpusat di `app.blade.php` (menghapus 35 duplikasi view) | `4abbc4a` |
 | P1: Opsi `perPage=all` dan input `perPage` dibatasi maksimal 100 di controller | `c939467` |
 | P7: Index database pada kolom pivot `product_packages` (`product_id`, `package_id`), `order_details` (`order_id`, `product_id`), dan `orders` (`agent_id`, `status`) | `c939467` |

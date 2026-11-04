@@ -49,13 +49,33 @@
             }
 
             function filterData(search) {
+                let visibleCount = 0;
+                const keyword = search.trim().toLowerCase();
+                const tbody = document.querySelector("tbody");
+
                 items.forEach((item) => {
-                    if (item.innerText.toLowerCase().includes(search.toLowerCase())) {
+                    if (item.id === 'filter-empty-message') return;
+                    if (!keyword || item.innerText.toLowerCase().includes(keyword)) {
                         item.classList.remove('hidden');
+                        visibleCount++;
                     } else {
                         item.classList.add('hidden');
                     }
                 });
+
+                const existingMsg = document.getElementById('filter-empty-message');
+                if (keyword && visibleCount === 0 && tbody) {
+                    if (!existingMsg) {
+                        const tr = document.createElement('tr');
+                        tr.id = 'filter-empty-message';
+                        tr.className = 'intro-x';
+                        const colCount = tbody.closest('table') ? (tbody.closest('table').querySelectorAll('thead th').length || 6) : 6;
+                        tr.innerHTML = `<td colspan="${colCount}" class="text-center py-4 text-slate-500 font-medium">Tidak ada data yang cocok di halaman ini.</td>`;
+                        tbody.appendChild(tr);
+                    }
+                } else if (existingMsg) {
+                    existingMsg.remove();
+                }
             }
 
             document.addEventListener('change', (e) => {
