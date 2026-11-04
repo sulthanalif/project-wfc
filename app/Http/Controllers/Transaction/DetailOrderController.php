@@ -15,6 +15,11 @@ class DetailOrderController extends Controller
 {
     public function editDetail(Request $request, OrderDetail $detail)
     {
+        $order = Order::findOrFail($detail->order_id);
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $validator = Validator::make($request->all(), [
             'product_id' => 'string',
             'qty' => 'numeric'
@@ -121,6 +126,10 @@ class DetailOrderController extends Controller
 
     public function addItems(Request $request, Order $order)
     {
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $products = json_decode($request->products, true);
 
         if ($products == null) {

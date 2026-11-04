@@ -155,9 +155,10 @@ class OrderFullController extends Controller
 
     public function archiveShow(Request $request, Order $order)
     {
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
 
-        // $product= GetProduct::detail('Product PHL 1');
-        // return response()->json($product);
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 0);
         })->get();
@@ -202,9 +203,10 @@ class OrderFullController extends Controller
 
     public function show(Request $request, Order $order)
     {
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
 
-        // $product= GetProduct::detail('Product PHL 1');
-        // return response()->json($product);
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->get();
@@ -277,8 +279,11 @@ class OrderFullController extends Controller
 
     public function store(Request $request)
     {
-        // return response()->json($request->all());
-        // dd($request->all());
+        $user = Auth::user();
+        if (!$user->hasAnyRole(['admin', 'super_admin'])) {
+            $request->merge(['agent_id' => $user->id]);
+        }
+
         $validator = Validator::make($request->all(), [
             'agent_id' => ['required'],
             'order_number' => ['required'],
@@ -290,7 +295,6 @@ class OrderFullController extends Controller
             return back()->with('error', $validator->errors());
         }
 
-        $user = Auth::user();
         $periode = Period::where('is_active', 1)->first();
 
         if ($user->roleName == 'agent' && $periode) {

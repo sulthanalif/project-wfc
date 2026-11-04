@@ -150,6 +150,10 @@ class PaymentController extends Controller
 
     public function showPaymentAgent(User $user, Order $order)
     {
+        if (auth()->user()->hasRole('agent') && ($order->agent_id !== auth()->id() || $user->id !== auth()->id())) {
+            abort(403, 'Unauthorized');
+        }
+
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->get();
@@ -195,6 +199,10 @@ class PaymentController extends Controller
 
     public function changePaymentStatus(Request $request, Payment $payment)
     {
+        if (!auth()->user()->hasAnyRole(['admin', 'super_admin', 'finance_admin'])) {
+            abort(403, 'Unauthorized');
+        }
+
         try {
             DB::transaction(function () use ($request, $payment) {
                 $payment->status = $request->status;
@@ -215,6 +223,10 @@ class PaymentController extends Controller
 
     public function changePaymentVerify(Request $request, Payment $payment)
     {
+        if (!auth()->user()->hasAnyRole(['admin', 'super_admin', 'finance_admin'])) {
+            abort(403, 'Unauthorized');
+        }
+
         try {
             DB::transaction(function () use ($request, $payment) {
                 $payment->is_confirmed = !$payment->is_confirmed;
@@ -304,6 +316,10 @@ class PaymentController extends Controller
 
     public function storePaymentAgent(Request $request, Order $order)
     {
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         if ($order->total_price <= 0) {
             return back()->with('error', 'Tidak dapat menambahkan pembayaran untuk pesanan dengan total tagihan Rp 0.');
         }
@@ -451,6 +467,10 @@ class PaymentController extends Controller
 
     public function updatePaymentAgent(Request $request, Payment $payment)
     {
+        if (auth()->user()->hasRole('agent') && $payment->order?->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $validator = Validator::make($request->all(), [
             'upd_method' => ['required', 'string'],
             'upd_bank' => ['nullable', 'string'],

@@ -61,16 +61,11 @@ Route::get('storage/images/{path}/{imageName}', [GetImageController::class, 'dis
 
 Auth::routes(['verify' => true]);
 
-Route::get('/sendmail', [NotificationController::class, 'sendEmail'])->name('sendmail');
-Route::get('/testview', function () {
-    return view('mail.notification-acc-order');
-});
-
 Route::group(['middleware' => 'auth',], function () {
     Route::get('/agent', [DashboardController::class, 'noActive'])->name('nonactive');
 
     //super_admin, finance_admin, admin
-    Route::group(['middleware' => 'role:super_admin|admin|finance_admin', 'active'], function () {
+    Route::group(['middleware' => ['role:super_admin|admin|finance_admin', 'active']], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
 
         Route::group(['prefix' => 'master'], function () {
@@ -153,16 +148,17 @@ Route::group(['middleware' => 'auth',], function () {
 
         //product return
         Route::resource('return', ProductReturnController::class);
-        Route::put('/return/{return}/change-status', [ProductReturnController::class, 'changeStatus'])->name('return.changeStatus');
         Route::post('/return/{return}/add-item', [ProductReturnController::class, 'addItem'])->name('return.item.create');
         Route::put('/return/{return}/{item}/edit-item', [ProductReturnController::class, 'editItem'])->name('return.item.update');
         Route::delete('/return/{return}/{item}/delete', [ProductReturnController::class, 'destroyItem'])->name('return.item.destroy');
     });
     require __DIR__ . '/transaction/payment.php';
-    Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|finance_admin|agent'], function () {
+    Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|finance_admin'], function () {
         require __DIR__ . '/transaction/status.php';
+        Route::put('/return/{return}/change-status', [ProductReturnController::class, 'changeStatus'])->name('return.changeStatus');
+    });
 
-
+    Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|finance_admin|agent'], function () {
         //export pdf invoice payment
         Route::get('/invoice/{order}/{payment}', [ExportInvoiceController::class, 'getInvoice'])->name('getInvoice');
 

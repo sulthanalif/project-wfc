@@ -150,6 +150,10 @@ class OrderController extends Controller
 
     public function archiveShow(Request $request, Order $order)
     {
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 0);
         })->get();
@@ -212,8 +216,11 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // return response()->json($request->all());
-        // dd($request->all());
+        $user = Auth::user();
+        if (!$user->hasAnyRole(['admin', 'super_admin'])) {
+            $request->merge(['agent_id' => $user->id]);
+        }
+
         $validator = Validator::make($request->all(), [
             'agent_id' => ['required'],
             'order_number' => ['required'],
@@ -225,7 +232,6 @@ class OrderController extends Controller
             return back()->with('error', $validator->errors());
         }
 
-        $user = Auth::user();
         $periode = Period::where('is_active', 1)->first();
 
         if ($user->roleName == 'agent') {
@@ -324,9 +330,10 @@ class OrderController extends Controller
      */
     public function show(Request $request, Order $order)
     {
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
 
-        // $product= GetProduct::detail('Product PHL 1');
-        // return response()->json($product);
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->get();
@@ -373,6 +380,10 @@ class OrderController extends Controller
 
     public function accOrder(Order $order)
     {
+        if (!auth()->user()->hasAnyRole(['admin', 'super_admin', 'finance_admin'])) {
+            abort(403, 'Unauthorized');
+        }
+
         if ($order) {
             $update = $order->update([
                 'status' => 'accepted'
@@ -390,6 +401,10 @@ class OrderController extends Controller
 
     public function changeOrderStatus(Request $request, Order $order)
     {
+        if (!auth()->user()->hasAnyRole(['admin', 'super_admin', 'finance_admin'])) {
+            abort(403, 'Unauthorized');
+        }
+
         if ($order) {
             $update = $order->update([
                 'status' => $request->status,
@@ -410,6 +425,10 @@ class OrderController extends Controller
 
     public function bulkConvertToSafePoint(Request $request)
     {
+        if (!auth()->user()->hasAnyRole(['admin', 'super_admin', 'finance_admin'])) {
+            abort(403, 'Unauthorized');
+        }
+
         $orderIds = array_filter(array_map('trim', explode(',', $request->get('order_ids', ''))));
 
         if (empty($orderIds)) {

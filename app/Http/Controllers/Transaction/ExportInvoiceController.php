@@ -13,6 +13,14 @@ class ExportInvoiceController extends Controller
 {
     public function getInvoice(Order $order, Payment $payment, BankOwner $banks)
     {
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        if ($payment->order_id !== $order->id) {
+            abort(404);
+        }
+
         $oldPayments = $order->payment()->where('created_at', '<', $payment->created_at)->get();
         // return response()->json(compact('oldPayments'));
         $data = [
@@ -35,6 +43,10 @@ class ExportInvoiceController extends Controller
 
     public function getInvoiceOrder(Order $order)
     {
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $data = [
             'title'=> 'Invoice',
             'order' => $order
@@ -45,6 +57,14 @@ class ExportInvoiceController extends Controller
 
     public function cekView(Order $order, Payment $payment, BankOwner $banks)
     {
+        if (auth()->user()->hasRole('agent') && $order->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        if ($payment->order_id !== $order->id) {
+            abort(404);
+        }
+
         $data = [
             'title'=> 'Faktur Pembayaran Angsuran',
             'order' => $order,

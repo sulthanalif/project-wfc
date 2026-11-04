@@ -78,6 +78,10 @@ class SubAgentController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+        if (!$user->hasAnyRole(['admin', 'super_admin'])) {
+            $request->merge(['agent_id' => $user->id]);
+        }
 
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -120,6 +124,10 @@ class SubAgentController extends Controller
      */
     public function show(SubAgent $subAgent)
     {
+        if (auth()->user()->hasRole('agent') && $subAgent->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         if ($subAgent) {
             return view('cms.sub-agent.detail', compact('subAgent'));
         } else {
@@ -132,6 +140,10 @@ class SubAgentController extends Controller
      */
     public function edit(SubAgent $subAgent)
     {
+        if (auth()->user()->hasRole('agent') && $subAgent->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $user = Auth::user();
         $roleUser = $user->roles->first();
         $roleName = $roleUser->name;
@@ -151,6 +163,14 @@ class SubAgentController extends Controller
      */
     public function update(Request $request, SubAgent $subAgent)
     {
+        $user = Auth::user();
+        if ($user->hasRole('agent')) {
+            if ($subAgent->agent_id !== $user->id) {
+                abort(403, 'Unauthorized');
+            }
+            $request->merge(['agent_id' => $user->id]);
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:500'],
@@ -191,6 +211,10 @@ class SubAgentController extends Controller
      */
     public function destroy(Request $request, SubAgent $subAgent)
     {
+        if (auth()->user()->hasRole('agent') && $subAgent->agent_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $delete = false;
 
         if ($subAgent->orderDetail()->count() == 0) {

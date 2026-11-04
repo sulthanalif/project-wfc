@@ -36,6 +36,10 @@ class ProductReturnController extends Controller
             $query->where('status', $status);
         }
 
+        if (auth()->user()->hasRole('agent')) {
+            $query->where('user_id', auth()->id());
+        }
+
         if ($perPages == 'all') {
             $returns = $query->take(100)->get();
         } else {
@@ -65,12 +69,16 @@ class ProductReturnController extends Controller
                 ->get();
         }
 
-        $orders = Order::with('detail')
+        $ordersQuery = Order::with('detail')
             ->where('status', '!=', 'pending')
             ->where('status', '!=', 'reject')
-            ->where('status', '!=', 'canceled')
-            // ->where('delivery_status', 'success')
-            ->get();
+            ->where('status', '!=', 'canceled');
+
+        if ($user->hasRole('agent')) {
+            $ordersQuery->where('agent_id', $user->id);
+        }
+
+        $orders = $ordersQuery->get();
 
         $products = Product::with(['detail', 'subProduct'])->get();
 
@@ -110,7 +118,7 @@ class ProductReturnController extends Controller
             DB::transaction(function () use ($request, $products) {
                 $return = new ProductReturn();
                 $return->return_number = $request->input('return_number');
-                $return->user_id = $request->input('agent_id') ?? auth()->user()->id;
+                $return->user_id = auth()->user()->hasRole('agent') ? auth()->id() : ($request->input('agent_id') ?? auth()->user()->id);
                 $return->date_in = $request->input('return_date');
                 $return->notes = $request->input('note');
                 $return->save();
@@ -200,6 +208,10 @@ class ProductReturnController extends Controller
      */
     public function show(ProductReturn $return)
     {
+        if (auth()->user()->hasRole('agent') && $return->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $detail = ProductReturnDetail::with(['order', 'product', 'subProduct'])
             ->where('product_return_id', $return->id)
             ->get();
@@ -234,6 +246,10 @@ class ProductReturnController extends Controller
      */
     public function destroy(ProductReturn $return)
     {
+        if (auth()->user()->hasRole('agent') && $return->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         try {
             DB::transaction(function () use ($return) {
                 // Hapus detail pengembalian terkait
@@ -266,6 +282,10 @@ class ProductReturnController extends Controller
 
     public function changeStatus(Request $request, ProductReturn $return)
     {
+        if (!auth()->user()->hasAnyRole(['admin', 'super_admin'])) {
+            abort(403, 'Unauthorized');
+        }
+
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:pending,processed,finished,rejected',
         ]);
@@ -297,6 +317,10 @@ class ProductReturnController extends Controller
 
     public function addItem(Request $request, ProductReturn $return)
     {
+        if (auth()->user()->hasRole('agent') && $return->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|exists:products,id',
             'sub_product_id_item' => 'required|exists:sub_products,id',
@@ -340,6 +364,14 @@ class ProductReturnController extends Controller
 
     public function editItem(Request $request, ProductReturn $return, ProductReturnDetail $item)
     {
+        if (auth()->user()->hasRole('agent') && $return->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        if ($item->product_return_id !== $return->id) {
+            abort(404);
+        }
+
         $validator = Validator::make($request->all(), [
             'qty' => 'required|numeric|min:1',
             'status_product' => 'required|in:damaged,expired,overstock,other',
@@ -368,6 +400,14 @@ class ProductReturnController extends Controller
 
     public function destroyItem(ProductReturn $return, ProductReturnDetail $item)
     {
+        if (auth()->user()->hasRole('agent') && $return->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        if ($item->product_return_id !== $return->id) {
+            abort(404);
+        }
+
         try {
             DB::transaction(function () use ($return, $item) {
                 // Hapus detail pengembalian terkait

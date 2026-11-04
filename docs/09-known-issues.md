@@ -4,14 +4,7 @@ Daftar per 16 Oktober 2026, dari pembacaan kode dan log production. Hapus baris 
 
 ## Keamanan
 
-| # | Masalah | Lokasi | Dampak |
-|---|---|---|---|
-| S1 | Route ubah status bisa dipanggil role `agent`: `acc/{order}`, `changeOrderStatus/{order}`, `changePaymentStatus/{payment}`, `changePaymentVerify/{payment}`, `bulk-convert-to-safe-point`. Controller tidak mengecek role. | `routes/transaction/status.php` (grup role termasuk `agent` di `web.php`) | Agen bisa menyetujui pesanan atau menandai pembayarannya sendiri `accepted` lewat request manual |
-| S2 | Tidak ada cek kepemilikan pada detail pesanan, ubah item, tambah item, pembayaran agen, dan retur. Hanya `index` yang difilter per agen. | `Transaction\*Controller` | Agen yang tahu UUID pesanan agen lain bisa melihat dan mengubahnya |
-| S3 | `store` pesanan memakai `agent_id` dari input form | `Order*Controller@store` | Agen bisa membuat pesanan atas nama agen lain |
-| S4 | Route debug publik: `GET /sendmail` mengirim email ke alamat tetap, `GET /testview` | `routes/web.php` | Siapa pun bisa memicu pengiriman email |
-| S5 | `GET storage/images/{path}/{imageName}` tanpa login, termasuk folder `administration` (KTP dan surat perjanjian) | `GetImageController` | Dokumen pribadi agen bisa diunduh siapa saja yang tahu nama filenya |
-| S6 | Middleware `active` tidak terpasang di grup admin karena ditulis sebagai elemen array biasa: `['middleware' => 'role:...', 'active']` | `routes/web.php` | Admin yang dinonaktifkan tetap bisa masuk |
+Tidak ada isu keamanan yang belum diperbaiki. Seluruh celah keamanan S1 s/d S6 telah selesai diperbaiki.
 
 ## Bug
 
@@ -49,6 +42,12 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 
 | Masalah | Commit |
 |---|---|
+| S1: Pembatasan route dan controller status pesanan/pembayaran (`order.accOrder`, `order.changeOrderStatus`, `order.bulkConvertToSafePoint`, `changePaymentStatus`, `changePaymentVerify`, `return.changeStatus`) hanya untuk role admin/super_admin/finance_admin | `optimalisasi` |
+| S2: Pengecekan otorisasi kepemilikan dan proteksi anti-IDOR di detail pesanan, arsip pesanan, ubah item, tambah item, pembayaran agen, retur produk, faktur invoice, dan sub agen | `optimalisasi` |
+| S3: `Order*Controller@store` memaksa `agent_id` sesuai user login untuk agen, mencegah manipulasi pesanan atas nama agen lain | `optimalisasi` |
+| S4: Penghapusan route debug publik `GET /sendmail` dan `GET /testview` di `routes/web.php` | `optimalisasi` |
+| S5: Proteksi path traversal dan pembatasan akses dokumen sensitif (KTP dan Surat Perjanjian) pada `GetImageController` khusus untuk pemilik dokumen atau admin | `optimalisasi` |
+| S6: Perbaikan penulisan middleware array `['role:super_admin|admin|finance_admin', 'active']` di grup route admin sehingga admin nonaktif terblokir | `optimalisasi` |
 | B1: Perbaikan route action hilang: hapus route mati accPayment/rejectPayment, batasi resource distribution/tutorial/procurement, dan buat class LoanExport untuk export pinjaman | `optimalisasi` |
 | B2: Total harga komisi dan dashboard agen dihitung langsung dari `sub_price` tanpa dikali `qty` ganda | `optimalisasi` |
 | B3: `updatePayment` admin membaca `$request->file('photo')` sesuai validasi dan nama form input | `optimalisasi` |
