@@ -16,6 +16,31 @@
     <link rel="stylesheet" href="{{ asset('assets/cms/css/app.css') }}" />
     <!-- END: CSS Assets-->
 
+    <style>
+        @keyframes tableSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .table-loading-spinner {
+            animation: tableSpin 0.75s linear infinite;
+        }
+        .table-loading-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            min-height: 180px;
+            border-radius: 0.5rem;
+        }
+        .dark .table-loading-overlay {
+            background-color: rgba(15, 23, 42, 0.72);
+        }
+    </style>
+
     @stack('custom-styles')
 </head>
 <!-- END: Head -->
@@ -44,12 +69,44 @@
             const filter = document.getElementById("filter");
             const urlParams = new URLSearchParams(window.location.search);
 
+            // Fungsi global untuk menampilkan loading overlay pada tabel
+            function showTableLoading() {
+                const tableWrappers = document.querySelectorAll('.table-container, .table-report');
+                tableWrappers.forEach(container => {
+                    let overlay = container.querySelector('.table-loading-overlay');
+                    if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.className = 'table-loading-overlay';
+                        overlay.innerHTML = `
+                            <div class="flex flex-col items-center justify-center p-5 bg-white/95 dark:bg-darkmode-600/95 rounded-xl shadow-lg border border-slate-200/80 dark:border-darkmode-400">
+                                <svg class="table-loading-spinner w-8 h-8 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Memuat data...</span>
+                            </div>
+                        `;
+                        const pos = window.getComputedStyle(container).position;
+                        if (pos === 'static') {
+                            container.style.position = 'relative';
+                        }
+                        container.appendChild(overlay);
+                    }
+                    overlay.style.display = 'flex';
+                    container.style.opacity = '0.55';
+                    container.style.pointerEvents = 'none';
+                });
+            }
+
+            // Expose agar bisa dipanggil komponen blade jika diperlukan
+            window.showTableLoading = showTableLoading;
+
             if (filter) {
                 // Inisialisasi placeholder dan title untuk pencarian server
                 if (!filter.placeholder || filter.placeholder === "Cari di halaman ini...") {
                     filter.placeholder = "Cari data...";
                 }
-                filter.title = "Pencarian server (otomatis setelah 2 detik atau tekan Enter)";
+                filter.title = "Pencarian server (otomatis setelah 500ms atau tekan Enter)";
 
                 // Inisialisasi nilai search dari URL jika tersedia
                 if (urlParams.has('search') && !filter.value) {
@@ -57,14 +114,30 @@
                 }
 
                 let serverSearchTimer = null;
+                const searchIcon = filter.parentElement ? filter.parentElement.querySelector('[data-lucide="search"]') : null;
+
+                function setSearchInputSpinning(isSpinning) {
+                    if (searchIcon) {
+                        if (isSpinning) {
+                            searchIcon.classList.add('table-loading-spinner');
+                            searchIcon.style.color = '#1e40af';
+                        } else {
+                            searchIcon.classList.remove('table-loading-spinner');
+                            searchIcon.style.color = '';
+                        }
+                    }
+                }
 
                 function triggerServerSearch() {
                     clearTimeout(serverSearchTimer);
+                    setSearchInputSpinning(false);
+
                     const params = new URLSearchParams(window.location.search);
                     const trimmedVal = filter.value.trim();
                     const currentSearch = (params.get('search') || '').trim();
 
                     if (trimmedVal !== currentSearch) {
+                        showTableLoading();
                         if (trimmedVal) {
                             params.set('search', trimmedVal);
                         } else {
@@ -75,10 +148,11 @@
                     }
                 }
 
-                // Pencarian otomatis ke server dengan jeda 2 detik tanpa klik Enter
+                // Pencarian otomatis ke server dengan jeda 500ms tanpa klik Enter
                 filter.addEventListener("input", () => {
                     clearTimeout(serverSearchTimer);
-                    serverSearchTimer = setTimeout(triggerServerSearch, 2000);
+                    setSearchInputSpinning(true);
+                    serverSearchTimer = setTimeout(triggerServerSearch, 500);
                 });
 
                 filter.addEventListener("keydown", (e) => {
@@ -87,9 +161,11 @@
                         triggerServerSearch();
                     } else if (e.key === "Escape") {
                         clearTimeout(serverSearchTimer);
+                        setSearchInputSpinning(false);
                         filter.value = "";
                         const params = new URLSearchParams(window.location.search);
                         if (params.has('search')) {
+                            showTableLoading();
                             params.delete('search');
                             params.delete('page');
                             window.location.search = params.toString();
@@ -97,10 +173,9 @@
                     }
                 });
 
-                const searchIcon = filter.parentElement ? filter.parentElement.querySelector('[data-lucide="search"]') : null;
                 if (searchIcon) {
                     searchIcon.style.cursor = 'pointer';
-                    searchIcon.setAttribute('title', 'Cari di database (Tekan Enter atau tunggu 2 detik)');
+                    searchIcon.setAttribute('title', 'Cari di database (Tekan Enter atau tunggu 500ms)');
                     searchIcon.addEventListener('click', triggerServerSearch);
                 }
             }
@@ -109,6 +184,7 @@
 
             document.addEventListener('change', (e) => {
                 if (e.target && e.target.id === 'records_per_page') {
+                    showTableLoading();
                     const urlParams = new URLSearchParams(window.location.search);
                     const paramName = e.target.getAttribute('data-param') || 'perPage';
                     urlParams.set(paramName, e.target.value);
@@ -116,11 +192,29 @@
                     window.location.search = urlParams.toString();
                 }
                 if (e.target && e.target.id === 'records_per_status') {
+                    showTableLoading();
                     const urlParams = new URLSearchParams(window.location.search);
                     urlParams.set('status', e.target.value);
                     urlParams.delete('page');
                     window.location.search = urlParams.toString();
                 }
+            });
+
+            // Loading saat pagination diklik
+            document.addEventListener('click', (e) => {
+                const pageLink = e.target.closest('.pagination a');
+                if (pageLink && pageLink.href && !pageLink.href.includes('#')) {
+                    showTableLoading();
+                }
+            });
+
+            // Reset loading jika halaman dibuka dari cache browser (tombol Back)
+            window.addEventListener('pageshow', () => {
+                document.querySelectorAll('.table-loading-overlay').forEach(el => el.remove());
+                document.querySelectorAll('.table-container, .table-report').forEach(el => {
+                    el.style.opacity = '';
+                    el.style.pointerEvents = '';
+                });
             });
 
             function formatRupiah(angka, prefix) {
