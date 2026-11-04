@@ -101,7 +101,7 @@
                                 @endhasrole
                                 <td>
                                     <p class="text-center">
-                                        {{ $return->productReturnDetail->count() }} Item
+                                        {{ $return->product_return_detail_count ?? $return->productReturnDetail->count() }} Item
                                     </p>
                                 </td>
                                 <td>

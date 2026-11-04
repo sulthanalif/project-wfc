@@ -87,7 +87,12 @@
                                                 'address' => $query?->address ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}" : 'Alamat Belum Diisi',
                                             ];
                                         } else {
-                                            $data[] = $d->orderDetail->subAgent->agentProfile;
+                                            $sub = $d->orderDetail->subAgent;
+                                            $data[] = $sub ? [
+                                                'name' => $sub->name ?? '-',
+                                                'phone_number' => $sub->phone_number ?? 'Nomer HP Belum Diisi',
+                                                'address' => $sub->address ?? 'Alamat Belum Diisi',
+                                            ] : null;
                                         }
                                     }
 

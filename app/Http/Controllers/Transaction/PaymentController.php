@@ -31,16 +31,27 @@ class PaymentController extends Controller
         if (ValidateRole::check('agent')) {
             $user = Auth::user();
 
+            $query = Order::with('detail.product.package.package.period')
+                ->withSum(['payment as paid_total' => function ($query) {
+                    $query->where('status', 'accepted');
+                }], 'pay')
+                ->where('agent_id', $user->id)
+                ->whereIn('status', ['accepted', 'stop'])
+                ->orderByDesc('created_at');
+
             if ($perPages == 'all') {
-                $orders = Order::where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->orderByDesc('created_at')->get();
+                $orders = $query->get();
             } else {
                 $perPage = intval($perPages);
-                $orders = Order::where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->orderByDesc('created_at')->paginate($perPage)->withQueryString();
+                $orders = $query->paginate($perPage)->withQueryString();
             }
 
             return view('cms.agen.payment.index', compact('orders', 'user'));
         } else {
-            $allGrouped = Order::with('agent.agentProfile')
+            $allGrouped = Order::with(['agent.agentProfile', 'detail.product.package.package.period'])
+                ->withSum(['payment as paid_total' => function ($query) {
+                    $query->where('status', 'accepted');
+                }], 'pay')
                 ->whereIn('status', ['accepted', 'stop'])
                 ->get()
                 ->groupBy('agent_id');
@@ -93,11 +104,18 @@ class PaymentController extends Controller
             $query->where('is_active', 1);
         })->get();
 
+        $query = Order::with(['agent.agentProfile', 'detail.product.package.package.period'])
+            ->withSum(['payment as paid_total' => function ($query) {
+                $query->where('status', 'accepted');
+            }], 'pay')
+            ->where('agent_id', $user->id)
+            ->whereIn('status', ['accepted', 'stop']);
+
         if ($perPages == 'all') {
-            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->get();
+            $orders = $query->get();
         } else {
             $perPage = intval($perPages);
-            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->paginate($perPage)->withQueryString();
+            $orders = $query->paginate($perPage)->withQueryString();
         }
 
         if ($request->get('export') == 'true') {

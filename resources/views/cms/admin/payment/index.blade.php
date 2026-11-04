@@ -67,7 +67,7 @@
                                 @php
                                     $totalPrice = $order->sum('total_price');
                                     $totalPayment = $order->sum(function ($o) {
-                                        return $o->payment()->where('status', 'accepted')->sum('pay');
+                                        return $o->paid_total ?? $o->payment()->where('status', 'accepted')->sum('pay');
                                     });
                                     $remainingPayment = $totalPrice - $totalPayment;
 

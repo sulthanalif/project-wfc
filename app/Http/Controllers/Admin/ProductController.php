@@ -32,17 +32,16 @@ class ProductController extends Controller
     {
         $perPages = $request->get('perPage') ?? 5;
 
+        $query = Product::with(['detail', 'package.package.period'])->whereHas('package.package.period', function ($query) {
+            $query->where('is_active', 1);
+        })->latest();
+
         if ($perPages == 'all') {
-            $products = Product::whereHas('package.package.period', function ($query) {
-                $query->where('is_active', 1);
-            })->latest()->get();
+            $products = $query->get();
         } else {
             $perPage = intval($perPages);
-            $products = Product::whereHas('package.package.period', function ($query) {
-                $query->where('is_active', 1);
-            })->latest()->paginate($perPage)->withQueryString();
+            $products = $query->paginate($perPage)->withQueryString();
         }
-
 
         return view('cms.admin.products.index', compact('products'));
     }
@@ -51,15 +50,15 @@ class ProductController extends Controller
     {
         $perPages = $request->get('perPage') ?? 5;
 
+        $query = Product::with(['detail', 'package.package.period'])->whereHas('package.package.period', function ($query) {
+            $query->where('is_active', 0);
+        })->latest();
+
         if ($perPages == 'all') {
-            $products = Product::whereHas('package.package.period', function ($query) {
-                $query->where('is_active', 0);
-            })->latest()->get();
+            $products = $query->get();
         } else {
             $perPage = intval($perPages);
-            $products = Product::whereHas('package.package.period', function ($query) {
-                $query->where('is_active', 0);
-            })->latest()->paginate($perPage)->withQueryString();
+            $products = $query->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.products.archive', compact('products'));

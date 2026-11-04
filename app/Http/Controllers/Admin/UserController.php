@@ -30,11 +30,13 @@ class UserController extends Controller
     {
         $perPages = $request->get('perPage') ?? 5;
 
+        $query = User::with(['roles', 'agentProfile', 'adminProfile'])->latest();
+
         if ($perPages == 'all') {
-            $users = User::all();
+            $users = $query->get();
         } else {
             $perPage = intval($perPages);
-            $users = User::latest()->paginate($perPage)->withQueryString();
+            $users = $query->paginate($perPage)->withQueryString();
         }
 
         // Tampilkan data ke view.

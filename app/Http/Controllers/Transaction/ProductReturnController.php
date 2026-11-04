@@ -23,7 +23,13 @@ class ProductReturnController extends Controller
         $perPages = $request->get('perPage') ?? 10;
         $status = $request->get('status') ?? 'all';
 
-        $query = ProductReturn::with(['user', 'productReturnDetail', 'productReturnDetail.order', 'productReturnDetail.product', 'productReturnDetail.subProduct'])
+        $query = ProductReturn::with([
+            'user.agentProfile',
+            'productReturnDetail.order',
+            'productReturnDetail.product',
+            'productReturnDetail.subProduct'
+        ])
+            ->withCount('productReturnDetail')
             ->orderBy('date_in', 'desc');
 
         if ($status != 'all') {

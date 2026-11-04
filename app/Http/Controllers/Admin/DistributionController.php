@@ -25,11 +25,16 @@ class DistributionController extends Controller
     {
         $perPages = $request->get('perPage') ?? 5;
 
+        $query = Distribution::with([
+            'detail.orderDetail.order.agent.agentProfile',
+            'detail.orderDetail.subAgent',
+        ])->latest();
+
         if ($perPages == 'all') {
-            $distributions = Distribution::latest()->get();
+            $distributions = $query->get();
         } else {
             $perPage = intval($perPages);
-            $distributions = Distribution::latest()->paginate($perPage)->withQueryString();
+            $distributions = $query->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.distributions.index', compact('distributions'));

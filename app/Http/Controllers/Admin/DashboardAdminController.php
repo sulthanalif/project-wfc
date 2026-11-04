@@ -44,12 +44,18 @@ class DashboardAdminController extends Controller
 
         $orderPages = $request->get('orderPage') ?? 10;
 
+        $query = Order::with(['agent.agentProfile', 'detail.product.package.package.period'])
+            ->withSum(['payment as paid_total' => function ($query) {
+                $query->where('status', 'accepted');
+            }], 'pay')
+            ->whereIn('status', ['accepted', 'stop']);
+
         if ($orderPages == 'all') {
-                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->get()->groupBy('agent_id');
-            } else {
-                $orderPage = intval($orderPages);
-                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->paginate($orderPage)->withQueryString()->groupBy('agent_id');
-            }
+            $orders = $query->get()->groupBy('agent_id');
+        } else {
+            $orderPage = intval($orderPages);
+            $orders = $query->paginate($orderPage)->withQueryString()->groupBy('agent_id');
+        }
 
             if ($request->get('export') == 'true') {
                 $datas = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->get()->groupBy('agent_id')->map(function ($item) {

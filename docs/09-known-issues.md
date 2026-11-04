@@ -72,8 +72,6 @@ else { $data = Model::...->paginate(intval($perPages)); }
 | P2 | Pembayaran admin memuat semua pesanan `accepted`/`stop`, `groupBy('agent_id')` di PHP, lalu memotong dengan `LengthAwarePaginator` manual | `transaction/payment` (`PaymentController@index`) | Paginate di database: `User::role('agent')->whereHas('order', ...)->withCount/withSum(...)->paginate()` |
 | P3 | Dashboard admin memanggil `->paginate()->groupBy('agent_id')`. Hasilnya Collection biasa, jadi blok `@if (... instanceof LengthAwarePaginator)` di view tidak pernah benar: tombol halaman tidak tampil dan hanya 10 pesanan pertama yang dikelompokkan. Filter juga memakai `where('status', [...])` (lihat B4). | `admin` (`DashboardAdminController@index`) | Sama dengan P2, paginate per agen |
 | P4 | Laporan menghitung semua data di PHP (`->get()` lalu `map`), pagination di view di-comment. Seluruh baris dirender sekaligus. | Semua `report/*` | Agregasi di SQL (`SUM`, `GROUP BY`) dan `paginate()`; export tetap ambil semua |
-| P5 | Query per baris di view yang di-paginate (N+1), contohnya total bayar per pesanan dihitung di `@php` | `admin/payment/index` (6 query di view), `admin/index` (6), `distributions/index` (3), `payment/show`, `agen/payment/index`, `return/index` (2) | `with()`, `withSum('payment as paid', 'pay')`, `withCount()` di controller |
-| P6 | Relasi yang dipakai view tidak di-eager load: produk (`detail`, `package.package`), user (`roles`, `agentProfile`), distribusi (`order`, `detail.orderDetail.order.agent.agentProfile`, `detail.orderDetail.subAgent`), paket (`period`) | `master/product`, `master/user`, `distribution`, `master/package` | Tambah `->with([...])` sebelum `paginate()` |
 | P7 | Filter `whereHas('...period', is_active)` dengan rantai 4 relasi di setiap request daftar pesanan dan produk | `transaction/order*`, `master/product`, `master/package` | Index pada kolom pivot (`product_packages.product_id`, `package_id`, `order_details.order_id`, `product_id`) karena migration tidak membuat foreign key/index |
 
 ### Frontend
@@ -84,14 +82,16 @@ else { $data = Model::...->paginate(intval($perPages)); }
 | P10 | Search (`#filter`) hanya menyembunyikan baris di halaman yang sedang tampil. Data di halaman lain tidak ikut dicari, sehingga user mengira data tidak ada. | Semua halaman dengan input Search | Kirim `?search=` ke server dan filter dengan `where(... like ...)`, atau beri label "cari di halaman ini" |
 | P12 | Script `records_per_page` dan markup dropdown disalin di setiap view (35 file) | Semua halaman daftar | Pindahkan ke satu partial `cms/layouts/per-page.blade.php` dan script ke `app.blade.php` |
 
-Urutan yang disarankan: P8 dan P11 (sudah diperbaiki), lalu P5 dan P6 di halaman pesanan dan pembayaran, lalu P2 dan P3.
+Urutan yang disarankan: P8 dan P11 (sudah diperbaiki), P5 dan P6 (sudah diperbaiki), lalu P2 dan P3.
 
 ## Sudah diperbaiki
 
 | Masalah | Commit |
 |---|---|
-| P8: Link pagination tidak membawa query string (`->withQueryString()` di controller) | `optimalisasi` |
-| P11: Ganti `perPage` dan filter status mempertahankan `?page=` lama (`urlParams.delete('page')` di view) | `optimalisasi` |
+| P5: Eliminasi query N+1 per baris view dengan `withSum('payment as paid_total', 'pay')` dan `withCount()` di controller serta optimasi view | `optimalisasi` |
+| P6: Eager loading relasi yang dipakai view: produk (`detail`, `package.package.period`), user (`roles`, `agentProfile`, `adminProfile`), distribusi (`detail.orderDetail...`), paket (`period`), dan pesanan (`detail...`, `distributions.detail`) | `optimalisasi` |
+| P8: Link pagination tidak membawa query string (`->withQueryString()` di controller) | `b424a88` |
+| P11: Ganti `perPage` dan filter status mempertahankan `?page=` lama (`urlParams.delete('page')` di view) | `b424a88` |
 | Subtotal item tersimpan 100 kali lipat karena JS mem-parse teks `Rp 487.500,00`. Server sekarang menghitung `sub_price` sendiri. Data lama perlu diperbaiki manual (lihat [08-deployment.md](08-deployment.md)). | `9dca942` |
 | `Attempt to read property "access_date" on null` di view pembayaran dan pesanan | `e39d07b` |
 | Cron `schedule:run` gagal karena `proc_open` dimatikan hosting | Konfigurasi cron, lihat [08-deployment.md](08-deployment.md) |

@@ -38,7 +38,7 @@ class OrderController extends Controller
             ->whereHas('detail.product.package.package.period', function ($query) {
                 $query->where('is_active', 1);
             })
-            ->with(['detail.product', 'agent.agentProfile']);
+            ->with(['detail.product.package.package.period', 'agent.agentProfile', 'distributions.detail']);
 
         if (ValidateRole::check('agent')) {
             $query->where('agent_id', Auth::user()->id);
@@ -101,7 +101,7 @@ class OrderController extends Controller
             ->whereHas('detail.product.package.package.period', function ($query) {
                 $query->where('is_active', 0);
             })
-            ->with(['detail.product', 'agent.agentProfile']);
+            ->with(['detail.product.package.package.period', 'agent.agentProfile', 'distributions.detail']);
 
         if (ValidateRole::check('agent')) {
             $query->where('agent_id', Auth::user()->id);

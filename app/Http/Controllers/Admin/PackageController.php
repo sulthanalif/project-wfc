@@ -33,17 +33,16 @@ class PackageController extends Controller
         // ->paginate(10);
         $perPages = $request->get('perPage') ?? 5;
 
+        $query = Package::with('period')->whereHas('period', function ($query) {
+            $query->where('is_active', 1);
+        })->latest();
+
         if ($perPages == 'all') {
-            $packages = Package::whereHas('period', function ($query) {
-                $query->where('is_active', 1);
-            })->latest()->get();
+            $packages = $query->get();
         } else {
             $perPage = intval($perPages);
-            $packages = Package::whereHas('period', function ($query) {
-                $query->where('is_active', 1);
-            })->latest()->paginate($perPage)->withQueryString();
+            $packages = $query->paginate($perPage)->withQueryString();
         }
-
 
         return view('cms.admin.pakets.index', compact('packages'));
     }
@@ -52,15 +51,15 @@ class PackageController extends Controller
     {
         $perPages = $request->get('perPage') ?? 5;
 
+        $query = Package::with('period')->whereHas('period', function ($query) {
+            $query->where('is_active', 0);
+        })->latest();
+
         if ($perPages == 'all') {
-            $packages = Package::whereHas('period', function ($query) {
-                $query->where('is_active', 0);
-            })->latest()->get();
+            $packages = $query->get();
         } else {
             $perPage = intval($perPages);
-            $packages = Package::whereHas('period', function ($query) {
-                $query->where('is_active', 0);
-            })->latest()->paginate($perPage)->withQueryString();
+            $packages = $query->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.pakets.archive', compact('packages'));

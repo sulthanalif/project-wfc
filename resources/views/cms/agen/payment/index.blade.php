@@ -58,7 +58,7 @@
                             <tr class="intro-x">
                                 @php
                                     $totalPrice = $order->total_price;
-                                    $totalPayment = $order->payment()->where('status', 'accepted')->sum('pay');
+                                    $totalPayment = $order->paid_total ?? $order->payment()->where('status', 'accepted')->sum('pay');
                                     $remainingPayment = $totalPrice - $totalPayment;
                                     $period = $order->detail->first()?->product?->package?->package?->period;
                                     $accessDate = $period?->access_date
