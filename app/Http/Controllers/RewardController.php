@@ -22,7 +22,7 @@ class RewardController extends Controller
             $rewards = Reward::latest()->get();
         } else {
             $perPage = intval($perPages);
-            $rewards = Reward::latest()->paginate($perPage);
+            $rewards = Reward::latest()->paginate($perPage)->withQueryString();
         }
 
 

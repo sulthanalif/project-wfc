@@ -24,7 +24,7 @@ class LoanController extends Controller
             $loans = Loan::with('loanPayments')->get();
         } else {
             $perPage = intval($perPages);
-            $loans = Loan::with('loanPayments')->latest()->paginate($perPage);
+            $loans = Loan::with('loanPayments')->latest()->paginate($perPage)->withQueryString();
         }
 
         $totalLoans = $loans->sum('amount');

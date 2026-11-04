@@ -765,6 +765,7 @@
                 const orderPage = this.value;
                 const urlParams = new URLSearchParams(window.location.search);
                 urlParams.set('orderPage', orderPage);
+                urlParams.delete('page');
                 window.location.search = urlParams.toString();
             });
         });

@@ -20,7 +20,7 @@ class LandingpageController extends Controller
 {
     public function index()
     {
-        $products = Product::paginate(5);
+        $products = Product::paginate(5)->withQueryString();
         $reviewPage = ReviewPage::first();
         $reviews = Review::where('publish', 1)->get();
         $rewards = Reward::whereHas('period', function ($query) {

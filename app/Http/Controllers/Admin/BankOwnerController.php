@@ -15,7 +15,7 @@ class BankOwnerController extends Controller
      */
     public function index()
     {
-        $datas = BankOwner::paginate(5);
+        $datas = BankOwner::paginate(5)->withQueryString();
 
         return view('cms.admin.banks.index', compact('datas'));
     }

@@ -32,7 +32,7 @@ class SubAgentController extends Controller
                 $subAgents = SubAgent::where('agent_id', $user->id)->get();
             } else {
                 $perPage = intval($perPages);
-                $subAgents = SubAgent::where('agent_id', $user->id)->paginate($perPage);
+                $subAgents = SubAgent::where('agent_id', $user->id)->paginate($perPage)->withQueryString();
             }
             return view('cms.sub-agent.index', compact('subAgents'));
         } else {
@@ -42,7 +42,7 @@ class SubAgentController extends Controller
                 $subAgents = SubAgent::all();
             } else {
                 $perPage = intval($perPages);
-                $subAgents = SubAgent::paginate($perPage);
+                $subAgents = SubAgent::paginate($perPage)->withQueryString();
             }
             return view('cms.sub-agent.index', compact('subAgents'));
         }

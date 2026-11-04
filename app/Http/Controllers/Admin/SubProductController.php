@@ -22,7 +22,7 @@ class SubProductController extends Controller
             $subProducts = SubProduct::all();
         } else {
             $perPage = intval($perPages);
-            $subProducts = SubProduct::latest()->paginate($perPage);
+            $subProducts = SubProduct::latest()->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.sub-products.index', compact('subProducts'));

@@ -191,12 +191,14 @@
                 const perPage = this.value;
                 const urlParams = new URLSearchParams(window.location.search);
                 urlParams.set('perPage', perPage);
+                urlParams.delete('page');
                 window.location.search = urlParams.toString();
             });
             document.getElementById('records_per_status').addEventListener('change', function() {
                 const status = this.value;
                 const urlParams = new URLSearchParams(window.location.search);
                 urlParams.set('status', status);
+                urlParams.delete('page');
                 window.location.search = urlParams.toString();
             });
         });

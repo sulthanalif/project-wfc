@@ -17,7 +17,7 @@ class CatalogController extends Controller
      */
     public function index(Request $request)
     {
-        $catalogs = Catalog::paginate(10);
+        $catalogs = Catalog::paginate(10)->withQueryString();
 
         return view('cms.admin.catalogs.index', compact('catalogs'));
     }

@@ -80,18 +80,18 @@ else { $data = Model::...->paginate(intval($perPages)); }
 
 | # | Masalah | Halaman terdampak | Perbaikan |
 |---|---|---|---|
-| P8 | Link halaman tidak membawa query string. Pindah ke halaman 2 menghapus `perPage`, `status`, dan filter lain, sehingga kembali ke default. | Semua `->links('cms.layouts.paginate')` kecuali `finance/spending-type` dan `procurement/type` yang sudah `appends(['perPage' => ...])` | Satu baris di setiap controller: `->paginate($perPage)->withQueryString()` |
 | P9 | Default controller `perPage = 5`, tetapi dropdown hanya punya 10/25/50/All. Saat halaman pertama dibuka, dropdown menampilkan 10 padahal yang tampil 5 baris. | 23 tempat di 16 controller (Product, Package, Order*, Distribution, User, SubProduct, Supplier, Spending, SpendingType, Income, Loan, Commission, Reward, SubAgent) | Samakan default ke 10, atau tambah opsi 5 |
 | P10 | Search (`#filter`) hanya menyembunyikan baris di halaman yang sedang tampil. Data di halaman lain tidak ikut dicari, sehingga user mengira data tidak ada. | Semua halaman dengan input Search | Kirim `?search=` ke server dan filter dengan `where(... like ...)`, atau beri label "cari di halaman ini" |
-| P11 | Mengganti `perPage` mempertahankan `?page=` lama. Dari halaman 5 dengan 10 baris, memilih 50 bisa membuka halaman kosong. | Script `records_per_page` di setiap view | Tambah `urlParams.delete('page')` sebelum reload |
 | P12 | Script `records_per_page` dan markup dropdown disalin di setiap view (35 file) | Semua halaman daftar | Pindahkan ke satu partial `cms/layouts/per-page.blade.php` dan script ke `app.blade.php` |
 
-Urutan yang disarankan: P8 dan P11 (satu baris per file, dampaknya langsung terasa), lalu P5 dan P6 di halaman pesanan dan pembayaran, lalu P2 dan P3.
+Urutan yang disarankan: P8 dan P11 (sudah diperbaiki), lalu P5 dan P6 di halaman pesanan dan pembayaran, lalu P2 dan P3.
 
-## Sudah diperbaiki (16 Oktober 2026)
+## Sudah diperbaiki
 
 | Masalah | Commit |
 |---|---|
+| P8: Link pagination tidak membawa query string (`->withQueryString()` di controller) | `optimalisasi` |
+| P11: Ganti `perPage` dan filter status mempertahankan `?page=` lama (`urlParams.delete('page')` di view) | `optimalisasi` |
 | Subtotal item tersimpan 100 kali lipat karena JS mem-parse teks `Rp 487.500,00`. Server sekarang menghitung `sub_price` sendiri. Data lama perlu diperbaiki manual (lihat [08-deployment.md](08-deployment.md)). | `9dca942` |
 | `Attempt to read property "access_date" on null` di view pembayaran dan pesanan | `e39d07b` |
 | Cron `schedule:run` gagal karena `proc_open` dimatikan hosting | Konfigurasi cron, lihat [08-deployment.md](08-deployment.md) |

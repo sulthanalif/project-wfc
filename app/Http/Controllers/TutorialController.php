@@ -20,7 +20,7 @@ class TutorialController extends Controller
             $datas = Tutorial::latest()->get();
         } else {
             $perPage = intval($perPages);
-            $datas = Tutorial::latest()->paginate($perPage);
+            $datas = Tutorial::latest()->paginate($perPage)->withQueryString();
         }
 
         $roles = Role::where('name', '!=', 'super_admin')->get();

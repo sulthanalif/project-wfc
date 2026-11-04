@@ -16,7 +16,7 @@ class ReviewAgentController extends Controller
      */
     public function index()
     {
-        $reviews = Review::where('user_id', auth()->user()->id)->paginate(10);
+        $reviews = Review::where('user_id', auth()->user()->id)->paginate(10)->withQueryString();
 
         return view('cms.agen.reviews.index', compact('reviews'));
     }

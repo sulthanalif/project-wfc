@@ -23,7 +23,7 @@ class SupplierController extends Controller
             $suppliers = Supplier::all();
         } else {
             $perPage = intval($perPages);
-            $suppliers = Supplier::latest()->paginate($perPage);
+            $suppliers = Supplier::latest()->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.suppliers.index', compact('suppliers'));

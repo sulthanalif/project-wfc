@@ -40,7 +40,7 @@ class ProductController extends Controller
             $perPage = intval($perPages);
             $products = Product::whereHas('package.package.period', function ($query) {
                 $query->where('is_active', 1);
-            })->latest()->paginate($perPage);
+            })->latest()->paginate($perPage)->withQueryString();
         }
 
 
@@ -59,7 +59,7 @@ class ProductController extends Controller
             $perPage = intval($perPages);
             $products = Product::whereHas('package.package.period', function ($query) {
                 $query->where('is_active', 0);
-            })->latest()->paginate($perPage);
+            })->latest()->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.products.archive', compact('products'));

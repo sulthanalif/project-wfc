@@ -22,7 +22,7 @@ class SpendingController extends Controller
             $spendings = Spending::all();
         } else {
             $perPage = intval($perPages);
-            $spendings = Spending::latest()->paginate($perPage);
+            $spendings = Spending::latest()->paginate($perPage)->withQueryString();
         }
         $totalSpending = Spending::selectRaw('SUM(amount * COALESCE(qty, 1)) as total')->value('total');
 

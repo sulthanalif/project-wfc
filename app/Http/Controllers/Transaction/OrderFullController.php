@@ -47,7 +47,7 @@ class OrderFullController extends Controller
             $orders = $query->orderByDesc('created_at')->get();
         } else {
             $perPage = intval($perPages);
-            $orders = $query->orderByDesc('created_at')->paginate($perPage);
+            $orders = $query->orderByDesc('created_at')->paginate($perPage)->withQueryString();
         }
 
         if (ValidateRole::check('agent')) {
@@ -113,7 +113,7 @@ class OrderFullController extends Controller
             $orders = $query->orderByDesc('created_at')->get();
         } else {
             $perPage = intval($perPages);
-            $orders = $query->orderByDesc('created_at')->paginate($perPage);
+            $orders = $query->orderByDesc('created_at')->paginate($perPage)->withQueryString();
         }
 
         if (ValidateRole::check('agent')) {

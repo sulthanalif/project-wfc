@@ -52,7 +52,7 @@ class OrderController extends Controller
             $orders = $query->orderByDesc('created_at')->get();
         } else {
             $perPage = intval($perPages);
-            $orders = $query->orderByDesc('created_at')->paginate($perPage);
+            $orders = $query->orderByDesc('created_at')->paginate($perPage)->withQueryString();
         }
 
         if (ValidateRole::check('agent')) {
@@ -115,7 +115,7 @@ class OrderController extends Controller
             $orders = $query->orderByDesc('created_at')->get();
         } else {
             $perPage = intval($perPages);
-            $orders = $query->orderByDesc('created_at')->paginate($perPage);
+            $orders = $query->orderByDesc('created_at')->paginate($perPage)->withQueryString();
         }
 
         if ($request->get('export') == 'true') {

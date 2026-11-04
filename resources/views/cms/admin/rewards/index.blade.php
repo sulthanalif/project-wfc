@@ -196,6 +196,7 @@
                 const perPage = this.value;
                 const urlParams = new URLSearchParams(window.location.search);
                 urlParams.set('perPage', perPage);
+                urlParams.delete('page');
                 window.location.search = urlParams.toString();
             });
         });

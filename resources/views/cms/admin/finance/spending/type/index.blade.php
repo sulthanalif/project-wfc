@@ -180,7 +180,7 @@
         @if ($spendingTypes instanceof \Illuminate\Pagination\LengthAwarePaginator)
             <!-- BEGIN: Pagination -->
             <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $spendingTypes->appends(['perPage' => request()->get('perPage')])->links('cms.layouts.paginate') }}
+                {{ $spendingTypes->links('cms.layouts.paginate') }}
             </div>
             <!-- END: Pagination -->
         @endif
@@ -194,6 +194,7 @@
                 const perPage = this.value;
                 const urlParams = new URLSearchParams(window.location.search);
                 urlParams.set('perPage', perPage);
+                urlParams.delete('page');
                 window.location.search = urlParams.toString();
             });
         });

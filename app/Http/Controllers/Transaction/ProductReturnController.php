@@ -18,11 +18,24 @@ class ProductReturnController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $returns = ProductReturn::with(['user', 'productReturnDetail', 'productReturnDetail.order', 'productReturnDetail.product', 'productReturnDetail.subProduct'])
-            ->orderBy('date_in', 'desc')
-            ->get();
+        $perPages = $request->get('perPage') ?? 10;
+        $status = $request->get('status') ?? 'all';
+
+        $query = ProductReturn::with(['user', 'productReturnDetail', 'productReturnDetail.order', 'productReturnDetail.product', 'productReturnDetail.subProduct'])
+            ->orderBy('date_in', 'desc');
+
+        if ($status != 'all') {
+            $query->where('status', $status);
+        }
+
+        if ($perPages == 'all') {
+            $returns = $query->get();
+        } else {
+            $perPage = intval($perPages);
+            $returns = $query->paginate($perPage)->withQueryString();
+        }
 
         return view('cms.return.index', compact('returns'));
     }

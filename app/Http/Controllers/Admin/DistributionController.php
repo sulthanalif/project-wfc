@@ -29,7 +29,7 @@ class DistributionController extends Controller
             $distributions = Distribution::latest()->get();
         } else {
             $perPage = intval($perPages);
-            $distributions = Distribution::latest()->paginate($perPage);
+            $distributions = Distribution::latest()->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.distributions.index', compact('distributions'));

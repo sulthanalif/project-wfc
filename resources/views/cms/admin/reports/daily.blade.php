@@ -166,6 +166,7 @@
                 const feature = this.value;
                 const urlParams = new URLSearchParams(window.location.search);
                 urlParams.set('feature', feature);
+                urlParams.delete('page');
                 window.location.search = urlParams.toString();
             });
         });

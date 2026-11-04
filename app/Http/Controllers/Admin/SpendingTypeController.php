@@ -19,7 +19,7 @@ class SpendingTypeController extends Controller
             $spendingTypes = SpendingType::all();
         } else {
             $perPage = intval($perPages);
-            $spendingTypes = SpendingType::latest()->paginate($perPage);
+            $spendingTypes = SpendingType::latest()->paginate($perPage)->withQueryString();
         }
         
         return view('cms.admin.finance.spending.type.index', compact('spendingTypes'));

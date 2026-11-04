@@ -21,7 +21,7 @@ class IncomeController extends Controller
             $incomes = Income::all();
         } else {
             $perPage = intval($perPages);
-            $incomes = Income::latest()->paginate($perPage);
+            $incomes = Income::latest()->paginate($perPage)->withQueryString();
         }
         $totalIncome = Income::sum('amount');
         return view('cms.admin.finance.income.index', compact('incomes', 'totalIncome'));

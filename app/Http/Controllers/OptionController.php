@@ -9,7 +9,7 @@ class OptionController extends Controller
 {
     public function index()
     {
-        $periods = Period::paginate(5);
+        $periods = Period::paginate(5)->withQueryString();
         return view('cms.admin.options.index', compact('periods'));
     }
 

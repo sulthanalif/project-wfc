@@ -29,7 +29,7 @@ class CommissionController extends Controller
             $perPage = intval($perPages);
             $commissions = Commission::whereHas('package.period', function ($query) {
                 $query->where('is_active', 1);
-            })->latest()->paginate($perPage);
+            })->latest()->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.commissions.index', compact('commissions'));
@@ -251,7 +251,7 @@ class CommissionController extends Controller
             $perPage = intval($perPages);
             $commissions = Commission::whereHas('package.period', function ($query) {
                 $query->where('is_active', 0);
-            })->latest()->paginate($perPage);
+            })->latest()->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.commissions.archive', compact('commissions'));

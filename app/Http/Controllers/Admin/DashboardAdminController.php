@@ -48,7 +48,7 @@ class DashboardAdminController extends Controller
                 $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->get()->groupBy('agent_id');
             } else {
                 $orderPage = intval($orderPages);
-                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->paginate($orderPage)->groupBy('agent_id');
+                $orders = Order::with('agent.agentProfile')->where('status', ['accepted', 'stop'])->paginate($orderPage)->withQueryString()->groupBy('agent_id');
             }
 
             if ($request->get('export') == 'true') {

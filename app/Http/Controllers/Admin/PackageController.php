@@ -41,7 +41,7 @@ class PackageController extends Controller
             $perPage = intval($perPages);
             $packages = Package::whereHas('period', function ($query) {
                 $query->where('is_active', 1);
-            })->latest()->paginate($perPage);
+            })->latest()->paginate($perPage)->withQueryString();
         }
 
 
@@ -60,7 +60,7 @@ class PackageController extends Controller
             $perPage = intval($perPages);
             $packages = Package::whereHas('period', function ($query) {
                 $query->where('is_active', 0);
-            })->latest()->paginate($perPage);
+            })->latest()->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.pakets.archive', compact('packages'));

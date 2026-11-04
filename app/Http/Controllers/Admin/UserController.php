@@ -34,7 +34,7 @@ class UserController extends Controller
             $users = User::all();
         } else {
             $perPage = intval($perPages);
-            $users = User::latest()->paginate($perPage);
+            $users = User::latest()->paginate($perPage)->withQueryString();
         }
 
         // Tampilkan data ke view.
@@ -342,7 +342,7 @@ class UserController extends Controller
 
     public function getAdmin(Request $request)
     {
-        $admins = User::role(['admin', 'super_admin', 'finance_admin'])->paginate(10);
+        $admins = User::role(['admin', 'super_admin', 'finance_admin'])->paginate(10)->withQueryString();
 
         if ($admins) {
             return view('cms.admin.users.admin', compact('admins'));
@@ -353,7 +353,7 @@ class UserController extends Controller
 
     public function getAgent(Request $request)
     {
-        $agents = User::role(['agent'])->paginate(10);
+        $agents = User::role(['agent'])->paginate(10)->withQueryString();
 
         if ($agents) {
             return view('cms.admin.users.agent', compact('agents'));

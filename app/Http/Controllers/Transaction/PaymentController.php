@@ -35,7 +35,7 @@ class PaymentController extends Controller
                 $orders = Order::where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->orderByDesc('created_at')->get();
             } else {
                 $perPage = intval($perPages);
-                $orders = Order::where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->orderByDesc('created_at')->paginate($perPage);
+                $orders = Order::where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->orderByDesc('created_at')->paginate($perPage)->withQueryString();
             }
 
             return view('cms.agen.payment.index', compact('orders', 'user'));
@@ -97,7 +97,7 @@ class PaymentController extends Controller
             $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->get();
         } else {
             $perPage = intval($perPages);
-            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->paginate($perPage);
+            $orders = Order::with('agent.agentProfile')->where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->paginate($perPage)->withQueryString();
         }
 
         if ($request->get('export') == 'true') {
