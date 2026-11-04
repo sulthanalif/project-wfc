@@ -28,14 +28,7 @@
             @hasrole('super_admin|admin|agent')
                 <a href="{{ route('order.aman.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Pesanan</a>
             @endhasrole
-            <div class="w-auto relative text-slate-500 mr-2">
-                <select id="records_per_page" class="form-control box">
-                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
-                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
-                </select>
-            </div>
+            @include('cms.layouts.per-page')
             <div class="w-auto relative text-slate-500 mt-2 lg:mt-0">
                 <select id="records_per_status" class="form-control box">
                     <option value="all" {{ request()->get('status') == 'all' ? 'selected' : '' }}>All</option>
@@ -186,23 +179,6 @@
 
 @push('custom-scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('records_per_page').addEventListener('change', function() {
-                const perPage = this.value;
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('perPage', perPage);
-                urlParams.delete('page');
-                window.location.search = urlParams.toString();
-            });
-            document.getElementById('records_per_status').addEventListener('change', function() {
-                const status = this.value;
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('status', status);
-                urlParams.delete('page');
-                window.location.search = urlParams.toString();
-            });
-        });
-
         const modals = document.querySelectorAll('.modal');
 
         modals.forEach(modal => {

@@ -58,6 +58,22 @@
                 });
             }
 
+            document.addEventListener('change', (e) => {
+                if (e.target && e.target.id === 'records_per_page') {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const paramName = e.target.getAttribute('data-param') || 'perPage';
+                    urlParams.set(paramName, e.target.value);
+                    urlParams.delete('page');
+                    window.location.search = urlParams.toString();
+                }
+                if (e.target && e.target.id === 'records_per_status') {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.set('status', e.target.value);
+                    urlParams.delete('page');
+                    window.location.search = urlParams.toString();
+                }
+            });
+
             function formatRupiah(angka, prefix) {
                 var number_string = angka.replace(/[^,\d]/g, '').toString(),
                     split = number_string.split(','),

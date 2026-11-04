@@ -28,6 +28,9 @@ class PaginationWithQueryStringTest extends TestCase
 
     public function test_views_contain_page_param_deletion_on_per_page_change(): void
     {
+        $appLayout = file_get_contents(resource_path('views/cms/layouts/app.blade.php'));
+        $this->assertStringContainsString("urlParams.delete('page');", $appLayout);
+
         $views = [
             resource_path('views/cms/transactions/index.blade.php'),
             resource_path('views/cms/admin/products/index.blade.php'),
@@ -37,7 +40,7 @@ class PaginationWithQueryStringTest extends TestCase
 
         foreach ($views as $viewPath) {
             $content = file_get_contents($viewPath);
-            $this->assertStringContainsString("urlParams.delete('page');", $content, "Missing urlParams.delete('page') in {$viewPath}");
+            $this->assertStringContainsString("cms.layouts.per-page", $content, "Missing per-page partial include in {$viewPath}");
         }
     }
 }

@@ -10,14 +10,7 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @hasrole('super_admin|admin')
                 <a href="{{ route('supplier.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Supplier</a>
-                <div class="w-auto relative text-slate-500 ml-2">
-                    <select id="records_per_page" class="form-control box">
-                        <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
-                        <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
-                        <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
-                        <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
-                    </select>
-                </div>
+                @include('cms.layouts.per-page')
                 @if ($suppliers instanceof \Illuminate\Pagination\LengthAwarePaginator)
                     <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $suppliers->firstItem() }} hingga
                         {{ $suppliers->lastItem() }} dari {{ $suppliers->total() }} data</div>
@@ -141,16 +134,4 @@
     </div>
 @endsection
 
-@push('custom-scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('records_per_page').addEventListener('change', function() {
-                const perPage = this.value;
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('perPage', perPage);
-                urlParams.delete('page');
-                window.location.search = urlParams.toString();
-            });
-        });
-    </script>
-@endpush
+

@@ -69,16 +69,4 @@
     </div>
 @endsection
 
-@push('custom-scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('records_per_page').addEventListener('change', function() {
-                const perPage = this.value;
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('perPage', perPage);
-                urlParams.delete('page');
-                window.location.search = urlParams.toString();
-            });
-        });
-    </script>
-@endpush
+

@@ -79,14 +79,7 @@
                         </h2>
                     </div>
                     <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-                        <div class="w-auto relative text-slate-500">
-                            <select id="records_per_page" class="form-control box">
-                                <option value="10" {{ request()->get('orderPage') == 10 ? 'selected' : '' }}>10</option>
-                                <option value="25" {{ request()->get('orderPage') == 25 ? 'selected' : '' }}>25</option>
-                                <option value="50" {{ request()->get('orderPage') == 50 ? 'selected' : '' }}>50</option>
-                                <option value="all" {{ request()->get('orderPage') == 'all' ? 'selected' : '' }}>All</option>
-                            </select>
-                        </div>
+                        @include('cms.layouts.per-page', ['param' => 'orderPage'])
 
                         @if ($orders instanceof \Illuminate\Pagination\LengthAwarePaginator)
                             <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $orders->firstItem() }} hingga
@@ -761,16 +754,4 @@
     </div>
 @endsection
 
-@push('custom-scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('records_per_page').addEventListener('change', function() {
-                const orderPage = this.value;
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('orderPage', orderPage);
-                urlParams.delete('page');
-                window.location.search = urlParams.toString();
-            });
-        });
-    </script>
-@endpush
+

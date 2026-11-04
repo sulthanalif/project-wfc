@@ -46,14 +46,7 @@
             {{-- <button class="btn btn-primary shadow-md mr-2 ml-auto sm:ml-0"><span
                     class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="filter"></i>
                 </span></button> --}}
-            <div class="w-auto relative text-slate-500 ml-2">
-                <select id="records_per_page" class="form-control box">
-                    <option value="10" {{ request()->get('perPage') == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request()->get('perPage') == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request()->get('perPage') == 50 ? 'selected' : '' }}>50</option>
-                    <option value="all" {{ request()->get('perPage') == 'all' ? 'selected' : '' }}>All</option>
-                </select>
-            </div>
+            @include('cms.layouts.per-page')
 
             @if ($cashFlows instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $cashFlows->firstItem() }} hingga
@@ -279,13 +272,6 @@
                 window.location.href = url;
             });
 
-            document.getElementById('records_per_page').addEventListener('change', function() {
-                const perPage = this.value;
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('perPage', perPage);
-                urlParams.delete('page');
-                window.location.search = urlParams.toString();
             });
-        });
     </script>
 @endpush

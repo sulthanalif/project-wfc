@@ -75,17 +75,17 @@ else { $data = Model::...->paginate(intval($perPages)); }
 | # | Masalah | Halaman terdampak | Perbaikan |
 |---|---|---|---|
 | P10 | Search (`#filter`) hanya menyembunyikan baris di halaman yang sedang tampil. Data di halaman lain tidak ikut dicari, sehingga user mengira data tidak ada. | Semua halaman dengan input Search | Kirim `?search=` ke server dan filter dengan `where(... like ...)`, atau beri label "cari di halaman ini" |
-| P12 | Script `records_per_page` dan markup dropdown disalin di setiap view (35 file) | Semua halaman daftar | Pindahkan ke satu partial `cms/layouts/per-page.blade.php` dan script ke `app.blade.php` |
 
-Urutan yang disarankan: P8, P11, P5, P6, P2, P3, P1, P7, dan P9 (selesai), lalu P4, P10, dan P12.
+Urutan yang disarankan: P8, P11, P5, P6, P2, P3, P1, P7, P9, dan P12 (selesai), lalu P4 dan P10.
 
 ## Sudah diperbaiki
 
 | Masalah | Commit |
 |---|---|
-| P1: Opsi `perPage=all` dan input `perPage` dibatasi maksimal 100 di controller | `optimalisasi` |
-| P7: Index database pada kolom pivot `product_packages` (`product_id`, `package_id`), `order_details` (`order_id`, `product_id`), dan `orders` (`agent_id`, `status`) | `optimalisasi` |
-| P9: Default `perPage = 10` disamakan di seluruh 16 controller agar konsisten dengan pilihan pertama dropdown UI | `optimalisasi` |
+| P12: Partial dropdown bersama `cms/layouts/per-page.blade.php` dan skrip event listener terpusat di `app.blade.php` (menghapus 35 duplikasi view) | `optimalisasi` |
+| P1: Opsi `perPage=all` dan input `perPage` dibatasi maksimal 100 di controller | `c939467` |
+| P7: Index database pada kolom pivot `product_packages` (`product_id`, `package_id`), `order_details` (`order_id`, `product_id`), dan `orders` (`agent_id`, `status`) | `c939467` |
+| P9: Default `perPage = 10` disamakan di seluruh 16 controller agar konsisten dengan pilihan pertama dropdown UI | `c939467` |
 | P2: Paginate pembayaran admin per agen langsung di database (`User::role('agent')->whereHas('order', ...)->paginate()`) | `f62129d` |
 | P3: Paginate pesanan dashboard admin per agen langsung di database, memperbaiki pagination yang hilang akibat `groupBy` di PHP | `f62129d` |
 | P5: Eliminasi query N+1 per baris view dengan `withSum('payment as paid_total', 'pay')` dan `withCount()` di controller serta optimasi view | `2b1911d` |
