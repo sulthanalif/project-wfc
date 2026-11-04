@@ -50,80 +50,67 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA BARANG</th>
-                        <th class="text-center whitespace-nowrap">HARGA</th>
-                        <th class="text-center whitespace-nowrap">PAKET</th>
-                        <th class="text-center whitespace-nowrap">PERIODE</th>
-                        <th class="text-center whitespace-nowrap">FOTO</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($products->isEmpty())
-                        <tr>
-                            <td colspan="7" class="text-center py-8 text-slate-500">
-                                <div class="flex flex-col items-center justify-center">
-                                    <i data-lucide="inbox" class="w-10 h-10 text-slate-300 mb-2"></i>
-                                    <span class="font-medium text-base">Belum Ada Data Arsip Barang</span>
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA BARANG</th>
+                    <th class="text-center whitespace-nowrap">HARGA</th>
+                    <th class="text-center whitespace-nowrap">PAKET</th>
+                    <th class="text-center whitespace-nowrap">PERIODE</th>
+                    <th class="text-center whitespace-nowrap">FOTO</th>
+                </tr>
+            </x-slot:header>
+
+            @if ($products->isEmpty())
+                <x-table.empty colspan="6" message="Belum Ada Data Arsip Barang" />
+            @else
+                @foreach ($products as $product)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $products instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($products->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+                        <td>
+                            <a class="text-slate-500 flex items-center mr-3 hover:text-primary transition-colors"
+                                href="{{ route('product.archive.show', $product) }}"> <i data-lucide="external-link"
+                                    class="w-4 h-4 mr-2"></i> {{ $product->name }}
+                                {{ $product->is_safe_point == 1 ? '(Titik Aman)' : '' }}
+                            </a>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center">Rp.
+                                {{ number_format($product->price, 0, ',', '.') }}/hari </p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center">{{ $product->package->package->name }}</p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 whitespace-nowrap text-center">
+                                {{ $product->package->package->period->description }}
+                            </p>
+                        </td>
+                        <td class="w-40">
+                            <div class="flex items-center justify-center">
+                                <div class="w-10 h-10 image-fit zoom-in">
+                                    @if ($product->detail->image == 'image.jpg' || $product->detail->image == null)
+                                        <img alt="PAKET SMART WFC" class="rounded-full"
+                                            src="{{ asset('assets/logo2.png') }}">
+                                    @else
+                                        <img alt="PAKET SMART WFC" class="tooltip rounded-full"
+                                            src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
+                                            title="@if ($product->created_at == $product->updated_at) Diupload {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }} @else Diupdate {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y, H:m:i') }} @endif">
+                                    @endif
                                 </div>
-                            </td>
-                        </tr>
-                    @else
-                        @foreach ($products as $product)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $products instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($products->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
-                                <td>
-                                    <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('product.archive.show', $product) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $product->name }}
-                                        {{ $product->is_safe_point == 1 ? '(Titik Aman)' : '' }}
-                                    </a>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center">Rp.
-                                        {{ number_format($product->price, 0, ',', '.') }}/hari </p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center">{{ $product->package->package->name }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 whitespace-nowrap text-center">
-                                        {{ $product->package->package->period->description }}
-                                    </p>
-                                </td>
-                                <td class="w-40">
-                                    <div class="flex items-center justify-center">
-                                        <div class="w-10 h-10 image-fit zoom-in">
-                                            @if ($product->detail->image == 'image.jpg' || $product->detail->image == null)
-                                                <img alt="PAKET SMART WFC" class="rounded-full"
-                                                    src="{{ asset('assets/logo2.png') }}">
-                                            @else
-                                                <img alt="PAKET SMART WFC" class="tooltip rounded-full"
-                                                    src="{{ route('getImage', ['path' => 'product', 'imageName' => $product->detail->image]) }}"
-                                                    title="@if ($product->created_at == $product->updated_at) Diupload {{ \Carbon\Carbon::parse($product->created_at)->format('d M Y, H:m:i') }} @else Diupdate {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y, H:m:i') }} @endif">
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
+
         <!-- BEGIN: Pagination -->
-        @if ($products instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $products->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$products" />
         <!-- END: Pagination -->
     </div>
 

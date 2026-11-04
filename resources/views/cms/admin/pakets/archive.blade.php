@@ -50,72 +50,64 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA PAKET</th>
-                        <th class="text-center whitespace-nowrap">PERIODE</th>
-                        <th class="text-center whitespace-nowrap">BATAS WAKTU</th>
-                        <th class="whitespace-nowrap">FOTO</th>
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA PAKET</th>
+                    <th class="text-center whitespace-nowrap">PERIODE</th>
+                    <th class="text-center whitespace-nowrap">BATAS WAKTU</th>
+                    <th class="whitespace-nowrap">FOTO</th>
+                </tr>
+            </x-slot:header>
+
+            @if ($packages->isEmpty())
+                <x-table.empty colspan="5" message="Belum Ada Data Arsip Paket" />
+            @else
+                @foreach ($packages as $package)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $packages instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($packages->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+                        <td>
+                            <a class="text-slate-500 flex items-center mr-3 hover:text-primary transition-colors"
+                                href="{{ route('package.archiveShow', $package) }}"> <i data-lucide="external-link"
+                                    class="w-4 h-4 mr-2"></i> {{ $package->name }} </a>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 whitespace-nowrap text-center">
+                                {{ $package->period->description }}
+                            </p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 whitespace-nowrap text-center">
+                                {{ \Carbon\Carbon::parse($package->period->access_date)->format('d M Y') }}
+                            </p>
+                        </td>
+                        <td class="w-40">
+                            <div class="flex">
+                                <div class="w-10 h-10 image-fit zoom-in">
+                                    @if ($package->image == null)
+                                        <img alt="PAKET SMART WFC" class="tooltip rounded-full"
+                                            src="{{ asset('assets/logo2.png') }}" title="PAKET SMART WFC">
+                                    @else
+                                        <img alt="PAKET SMART WFC" class="tooltip rounded-full"
+                                            src="{{ route('getImage', ['path' => 'package', 'imageName' => $package->image]) }}"
+                                            title="@if ($package->created_at == $package->updated_at) Diupload {{ \Carbon\Carbon::parse($package->created_at)->format('d M Y, H:m:i') }}
+                                        @else
+                                        Diupdate {{ \Carbon\Carbon::parse($package->updated_at)->format('d M Y, H:m:i') }} @endif">
+                                    @endif
+                                </div>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @if ($packages->isEmpty())
-                        <tr>
-                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($packages as $package)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $packages instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($packages->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
-                                <td>
-                                    <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('package.archiveShow', $package) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $package->name }} </a>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 whitespace-nowrap text-center">
-                                        {{ $package->period->description }}
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 whitespace-nowrap text-center">
-                                        {{ \Carbon\Carbon::parse($package->period->access_date)->format('d M Y') }}
-                                    </p>
-                                </td>
-                                <td class="w-40">
-                                    <div class="flex">
-                                        <div class="w-10 h-10 image-fit zoom-in">
-                                            @if ($package->image == null)
-                                                <img alt="PAKET SMART WFC" class="tooltip rounded-full"
-                                                    src="{{ asset('assets/logo2.png') }}" title="PAKET SMART WFC">
-                                            @else
-                                                <img alt="PAKET SMART WFC" class="tooltip rounded-full"
-                                                    src="{{ route('getImage', ['path' => 'package', 'imageName' => $package->image]) }}"
-                                                    title="@if ($package->created_at == $package->updated_at) Diupload {{ \Carbon\Carbon::parse($package->created_at)->format('d M Y, H:m:i') }}
-                                                @else
-                                                Diupdate {{ \Carbon\Carbon::parse($package->updated_at)->format('d M Y, H:m:i') }} @endif">
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
+
         <!-- BEGIN: Pagination -->
-        @if ($packages instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $packages->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$packages" />
         <!-- END: Pagination -->
     </div>
 

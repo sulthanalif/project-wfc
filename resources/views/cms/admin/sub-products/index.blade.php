@@ -48,30 +48,27 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA SUB BARANG</th>
-                        <th class="text-center whitespace-nowrap">SATUAN</th>
-                        <th class="text-center whitespace-nowrap">HARGA</th>
-                        @hasrole('super_admin|admin')
-                            <th class="text-center whitespace-nowrap">AKSI</th>
-                        @endhasrole
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($subProducts->isEmpty())
-                        <tr>
-                            <td colspan="5" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($subProducts as $subProduct)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $subProducts instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($subProducts->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA SUB BARANG</th>
+                    <th class="text-center whitespace-nowrap">SATUAN</th>
+                    <th class="text-center whitespace-nowrap">HARGA</th>
+                    @hasrole('super_admin|admin')
+                        <th class="text-center whitespace-nowrap">AKSI</th>
+                    @endhasrole
+                </tr>
+            </x-slot:header>
+
+            @if ($subProducts->isEmpty())
+                <x-table.empty colspan="5" message="Belum Ada Data Sub Barang" />
+            @else
+                @foreach ($subProducts as $subProduct)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $subProducts instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($subProducts->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
                                 <td>
                                     <p class="whitespace-nowrap">{{ $subProduct->name }}</p>
                                 </td>
@@ -140,17 +137,11 @@
                             <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
-                </tbody>
-            </table>
-        </div>
+        </x-table.wrapper>
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        @if ($subProducts instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $subProducts->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$subProducts" />
         <!-- END: Pagination -->
     </div>
 

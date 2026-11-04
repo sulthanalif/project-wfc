@@ -19,27 +19,24 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA KATALOG</th>
-                        <th class="whitespace-nowrap">DESKRIPSI</th>
-                        <th class="text-center whitespace-nowrap">AKSI</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($catalogs->isEmpty())
-                        <tr>
-                            <td colspan="4" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($catalogs as $catalog)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $catalogs instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($catalogs->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="whitespace-nowrap">NAMA KATALOG</th>
+                    <th class="whitespace-nowrap">DESKRIPSI</th>
+                    <th class="text-center whitespace-nowrap">AKSI</th>
+                </tr>
+            </x-slot:header>
+
+            @if ($catalogs->isEmpty())
+                <x-table.empty colspan="4" message="Belum Ada Data Katalog" />
+            @else
+                @foreach ($catalogs as $catalog)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $catalogs instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($catalogs->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3" href="javascript:;"
                                         data-tw-toggle="modal" data-tw-target="#detail-modal{{ $catalog->id }}"> <i
@@ -126,14 +123,11 @@
                             <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
-                </tbody>
-            </table>
-        </div>
+        </x-table.wrapper>
         <!-- END: Data List -->
+
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $catalogs->links('cms.layouts.paginate') }}
-        </div>
+        <x-table.pagination :collection="$catalogs" />
         <!-- END: Pagination -->
     </div>
     @if (session('error'))

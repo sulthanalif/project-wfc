@@ -47,31 +47,28 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA USER</th>
-                        <th class="text-center whitespace-nowrap">JABATAN</th>
-                        <th class="text-center whitespace-nowrap">STATUS</th>
-                        <th class="text-center whitespace-nowrap">STATUS ACCESS</th>
-                        @hasrole('super_admin|admin')
-                            <th class="text-center whitespace-nowrap">AKSI</th>
-                        @endhasrole
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($users->isEmpty())
-                        <tr>
-                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($users as $user)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($users->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="whitespace-nowrap">NAMA USER</th>
+                    <th class="text-center whitespace-nowrap">JABATAN</th>
+                    <th class="text-center whitespace-nowrap">STATUS</th>
+                    <th class="text-center whitespace-nowrap">STATUS ACCESS</th>
+                    @hasrole('super_admin|admin')
+                        <th class="text-center whitespace-nowrap">AKSI</th>
+                    @endhasrole
+                </tr>
+            </x-slot:header>
+
+            @if ($users->isEmpty())
+                <x-table.empty colspan="6" message="Belum Ada Data Pengguna" />
+            @else
+                @foreach ($users as $user)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($users->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
                                 <td class="!py-3.5">
                                     <div class="flex items-center">
                                         <div class="w-9 h-9 image-fit zoom-in">
@@ -284,17 +281,11 @@
                             <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
-                </tbody>
-            </table>
-        </div>
+        </x-table.wrapper>
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        @if ($users instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $users->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$users" />
         <!-- END: Pagination -->
     </div>
     <!-- BEGIN: Import Confirmation Modal -->

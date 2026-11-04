@@ -28,30 +28,27 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA SUPPLIER</th>
-                        <th class="whitespace-nowrap">ALAMAT</th>
-                        <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
-                        @hasrole('super_admin|admin')
-                            <th class="text-center whitespace-nowrap">AKSI</th>
-                        @endhasrole
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($suppliers->isEmpty())
-                        <tr>
-                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($suppliers as $supplier)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $suppliers instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($suppliers->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="whitespace-nowrap">NAMA SUPPLIER</th>
+                    <th class="whitespace-nowrap">ALAMAT</th>
+                    <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
+                    @hasrole('super_admin|admin')
+                        <th class="text-center whitespace-nowrap">AKSI</th>
+                    @endhasrole
+                </tr>
+            </x-slot:header>
+
+            @if ($suppliers->isEmpty())
+                <x-table.empty colspan="5" message="Belum Ada Data Supplier" />
+            @else
+                @foreach ($suppliers as $supplier)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $suppliers instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($suppliers->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
                                 <td>
                                     <div class="flex items-center">
                                         <div class="ml-4">
@@ -119,17 +116,11 @@
                             <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
-                </tbody>
-            </table>
-        </div>
+        </x-table.wrapper>
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        @if ($suppliers instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $suppliers->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$suppliers" />
         <!-- END: Pagination -->
     </div>
 @endsection

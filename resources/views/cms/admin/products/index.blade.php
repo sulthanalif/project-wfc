@@ -49,35 +49,27 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA BARANG</th>
-                        <th class="text-center whitespace-nowrap">HARGA</th>
-                        <th class="text-center whitespace-nowrap">PAKET</th>
-                        <th class="text-center whitespace-nowrap">PERIODE</th>
-                        <th class="text-center whitespace-nowrap">FOTO</th>
-                        <th class="text-center whitespace-nowrap">AKSI</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($products->isEmpty())
-                        <tr>
-                            <td colspan="7" class="text-center py-8 text-slate-500">
-                                <div class="flex flex-col items-center justify-center">
-                                    <i data-lucide="inbox" class="w-10 h-10 text-slate-300 mb-2"></i>
-                                    <span class="font-medium text-base">Belum Ada Data Barang</span>
-                                </div>
-                            </td>
-                        </tr>
-                    @else
-                        @foreach ($products as $product)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $products instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($products->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA BARANG</th>
+                    <th class="text-center whitespace-nowrap">HARGA</th>
+                    <th class="text-center whitespace-nowrap">PAKET</th>
+                    <th class="text-center whitespace-nowrap">PERIODE</th>
+                    <th class="text-center whitespace-nowrap">FOTO</th>
+                    <th class="text-center whitespace-nowrap">AKSI</th>
+                </tr>
+            </x-slot:header>
+
+            @if ($products->isEmpty())
+                <x-table.empty colspan="7" message="Belum Ada Data Barang" />
+            @else
+                @foreach ($products as $product)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $products instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($products->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3"
                                         href="{{ route('product.show', $product) }}"> <i data-lucide="external-link"
@@ -158,16 +150,11 @@
                             <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
-                </tbody>
-            </table>
-        </div>
+        </x-table.wrapper>
         <!-- END: Data List -->
+
         <!-- BEGIN: Pagination -->
-        @if ($products instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $products->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$products" />
         <!-- END: Pagination -->
     </div>
 
