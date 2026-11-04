@@ -57,7 +57,7 @@
                             Nomor
                             Pesanan: <span class="underline decoration-dotted ml-1">{{ $order->order_number }}</span> </div>
                         <div class="flex items-center mt-3"> <i data-lucide="user" class="w-4 h-4 text-slate-500 mr-2"></i>
-                            Nama Agen: {{ $order->agent->agentProfile->name }} </div>
+                            Nama Agen: {{ $order->agent?->agentProfile?->name ?? 'N/A' }} </div>
                         <div class="flex items-center mt-3"> <i data-lucide="calendar"
                                 class="w-4 h-4 text-slate-500 mr-2"></i>
                             Tanggal Pesanan: {{ $order->order_date }} </div>

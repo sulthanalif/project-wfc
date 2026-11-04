@@ -165,14 +165,16 @@
                             $tampilkan = [];
                             foreach ($details as $d) {
                                 if (!$d->orderDetail->sub_agent_id) {
-                                    $query = $d->orderDetail->order->agent->agentProfile;
-                                    $data[] = [
-                                        'name' => $query->name,
-                                        'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
-                                        'address' => $query->address
-                                            ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}"
-                                            : 'Alamat Belum Diisi',
-                                    ];
+                                    $query = $d->orderDetail?->order?->agent?->agentProfile;
+                                    if ($query) {
+                                        $data[] = [
+                                            'name' => $query->name,
+                                            'phone_number' => $query->phone_number ?? 'Nomer HP Belum Diisi',
+                                            'address' => $query->address
+                                                ? "{$query->address} RT {$query->rt} / RW {$query->rw}, {$query->village}, {$query->district}, {$query->regency}, {$query->province}"
+                                                : 'Alamat Belum Diisi',
+                                        ];
+                                    }
                                 } else {
                                     $data[] = $d->orderDetail->subAgent->agentProfile;
                                 }
@@ -222,7 +224,7 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
-                                {{ $detail->orderDetail->sub_agent_id ? $detail->orderDetail->subAgent->name : $distribution->order->agent->agentProfile->name }}
+                                {{ $detail->orderDetail->sub_agent_id ? $detail->orderDetail->subAgent->name : ($distribution->order?->agent?->agentProfile?->name ?? 'N/A') }}
                             </td>
                             <td>{{ $detail->orderDetail->product->name }}</td>
                             <td>{{ $detail->qty }}</td>

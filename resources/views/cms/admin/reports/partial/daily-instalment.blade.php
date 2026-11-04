@@ -18,7 +18,7 @@
                 </td>
                 <td>
                     <p class="text-center mr-3">
-                        {{ $payment->order->agent->agentProfile->name }} </p>
+                        {{ $payment->order?->agent?->agentProfile?->name ?? 'N/A' }} </p>
                 </td>
                 <td>
                     <p class="text-slate-500 text-center mr-3"> {{ $payment->order->order_number }}

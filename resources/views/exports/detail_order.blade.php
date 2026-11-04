@@ -13,7 +13,7 @@
         @foreach($order->detail as $detail)
         <tr>
             <td>{{ $order->order_number }}</td>
-            <td>{{ $detail->subAgent ? $detail->subAgent->name : $order->agent->agentProfile->name }}</td>
+            <td>{{ $detail->subAgent ? $detail->subAgent->name : ($order->agent?->agentProfile?->name ?? 'N/A') }}</td>
             <td>{{ $detail->product->name }}</td>
             <td>{{ $detail->qty }}</td>
             <td>{{ $detail->product->price }}</td>

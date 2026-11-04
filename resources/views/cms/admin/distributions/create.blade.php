@@ -61,7 +61,7 @@
 
                                         @if ($totalOrderQty != $totalDistributionQty)
                                             <option value="{{ $order->id }}">{{ $order->order_number }} -
-                                                {{ $order->agent->agentProfile->name }}</option>
+                                                {{ $order->agent?->agentProfile?->name ?? 'N/A' }}</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -210,7 +210,7 @@
 
                         var option = {
                             value: '{{ $products->id }}',
-                            text: "{{ $products->subAgent ? $products->subAgent->name : $order->agent->agentProfile->name }} - {{ $products->product->name }} {{ $products->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - {{ $products->qty - $qty }}",
+                            text: "{{ $products->subAgent ? $products->subAgent->name : ($order->agent?->agentProfile?->name ?? 'N/A') }} - {{ $products->product->name }} {{ $products->product->is_safe_point == 1 ? '(Titik Aman)' : '' }} - {{ $products->qty - $qty }}",
                             qty: '{{ $products->qty - $qty }}',
                             disabled: {{ $products->qty - $qty == 0 ? 'true' : 'false' }}
                         };

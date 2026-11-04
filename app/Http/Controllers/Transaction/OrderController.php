@@ -78,7 +78,7 @@ class OrderController extends Controller
                     'order_number' => $item->order_number,
                     'order_date' => $item->order_date,
                     'total_price' => $item->total_price,
-                    'agent_name' => $item->agent->agentProfile->name,
+                    'agent_name' => $item->agent?->agentProfile?->name ?? $item->agent?->name ?? 'N/A',
                     'status' => $item->status,
                     'status_payment' => $item->payment_status,
                     'status_delivery' => $item->isAllItemDistributed() ? 'Sukses' : ($item->distributions->isNotEmpty() ? 'Sedang Proses' : 'Belum Dikirim'),
@@ -150,7 +150,7 @@ class OrderController extends Controller
                     'order_number' => $item->order_number,
                     'order_date' => $item->order_date,
                     'total_price' => $item->total_price,
-                    'agent_name' => $item->agent->agentProfile->name,
+                    'agent_name' => $item->agent?->agentProfile?->name ?? $item->agent?->name ?? 'N/A',
                     'status' => $item->status,
                     'status_payment' => $item->payment_status,
                     'status_delivery' => $item->isAllItemDistributed() ? 'Sukses' : ($item->distributions->isNotEmpty() ? 'Sedang Proses' : 'Belum Dikirim'),
@@ -187,8 +187,8 @@ class OrderController extends Controller
         $agents = auth()->user();
 
         $selects = $order->detail()->pluck('sub_agent_id')->unique()->map(function ($subAgentId) use ($order) {
-            $subAgent = $order->agent->subAgent->where('id', $subAgentId)->first();
-            return $subAgent ? $subAgent->name : $order->agent->agentProfile->name;
+            $subAgent = $order->agent?->subAgent?->where('id', $subAgentId)->first();
+            return $subAgent ? $subAgent->name : ($order->agent?->agentProfile?->name ?? 'N/A');
         })->toArray();
 
         $selectProducts = $order->detail->pluck('product_id')->unique()->map(function ($productId) use ($order) {
@@ -375,8 +375,8 @@ class OrderController extends Controller
 
         //select agent name
         $selects = $order->detail()->pluck('sub_agent_id')->unique()->map(function ($subAgentId) use ($order) {
-            $subAgent = $order->agent->subAgent->where('id', $subAgentId)->first();
-            return $subAgent ? $subAgent->name : $order->agent->agentProfile->name;
+            $subAgent = $order->agent?->subAgent?->where('id', $subAgentId)->first();
+            return $subAgent ? $subAgent->name : ($order->agent?->agentProfile?->name ?? 'N/A');
         })->toArray();
 
         //select product

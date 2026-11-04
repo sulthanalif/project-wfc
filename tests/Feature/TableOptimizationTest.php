@@ -85,4 +85,15 @@ class TableOptimizationTest extends TestCase
         $this->assertNotEmpty($users);
         $this->assertTrue($users->contains('id', $admin->id));
     }
+
+    public function test_order_full_archive_handles_orphaned_orders_gracefully(): void
+    {
+        $admin = User::role('super_admin')->first();
+        if (!$admin) {
+            $this->markTestSkipped('Super admin user not found');
+        }
+
+        $response = $this->actingAs($admin)->get('/transaction/order/full/archive');
+        $response->assertStatus(200);
+    }
 }

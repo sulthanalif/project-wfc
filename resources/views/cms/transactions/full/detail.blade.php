@@ -61,14 +61,14 @@
                             </div>
                             <div class="flex items-center"> <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 mr-2"></i>
                                 Nama:
-                                <span class="underline decoration-dotted ml-1">{{ $order->agent->agentProfile->name }}</span>
+                                <span class="underline decoration-dotted ml-1">{{ $order->agent?->agentProfile?->name ?? 'N/A' }}</span>
                             </div>
                             <div class="flex items-center mt-3"> <i data-lucide="calendar"
                                     class="w-4 h-4 text-slate-500 mr-2"></i>
-                                Nomor Telepon: {{ $order->agent->agentProfile->phone_number }} </div>
+                                Nomor Telepon: {{ $order->agent?->agentProfile?->phone_number ?? '-' }} </div>
                             <div class="flex items-center mt-3"> <i data-lucide="map-pin"
                                     class="w-4 h-4 text-slate-500 mr-2"></i>
-                                Alamat: {{ $order->agent->agentProfile->address }} </div>
+                                Alamat: {{ $order->agent?->agentProfile?->address ?? '-' }} </div>
                         </div>
                     </div>
                 @endhasrole
@@ -86,7 +86,7 @@
                                 <option value="all">Semua Agen</option>
                                 @foreach ($selects as $select)
                                     <option value="{{ $select }}"
-                                        {{ request()->get('select') === $select || (request()->get('select') == 'agent' && trim($select) === trim($order->agent->agentProfile->name)) ? 'selected' : '' }}>
+                                        {{ request()->get('select') === $select || (request()->get('select') == 'agent' && trim($select) === trim($order->agent?->agentProfile?->name ?? '')) ? 'selected' : '' }}>
                                         {{ $select }}
                                     </option>
                                 @endforeach
@@ -191,7 +191,7 @@
                                         ->detail()
                                         ->where(function ($query) use ($order, $selectedAgent, $selectedProduct) {
                                             if ($selectedAgent && $selectedAgent !== 'all') {
-                                                if ($selectedAgent == $order->agent->agentProfile->name) {
+                                                if ($selectedAgent == ($order->agent?->agentProfile?->name ?? '')) {
                                                     $query->whereNull('sub_agent_id');
                                                 } else {
                                                     $query->whereHas('subAgent', function ($query) use (
@@ -220,7 +220,7 @@
                                                     $order,
                                                 ) {
                                                     $query->where('product_id', $selectedProduct);
-                                                    if ($selectedAgent == $order->agent->agentProfile->name) {
+                                                    if ($selectedAgent == ($order->agent?->agentProfile?->name ?? '')) {
                                                         $query->whereNull('sub_agent_id');
                                                     } elseif ($selectedAgent !== 'all') {
                                                         $query->whereHas('subAgent', function ($query) use (
@@ -237,7 +237,7 @@
                                 @endphp
                                 @foreach ($details as $item)
                                     <tr>
-                                        <td>{{ $item->subAgent->name ?? $order->agent->agentProfile->name }}</td>
+                                        <td>{{ $item->subAgent->name ?? ($order->agent?->agentProfile?->name ?? 'N/A') }}</td>
                                         <td class="!py-4">
                                             <div class="flex items-center">
                                                 @hasrole('admin|super_admin|finance_admin')
@@ -372,7 +372,7 @@
                             @else
                                 @foreach ($order->detail as $item)
                                     <tr>
-                                        <td>{{ $item->subAgent->name ?? $order->agent->agentProfile->name }}</td>
+                                        <td>{{ $item->subAgent->name ?? ($order->agent?->agentProfile?->name ?? 'N/A') }}</td>
                                         <td class="!py-4">
                                             <div class="flex items-center">
                                                 @hasrole('admin|super_admin|finance_admin')

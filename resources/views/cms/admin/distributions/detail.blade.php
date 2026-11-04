@@ -213,7 +213,7 @@
                             @foreach ($distribution->detail->sortBy('order_number') as $item)
                                 <tr>
                                     <td>
-                                        {{ $item->orderDetail->sub_agent_id ? $item->orderDetail->subAgent->name : $distribution->order->agent->agentProfile->name }}
+                                        {{ $item->orderDetail->sub_agent_id ? $item->orderDetail->subAgent->name : ($distribution->order?->agent?->agentProfile?->name ?? 'N/A') }}
                                     </td>
                                     <td class="!py-4">
                                         <div class="flex items-center justify-center">

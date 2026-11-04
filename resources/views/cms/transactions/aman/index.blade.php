@@ -97,7 +97,7 @@
                         </td>
                         @hasrole('super_admin|admin')
                             <td class="text-center capitalize">
-                                {{ $order->agent->agentProfile->name }}
+                                {{ $order->agent?->agentProfile?->name ?? $order->agent?->name ?? 'N/A' }}
                             </td>
                         @endhasrole
                         <td class="text-center font-medium">

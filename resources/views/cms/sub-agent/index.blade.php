@@ -77,7 +77,7 @@
                                 </td>
                                 @hasrole('super_admin|admin')
                                     <td class="text-center capitalize">
-                                        {{ $subAgent->agent->agentProfile->name }}
+                                        {{ $subAgent->agent?->agentProfile?->name ?? $subAgent->agent?->name ?? 'N/A' }}
                                     </td>
                                 @endhasrole
                                 <td class="!py-3.5">

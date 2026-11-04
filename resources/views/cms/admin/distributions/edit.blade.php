@@ -48,7 +48,7 @@
                                     @foreach ($orders as $order)
                                         <option value="{{ $order->id }}"
                                             {{ $order->id == $distribution->order_id ? 'selected' : '' }}>
-                                            {{ $order->order_number }} - {{ $order->agent->agentProfile->name }}</option>
+                                            {{ $order->order_number }} - {{ $order->agent?->agentProfile?->name ?? 'N/A' }}</option>
                                     @endforeach
                                 </select>
                             </div>

@@ -144,10 +144,10 @@
                 <tbody>
                     <tr>
                         <td class="col-6">
-                            Nama Agen: {{ $order->agent->agentProfile->name }}
+                            Nama Agen: {{ $order->agent?->agentProfile?->name ?? 'N/A' }}
                             <br>
                             No. Kontak:
-                            {{ $order->agent->agentProfile->phone_number ? $order->agent->agentProfile->phone_number : '-' }}
+                            {{ $order->agent?->agentProfile?->phone_number ? $order->agent?->agentProfile?->phone_number : '-' }}
                             <br>
                             Pembayaran: {{ $payment->method }}
                             @if ($payment->method == 'Transfer')
