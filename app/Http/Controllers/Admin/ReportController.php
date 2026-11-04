@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Helpers\PaginationHelper;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ReportAgentOrderExport;
 use App\Exports\ReportInstalmentExport;
@@ -27,215 +28,275 @@ use App\Models\Product;
 
 class ReportController extends Controller
 {
+    protected function paginateData($items, int $perPage, Request $request): LengthAwarePaginator
+    {
+        $page = (int) $request->get('page', 1);
+        $collection = $items instanceof \Illuminate\Support\Collection ? $items : collect($items);
+        $total = $collection->count();
+        $sliced = $collection->slice(($page - 1) * $perPage, $perPage)->values();
+
+        return new LengthAwarePaginator(
+            $sliced,
+            $total,
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+    }
+
     public function totalDeposit(Request $request)
     {
         $getAgent = $request->get('agent');
+        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
 
         $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
-            $q->where('name', '!=', null)
+            $q->whereNotNull('name')
                 ->orderBy('name', 'asc');
         })->where('active', 1)->get();
 
-        $agents = User::role('agent')->whereHas('agentProfile', function ($q) use ($getAgent) {
-            $q->where('name', 'like', '%' . $getAgent . '%');
-        })->get();
-
-        $datas = [];
-
-        foreach ($agents as $agent) {
-            $totalPriceOrder = 0;
-            $totalDeposit = 0;
-
-            //total price order
-            foreach ($agent->order as $order) {
-                if ($order->status == 'accepted') {
-                    $totalPriceOrder += $order->total_price;
-
-                    //total deposit
-                    $payments = $order->payment->where('status', 'accepted');
-                    foreach ($payments as $payment) {
-                        $totalDeposit += $payment->pay;
-                    }
+        $agentsQuery = User::role('agent')
+            ->whereHas('order', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->whereHas('agentProfile', function ($q) use ($getAgent) {
+                if ($getAgent && $getAgent !== 'all') {
+                    $q->where('name', 'like', '%' . $getAgent . '%');
                 }
-            }
+            })
+            ->with('agentProfile')
+            ->select('users.*')
+            ->selectSub(
+                Order::selectRaw('coalesce(sum(total_price), 0)')
+                    ->whereColumn('orders.agent_id', 'users.id')
+                    ->where('orders.status', 'accepted'),
+                'total_price_order'
+            )
+            ->selectSub(
+                Payment::selectRaw('coalesce(sum(payments.pay), 0)')
+                    ->join('orders', 'payments.order_id', '=', 'orders.id')
+                    ->whereColumn('orders.agent_id', 'users.id')
+                    ->where('orders.status', 'accepted')
+                    ->where('payments.status', 'accepted'),
+                'total_deposit'
+            );
 
-            if ($totalPriceOrder > 0) {
-                $datas[] = [
-                    'agent_name' => $agent->agentProfile->name,
-                    'total_price_order' => $totalPriceOrder,
-                    'total_deposit' => $totalDeposit,
-                    'total_remaining_payment' => $totalPriceOrder - $totalDeposit
-                ];
+        $orderStatsQuery = Order::where('status', 'accepted');
+        if ($getAgent && $getAgent !== 'all') {
+            $orderStatsQuery->whereHas('agent.agentProfile', fn($q) => $q->where('name', 'like', '%' . $getAgent . '%'));
+        }
+        $totalPriceOrderAll = (float) $orderStatsQuery->sum('total_price');
+
+        $paymentStatsQuery = Payment::where('status', 'accepted')->whereHas('order', function ($q) use ($getAgent) {
+            $q->where('status', 'accepted');
+            if ($getAgent && $getAgent !== 'all') {
+                $q->whereHas('agent.agentProfile', fn($ap) => $ap->where('name', 'like', '%' . $getAgent . '%'));
             }
-        }
-        if (is_array($datas)) {
-            $totalPriceOrderAll = array_sum(array_column($datas, 'total_price_order'));
-            $totalDepositAll = array_sum(array_column($datas, 'total_deposit'));
-            $totalRemainingAll = array_sum(array_column($datas, 'total_remaining_payment'));
-        }
+        });
+        $totalDepositAll = (float) $paymentStatsQuery->sum('pay');
+        $totalRemainingAll = $totalPriceOrderAll - $totalDepositAll;
 
         $stats = [
             'totalPriceOrderAll' => $totalPriceOrderAll,
             'totalDepositAll' => $totalDepositAll,
-            'totalRemainingAll' => $totalRemainingAll
+            'totalRemainingAll' => $totalRemainingAll,
         ];
 
-        // $paginationData = PaginationHelper::paginate($datas, 10, 'totalDeposit');
-
-
-        // untuk export, routenya harus "route('totalDeposit', ['export' => 1])"
         if ($request->get('export') == 1) {
+            $datas = $agentsQuery->get()->map(function ($agent) {
+                return [
+                    'agent_name' => $agent->agentProfile->name ?? '-',
+                    'total_price_order' => (int) $agent->total_price_order,
+                    'total_deposit' => (int) $agent->total_deposit,
+                    'total_remaining_payment' => (int) ($agent->total_price_order - $agent->total_deposit),
+                ];
+            });
             return Excel::download(new ReportTotalDepositExport($datas, $stats), 'Laporan_Total_Setoran_' . now()->format('dmY') . '.xlsx');
         }
 
-        // return response()->json($request->get('agent'));
-        return view('cms.admin.reports.total-deposit', compact('stats', 'datas', 'agentsName'));
-        // return response()->json(compact('stats', 'paginationData'));
-        // routenya 'report/total-deposit'
+        $datas = $agentsQuery->paginate($perPage)->withQueryString()->through(function ($agent) {
+            return [
+                'agent_name' => $agent->agentProfile->name ?? '-',
+                'total_price_order' => (int) $agent->total_price_order,
+                'total_deposit' => (int) $agent->total_deposit,
+                'total_remaining_payment' => (int) ($agent->total_price_order - $agent->total_deposit),
+            ];
+        });
 
+        return view('cms.admin.reports.total-deposit', compact('stats', 'datas', 'agentsName'));
     }
 
     public function productDetail(Request $request)
     {
-        $orders = Order::all();
+        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
 
-        $datas = [];
+        $productDetailsQuery = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
+            ->leftJoin('products', 'order_details.product_id', '=', 'products.id')
+            ->where('orders.status', 'accepted')
+            ->select([
+                'order_details.product_id',
+                'products.name as product_name',
+                'products.is_safe_point',
+                DB::raw('sum(order_details.qty) as total_product'),
+            ])
+            ->groupBy('order_details.product_id', 'products.name', 'products.is_safe_point')
+            ->orderBy('products.name', 'asc');
 
-        foreach ($orders as $item) {
-            if ($item->status == 'accepted') {
-                foreach ($item->detail as $order) {
-                    if ($order->product) {
-                        $productId = $order->product_id;
-                        $packageName = $order->product->name;
-
-                        if ($order->product->is_safe_point == 1) {
-                            $packageName .= ' (Titik Aman)';
-                        }
-
-                        if (isset($datas[$productId])) {
-                            $datas[$productId]['total_product'] += $order->qty;
-                        } else {
-                            $datas[$productId] = [
-                                'product_id' => $productId,
-                                'package' => $packageName,
-                                'total_product' => $order->qty,
-                            ];
-                        }
-                    } else {
-                        $datas[] = [
-                            'package' => 'Order dengan nomor ' . $order->order->order_number . ' Paket Tidak Tersedia' . ' (' . $order->product_id . ')',
-                            'total_product' => $order->qty,
-                        ];
-                    }
-                }
-            }
-        }
-
-        if (is_array($datas)) {
-            $totalProductAll = array_sum(array_column($datas, 'total_product'));
-            $totalPriceAll = array_sum(array_column($datas, 'total_price'));
-        }
+        $totalProductAll = (int) OrderDetail::whereHas('order', fn($q) => $q->where('status', 'accepted'))->sum('qty');
+        $totalPriceAll = (float) Order::where('status', 'accepted')->sum('total_price');
 
         $stats = [
             'totalProductAll' => $totalProductAll,
             'totalPriceAll' => $totalPriceAll,
         ];
 
-        // untuk export, routenya harus "route('productDetail', ['export' => 1])"
         if ($request->get('export') == 1) {
+            $datas = $productDetailsQuery->get()->map(function ($item) {
+                $name = $item->product_name ?? 'Paket Tidak Tersedia';
+                if ($item->is_safe_point == 1) {
+                    $name .= ' (Titik Aman)';
+                }
+                return [
+                    'product_id' => $item->product_id,
+                    'package' => $name,
+                    'total_product' => (int) $item->total_product,
+                ];
+            });
             return Excel::download(new ReportProductDetailExport($datas, $stats), 'Laporan_Rincian_Perpaket_' . now()->format('dmY') . '.xlsx');
         }
 
-        // $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
+        $datas = $productDetailsQuery->paginate($perPage)->withQueryString()->through(function ($item) {
+            $name = $item->product_name ?? 'Paket Tidak Tersedia';
+            if ($item->is_safe_point == 1) {
+                $name .= ' (Titik Aman)';
+            }
+            return [
+                'product_id' => $item->product_id,
+                'package' => $name,
+                'total_product' => (int) $item->total_product,
+            ];
+        });
 
         return view('cms.admin.reports.product-detail', compact('stats', 'datas'));
-        // return response()->json(compact('stats', 'paginationData'));
-        // routenya 'report/product-detail'
     }
 
     public function agentProductDetail(Request $request, $productId)
     {
+        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
         $product = Product::where('id', $productId)->with(['order.order'])->get();
-        $orders = Order::whereHas('detail', function ($q) use ($productId) {
-            $q->where('product_id', $productId);
-        })->with(['agent.agentProfile', 'detail'])->get()
-            ->groupBy('agent_id')
-            ->map(function ($group) use ($productId) {
-                return (object) [
-                    'agent' => $group->first()->agent,
-                    'totalProduct' => $group->sum(function ($order) use ($productId) {
-                        return $order->detail->where('product_id', $productId)->sum('qty');
-                    }),
-                ];
-            })
-            ->values();
 
-        return view('cms.admin.reports.partial.agent-product-detail', compact('product', 'orders'));
+        $ordersQuery = User::role('agent')
+            ->whereHas('order.detail', function ($q) use ($productId) {
+                $q->where('product_id', $productId)
+                    ->whereHas('order', fn($oq) => $oq->where('status', 'accepted'));
+            })
+            ->with('agentProfile')
+            ->select('users.*')
+            ->selectSub(
+                OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
+                    ->whereColumn('orders.agent_id', 'users.id')
+                    ->where('orders.status', 'accepted')
+                    ->where('order_details.product_id', $productId)
+                    ->selectRaw('coalesce(sum(order_details.qty), 0)'),
+                'totalProduct'
+            );
+
+        $totalProductCount = (int) OrderDetail::whereHas('order', fn($q) => $q->where('status', 'accepted'))
+            ->where('product_id', $productId)
+            ->sum('qty');
+
+        $orders = $ordersQuery->paginate($perPage)->withQueryString()->through(function ($user) {
+            return (object) [
+                'agent' => $user,
+                'totalProduct' => (int) $user->totalProduct,
+            ];
+        });
+
+        return view('cms.admin.reports.partial.agent-product-detail', compact('product', 'orders', 'totalProductCount'));
     }
 
     public function agentOrder(Request $request)
     {
-
         $getAgent = $request->get('agent');
+        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
 
         $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
-            $q->where('name', '!=', null)
+            $q->whereNotNull('name')
                 ->orderBy('name', 'asc');
         })->where('active', 1)->get();
 
-        $agents = User::role('agent')->whereHas('agentProfile', function ($q) use ($getAgent) {
-            $q->where('name', 'like', '%' . $getAgent . '%');
-        })->get();
-
-        $datas = [];
-
-        foreach ($agents as $agent) {
-            $totalProduct = 0;
-            $totalPrice = 0;
-
-            foreach ($agent->order as $order) {
-                if ($order->status == 'accepted') {
-                    $totalPrice += $order->total_price;
-
-                    foreach ($order->detail as $detail) {
-                        $totalProduct += $detail->qty;
-                    }
+        $agentsQuery = User::role('agent')
+            ->whereHas('order', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->whereHas('agentProfile', function ($q) use ($getAgent) {
+                if ($getAgent && $getAgent !== 'all') {
+                    $q->where('name', 'like', '%' . $getAgent . '%');
                 }
-            }
+            })
+            ->with('agentProfile')
+            ->select('users.*')
+            ->selectSub(
+                Order::selectRaw('coalesce(sum(total_price), 0)')
+                    ->whereColumn('orders.agent_id', 'users.id')
+                    ->where('orders.status', 'accepted'),
+                'total_price'
+            )
+            ->selectSub(
+                OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
+                    ->whereColumn('orders.agent_id', 'users.id')
+                    ->where('orders.status', 'accepted')
+                    ->selectRaw('coalesce(sum(order_details.qty), 0)'),
+                'total_product'
+            );
 
-            if ($totalPrice > 0) {
-                $datas[] = [
-                    'agent_name' => $agent->agentProfile->name,
-                    'total_product' => $totalProduct,
-                    'total_price' => $totalPrice
-                ];
+        $orderStatsQuery = Order::where('status', 'accepted');
+        if ($getAgent && $getAgent !== 'all') {
+            $orderStatsQuery->whereHas('agent.agentProfile', fn($q) => $q->where('name', 'like', '%' . $getAgent . '%'));
+        }
+        $totalPriceAll = (float) $orderStatsQuery->sum('total_price');
+
+        $detailStatsQuery = OrderDetail::whereHas('order', function ($q) use ($getAgent) {
+            $q->where('status', 'accepted');
+            if ($getAgent && $getAgent !== 'all') {
+                $q->whereHas('agent.agentProfile', fn($ap) => $ap->where('name', 'like', '%' . $getAgent . '%'));
             }
-        }
-        if (is_array($datas)) {
-            $totalProductAll = array_sum(array_column($datas, 'total_product'));
-            $totalPriceAll = array_sum(array_column($datas, 'total_price'));
-        }
+        });
+        $totalProductAll = (int) $detailStatsQuery->sum('qty');
 
         $stats = [
             'totalProductAll' => $totalProductAll,
             'totalPriceAll' => $totalPriceAll,
         ];
 
-        // untuk export, routenya harus "route('productDetail', ['export' => 1])"
         if ($request->get('export') == 1) {
+            $datas = $agentsQuery->get()->map(function ($agent) {
+                return [
+                    'agent_name' => $agent->agentProfile->name ?? '-',
+                    'total_product' => (int) $agent->total_product,
+                    'total_price' => (float) $agent->total_price,
+                ];
+            });
             return Excel::download(new ReportAgentOrderExport($datas, $stats), 'Laporan_Rincian_Order_Agent_' . now()->format('dmY') . '.xlsx');
         }
 
-        // $paginationData = PaginationHelper::paginate($datas, 10, 'productDetail');
+        $datas = $agentsQuery->paginate($perPage)->withQueryString()->through(function ($agent) {
+            return [
+                'agent_name' => $agent->agentProfile->name ?? '-',
+                'total_product' => (int) $agent->total_product,
+                'total_price' => (float) $agent->total_price,
+            ];
+        });
 
         return view('cms.admin.reports.agent-order', compact('stats', 'datas', 'agentsName'));
-        // return response()->json(compact('stats', 'paginationData'));
-        // routenya 'report/product-detail'
     }
 
     public function agentReward(Request $request)
     {
         $getAgent = $request->get('agent');
+        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
 
         // 1. Ambil semua reward yang aktif dan urutkan dari target terbesar
         $activeRewards = Reward::whereHas('period', function ($query) {
@@ -243,70 +304,68 @@ class ReportController extends Controller
         })->orderBy('target_qty', 'desc')->get();
 
         $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
-            $q->where('name', '!=', null)
+            $q->whereNotNull('name')
                 ->orderBy('name', 'asc');
         })->where('active', 1)->get();
 
-        $agents = User::role('agent')->whereHas('agentProfile', function ($q) use ($getAgent) {
-            $q->where('name', 'like', '%' . $getAgent . '%');
-        })->get();
+        $agentsQuery = User::role('agent')
+            ->whereHas('agentProfile', function ($q) use ($getAgent) {
+                if ($getAgent && $getAgent !== 'all') {
+                    $q->where('name', 'like', '%' . $getAgent . '%');
+                }
+            })
+            ->whereHas('order', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->with('agentProfile')
+            ->select('users.*')
+            ->selectSub(
+                OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
+                    ->whereColumn('orders.agent_id', 'users.id')
+                    ->where('orders.status', 'accepted')
+                    ->selectRaw('coalesce(sum(order_details.qty), 0)'),
+                'total_product'
+            );
 
+        $agents = $agentsQuery->get();
         $datas = [];
 
         foreach ($agents as $agent) {
-            $totalProduct = 0;
-            // $totalPrice tidak lagi digunakan
+            $totalProduct = (int) $agent->total_product;
+            $agentRewardTitle = null;
 
-            foreach ($agent->order as $order) {
-                if ($order->status == 'accepted') {
-                    // $totalPrice += $order->total_price; <-- tidak lagi digunakan
-
-                    foreach ($order->detail as $detail) {
-                        $totalProduct += $detail->qty;
-                    }
-                }
-            }
-
-            // 2. Tentukan reward untuk agen berdasarkan total produk
-            $agentRewardTitle = 'Tidak ada reward'; // Default value
             foreach ($activeRewards as $reward) {
                 if ($totalProduct >= $reward->target_qty) {
                     $agentRewardTitle = $reward->title;
-                    break; // <-- Hentikan loop karena reward tertinggi sudah didapat
+                    break;
                 }
             }
 
-            // Masukkan data HANYA JIKA agen mendapatkan reward
-            if ($agentRewardTitle !== 'Tidak ada reward') {
+            if ($agentRewardTitle !== null) {
                 $datas[] = [
-                    'agent_name' => $agent->agentProfile->name,
+                    'agent_name' => $agent->agentProfile->name ?? '-',
                     'total_product' => $totalProduct,
-                    'reward' => $agentRewardTitle
+                    'reward' => $agentRewardTitle,
+                    'total_price' => $agentRewardTitle,
                 ];
             }
         }
 
-         // Mengurutkan hasil dari total_product terbanyak
         if (!empty($datas)) {
             array_multisort(array_column($datas, 'total_product'), SORT_DESC, $datas);
         }
 
-        $totalProductAll = 0;
-        if (is_array($datas) && !empty($datas)) {
-            $totalProductAll = array_sum(array_column($datas, 'total_product'));
-        }
-
+        $totalProductAll = !empty($datas) ? array_sum(array_column($datas, 'total_product')) : 0;
         $stats = [
             'totalProductAll' => $totalProductAll,
+            'totalPriceAll' => 0,
         ];
 
-        // untuk export, routenya harus "route('productDetail', ['export' => 1])"
         if ($request->get('export') == 1) {
-            // Perlu penyesuaian pada class Export jika masih menggunakan totalPrice
             return Excel::download(new ReportAgentOrderExport($datas, $stats), 'Laporan_Reward_Agent_' . now()->format('dmY') . '.xlsx');
         }
 
-        // return response()->json(compact('datas', 'stats'));
+        $datas = $this->paginateData($datas, $perPage, $request);
 
         return view('cms.admin.reports.agent-reward', compact('datas'));
     }
@@ -316,140 +375,100 @@ class ReportController extends Controller
         $filterAgent = $request->get('agent');
         $filterDate = $request->get('date');
         $filterVerify = $request->get('verify');
+        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
 
-        $agentsName = Order::whereHas('payment', function ($q) {
-            $q->where('pay', '>', 0);
-        })->pluck('agent_id')->unique()->map(function ($agentId) {
-            return User::find($agentId)->agentProfile->name;
-        })->toArray();
+        $agentsName = User::role('agent')
+            ->whereHas('agentProfile')
+            ->whereHas('order.payment', fn($q) => $q->where('pay', '>', 0))
+            ->with('agentProfile')
+            ->get()
+            ->pluck('agentProfile.name')
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
 
-        $payments = Payment::with('order')
+        $paymentsQuery = Payment::with(['order.agent.agentProfile', 'order'])
             ->where('status', 'accepted')
             ->orderBy('created_at', 'desc')
-            ->whereHas('order.agent.agentProfile', function ($q) use ($filterAgent, $filterDate) {
+            ->whereHas('order.agent.agentProfile', function ($q) use ($filterAgent) {
                 if ($filterAgent) {
                     $q->where('name', 'like', '%' . $filterAgent . '%');
                 }
-                if ($filterDate) {
-                    $q->whereDate('date', $filterDate);
-                }
+            })
+            ->when($filterDate, function ($q) use ($filterDate) {
+                $q->whereDate('date', $filterDate);
             })
             ->when(isset($filterVerify), function ($query) use ($filterVerify) {
                 $query->where('is_confirmed', (bool)$filterVerify);
-            })
-            ->get();
+            });
 
-        $orders = Order::where('status', 'accepted')->get();
-
-        $stats = [];
-        $pay = 0;
-        $remaining_pay = 0;
-        $total_price = $orders->sum('total_price');
-
-        foreach ($payments as $payment) {
-            $pay += $payment->pay;
-            $total_price_remaining = $total_price - $pay;
-            $remaining_pay = $payment->order->payment_status == 'paid' ? 0 : $total_price_remaining;
-        }
+        $totalPrice = (float) Order::where('status', 'accepted')->sum('total_price');
+        $pay = (float) (clone $paymentsQuery)->sum('pay');
+        $remaining_pay = max(0, $totalPrice - $pay);
 
         $stats = [
             'pay' => $pay,
-            'remaining_pay' => $remaining_pay
+            'remaining_pay' => $remaining_pay,
         ];
 
         if ($request->get('export') == 1) {
-            return Excel::download(new ReportInstalmentExport($payments, $stats), 'Laporan_Rincian_Cicilan_' . now()->format('dmY') . '.xlsx');
+            return Excel::download(new ReportInstalmentExport($paymentsQuery->get(), $stats), 'Laporan_Rincian_Cicilan_' . now()->format('dmY') . '.xlsx');
         }
 
+        $payments = $paymentsQuery->paginate($perPage)->withQueryString();
+
         return view('cms.admin.reports.instalment', compact('stats', 'payments', 'agentsName'));
-        // return response()->json(compact('stats', 'payments'));
-        // routenya 'report/instalment'
     }
 
     public function requirement(Request $request)
     {
-        // 1. Ambil semua detail order yang statusnya 'accepted'
-        // Ambil order detail lengkap sekaligus untuk menghindari N+1
-        $orderDetails = OrderDetail::whereHas('order', function ($query) {
-            $query->where('status', 'accepted');
-        })->with('order', 'product.subProduct.subProduct')->get();
+        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
 
-        $datas = [];
-        $datasubs = [];
+        $datasubsQuery = DB::table('order_details')
+            ->join('orders', 'order_details.order_id', '=', 'orders.id')
+            ->join('product_sub_products', 'order_details.product_id', '=', 'product_sub_products.product_id')
+            ->join('sub_products', 'product_sub_products.sub_product_id', '=', 'sub_products.id')
+            ->where('orders.status', 'accepted')
+            ->select([
+                'sub_products.id',
+                'sub_products.name',
+                'sub_products.unit',
+                DB::raw('sum(order_details.qty * product_sub_products.amount) as qty'),
+                DB::raw('sum(order_details.qty * product_sub_products.amount * sub_products.price) as price'),
+            ])
+            ->groupBy('sub_products.id', 'sub_products.name', 'sub_products.unit')
+            ->orderBy('sub_products.name', 'asc');
 
-        foreach ($orderDetails as $detail) {
-            // Lewati jika detail tidak memiliki produk terkait (data integrity)
-            if (!$detail->product) {
-                continue;
-            }
+        $allDataSubs = $datasubsQuery->get()->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'unit' => $item->unit,
+                'qty' => (int) $item->qty,
+                'price' => (float) $item->price,
+            ];
+        })->toArray();
 
-            $productId = $detail->product_id;
-            $qty = $detail->qty;
-
-            // 2. Agregasi data produk utama menggunakan ID produk sebagai key array
-            if (!isset($datas[$productId])) {
-                $datas[$productId] = [
-                    'product_id'   => $productId,
-                    'product_name' => $detail->product->name,
-                    'qty'          => 0,
-                    'price'        => 0,
-                ];
-            }
-            $datas[$productId]['qty'] += $qty;
-            $datas[$productId]['price'] += ($detail->product->price * $detail->product->days) * $qty;
-
-            // 3. Agregasi data sub-produk
-            if ($detail->product->subProduct) {
-                foreach ($detail->product->subProduct as $sub) {
-                    // Lewati jika relasi sub-produk tidak lengkap
-                    if (!$sub->subProduct) {
-                        continue;
-                    }
-
-                    $subProductId = $sub->subProduct->id;
-                    $subProductAmount = $sub->amount;
-                    $calculatedQty = $qty * $subProductAmount;
-
-                    // Gunakan ID sub-produk sebagai key untuk agregasi cepat
-                    if (!isset($datasubs[$subProductId])) {
-                        $datasubs[$subProductId] = [
-                            'id'    => $subProductId,
-                            'name'  => $sub->subProduct->name,
-                            'unit'  => $sub->subProduct->unit,
-                            'qty'   => 0,
-                            'price' => 0,
-                        ];
-                    }
-                    $datasubs[$subProductId]['qty'] += $calculatedQty;
-                    $datasubs[$subProductId]['price'] += $calculatedQty * $sub->subProduct->price;
-                }
-            }
-        }
-
-        // Tidak mengurangi berdasarkan distribusi — hanya menampilkan kebutuhan dari pesanan accepted
-
-        // Kalkulasi total
-        $totalSubProductAll = array_sum(array_column($datasubs, 'qty'));
-        $totalPriceAll = array_sum(array_column($datasubs, 'price'));
+        $totalSubProductAll = array_sum(array_column($allDataSubs, 'qty'));
+        $totalPriceAll = array_sum(array_column($allDataSubs, 'price'));
 
         $stats = [
             'totalSubProductAll' => $totalSubProductAll,
-            'totalPriceAll'      => $totalPriceAll,
+            'totalPriceAll' => $totalPriceAll,
         ];
 
-        // 4. Konversi array asosiatif kembali menjadi array numerik agar formatnya sama seperti kode lama
-        $finalDatas = array_values($datas);
-        $finalDatasubs = array_values($datasubs);
-
-        // untuk export
         if ($request->get('export') == 1) {
-            return Excel::download(new ReportRequirementExport($finalDatasubs, $stats), 'Laporan_Rincian_SubProduct_' . now()->format('dmY') . '.xlsx');
+            return Excel::download(new ReportRequirementExport($allDataSubs, $stats), 'Laporan_Rincian_SubProduct_' . now()->format('dmY') . '.xlsx');
         }
 
+        $datasubs = $this->paginateData($allDataSubs, $perPage, $request);
+
         return view('cms.admin.reports.requirement', [
-            'datasubs' => $finalDatasubs,
-            'stats'    => $stats,
-            'datas'    => $finalDatas,
+            'datasubs' => $datasubs,
+            'stats' => $stats,
+            'datas' => [],
         ]);
     }
 
@@ -643,88 +662,70 @@ class ReportController extends Controller
 
     public function stockSubProduct(Request $request)
     {
+        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
         $spendingType = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
 
-        // Hitung kebutuhan sub-product dari order yang diterima
-        $orderDetails = OrderDetail::whereHas('order', function ($query) {
-            $query->where('status', 'accepted');
-        })->with('product.subProduct.subProduct')->get();
+        // 1. Kebutuhan sub-product dari pesanan accepted via SQL aggregation
+        $neededQuery = DB::table('order_details')
+            ->join('orders', 'order_details.order_id', '=', 'orders.id')
+            ->join('product_sub_products', 'order_details.product_id', '=', 'product_sub_products.product_id')
+            ->join('sub_products', 'product_sub_products.sub_product_id', '=', 'sub_products.id')
+            ->where('orders.status', 'accepted')
+            ->select([
+                'sub_products.id',
+                'sub_products.name',
+                'sub_products.unit',
+                DB::raw('sum(order_details.qty * product_sub_products.amount) as needed'),
+            ])
+            ->groupBy('sub_products.id', 'sub_products.name', 'sub_products.unit')
+            ->orderBy('sub_products.name', 'asc');
 
-        $neededSubProducts = [];
-        foreach ($orderDetails as $detail) {
-            if (!$detail->product || !$detail->product->subProduct) {
-                continue;
-            }
+        $neededSubProducts = $neededQuery->get();
 
-            foreach ($detail->product->subProduct as $sub) {
-                if (!$sub->subProduct) {
-                    continue;
-                }
-                $subProductId = $sub->subProduct->id;
-                $calculatedQty = $detail->qty * $sub->amount;
+        // 2. Sub-product yang didistribusikan (status delivered) via SQL aggregation
+        $distributedSubProducts = DB::table('distribution_details')
+            ->join('distributions', 'distribution_details.distribution_id', '=', 'distributions.id')
+            ->join('order_details', 'distribution_details.order_detail_id', '=', 'order_details.id')
+            ->join('product_sub_products', 'order_details.product_id', '=', 'product_sub_products.product_id')
+            ->where('distributions.status', 'delivered')
+            ->groupBy('product_sub_products.sub_product_id')
+            ->select('product_sub_products.sub_product_id', DB::raw('sum(distribution_details.qty * product_sub_products.amount) as total_distributed'))
+            ->pluck('total_distributed', 'sub_product_id')
+            ->toArray();
 
-                if (!isset($neededSubProducts[$subProductId])) {
-                    $neededSubProducts[$subProductId] = [
-                        'id'    => $subProductId,
-                        'name'  => $sub->subProduct->name,
-                        'unit'  => $sub->subProduct->unit,
-                        'needed' => 0,
-                    ];
-                }
-                $neededSubProducts[$subProductId]['needed'] += $calculatedQty;
-            }
-        }
+        // 3. Pengadaan per sub-product via 1 SQL query
+        $procurements = Spending::where('spending_type_id', $spendingType->id)
+            ->where('information', 'like', 'Pengadaan: %')
+            ->groupBy('information')
+            ->select('information', DB::raw('sum(qty) as total_qty'))
+            ->pluck('total_qty', 'information')
+            ->toArray();
 
-        // Hitung jumlah sub-product yang sudah didistribusikan
-        $distributedSubProducts = [];
-        $distributions = Distribution::whereIn('status', ['delivered'])
-            ->with('detail.orderDetail.product.subProduct.subProduct')
-            ->get();
-
-        foreach ($distributions as $dist) {
-            foreach ($dist->detail as $distDetail) {
-                $orderDetail = $distDetail->orderDetail;
-                if (!$orderDetail || !$orderDetail->product) {
-                    continue;
-                }
-                foreach ($orderDetail->product->subProduct as $sub) {
-                    if (!$sub->subProduct) {
-                        continue;
-                    }
-                    $subProductId = $sub->subProduct->id;
-                    $distributedSubProducts[$subProductId] = ($distributedSubProducts[$subProductId] ?? 0) + ($distDetail->qty * $sub->amount);
-                }
-            }
-        }
-
-        // Gabungkan data dan hitung stok = pengadaan - didistribusikan
         $finalData = [];
-        foreach ($neededSubProducts as $subProductId => $data) {
-            $subProductName = $data['name'];
+        foreach ($neededSubProducts as $item) {
+            $subProductId = $item->id;
+            $subProductName = $item->name;
+            $procured = (int) ($procurements['Pengadaan: ' . $subProductName] ?? 0);
+            $distributed = (int) ($distributedSubProducts[$subProductId] ?? 0);
+            $needed = (int) $item->needed;
+            $stock = $procured - ($needed - $distributed);
 
-            $procured = Spending::where('spending_type_id', $spendingType->id)
-                ->where('information', 'Pengadaan: ' . $subProductName)
-                ->sum('qty');
-
-            $distributed = $distributedSubProducts[$subProductId] ?? 0;
-            $stock = $procured - ($data['needed'] - $distributed);
-
-            $finalData[$subProductId] = [
-                'id'          => $data['id'],
-                'name'        => $data['name'],
-                'unit'        => $data['unit'],
-                'needed'      => $data['needed'],
+            $finalData[] = [
+                'id' => $subProductId,
+                'name' => $subProductName,
+                'unit' => $item->unit,
+                'needed' => $needed,
                 'procurement' => $procured,
                 'distributed' => $distributed,
-                'stock'       => $stock,
+                'stock' => $stock,
             ];
         }
-
-        $products = $finalData;
 
         if ($request->get('export') == 1) {
             return Excel::download(new ReportStockSubExport($finalData), 'Laporan_Stock_SubProduct_' . now()->format('dmY') . '.xlsx');
         }
+
+        $products = $this->paginateData($finalData, $perPage, $request);
 
         return view('cms.admin.reports.stock-sub', compact('products'));
     }

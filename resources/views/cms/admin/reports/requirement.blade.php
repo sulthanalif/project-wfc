@@ -42,8 +42,9 @@
                 <!-- END: Laporan Rincian Perpaket -->
             </div>
         </div>
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            <a href="{{ route('requirement', ['export' => 1]) }}"
+        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
+            @include('cms.layouts.per-page')
+            <a href="{{ route('requirement', array_merge(request()->except('page'), ['export' => 1])) }}"
                 class="btn btn-primary shadow-md mr-2"> <i data-lucide="file"
                     class="w-4 h-4 mr-3"></i> Export </a>
             <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0 ml-auto">
@@ -75,7 +76,7 @@
                         @foreach ($datasubs as $sub)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $datasubs instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($datasubs->currentPage() - 1) * $datasubs->perPage() + $loop->iteration : $loop->iteration }}</p>
                                 </td>
 
                                 <td>
@@ -100,9 +101,11 @@
         </div>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        {{-- <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $paginationData->links('cms.layouts.paginate') }}
-        </div> --}}
+        @if ($datasubs instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $datasubs->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
 @endsection

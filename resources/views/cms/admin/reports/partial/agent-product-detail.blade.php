@@ -14,6 +14,9 @@
             </div>
         </div>
     </h2>
+    <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
+        @include('cms.layouts.per-page')
+    </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <!-- BEGIN: Data List -->
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
@@ -34,7 +37,7 @@
                         @foreach ($orders as $order)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $orders instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($orders->currentPage() - 1) * $orders->perPage() + $loop->iteration : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <p class="text-slate-500 items-center">
@@ -51,7 +54,7 @@
                     <tr>
                         <th colspan="2" class="text-center">TOTAL PESANAN PAKET</th>
                         <th class="text-center">
-                            {{ $orders->sum('totalProduct') }}
+                            {{ $totalProductCount ?? $orders->sum('totalProduct') }}
                         </th>
                     </tr>
                 </tfoot>

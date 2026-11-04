@@ -66,9 +66,7 @@ else { $data = Model::...->paginate(intval($perPages)); }
 
 ### Backend
 
-| # | Masalah | Halaman terdampak | Perbaikan |
-|---|---|---|---|
-| P4 | Laporan menghitung semua data di PHP (`->get()` lalu `map`), pagination di view di-comment. Seluruh baris dirender sekaligus. | Semua `report/*` | Agregasi di SQL (`SUM`, `GROUP BY`) dan `paginate()`; export tetap ambil semua |
+Tidak ada masalah backend pagination yang belum diperbaiki.
 
 ### Frontend
 
@@ -76,13 +74,14 @@ else { $data = Model::...->paginate(intval($perPages)); }
 |---|---|---|---|
 | P10 | Search (`#filter`) hanya menyembunyikan baris di halaman yang sedang tampil. Data di halaman lain tidak ikut dicari, sehingga user mengira data tidak ada. | Semua halaman dengan input Search | Kirim `?search=` ke server dan filter dengan `where(... like ...)`, atau beri label "cari di halaman ini" |
 
-Urutan yang disarankan: P8, P11, P5, P6, P2, P3, P1, P7, P9, dan P12 (selesai), lalu P4 dan P10.
+Urutan yang disarankan: P8, P11, P5, P6, P2, P3, P1, P7, P9, P12, dan P4 (selesai), lalu P10.
 
 ## Sudah diperbaiki
 
 | Masalah | Commit |
 |---|---|
-| P12: Partial dropdown bersama `cms/layouts/per-page.blade.php` dan skrip event listener terpusat di `app.blade.php` (menghapus 35 duplikasi view) | `optimalisasi` |
+| P4: Agregasi SQL (subquery, join, group by) dan LengthAwarePaginator di semua modul laporan admin (`report/*`), mengaktifkan pagination di view dan export dataset lengkap | `optimalisasi` |
+| P12: Partial dropdown bersama `cms/layouts/per-page.blade.php` dan skrip event listener terpusat di `app.blade.php` (menghapus 35 duplikasi view) | `4abbc4a` |
 | P1: Opsi `perPage=all` dan input `perPage` dibatasi maksimal 100 di controller | `c939467` |
 | P7: Index database pada kolom pivot `product_packages` (`product_id`, `package_id`), `order_details` (`order_id`, `product_id`), dan `orders` (`agent_id`, `status`) | `c939467` |
 | P9: Default `perPage = 10` disamakan di seluruh 16 controller agar konsisten dengan pilihan pertama dropdown UI | `c939467` |

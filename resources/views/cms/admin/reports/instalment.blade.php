@@ -44,6 +44,7 @@
             </div>
         </div>
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
+            @include('cms.layouts.per-page')
             <form action="{{ route('instalment') }}" class="w-full sm:w-auto flex items-center gap-2">
                 <div class="w-auto relative text-slate-500 border rounded">
                     <select id="records_select" name="agent">
@@ -104,7 +105,7 @@
                         @foreach ($payments as $payment)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $payments instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($payments->currentPage() - 1) * $payments->perPage() + $loop->iteration : $loop->iteration }}</p>
                                 </td>
 
                                 <td>
@@ -182,9 +183,11 @@
         </div>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        {{-- <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $paginationData->links('cms.layouts.paginate') }}
-        </div> --}}
+        @if ($payments instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $payments->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
 @endsection

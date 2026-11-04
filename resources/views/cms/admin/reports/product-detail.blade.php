@@ -31,6 +31,7 @@
             </div>
         </div>
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
+            @include('cms.layouts.per-page')
             {{-- <div class="w-auto relative text-slate-500 border rounded">
                 <select id="records_select"
                     onchange="window.location.href = (this.value === 'all' ? '?' + '{{ http_build_query(request()->except('package', 'page')) }}' : '?package=' + this.value + '&' + '{{ http_build_query(request()->except('package', 'page')) }}')"
@@ -73,7 +74,7 @@
                         @foreach ($datas as $item)
                             <tr class="intro-x">
                                 <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loop->iteration }}</p>
+                                    <p class="font-medium whitespace-nowrap text-center">{{ $datas instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($datas->currentPage() - 1) * $datas->perPage() + $loop->iteration : $loop->iteration }}</p>
                                 </td>
                                 <td>
                                     <a class="text-slate-500 flex items-center mr-3" href="{{ route('ragentProductDetail', $item['product_id']) }}"> <i
@@ -91,9 +92,11 @@
         </div>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        {{-- <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-            {{ $paginationData->links('cms.layouts.paginate') }}
-        </div> --}}
+        @if ($datas instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
+                {{ $datas->links('cms.layouts.paginate') }}
+            </div>
+        @endif
         <!-- END: Pagination -->
     </div>
 @endsection
