@@ -267,7 +267,7 @@ class ProductReturnController extends Controller
     public function changeStatus(Request $request, ProductReturn $return)
     {
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:pending,processed,finished,rejected,canceled',
+            'status' => 'required|in:pending,processed,finished,rejected',
         ]);
 
         if ($validator->fails()) {

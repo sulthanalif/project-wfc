@@ -139,7 +139,7 @@ class DashboardController extends Controller
 
             $agentProductCount = $agentDetails->sum('qty');
             $agentTotalPrice = $agentDetails->sum(function ($d) {
-                return $d->sub_price * $d->qty;
+                return $d->sub_price;
             });
 
             if ($isPercentage) {
@@ -173,7 +173,7 @@ class DashboardController extends Controller
 
                 $subProductCount = $subDetails->sum('qty');
                 $subTotalPrice = $subDetails->sum(function ($d) {
-                    return $d->sub_price * $d->qty;
+                    return $d->sub_price;
                 });
 
                 if ($isPercentage) {

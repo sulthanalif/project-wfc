@@ -14,7 +14,7 @@ Route::resource('loan', LoanController::class)->except(['create', 'edit']);
 Route::get('/cash-flow', [CashFlowController::class, 'index'])->name('cash-flow.index');
 Route::get('/cash-flow/create', [CashFlowController::class, 'create'])->name('cash-flow.create');
 Route::post('/cash-flow/transfer', [CashFlowController::class, 'transferCash'])->name('cash-flow.store');
-Route::resource('/procurement', ProcurementController::class);
+Route::resource('/procurement', ProcurementController::class)->except(['edit', 'update', 'destroy']);
 
 
 Route::post('/loan/{loan}/payment', [LoanController::class, 'storePayment'])->name('loan.storePayment');

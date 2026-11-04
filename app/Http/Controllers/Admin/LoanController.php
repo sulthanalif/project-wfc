@@ -9,6 +9,8 @@ use App\Models\Loan;
 use App\Models\LoanPayment;
 use App\Models\Spending;
 use App\Models\SpendingType;
+use App\Exports\LoanExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -36,6 +38,11 @@ class LoanController extends Controller
         $banks = BankOwner::all();
 
         return view('cms.admin.finance.loan.index', compact('loans', 'totalLoans', 'totalPayments', 'totalRemaining', 'banks'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new LoanExport, 'Laporan_Pinjaman_' . now()->format('dmY') . '.xlsx');
     }
 
     public function show($id)

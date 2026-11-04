@@ -426,7 +426,7 @@ class OrderController extends Controller
 
                     foreach ($order->detail as $detail) {
                         $product = Product::find($detail->product_id);
-                        if (!$product || !$product->is_safe_point) {
+                        if ($product && !$product->is_safe_point) {
                             $safePointProduct = Product::where('name', 'like', "%{$product->name}%")
                                 ->where('is_safe_point', true)
                                 ->first();

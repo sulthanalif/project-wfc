@@ -91,15 +91,18 @@ class BankOwnerController extends Controller
      */
     public function destroy(BankOwner $bankOwner)
     {
+        $hasRelations = $bankOwner->payments()->exists()
+            || $bankOwner->incomes()->exists()
+            || $bankOwner->spendings()->exists()
+            || $bankOwner->loans()->exists()
+            || $bankOwner->loanPayments()->exists();
+
+        if ($hasRelations) {
+            return back()->with('error', 'Rekening bank tidak dapat dihapus karena masih digunakan pada data transaksi.');
+        }
+
         try {
-            DB::transaction(function () use ($bankOwner) {
-                if ($bankOwner->payments()->count() > 0) {
-                    return back()->with('error', 'Bank masih digunakan di pembayaran');
-                }
-
-                $bankOwner->delete();
-            });
-
+            $bankOwner->delete();
             return back()->with('success', 'Bank telah dihapus');
         } catch (\Exception $e) {
             $data = [

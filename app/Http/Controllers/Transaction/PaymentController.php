@@ -123,7 +123,7 @@ class PaymentController extends Controller
         }
 
         if ($request->get('export') == 'true') {
-            $datas = Order::with('agent.agentProfile')->where('agent_id', $user->id)->where('status', ['accepted', 'stop'])->get()->map(function ($item) {
+            $datas = Order::with('agent.agentProfile')->where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->get()->map(function ($item) {
                 return [
                     'order_number' => $item->order_number,
                     'order_date' => $item->order_date,
@@ -422,8 +422,8 @@ class PaymentController extends Controller
                         unlink(storage_path('app/public/images/proofs/' . $payment->photo));
                     }
 
-                    $imageName = 'proofs_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-                    Storage::disk('public')->put('images/proofs/' . $imageName, $request->file('image')->getContent());
+                    $imageName = 'proofs_' . time() . '.' . $request->file('photo')->getClientOriginalExtension();
+                    Storage::disk('public')->put('images/proofs/' . $imageName, $request->file('photo')->getContent());
 
                     $payment->photo = $imageName;
                 }

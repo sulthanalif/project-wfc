@@ -21,17 +21,17 @@ class LandingpageController extends Controller
     public function index()
     {
         $products = Product::paginate(5)->withQueryString();
-        $reviewPage = ReviewPage::first();
+        $reviewPage = ReviewPage::first() ?? new ReviewPage();
         $reviews = Review::where('publish', 1)->get();
         $rewards = Reward::whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->get();
 
-        $header = Header::first();
-        $profile = Profile::first();
-        $benefit = Benefit::first();
-        $gallery = Gallery::first();
-        $contact = Contact::first();
+        $header = Header::first() ?? new Header();
+        $profile = Profile::first() ?? new Profile();
+        $benefit = Benefit::first() ?? new Benefit();
+        $gallery = Gallery::first() ?? new Gallery();
+        $contact = Contact::first() ?? new Contact();
 
         return view('landing.welcome', compact(
             'products',
@@ -48,15 +48,8 @@ class LandingpageController extends Controller
 
     public function profile()
     {
-        $users = User::all();
-        $detailProfile = DetailProfile::first();
-        $agentUsers = [];
-
-        foreach ($users as $user) {
-            if ($user->roles->first()->name == 'agent') {
-                $agentUsers[] = $user;
-            }
-        }
+        $agentUsers = User::role('agent')->get();
+        $detailProfile = DetailProfile::first() ?? new DetailProfile();
 
         return view('landing.pages.profile', compact('agentUsers', 'detailProfile'));
     }

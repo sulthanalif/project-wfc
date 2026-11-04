@@ -98,7 +98,7 @@ Route::group(['middleware' => 'auth',], function () {
         // });
 
         //distribution
-        Route::resource('distribution', DistributionController::class);
+        Route::resource('distribution', DistributionController::class)->except(['edit', 'update']);
         Route::group(['prefix' => 'distribution'], function () {
             Route::put('/{distribution}/approve', [DistributionController::class, 'approve'])->name('distribution.approve');
             Route::get('/export/{distribution}', [ExportDeliveryOrderController::class, 'getDeliveryOrder'])->name('export.deliveryOrder');
@@ -196,10 +196,10 @@ Route::group(['middleware' => 'auth',], function () {
     });
 
     Route::group(['prefix' => 'master', 'middleware' => 'role:super_admin'], function () {
-        Route::resource('tutorial', TutorialController::class);
+        Route::resource('tutorial', TutorialController::class)->except(['create', 'show', 'edit']);
     });
 
-    Route::group(['middleware' => 'role:admin|admin_finance|agent'], function () {
+    Route::group(['middleware' => 'role:admin|finance_admin|agent'], function () {
         Route::get('tutorial', [TutorialController::class, 'tutorialPage'])->name('tutorial.page');
     });
 

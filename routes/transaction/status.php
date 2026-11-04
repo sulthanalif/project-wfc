@@ -8,8 +8,6 @@ use App\Http\Controllers\Transaction\PaymentController;
 Route::post('/acc/{order}', [OrderController::class, 'accOrder'])->name('order.accOrder');
 Route::post('/changeOrderStatus/{order}', [OrderController::class, 'changeOrderStatus'])->name('order.changeOrderStatus');
 Route::post('/bulk-convert-to-safe-point', [OrderController::class, 'bulkConvertToSafePoint'])->name('order.bulkConvertToSafePoint');
-Route::post('/accPayment/{payment}/{order}', [PaymentController::class, 'accPayment'])->name('accPayment');
-Route::post('/rejectPayment/{payment}/{order}', [PaymentController::class, 'rejectPayment'])->name('rejectPayment');
 Route::put('/changePaymentStatus/{payment}', [PaymentController::class, 'changePaymentStatus'])->name('changePaymentStatus');
 Route::put('/changePaymentVerify/{payment}', [PaymentController::class, 'changePaymentVerify'])->name('changePaymentVerify');
 

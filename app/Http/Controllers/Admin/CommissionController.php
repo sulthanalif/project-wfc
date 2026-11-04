@@ -150,7 +150,7 @@ class CommissionController extends Controller
 
             $totalProduct = $allOrderDetails->sum('qty');
             $totalPrice = $allOrderDetails->sum(function ($detail) {
-                return $detail->sub_price * $detail->qty;
+                return $detail->sub_price;
             });
 
             if ($totalProduct >= $termQty) {
@@ -315,7 +315,7 @@ class CommissionController extends Controller
 
             $totalProduct = $allOrderDetails->sum('qty');
             $totalPrice = $allOrderDetails->sum(function ($detail) {
-                return $detail->sub_price * $detail->qty;
+                return $detail->sub_price;
             });
 
             if ($totalProduct >= $termQty) {

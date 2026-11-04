@@ -15,36 +15,7 @@ Daftar per 16 Oktober 2026, dari pembacaan kode dan log production. Hapus baris 
 
 ## Bug
 
-| # | Masalah | Lokasi |
-|---|---|---|
-| B1 | Route menunjuk ke method yang tidak ada (error 500 saat dibuka): `PaymentController@accPayment`, `@rejectPayment`, `LoanController@export`, `DistributionController@edit/@update`, `ProcurementController@edit/@update/@destroy`, `TutorialController@create/@show/@edit` | Cek ulang dengan skrip di bawah |
-| B2 | Total harga untuk komisi dan dashboard agen dihitung `sub_price × qty`, padahal `sub_price` sudah termasuk qty. Bonus komisi persentase jadi terlalu besar. | `Admin\CommissionController` (show, archiveShow), `Agent\DashboardController` |
-| B3 | `updatePayment` mengecek `hasFile('photo')` tapi membaca `file('image')`, sehingga ganti foto bukti dari sisi admin error | `PaymentController@updatePayment` |
-| B4 | `where('status', ['accepted', 'stop'])` seharusnya `whereIn`; pesanan `stop` tidak ikut di data export | `PaymentController@index` baris 61, `@show` baris 104 |
-| B5 | Validasi `changeStatus` retur menerima `canceled`, tetapi enum `product_returns.status` tidak punya nilai itu | `ProductReturnController@changeStatus` |
-| B6 | `payment_status = paid` hanya kalau total bayar tepat sama dengan total harga; kelebihan bayar tetap `pending` | Semua perhitungan `payment_status` |
-| B7 | Mengubah harga produk menghitung ulang semua pesanan lama yang memakai produk itu, tanpa menghitung ulang `payment_status` | `Admin\ProductController@update` |
-| B8 | Beberapa periode bisa aktif bersamaan; kode memakai `Period::where('is_active', 1)->first()` | `PeriodController@activatePeriod` |
-| B9 | Role `admin_finance` (salah ketik) di route `tutorial`, sehingga `finance_admin` tidak bisa membuka halaman tutorial | `routes/web.php` |
-| B10 | Menghapus rekening (`bank_owners`) ikut menghapus pembayaran, pemasukan, pengeluaran, dan pinjaman yang terkait (FK `cascade`) | Migration `bank_owner_id` |
-| B11 | `bulkConvertToSafePoint` mengakses `$product->name` saat `$product` null | `OrderController` |
-| B12 | Halaman landing page error kalau tabel kontennya kosong (`::first()` lalu akses properti) | `LandingpageController` |
-
-Skrip untuk mendeteksi B1 lagi (abaikan method `Auth\*` karena berasal dari trait `laravel/ui`):
-
-```bash
-php artisan route:list --except-vendor --json > /tmp/routes.json
-python3 - /tmp/routes.json <<'EOF'
-import json, sys, re, os
-for r in json.load(open(sys.argv[1])):
-    a = r['action']
-    if '@' not in a or not a.startswith('App\\'): continue
-    cls, m = a.split('@')
-    path = 'app/' + cls[4:].replace('\\', '/') + '.php'
-    if os.path.exists(path) and not re.search(r'function\s+' + m + r'\s*\(', open(path).read()):
-        print(r['method'], r['uri'], a)
-EOF
-```
+Tidak ada bug yang belum diperbaiki. Seluruh bug B1 s/d B12 telah selesai diperbaiki.
 
 ## Pagination
 
@@ -78,7 +49,18 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 
 | Masalah | Commit |
 |---|---|
-| P10: Klarifikasi scope pencarian dengan label/placeholder 'Cari di halaman ini...' di seluruh 43 view dan pesan feedback saat filter kosong di `app.blade.php` | `optimalisasi` |
+| B1: Perbaikan route action hilang: hapus route mati accPayment/rejectPayment, batasi resource distribution/tutorial/procurement, dan buat class LoanExport untuk export pinjaman | `optimalisasi` |
+| B2: Total harga komisi dan dashboard agen dihitung langsung dari `sub_price` tanpa dikali `qty` ganda | `optimalisasi` |
+| B3: `updatePayment` admin membaca `$request->file('photo')` sesuai validasi dan nama form input | `optimalisasi` |
+| B4: Export pembayaran per agen memakai `whereIn('status', ['accepted', 'stop'])` agar pesanan stop ikut terunduh | `optimalisasi` |
+| B5: Validasi `changeStatus` retur disesuaikan dengan nilai enum database ('pending,processed,finished,rejected') | `optimalisasi` |
+| B6 & B7: Perhitungan `payment_status` menandai `paid` jika total bayar `>= total_price` (termasuk kelebihan bayar) dan kalkulasi otomatis saat harga produk berubah | `optimalisasi` |
+| B8: Aktivasi periode menonaktifkan periode aktif lain dalam transaksi database sehingga hanya 1 periode aktif bersamaan | `optimalisasi` |
+| B9: Koreksi typo role `admin_finance` menjadi `finance_admin` pada route page tutorial | `optimalisasi` |
+| B10: Proteksi penghapusan rekening bank di controller jika masih terkait transaksi dan migration restrict foreign key di database | `optimalisasi` |
+| B11: Pengecekan keamanan null product pada `bulkConvertToSafePoint` sebelum mengakses `$product->name` | `optimalisasi` |
+| B12: Fallback instance model baru pada `LandingpageController` sehingga halaman profil dan landing page tidak crash saat tabel kosong | `optimalisasi` |
+| P10: Klarifikasi scope pencarian dengan label/placeholder 'Cari di halaman ini...' di seluruh 43 view dan pesan feedback saat filter kosong di `app.blade.php` | `2db3bd3` |
 | P4: Agregasi SQL (subquery, join, group by) dan LengthAwarePaginator di semua modul laporan admin (`report/*`), mengaktifkan pagination di view dan export dataset lengkap | `1b0f2ff` |
 | P12: Partial dropdown bersama `cms/layouts/per-page.blade.php` dan skrip event listener terpusat di `app.blade.php` (menghapus 35 duplikasi view) | `4abbc4a` |
 | P1: Opsi `perPage=all` dan input `perPage` dibatasi maksimal 100 di controller | `c939467` |
