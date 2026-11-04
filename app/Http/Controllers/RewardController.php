@@ -18,11 +18,21 @@ class RewardController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
+        $query = Reward::latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
         if ($perPages == 'all') {
-            $rewards = Reward::latest()->take(100)->get();
+            $rewards = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $rewards = Reward::latest()->paginate($perPage)->withQueryString();
+            $rewards = $query->paginate($perPage)->withQueryString();
         }
 
 

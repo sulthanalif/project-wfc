@@ -37,6 +37,16 @@ class PackageController extends Controller
             $query->where('is_active', 1);
         })->latest();
 
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhereHas('period', function ($p) use ($search) {
+                        $p->where('description', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         if ($perPages == 'all') {
             $packages = $query->take(100)->get();
         } else {
@@ -54,6 +64,16 @@ class PackageController extends Controller
         $query = Package::with('period')->whereHas('period', function ($query) {
             $query->where('is_active', 0);
         })->latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhereHas('period', function ($p) use ($search) {
+                        $p->where('description', 'like', "%{$search}%");
+                    });
+            });
+        }
 
         if ($perPages == 'all') {
             $packages = $query->take(100)->get();

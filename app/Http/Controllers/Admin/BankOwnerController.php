@@ -13,9 +13,20 @@ class BankOwnerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $datas = BankOwner::paginate(5)->withQueryString();
+        $query = BankOwner::latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('account_number', 'like', "%{$search}%")
+                    ->orWhere('account_name', 'like', "%{$search}%");
+            });
+        }
+
+        $datas = $query->paginate(10)->withQueryString();
 
         return view('cms.admin.banks.index', compact('datas'));
     }

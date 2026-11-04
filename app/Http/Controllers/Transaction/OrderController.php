@@ -54,6 +54,9 @@ class OrderController extends Controller
                 $q->where('order_number', 'like', "%{$search}%")
                     ->orWhereHas('agent.agentProfile', function ($ap) use ($search) {
                         $ap->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('detail.product', function ($dp) use ($search) {
+                        $dp->where('name', 'like', "%{$search}%");
                     });
             });
         }
@@ -127,6 +130,9 @@ class OrderController extends Controller
                 $q->where('order_number', 'like', "%{$search}%")
                     ->orWhereHas('agent.agentProfile', function ($ap) use ($search) {
                         $ap->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('detail.product', function ($dp) use ($search) {
+                        $dp->where('name', 'like', "%{$search}%");
                     });
             });
         }

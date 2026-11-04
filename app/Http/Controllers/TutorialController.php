@@ -16,11 +16,21 @@ class TutorialController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
+        $query = Tutorial::latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
         if ($perPages == 'all') {
-            $datas = Tutorial::latest()->take(100)->get();
+            $datas = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $datas = Tutorial::latest()->paginate($perPage)->withQueryString();
+            $datas = $query->paginate($perPage)->withQueryString();
         }
 
         $roles = Role::where('name', '!=', 'super_admin')->get();

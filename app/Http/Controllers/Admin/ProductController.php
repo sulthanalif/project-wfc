@@ -40,7 +40,10 @@ class ProductController extends Controller
             $search = trim($request->get('search'));
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('total_price', 'like', "%{$search}%");
+                    ->orWhere('total_price', 'like', "%{$search}%")
+                    ->orWhereHas('package.package', function ($pkg) use ($search) {
+                        $pkg->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -66,7 +69,10 @@ class ProductController extends Controller
             $search = trim($request->get('search'));
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('total_price', 'like', "%{$search}%");
+                    ->orWhere('total_price', 'like', "%{$search}%")
+                    ->orWhereHas('package.package', function ($pkg) use ($search) {
+                        $pkg->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 

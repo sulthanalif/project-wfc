@@ -19,11 +19,22 @@ class SupplierController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
+        $query = Supplier::latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%");
+            });
+        }
+
         if ($perPages == 'all') {
-            $suppliers = Supplier::take(100)->get();
+            $suppliers = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $suppliers = Supplier::latest()->paginate($perPage)->withQueryString();
+            $suppliers = $query->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.suppliers.index', compact('suppliers'));

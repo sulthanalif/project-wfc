@@ -17,7 +17,17 @@ class CatalogController extends Controller
      */
     public function index(Request $request)
     {
-        $catalogs = Catalog::paginate(10)->withQueryString();
+        $query = Catalog::latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $catalogs = $query->paginate(10)->withQueryString();
 
         return view('cms.admin.catalogs.index', compact('catalogs'));
     }

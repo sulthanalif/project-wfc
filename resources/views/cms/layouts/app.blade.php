@@ -144,7 +144,53 @@
                             params.delete('search');
                         }
                         params.delete('page');
-                        window.location.search = params.toString();
+
+                        const newQuery = params.toString();
+                        const newUrl = window.location.pathname + (newQuery ? '?' + newQuery : '') + window.location.hash;
+
+                        fetch(newUrl, {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network error');
+                            return response.text();
+                        })
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+
+                            const newContainer = doc.querySelector('.table-container') || doc.querySelector('.table-report')?.closest('.overflow-auto') || doc.querySelector('.table-report');
+                            const currentContainer = document.querySelector('.table-container') || document.querySelector('.table-report')?.closest('.overflow-auto') || document.querySelector('.table-report');
+
+                            if (newContainer && currentContainer) {
+                                currentContainer.outerHTML = newContainer.outerHTML;
+                            }
+
+                            // Update info pagination summary
+                            const newSummary = doc.querySelector('.intro-y.col-span-12 .hidden.md\\:block.mx-auto');
+                            const currentSummary = document.querySelector('.intro-y.col-span-12 .hidden.md\\:block.mx-auto');
+                            if (newSummary && currentSummary) {
+                                currentSummary.innerHTML = newSummary.innerHTML;
+                            }
+
+                            // Update pagination links
+                            const newPagination = doc.querySelector('.intro-y.col-span-12.flex.flex-wrap.sm\\:flex-row');
+                            const currentPagination = document.querySelector('.intro-y.col-span-12.flex.flex-wrap.sm\\:flex-row');
+                            if (newPagination && currentPagination) {
+                                currentPagination.outerHTML = newPagination.outerHTML;
+                            } else if (currentPagination && !newPagination) {
+                                currentPagination.innerHTML = '';
+                            }
+
+                            window.history.pushState(null, '', newUrl);
+
+                            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                                window.lucide.createIcons();
+                            }
+                        })
+                        .catch(() => {
+                            window.location.href = newUrl;
+                        });
                     }
                 }
 
@@ -168,7 +214,8 @@
                             showTableLoading();
                             params.delete('search');
                             params.delete('page');
-                            window.location.search = params.toString();
+                            const newQuery = params.toString();
+                            window.location.href = window.location.pathname + (newQuery ? '?' + newQuery : '') + window.location.hash;
                         }
                     }
                 });
@@ -189,14 +236,16 @@
                     const paramName = e.target.getAttribute('data-param') || 'perPage';
                     urlParams.set(paramName, e.target.value);
                     urlParams.delete('page');
-                    window.location.search = urlParams.toString();
+                    const newQuery = urlParams.toString();
+                    window.location.href = window.location.pathname + (newQuery ? '?' + newQuery : '') + window.location.hash;
                 }
                 if (e.target && e.target.id === 'records_per_status') {
                     showTableLoading();
                     const urlParams = new URLSearchParams(window.location.search);
                     urlParams.set('status', e.target.value);
                     urlParams.delete('page');
-                    window.location.search = urlParams.toString();
+                    const newQuery = urlParams.toString();
+                    window.location.href = window.location.pathname + (newQuery ? '?' + newQuery : '') + window.location.hash;
                 }
             });
 

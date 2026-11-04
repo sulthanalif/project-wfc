@@ -30,6 +30,19 @@ class DistributionController extends Controller
             'detail.orderDetail.subAgent',
         ])->latest();
 
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('distribution_number', 'like', "%{$search}%")
+                    ->orWhereHas('detail.orderDetail.order', function ($o) use ($search) {
+                        $o->where('order_number', 'like', "%{$search}%")
+                            ->orWhereHas('agent.agentProfile', function ($ap) use ($search) {
+                                $ap->where('name', 'like', "%{$search}%");
+                            });
+                    });
+            });
+        }
+
         if ($perPages == 'all') {
             $distributions = $query->take(100)->get();
         } else {

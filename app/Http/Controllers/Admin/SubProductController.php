@@ -18,11 +18,20 @@ class SubProductController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
+        $query = SubProduct::latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
         if ($perPages == 'all') {
-            $subProducts = SubProduct::take(100)->get();
+            $subProducts = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $subProducts = SubProduct::latest()->paginate($perPage)->withQueryString();
+            $subProducts = $query->paginate($perPage)->withQueryString();
         }
 
         return view('cms.admin.sub-products.index', compact('subProducts'));
