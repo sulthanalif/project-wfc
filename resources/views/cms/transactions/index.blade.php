@@ -67,7 +67,7 @@
                         @hasrole('super_admin|admin')
                             <th class="text-center whitespace-nowrap">DARI AGEN</th>
                         @endhasrole
-                        <th class="text-center whitespace-nowrap" width="30%">TOTAL HARGA</th>
+                        <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
                         <th class="text-center whitespace-nowrap">STATUS</th>
                         <th class="text-center whitespace-nowrap">PEMBAYARAN</th>
                         <th class="text-center whitespace-nowrap">PENGIRIMAN</th>
@@ -79,7 +79,12 @@
                 <tbody>
                     @if ($orders->isEmpty())
                         <tr>
-                            <td colspan="8" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="8" class="text-center py-8 text-slate-500">
+                                <div class="flex flex-col items-center justify-center">
+                                    <i data-lucide="inbox" class="w-10 h-10 text-slate-300 mb-2"></i>
+                                    <span class="font-medium text-base">Belum Ada Data Pesanan</span>
+                                </div>
+                            </td>
                         </tr>
                     @else
                         @foreach ($orders as $order)
@@ -94,7 +99,7 @@
                                     <p class="font-medium whitespace-nowrap text-center">{{ $orders instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($orders->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
-                                    <a class="text-slate-500 flex items-center mr-3"
+                                    <a class="text-slate-500 flex items-center mr-3 hover:text-primary transition-colors"
                                         href="{{ route('order.show', $order) }}"> <i data-lucide="external-link"
                                             class="w-4 h-4 mr-2"></i> {{ $order->order_number }} </a>
                                 </td>
@@ -103,61 +108,69 @@
                                         {{ $order->agent->agentProfile->name }}
                                     </td>
                                 @endhasrole
-                                <td class="text-center">
-                                    <p>
-                                        Rp. {{ number_format($order->total_price, 0, ',', '.') }}
-                                    </p>
+                                <td class="text-center font-medium">
+                                    Rp {{ number_format($order->total_price, 0, ',', '.') }}
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @if ($order->status === 'accepted')
-                                        <div class="flex items-center justify-center text-success"> <i
-                                                data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Diterima </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
+                                            <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-1.5"></i> Diterima
+                                        </span>
                                     @elseif ($order->status === 'stop')
-                                        <div class="flex items-center justify-center text-success"> <i
-                                                data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Mundur </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                                            <i data-lucide="pause-circle" class="w-3.5 h-3.5 mr-1.5"></i> Mundur
+                                        </span>
                                     @elseif ($order->status === 'reject')
-                                        <div class="flex items-center justify-center text-danger"> <i
-                                                data-lucide="alert-circle" class="w-4 h-4 mr-2"></i> Ditolak </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-danger/10 text-danger border border-danger/20">
+                                            <i data-lucide="alert-circle" class="w-3.5 h-3.5 mr-1.5"></i> Ditolak
+                                        </span>
                                     @elseif ($order->status === 'canceled')
-                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-circle"
-                                                class="w-4 h-4 mr-2"></i> Dibatalkan </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                                            <i data-lucide="x-circle" class="w-3.5 h-3.5 mr-1.5"></i> Dibatalkan
+                                        </span>
                                     @else
-                                        <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
-                                                class="w-4 h-4 mr-2"></i> Pending</div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20">
+                                            <i data-lucide="clock" class="w-3.5 h-3.5 mr-1.5"></i> Pending
+                                        </span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @if ($order->payment_status === 'paid')
-                                        <div class="flex items-center justify-center text-success"> <i
-                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> Lunas </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
+                                            <i data-lucide="check-square" class="w-3.5 h-3.5 mr-1.5"></i> Lunas
+                                        </span>
                                     @elseif ($order->payment_status === 'pending')
-                                        <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
-                                                class="w-4 h-4 mr-2"></i> Dicicil </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20">
+                                            <i data-lucide="clock" class="w-3.5 h-3.5 mr-1.5"></i> Dicicil
+                                        </span>
                                     @else
-                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
-                                                class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-danger/10 text-danger border border-danger/20">
+                                            <i data-lucide="x-square" class="w-3.5 h-3.5 mr-1.5"></i> Belum Dibayar
+                                        </span>
                                     @endif
                                     @if ($order->payment_status !== 'paid' && $accessDate !== null)
-                                        @if ($accessDate < 0)
-                                            <span class="text-danger text-sm capitalize">lebih {{ abs($accessDate) }} hari</span>
-                                        @elseif ($accessDate <= 30)
-                                            <span class="text-warning text-sm capitalize">{{ $accessDate }} hari lagi</span>
-                                        @endif
+                                        <div class="mt-1">
+                                            @if ($accessDate < 0)
+                                                <span class="text-danger text-xs font-medium">lewat {{ abs($accessDate) }} hari</span>
+                                            @elseif ($accessDate <= 30)
+                                                <span class="text-warning text-xs font-medium">{{ $accessDate }} hari lagi</span>
+                                            @endif
+                                        </div>
                                     @endif
                                 </td>
-                                <td>
-
+                                <td class="text-center">
                                     @if ($order->isAllItemDistributed())
-                                        <div class="flex items-center justify-center text-success"> <i
-                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> Sukses </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
+                                            <i data-lucide="truck" class="w-3.5 h-3.5 mr-1.5"></i> Sukses
+                                        </span>
+                                    @elseif ($order->distributions->isNotEmpty())
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20">
+                                            <i data-lucide="clock" class="w-3.5 h-3.5 mr-1.5"></i> Sedang Proses
+                                        </span>
                                     @else
-                                        @if ($order->distributions->isNotEmpty())
-                                            <div class="flex items-center justify-center text-warning"> <i
-                                                    data-lucide="clock" class="w-4 h-4 mr-2"></i> Sedang Proses </div>
-                                        @else
-                                            <div class="flex items-center justify-center text-primary"> <i
-                                                    data-lucide="clock" class="w-4 h-4 mr-2"></i> Belum Dikirim </div>
-                                        @endif
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                                            <i data-lucide="package" class="w-3.5 h-3.5 mr-1.5"></i> Belum Dikirim
+                                        </span>
                                     @endif
                                 </td>
                                 @hasrole('super_admin|admin')

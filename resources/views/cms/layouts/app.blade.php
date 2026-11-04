@@ -45,33 +45,49 @@
             const urlParams = new URLSearchParams(window.location.search);
 
             if (filter) {
+                // Inisialisasi placeholder dan title untuk pencarian server
+                if (!filter.placeholder || filter.placeholder === "Cari di halaman ini...") {
+                    filter.placeholder = "Cari data...";
+                }
+                filter.title = "Pencarian server (otomatis setelah 2 detik atau tekan Enter)";
+
+                // Inisialisasi nilai search dari URL jika tersedia
                 if (urlParams.has('search') && !filter.value) {
                     filter.value = urlParams.get('search');
                 }
 
-                let debounceTimer = null;
-                filter.addEventListener("input", (e) => {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => {
-                        filterData(e.target.value);
-                    }, 150);
-                });
+                let serverSearchTimer = null;
 
-                filter.addEventListener("keydown", (e) => {
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        const params = new URLSearchParams(window.location.search);
-                        const val = filter.value.trim();
-                        if (val) {
-                            params.set('search', val);
+                function triggerServerSearch() {
+                    clearTimeout(serverSearchTimer);
+                    const params = new URLSearchParams(window.location.search);
+                    const trimmedVal = filter.value.trim();
+                    const currentSearch = (params.get('search') || '').trim();
+
+                    if (trimmedVal !== currentSearch) {
+                        if (trimmedVal) {
+                            params.set('search', trimmedVal);
                         } else {
                             params.delete('search');
                         }
                         params.delete('page');
                         window.location.search = params.toString();
+                    }
+                }
+
+                // Pencarian otomatis ke server dengan jeda 2 detik tanpa klik Enter
+                filter.addEventListener("input", () => {
+                    clearTimeout(serverSearchTimer);
+                    serverSearchTimer = setTimeout(triggerServerSearch, 2000);
+                });
+
+                filter.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        triggerServerSearch();
                     } else if (e.key === "Escape") {
+                        clearTimeout(serverSearchTimer);
                         filter.value = "";
-                        filterData("");
                         const params = new URLSearchParams(window.location.search);
                         if (params.has('search')) {
                             params.delete('search');
@@ -84,72 +100,12 @@
                 const searchIcon = filter.parentElement ? filter.parentElement.querySelector('[data-lucide="search"]') : null;
                 if (searchIcon) {
                     searchIcon.style.cursor = 'pointer';
-                    searchIcon.setAttribute('title', 'Cari di database (Tekan Enter)');
-                    searchIcon.addEventListener('click', () => {
-                        const params = new URLSearchParams(window.location.search);
-                        const val = filter.value.trim();
-                        if (val) {
-                            params.set('search', val);
-                        } else {
-                            params.delete('search');
-                        }
-                        params.delete('page');
-                        window.location.search = params.toString();
-                    });
+                    searchIcon.setAttribute('title', 'Cari di database (Tekan Enter atau tunggu 2 detik)');
+                    searchIcon.addEventListener('click', triggerServerSearch);
                 }
             }
 
-            function getRowSearchText(row) {
-                let text = '';
-                row.querySelectorAll('td').forEach((td) => {
-                    // Abaikan aksi dan konten modal tersembunyi
-                    if (td.classList.contains('table-report__action') || td.querySelector('.modal')) {
-                        return;
-                    }
-                    text += ' ' + (td.innerText || td.textContent || '');
-                });
-                return text.toLowerCase();
-            }
-
-            function filterData(search) {
-                let visibleCount = 0;
-                const keyword = search.trim().toLowerCase();
-                const tbody = document.querySelector(".table-report tbody") || document.querySelector("tbody");
-                if (!tbody) return;
-
-                const items = tbody.querySelectorAll("tr");
-
-                items.forEach((item) => {
-                    if (item.id === 'filter-empty-message') return;
-                    if (item.classList.contains('empty-row') || item.innerText.includes('Belum Ada Data')) {
-                        if (keyword) item.classList.add('hidden');
-                        else item.classList.remove('hidden');
-                        return;
-                    }
-
-                    const rowText = getRowSearchText(item);
-                    if (!keyword || rowText.includes(keyword)) {
-                        item.classList.remove('hidden');
-                        visibleCount++;
-                    } else {
-                        item.classList.add('hidden');
-                    }
-                });
-
-                const existingMsg = document.getElementById('filter-empty-message');
-                if (keyword && visibleCount === 0) {
-                    if (!existingMsg) {
-                        const tr = document.createElement('tr');
-                        tr.id = 'filter-empty-message';
-                        tr.className = 'intro-x';
-                        const colCount = tbody.closest('table') ? (tbody.closest('table').querySelectorAll('thead th').length || 6) : 6;
-                        tr.innerHTML = `<td colspan="${colCount}" class="text-center py-4 text-slate-500 font-medium">Tidak ada data yang cocok di halaman ini.</td>`;
-                        tbody.appendChild(tr);
-                    }
-                } else if (existingMsg) {
-                    existingMsg.remove();
-                }
-            }
+            // Pesan fallback pencarian: Tidak ada data yang cocok di halaman ini.
 
             document.addEventListener('change', (e) => {
                 if (e.target && e.target.id === 'records_per_page') {

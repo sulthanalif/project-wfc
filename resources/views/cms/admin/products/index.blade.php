@@ -65,7 +65,12 @@
                 <tbody>
                     @if ($products->isEmpty())
                         <tr>
-                            <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="7" class="text-center py-8 text-slate-500">
+                                <div class="flex flex-col items-center justify-center">
+                                    <i data-lucide="inbox" class="w-10 h-10 text-slate-300 mb-2"></i>
+                                    <span class="font-medium text-base">Belum Ada Data Barang</span>
+                                </div>
+                            </td>
                         </tr>
                     @else
                         @foreach ($products as $product)

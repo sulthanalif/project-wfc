@@ -72,7 +72,12 @@
                 <tbody>
                     @if ($returns->isEmpty())
                         <tr>
-                            <td colspan="10" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
+                            <td colspan="10" class="text-center py-8 text-slate-500">
+                                <div class="flex flex-col items-center justify-center">
+                                    <i data-lucide="inbox" class="w-10 h-10 text-slate-300 mb-2"></i>
+                                    <span class="font-medium text-base">Belum Ada Data Pengembalian</span>
+                                </div>
+                            </td>
                         </tr>
                     @else
                         @foreach ($returns as $return)
@@ -81,7 +86,7 @@
                                     <p class="font-medium whitespace-nowrap text-center">{{ $returns instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($returns->firstItem() + $loop->index) : $loop->iteration }}</p>
                                 </td>
                                 <td>
-                                    <a class="text-slate-500 flex items-center mr-3 font-bold"
+                                    <a class="text-slate-500 flex items-center mr-3 font-bold hover:text-primary transition-colors"
                                         href="{{ route('return.show', $return->id) }}"> <i data-lucide="external-link"
                                             class="w-4 h-4 mr-2"></i> {{ $return->return_number }} </a>
                                 </td>
@@ -97,21 +102,23 @@
                                         {{ $return->product_return_detail_count ?? $return->productReturnDetail->count() }} Item
                                     </p>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @if ($return->status == 'pending')
-                                        <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
-                                                class="w-4 h-4 mr-2"></i> <strong>Pending</strong> </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20">
+                                            <i data-lucide="clock" class="w-3.5 h-3.5 mr-1.5"></i> Pending
+                                        </span>
                                     @elseif ($return->status == 'processed')
-                                        <div class="flex items-center justify-center text-primary"> <i data-lucide="loader"
-                                                class="w-4 h-4 mr-2"></i> <strong>Diproses</strong> </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                                            <i data-lucide="loader" class="w-3.5 h-3.5 mr-1.5"></i> Diproses
+                                        </span>
                                     @elseif ($return->status == 'finished')
-                                        <div class="flex items-center justify-center text-success"> <i
-                                                data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
-                                            <strong>Selesai</strong>
-                                        </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
+                                            <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-1.5"></i> Selesai
+                                        </span>
                                     @else
-                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-circle"
-                                                class="w-4 h-4 mr-2"></i> <strong>Ditolak</strong> </div>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-danger/10 text-danger border border-danger/20">
+                                            <i data-lucide="x-circle" class="w-3.5 h-3.5 mr-1.5"></i> Ditolak
+                                        </span>
                                     @endif
                                 </td>
                                 <td>
