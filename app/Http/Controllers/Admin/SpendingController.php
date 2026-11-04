@@ -16,12 +16,12 @@ class SpendingController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         if ($perPages == 'all') {
-            $spendings = Spending::all();
+            $spendings = Spending::take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $spendings = Spending::latest()->paginate($perPage)->withQueryString();
         }
         $totalSpending = Spending::selectRaw('SUM(amount * COALESCE(qty, 1)) as total')->value('total');

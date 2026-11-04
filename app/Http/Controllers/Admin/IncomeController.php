@@ -15,12 +15,12 @@ class IncomeController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         if ($perPages == 'all') {
-            $incomes = Income::all();
+            $incomes = Income::take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $incomes = Income::latest()->paginate($perPage)->withQueryString();
         }
         $totalIncome = Income::sum('amount');

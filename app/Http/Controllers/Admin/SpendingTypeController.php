@@ -13,12 +13,12 @@ class SpendingTypeController extends Controller
     //route: spendingType.index
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         if ($perPages == 'all') {
-            $spendingTypes = SpendingType::all();
+            $spendingTypes = SpendingType::take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $spendingTypes = SpendingType::latest()->paginate($perPage)->withQueryString();
         }
         

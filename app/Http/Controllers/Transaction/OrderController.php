@@ -31,7 +31,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
         $status = $request->get('status') ?? 'all';
 
         $query = Order::query()
@@ -49,9 +49,9 @@ class OrderController extends Controller
         }
 
         if ($perPages == 'all') {
-            $orders = $query->orderByDesc('created_at')->get();
+            $orders = $query->orderByDesc('created_at')->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $orders = $query->orderByDesc('created_at')->paginate($perPage)->withQueryString();
         }
 
@@ -94,7 +94,7 @@ class OrderController extends Controller
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
         $status = $request->get('status') ?? 'all';
 
         $query = Order::query()
@@ -112,9 +112,9 @@ class OrderController extends Controller
         }
 
         if ($perPages == 'all') {
-            $orders = $query->orderByDesc('created_at')->get();
+            $orders = $query->orderByDesc('created_at')->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $orders = $query->orderByDesc('created_at')->paginate($perPage)->withQueryString();
         }
 

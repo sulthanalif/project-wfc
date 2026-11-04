@@ -16,12 +16,12 @@ class SubProductController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         if ($perPages == 'all') {
-            $subProducts = SubProduct::all();
+            $subProducts = SubProduct::take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $subProducts = SubProduct::latest()->paginate($perPage)->withQueryString();
         }
 

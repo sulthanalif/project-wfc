@@ -16,12 +16,12 @@ class RewardController extends Controller
 
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         if ($perPages == 'all') {
-            $rewards = Reward::latest()->get();
+            $rewards = Reward::latest()->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $rewards = Reward::latest()->paginate($perPage)->withQueryString();
         }
 

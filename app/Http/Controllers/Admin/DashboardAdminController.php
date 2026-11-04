@@ -62,7 +62,7 @@ class DashboardAdminController extends Controller
         if ($orderPages == 'all') {
             $orders = $orderQuery->get();
         } else {
-            $orderPage = intval($orderPages);
+            $orderPage = min(max(intval($orderPages), 1), 100);
             $orders = $orderQuery->paginate($orderPage, ['*'], 'page')->withQueryString();
         }
 

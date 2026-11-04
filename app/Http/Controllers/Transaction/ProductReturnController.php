@@ -37,9 +37,9 @@ class ProductReturnController extends Controller
         }
 
         if ($perPages == 'all') {
-            $returns = $query->get();
+            $returns = $query->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $returns = $query->paginate($perPage)->withQueryString();
         }
 

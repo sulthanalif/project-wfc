@@ -26,22 +26,22 @@ class SubAgentController extends Controller
         $roleName = $roleUser->name;
 
         if ($roleName == 'agent') {
-            $perPages = $request->get('perPage') ?? 5;
+            $perPages = $request->get('perPage') ?? 10;
     
             if ($perPages == 'all') {
-                $subAgents = SubAgent::where('agent_id', $user->id)->get();
+                $subAgents = SubAgent::where('agent_id', $user->id)->take(100)->get();
             } else {
-                $perPage = intval($perPages);
+                $perPage = min(max(intval($perPages), 1), 100);
                 $subAgents = SubAgent::where('agent_id', $user->id)->paginate($perPage)->withQueryString();
             }
             return view('cms.sub-agent.index', compact('subAgents'));
         } else {
-            $perPages = $request->get('perPage') ?? 5;
+            $perPages = $request->get('perPage') ?? 10;
     
             if ($perPages == 'all') {
-                $subAgents = SubAgent::all();
+                $subAgents = SubAgent::take(100)->get();
             } else {
-                $perPage = intval($perPages);
+                $perPage = min(max(intval($perPages), 1), 100);
                 $subAgents = SubAgent::paginate($perPage)->withQueryString();
             }
             return view('cms.sub-agent.index', compact('subAgents'));

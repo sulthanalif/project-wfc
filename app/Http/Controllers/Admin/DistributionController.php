@@ -23,7 +23,7 @@ class DistributionController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         $query = Distribution::with([
             'detail.orderDetail.order.agent.agentProfile',
@@ -31,9 +31,9 @@ class DistributionController extends Controller
         ])->latest();
 
         if ($perPages == 'all') {
-            $distributions = $query->get();
+            $distributions = $query->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $distributions = $query->paginate($perPage)->withQueryString();
         }
 

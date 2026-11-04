@@ -19,14 +19,14 @@ class CommissionController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         if ($perPages == 'all') {
             $commissions = Commission::whereHas('package.period', function ($query) {
                 $query->where('is_active', 1);
             })->latest()->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $commissions = Commission::whereHas('package.period', function ($query) {
                 $query->where('is_active', 1);
             })->latest()->paginate($perPage)->withQueryString();
@@ -241,14 +241,14 @@ class CommissionController extends Controller
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         if ($perPages == 'all') {
             $commissions = Commission::whereHas('package.period', function ($query) {
                 $query->where('is_active', 0);
             })->latest()->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $commissions = Commission::whereHas('package.period', function ($query) {
                 $query->where('is_active', 0);
             })->latest()->paginate($perPage)->withQueryString();

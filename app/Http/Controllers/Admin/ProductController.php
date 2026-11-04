@@ -30,16 +30,16 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         $query = Product::with(['detail', 'package.package.period'])->whereHas('package.package.period', function ($query) {
             $query->where('is_active', 1);
         })->latest();
 
         if ($perPages == 'all') {
-            $products = $query->get();
+            $products = $query->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $products = $query->paginate($perPage)->withQueryString();
         }
 
@@ -48,16 +48,16 @@ class ProductController extends Controller
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         $query = Product::with(['detail', 'package.package.period'])->whereHas('package.package.period', function ($query) {
             $query->where('is_active', 0);
         })->latest();
 
         if ($perPages == 'all') {
-            $products = $query->get();
+            $products = $query->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $products = $query->paginate($perPage)->withQueryString();
         }
 

@@ -28,14 +28,14 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         $query = User::with(['roles', 'agentProfile', 'adminProfile'])->latest();
 
         if ($perPages == 'all') {
-            $users = $query->get();
+            $users = $query->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $users = $query->paginate($perPage)->withQueryString();
         }
 

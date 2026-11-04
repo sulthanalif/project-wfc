@@ -40,9 +40,9 @@ class PaymentController extends Controller
                 ->orderByDesc('created_at');
 
             if ($perPages == 'all') {
-                $orders = $query->get();
+                $orders = $query->take(100)->get();
             } else {
-                $perPage = intval($perPages);
+                $perPage = min(max(intval($perPages), 1), 100);
                 $orders = $query->paginate($perPage)->withQueryString();
             }
 
@@ -66,9 +66,9 @@ class PaymentController extends Controller
                 ]);
 
             if ($perPages == 'all') {
-                $orders = $query->get();
+                $orders = $query->take(100)->get();
             } else {
-                $perPage = intval($perPages);
+                $perPage = min(max(intval($perPages), 1), 100);
                 $orders = $query->paginate($perPage)->withQueryString();
             }
 
@@ -116,9 +116,9 @@ class PaymentController extends Controller
             ->whereIn('status', ['accepted', 'stop']);
 
         if ($perPages == 'all') {
-            $orders = $query->get();
+            $orders = $query->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $orders = $query->paginate($perPage)->withQueryString();
         }
 

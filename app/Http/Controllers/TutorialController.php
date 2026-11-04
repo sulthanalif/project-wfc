@@ -17,9 +17,9 @@ class TutorialController extends Controller
         $perPages = $request->get('perPage') ?? 10;
 
         if ($perPages == 'all') {
-            $datas = Tutorial::latest()->get();
+            $datas = Tutorial::latest()->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $datas = Tutorial::latest()->paginate($perPage)->withQueryString();
         }
 

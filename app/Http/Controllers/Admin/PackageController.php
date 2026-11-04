@@ -31,16 +31,16 @@ class PackageController extends Controller
         // ->where('periods.is_active', 1)
         // ->select('packages.*')
         // ->paginate(10);
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         $query = Package::with('period')->whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->latest();
 
         if ($perPages == 'all') {
-            $packages = $query->get();
+            $packages = $query->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $packages = $query->paginate($perPage)->withQueryString();
         }
 
@@ -49,16 +49,16 @@ class PackageController extends Controller
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 5;
+        $perPages = $request->get('perPage') ?? 10;
 
         $query = Package::with('period')->whereHas('period', function ($query) {
             $query->where('is_active', 0);
         })->latest();
 
         if ($perPages == 'all') {
-            $packages = $query->get();
+            $packages = $query->take(100)->get();
         } else {
-            $perPage = intval($perPages);
+            $perPage = min(max(intval($perPages), 1), 100);
             $packages = $query->paginate($perPage)->withQueryString();
         }
 

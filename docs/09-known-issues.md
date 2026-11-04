@@ -68,26 +68,26 @@ else { $data = Model::...->paginate(intval($perPages)); }
 
 | # | Masalah | Halaman terdampak | Perbaikan |
 |---|---|---|---|
-| P1 | Opsi `perPage=all` memuat seluruh tabel tanpa batas | Semua halaman yang punya pilihan All (35 view dengan `records_per_page`) | Hapus opsi All atau batasi (misalnya maks 100) |
 | P4 | Laporan menghitung semua data di PHP (`->get()` lalu `map`), pagination di view di-comment. Seluruh baris dirender sekaligus. | Semua `report/*` | Agregasi di SQL (`SUM`, `GROUP BY`) dan `paginate()`; export tetap ambil semua |
-| P7 | Filter `whereHas('...period', is_active)` dengan rantai 4 relasi di setiap request daftar pesanan dan produk | `transaction/order*`, `master/product`, `master/package` | Index pada kolom pivot (`product_packages.product_id`, `package_id`, `order_details.order_id`, `product_id`) karena migration tidak membuat foreign key/index |
 
 ### Frontend
 
 | # | Masalah | Halaman terdampak | Perbaikan |
 |---|---|---|---|
-| P9 | Default controller `perPage = 5`, tetapi dropdown hanya punya 10/25/50/All. Saat halaman pertama dibuka, dropdown menampilkan 10 padahal yang tampil 5 baris. | 23 tempat di 16 controller (Product, Package, Order*, Distribution, User, SubProduct, Supplier, Spending, SpendingType, Income, Loan, Commission, Reward, SubAgent) | Samakan default ke 10, atau tambah opsi 5 |
 | P10 | Search (`#filter`) hanya menyembunyikan baris di halaman yang sedang tampil. Data di halaman lain tidak ikut dicari, sehingga user mengira data tidak ada. | Semua halaman dengan input Search | Kirim `?search=` ke server dan filter dengan `where(... like ...)`, atau beri label "cari di halaman ini" |
 | P12 | Script `records_per_page` dan markup dropdown disalin di setiap view (35 file) | Semua halaman daftar | Pindahkan ke satu partial `cms/layouts/per-page.blade.php` dan script ke `app.blade.php` |
 
-Urutan yang disarankan: P8, P11, P5, P6, P2, dan P3 (selesai), lalu P4, P1, dan P7.
+Urutan yang disarankan: P8, P11, P5, P6, P2, P3, P1, P7, dan P9 (selesai), lalu P4, P10, dan P12.
 
 ## Sudah diperbaiki
 
 | Masalah | Commit |
 |---|---|
-| P2: Paginate pembayaran admin per agen langsung di database (`User::role('agent')->whereHas('order', ...)->paginate()`) | `optimalisasi` |
-| P3: Paginate pesanan dashboard admin per agen langsung di database, memperbaiki pagination yang hilang akibat `groupBy` di PHP | `optimalisasi` |
+| P1: Opsi `perPage=all` dan input `perPage` dibatasi maksimal 100 di controller | `optimalisasi` |
+| P7: Index database pada kolom pivot `product_packages` (`product_id`, `package_id`), `order_details` (`order_id`, `product_id`), dan `orders` (`agent_id`, `status`) | `optimalisasi` |
+| P9: Default `perPage = 10` disamakan di seluruh 16 controller agar konsisten dengan pilihan pertama dropdown UI | `optimalisasi` |
+| P2: Paginate pembayaran admin per agen langsung di database (`User::role('agent')->whereHas('order', ...)->paginate()`) | `f62129d` |
+| P3: Paginate pesanan dashboard admin per agen langsung di database, memperbaiki pagination yang hilang akibat `groupBy` di PHP | `f62129d` |
 | P5: Eliminasi query N+1 per baris view dengan `withSum('payment as paid_total', 'pay')` dan `withCount()` di controller serta optimasi view | `2b1911d` |
 | P6: Eager loading relasi yang dipakai view: produk (`detail`, `package.package.period`), user (`roles`, `agentProfile`, `adminProfile`), distribusi (`detail.orderDetail...`), paket (`period`), dan pesanan (`detail...`, `distributions.detail`) | `2b1911d` |
 | P8: Link pagination tidak membawa query string (`->withQueryString()` di controller) | `b424a88` |
