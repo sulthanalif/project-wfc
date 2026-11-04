@@ -36,111 +36,89 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA AGEN</th>
-                        <th class="text-center whitespace-nowrap">TOTAL TAGIHAN</th>
-                        <th class="text-center whitespace-nowrap">TOTAL PEMBAYARAN</th>
-                        <th class="text-center whitespace-nowrap">SISA PEMBAYARAN</th>
-                        <th class="text-center whitespace-nowrap">PERSENTASE</th>
-                        <th class="text-center whitespace-nowrap">STATUS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($orders->isEmpty())
-                        <tr>
-                            <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($orders as $agent)
-                            <tr class="intro-x">
-                                @php
-                                    $order = $agent instanceof \App\Models\User ? $agent->order : $agent;
-                                    $totalPrice = $order->sum('total_price');
-                                    $totalPayment = $order->sum(function ($o) {
-                                        return $o->paid_total ?? $o->payment()->where('status', 'accepted')->sum('pay');
-                                    });
-                                    $remainingPayment = $totalPrice - $totalPayment;
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA AGEN</th>
+                    <th class="text-center whitespace-nowrap">TOTAL TAGIHAN</th>
+                    <th class="text-center whitespace-nowrap">TOTAL PEMBAYARAN</th>
+                    <th class="text-center whitespace-nowrap">SISA PEMBAYARAN</th>
+                    <th class="text-center whitespace-nowrap">PERSENTASE</th>
+                    <th class="text-center whitespace-nowrap">STATUS</th>
+                </tr>
+            </x-slot:header>
 
-                                    $allPaid = $order->isNotEmpty() && $order->every(function ($o) {
-                                        return $o->payment_status === 'paid';
-                                    });
-                                    $hasPending = $order->contains(function ($o) {
-                                        return $o->payment_status === 'pending';
-                                    });
-                                    $firstDetail = $order->first()?->detail?->first();
-                                    $period = $firstDetail?->product?->package?->package?->period;
-                                    $accessDate = $period?->access_date
-                                        ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
-                                        : null;
-                                    $agentId = $agent instanceof \App\Models\User ? $agent->id : $order->first()?->agent_id;
-                                    $agentName = $agent instanceof \App\Models\User ? ($agent->agentProfile->name ?? $agent->name ?? $agent->email) : ($order->first()?->agent->agentProfile->name ?? 'N/A');
-                                @endphp
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $orders instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($orders->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
-                                <td>
-                                    <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('payment.show', ['user' => $agentId]) }}"> <i
-                                            data-lucide="external-link" class="w-4 h-4 mr-2"></i>
-                                        {{ $agentName }} </a>
-                                </td>
-                                <td class="text-center">
-                                    <p>
-                                        Rp. {{ number_format($totalPrice, 0, ',', '.') }}
-                                    </p>
-                                </td>
-                                <td class="text-center">
-                                    <p>
-                                        Rp. {{ number_format($totalPayment, 0, ',', '.') }}
-                                    </p>
-                                </td>
-                                <td class="text-center">
-                                    <p>
-                                        Rp. {{ number_format($remainingPayment, 0, ',', '.') }}
-                                    </p>
-                                </td>
-                                <td class="text-center">
-                                    <p>
-                                        {{ $totalPrice > 0 ? number_format(($totalPayment / $totalPrice) * 100, 2) : 0 }}%
-                                    </p>
-                                </td>
-                                <td class="text-center">
-                                    @if ($allPaid)
-                                        <div class="flex items-center justify-center text-success"> <i
-                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> Lunas </div>
-                                    @elseif ($hasPending)
-                                        <div class="flex items-center justify-center text-warning"> <i data-lucide="clock"
-                                                class="w-4 h-4 mr-2"></i> Dicicil </div>
-                                    @else
-                                        <div class="flex items-center justify-center text-danger"> <i data-lucide="x-square"
-                                                class="w-4 h-4 mr-2"></i> Belum Dibayar</div>
+            @if ($orders->isEmpty())
+                <x-table.empty colspan="7" message="Belum Ada Data Pembayaran" />
+            @else
+                @foreach ($orders as $agent)
+                    <tr class="intro-x">
+                        @php
+                            $order = $agent instanceof \App\Models\User ? $agent->order : $agent;
+                            $totalPrice = $order->sum('total_price');
+                            $totalPayment = $order->sum(function ($o) {
+                                return $o->paid_total ?? $o->payment()->where('status', 'accepted')->sum('pay');
+                            });
+                            $remainingPayment = $totalPrice - $totalPayment;
+
+                            $allPaid = $order->isNotEmpty() && $order->every(function ($o) {
+                                return $o->payment_status === 'paid';
+                            });
+                            $hasPending = $order->contains(function ($o) {
+                                return $o->payment_status === 'pending';
+                            });
+                            $firstDetail = $order->first()?->detail?->first();
+                            $period = $firstDetail?->product?->package?->package?->period;
+                            $accessDate = $period?->access_date
+                                ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
+                                : null;
+                            $agentId = $agent instanceof \App\Models\User ? $agent->id : $order->first()?->agent_id;
+                            $agentName = $agent instanceof \App\Models\User ? ($agent->agentProfile->name ?? $agent->name ?? $agent->email) : ($order->first()?->agent->agentProfile->name ?? 'N/A');
+                        @endphp
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $orders instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($orders->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+                        <td>
+                            <a class="text-slate-500 flex items-center mr-3 hover:text-primary transition-colors"
+                                href="{{ route('payment.show', ['user' => $agentId]) }}"> <i
+                                    data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+                                {{ $agentName }} </a>
+                        </td>
+                        <td class="text-center font-medium">
+                            Rp {{ number_format($totalPrice, 0, ',', '.') }}
+                        </td>
+                        <td class="text-center font-medium">
+                            Rp {{ number_format($totalPayment, 0, ',', '.') }}
+                        </td>
+                        <td class="text-center font-medium">
+                            Rp {{ number_format($remainingPayment, 0, ',', '.') }}
+                        </td>
+                        <td class="text-center">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700">
+                                {{ $totalPrice > 0 ? number_format(($totalPayment / $totalPrice) * 100, 2) : 0 }}%
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <x-badge.status type="payment" :status="$allPaid ? 'paid' : ($hasPending ? 'pending' : 'unpaid')" />
+                            @if ($order->contains(function ($item) { return $item->payment_status !== 'paid'; }) && $accessDate !== null)
+                                <div class="mt-1">
+                                    @if ($accessDate < 0)
+                                        <span class="text-danger text-xs font-medium">lewat {{ abs($accessDate) }} hari</span>
+                                    @elseif ($accessDate <= 30)
+                                        <span class="text-warning text-xs font-medium">{{ $accessDate }} hari lagi</span>
                                     @endif
-                                    @if ($order->contains(function ($item) { return $item->payment_status !== 'paid'; }) && $accessDate !== null)
-                                        @if ($accessDate < 0)
-                                            <span class="text-danger text-sm capitalize">lebih {{ abs($accessDate) }} hari</span>
-                                        @elseif ($accessDate <= 30)
-                                            <span class="text-warning text-sm capitalize">{{ $accessDate }} hari lagi</span>
-                                        @endif
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                                </div>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        @if ($orders instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $orders->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$orders" />
         <!-- END: Pagination -->
     </div>
 @endsection

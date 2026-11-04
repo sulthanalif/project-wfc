@@ -26,66 +26,54 @@
 
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter" value="{{ request('search') }}">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">JUDUL KOMISI</th>
-                        <th class="text-center whitespace-nowrap">PAKET</th>
-                        <th class="text-center whitespace-nowrap">TARGET</th>
-                        <th class="text-center whitespace-nowrap">BONUS</th>
+        <x-table.wrapper>
+            <x-slot:thead>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">JUDUL KOMISI</th>
+                    <th class="text-center whitespace-nowrap">PAKET</th>
+                    <th class="text-center whitespace-nowrap">TARGET</th>
+                    <th class="text-center whitespace-nowrap">BONUS</th>
+                </tr>
+            </x-slot:thead>
+            @if ($commissions->isEmpty())
+                <x-table.empty colspan="5" />
+            @else
+                @foreach ($commissions as $commission)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $commissions instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($commissions->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+                        <td>
+                            <a class="text-slate-500 flex items-center mr-3"
+                                href="{{ route('commissions.archive.show', $commission) }}"> <i data-lucide="external-link"
+                                    class="w-4 h-4 mr-2"></i> {{ $commission->title }}
+                            </a>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center">{{ $commission->package->name }} </p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center">{{ $commission->term }}</p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 whitespace-nowrap text-center">
+                                {{ $commission->reward }}
+                            </p>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @if ($commissions->isEmpty())
-                        <tr>
-                            <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($commissions as $commission)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $commissions instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($commissions->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
-                                <td>
-                                    <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('commissions.archive.show', $commission) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $commission->title }}
-                                    </a>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center">{{ $commission->package->name }} </p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center">{{ $commission->term }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 whitespace-nowrap text-center">
-                                        {{ $commission->reward }}
-                                    </p>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        @if ($commissions instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $commissions->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$commissions" />
         <!-- END: Pagination -->
     </div>
 @endsection
-
-

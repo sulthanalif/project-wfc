@@ -84,141 +84,114 @@
             @endif
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter" value="{{ request('search') }}">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA PEMINJAM</th>
-                        <th class="text-center whitespace-nowrap">JUMLAH</th>
-                        <th class="text-center whitespace-nowrap">METODE</th>
-                        <th class="text-center whitespace-nowrap">STATUS PEMBAYARAN</th>
-                        <th class="text-center whitespace-nowrap">TANGGAL</th>
-                        <th class="text-center whitespace-nowrap">KETERANGAN</th>
-                        <th class="text-center whitespace-nowrap">AKSI</th>
+        <x-table.wrapper>
+            <x-slot:thead>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA PEMINJAM</th>
+                    <th class="text-center whitespace-nowrap">JUMLAH</th>
+                    <th class="text-center whitespace-nowrap">METODE</th>
+                    <th class="text-center whitespace-nowrap">STATUS PEMBAYARAN</th>
+                    <th class="text-center whitespace-nowrap">TANGGAL</th>
+                    <th class="text-center whitespace-nowrap">KETERANGAN</th>
+                    <th class="text-center whitespace-nowrap">AKSI</th>
+                </tr>
+            </x-slot:thead>
+            @if ($loans->isEmpty())
+                <x-table.empty colspan="8" />
+            @else
+                @foreach ($loans as $loan)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $loans instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($loans->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+                        <td>
+                            <a class="text-slate-500 flex items-center mr-3"
+                                href="{{ route('loan.show', $loan) }}"> <i data-lucide="external-link"
+                                    class="w-4 h-4 mr-2"></i>
+                                {{ $loan->borrower_name }} </a>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 flex items-center justify-center mr-3">Rp.
+                                {{ number_format($loan->amount, 0, ',', '.') }} </p>
+                        </td>
+                        <td>
+                            <span class="text-slate-500 flex items-center justify-center">
+                                <p class="text-center">
+                                    {{ $loan->method }}
+                                    <br />
+                                    {{ $loan->method == 'Transfer' && $loan->bankOwner ? $loan->bankOwner->name . ' - ' . $loan->bankOwner->account_number : '' }}
+                                </p>
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <x-badge.status type="payment" :status="$loan->status_payment" />
+                        </td>
+                        <td>
+                            <span
+                                class="text-slate-500 flex items-center justify-center">{{ \Carbon\Carbon::parse($loan->date)->format('d-m-Y') }}</span>
+                        </td>
+                        <td>
+                            <span class="text-slate-500">{!! $loan->description !!}</span>
+                        </td>
+                        <td class="table-report__action w-56">
+                            <div class="flex justify-center items-center">
+                                <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
+                                    data-tw-target="#edit-modal{{ $loan->id }}"> <i data-lucide="edit"
+                                        class="w-4 h-4 mr-1"></i> Ubah </a>
+                                @include('cms.admin.finance.loan.modal.edit', ['loan' => $loan])
+                                <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
+                                    data-tw-target="#delete-confirmation-modal{{ $loan->id }}"> <i
+                                        data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @if ($loans->isEmpty())
-                        <tr>
-                            <td colspan="6" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($loans as $loan)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $loans instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($loans->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
-                                <td>
-                                    <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('loan.show', $loan) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i>
-                                        {{ $loan->borrower_name }} </a>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 flex items-center justify-center mr-3">Rp.
-                                        {{ number_format($loan->amount, 0, ',', '.') }} </p>
-                                </td>
-                                <td>
-                                    <span class="text-slate-500 flex items-center justify-center">
-                                        <p class="text-center">
-                                            {{ $loan->method }}
-                                            <br />
-                                            {{ $loan->method == 'Transfer' && $loan->bankOwner ? $loan->bankOwner->name . ' - ' . $loan->bankOwner->account_number : '' }}
-                                        </p>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-slate-500 flex items-center justify-center">
-                                        @if ($loan->status_payment == 'unpaid')
-                                            <div
-                                                class="flex items-center justify-center bg-danger/20 text-danger rounded-full px-3 py-1">
-                                                <i data-lucide="x-circle" class="w-4 h-4 mr-2"></i> Belum Dibayar
-                                            </div>
-                                        @elseif ($loan->status_payment == 'pending')
-                                            <div
-                                                class="flex items-center justify-center bg-warning/20 text-warning rounded-full px-3 py-1">
-                                                <i data-lucide="clock" class="w-4 h-4 mr-2"></i> Dicicil
-                                            </div>
-                                        @else
-                                            <div
-                                                class="flex items-center justify-center bg-success/20 text-success rounded-full px-3 py-1">
-                                                <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Lunas
-                                            </div>
-                                        @endif
-                                    </span>
-                                </td>
-                                <td>
-                                    <span
-                                        class="text-slate-500 flex items-center justify-center">{{ \Carbon\Carbon::parse($loan->date)->format('d-m-Y') }}</span>
-                                </td>
-                                <td>
-                                    <span class="text-slate-500">{!! $loan->description !!}</span>
-                                </td>
-                                <td class="table-report__action w-56">
-                                    <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#edit-modal{{ $loan->id }}"> <i data-lucide="edit"
-                                                class="w-4 h-4 mr-1"></i> Ubah </a>
-                                        @include('cms.admin.finance.loan.modal.edit', ['loan' => $loan])
-                                        <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal{{ $loan->id }}"> <i
-                                                data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                    </div>
-                                </td>
-                            </tr>
 
-                            <!-- BEGIN: Delete Confirmation Modal -->
-                            <div id="delete-confirmation-modal{{ $loan->id }}" class="modal" tabindex="-1"
-                                aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-body p-0">
-                                            <div class="p-5 text-center">
-                                                <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                                <div class="text-slate-500 mt-2">
-                                                    Apakah anda yakin untuk menghapus data ini?
-                                                    <br>
-                                                    Proses tidak akan bisa diulangi.
-                                                </div>
-                                            </div>
-                                            <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('loan.destroy', $loan) }}" method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    @if ($loans instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                                        <input type="hidden" name="page"
-                                                            value="{{ $loans->currentPage() }}">
-                                                    @endif
-                                                    <button type="submit" class="btn btn-danger w-24">Hapus</button>
-                                                    <button type="button" data-tw-dismiss="modal"
-                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                                </form>
-                                            </div>
+                    <!-- BEGIN: Delete Confirmation Modal -->
+                    <div id="delete-confirmation-modal{{ $loan->id }}" class="modal" tabindex="-1"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body p-0">
+                                    <div class="p-5 text-center">
+                                        <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                        <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                        <div class="text-slate-500 mt-2">
+                                            Apakah anda yakin untuk menghapus data ini?
+                                            <br>
+                                            Proses tidak akan bisa diulangi.
                                         </div>
+                                    </div>
+                                    <div class="px-5 pb-8 text-center">
+                                        <form action="{{ route('loan.destroy', $loan) }}" method="post">
+                                            @csrf
+                                            @method('delete')
+                                            @if ($loans instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                <input type="hidden" name="page"
+                                                    value="{{ $loans->currentPage() }}">
+                                            @endif
+                                            <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                            <button type="button" data-tw-dismiss="modal"
+                                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                            <!-- END: Delete Confirmation Modal -->
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </div>
+                    <!-- END: Delete Confirmation Modal -->
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        @if ($loans instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $loans->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$loans" />
         <!-- END: Pagination -->
     </div>
 

@@ -53,125 +53,115 @@
             @endif
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter" value="{{ request('search') }}">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NAMA PENGELUARAN</th>
-                        <th class="text-center whitespace-nowrap">KATEGORI</th>
-                        <th class="text-center whitespace-nowrap">HARGA</th>
-                        <th class="text-center whitespace-nowrap">QTY</th>
-                        <th class="text-center whitespace-nowrap">TOTAL</th>
-                        <th class="text-center whitespace-nowrap">METODE</th>
-                        <th class="text-center whitespace-nowrap">TANGGAL</th>
-                        <th class="text-center whitespace-nowrap">AKSI</th>
+        <x-table.wrapper>
+            <x-slot:thead>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NAMA PENGELUARAN</th>
+                    <th class="text-center whitespace-nowrap">KATEGORI</th>
+                    <th class="text-center whitespace-nowrap">HARGA</th>
+                    <th class="text-center whitespace-nowrap">QTY</th>
+                    <th class="text-center whitespace-nowrap">TOTAL</th>
+                    <th class="text-center whitespace-nowrap">METODE</th>
+                    <th class="text-center whitespace-nowrap">TANGGAL</th>
+                    <th class="text-center whitespace-nowrap">AKSI</th>
+                </tr>
+            </x-slot:thead>
+            @if ($spendings->isEmpty())
+                <x-table.empty colspan="9" />
+            @else
+                @foreach ($spendings as $spending)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $spendings instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($spendings->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+                        <td>
+                            <span class="text-slate-500">{{ $spending->information }}</span>
+                        </td>
+                        <td>
+                            <span class="text-slate-500 flex items-center justify-center">{{ $spending->spendingType->name }}</span>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 flex items-center justify-center whitespace-nowrap">Rp.
+                                {{ number_format($spending->amount, 0, ',', '.') }} </p>
+                        </td>
+                        <td>
+                            <span class="text-slate-500 flex items-center justify-center">{{ $spending->qty ?? 1 }}</span>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 flex items-center justify-center whitespace-nowrap">Rp.
+                                {{ number_format($spending->amount * ($spending->qty ?? 1), 0, ',', '.') }} </p>
+                        </td>
+                        <td>
+                            <span class="text-slate-500 flex items-center justify-center">
+                                <p class="text-center">
+                                    {{ ucfirst($spending->method) }}
+                                    <br />
+                                    {{ strtolower($spending->method) == 'transfer' && $spending->bankOwner ? $spending->bankOwner->name . ' - ' . $spending->bankOwner->account_number : '' }}
+                                </p>
+                            </span>
+                        </td>
+                        <td>
+                            <span
+                                class="text-slate-500 flex items-center justify-center">{{ \Carbon\Carbon::parse($spending->date)->format('d-m-Y') }}</span>
+                        </td>
+                        <td class="table-report__action">
+                            <div class="flex justify-center items-center">
+                                <a class="flex items-center mr-3" href="{{ route('spending.edit', $spending) }}">
+                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
+                                <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
+                                    data-tw-target="#delete-confirmation-modal{{ $spending->id }}"> <i
+                                        data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @if ($spendings->isEmpty())
-                        <tr>
-                            <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($spendings as $spending)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $spendings instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($spendings->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
-                                <td>
-                                    <span class="text-slate-500">{{ $spending->information }}</span>
-                                </td>
-                                <td>
-                                    <span class="text-slate-500 flex items-center justify-center">{{ $spending->spendingType->name }}</span>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 flex items-center justify-center whitespace-nowrap">Rp.
-                                        {{ number_format($spending->amount, 0, ',', '.') }} </p>
-                                </td>
-                                <td>
-                                    <span class="text-slate-500 flex items-center justify-center">{{ $spending->qty ?? 1 }}</span>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 flex items-center justify-center whitespace-nowrap">Rp.
-                                        {{ number_format($spending->amount * ($spending->qty ?? 1), 0, ',', '.') }} </p>
-                                </td>
-                                <td>
-                                    <span class="text-slate-500 flex items-center justify-center">
-                                        <p class="text-center">
-                                            {{ ucfirst($spending->method) }}
-                                            <br />
-                                            {{ strtolower($spending->method) == 'transfer' && $spending->bankOwner ? $spending->bankOwner->name . ' - ' . $spending->bankOwner->account_number : '' }}
-                                        </p>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span
-                                        class="text-slate-500 flex items-center justify-center">{{ \Carbon\Carbon::parse($spending->date)->format('d-m-Y') }}</span>
-                                </td>
-                                <td class="table-report__action">
-                                    <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="{{ route('spending.edit', $spending) }}">
-                                            <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
-                                        <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal{{ $spending->id }}"> <i
-                                                data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                    </div>
-                                </td>
-                            </tr>
 
 
-                            <!-- BEGIN: Delete Confirmation Modal -->
-                            <div id="delete-confirmation-modal{{ $spending->id }}" class="modal" tabindex="-1"
-                                aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-body p-0">
-                                            <div class="p-5 text-center">
-                                                <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                                <div class="text-slate-500 mt-2">
-                                                    Apakah anda yakin untuk menghapus data ini?
-                                                    <br>
-                                                    Proses tidak akan bisa diulangi.
-                                                </div>
-                                            </div>
-                                            <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('spending.destroy', $spending) }}" method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    @if ($spendings instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                                        <input type="hidden" name="page"
-                                                            value="{{ $spendings->currentPage() }}">
-                                                    @endif
-                                                    <button type="submit" class="btn btn-danger w-24">Hapus</button>
-                                                    <button type="button" data-tw-dismiss="modal"
-                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                                </form>
-                                            </div>
+                    <!-- BEGIN: Delete Confirmation Modal -->
+                    <div id="delete-confirmation-modal{{ $spending->id }}" class="modal" tabindex="-1"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body p-0">
+                                    <div class="p-5 text-center">
+                                        <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                        <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                        <div class="text-slate-500 mt-2">
+                                            Apakah anda yakin untuk menghapus data ini?
+                                            <br>
+                                            Proses tidak akan bisa diulangi.
                                         </div>
+                                    </div>
+                                    <div class="px-5 pb-8 text-center">
+                                        <form action="{{ route('spending.destroy', $spending) }}" method="post">
+                                            @csrf
+                                            @method('delete')
+                                            @if ($spendings instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                <input type="hidden" name="page"
+                                                    value="{{ $spendings->currentPage() }}">
+                                            @endif
+                                            <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                            <button type="button" data-tw-dismiss="modal"
+                                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                            <!-- END: Delete Confirmation Modal -->
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </div>
+                    <!-- END: Delete Confirmation Modal -->
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        @if ($spendings instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $spendings->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$spendings" />
         <!-- END: Pagination -->
     </div>
 @endsection

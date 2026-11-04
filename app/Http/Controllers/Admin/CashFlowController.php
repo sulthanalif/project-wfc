@@ -14,12 +14,17 @@ use App\Http\Controllers\Controller;
 
 class CashFlowController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $cashFlows = [];
 
         // Ambil data bank transfer
-        $banks = BankOwner::all();
+        $banksQuery = BankOwner::query();
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $banksQuery->where('name', 'like', "%{$search}%");
+        }
+        $banks = $banksQuery->get();
         foreach ($banks as $bank) {
             $income = Income::where('bank_owner_id', $bank->id)
                 ->where('method', 'transfer')

@@ -28,8 +28,10 @@ class CommissionController extends Controller
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
             $query->where(function ($q) use ($search) {
-                $q->where('reward', 'like', "%{$search}%")
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('reward', 'like', "%{$search}%")
                     ->orWhere('term', 'like', "%{$search}%")
+                    ->orWhereHas('package', fn($p) => $p->where('name', 'like', "%{$search}%"))
                     ->orWhereHas('package.product', fn($p) => $p->where('name', 'like', "%{$search}%"));
             });
         }
@@ -259,8 +261,10 @@ class CommissionController extends Controller
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
             $query->where(function ($q) use ($search) {
-                $q->where('reward', 'like', "%{$search}%")
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('reward', 'like', "%{$search}%")
                     ->orWhere('term', 'like', "%{$search}%")
+                    ->orWhereHas('package', fn($p) => $p->where('name', 'like', "%{$search}%"))
                     ->orWhereHas('package.product', fn($p) => $p->where('name', 'like', "%{$search}%"));
             });
         }

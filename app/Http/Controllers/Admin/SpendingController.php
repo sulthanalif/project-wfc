@@ -18,11 +18,17 @@ class SpendingController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
-        $query = Spending::latest();
+        $query = Spending::with(['bankOwner', 'spendingType'])->latest();
 
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
-            $query->where('information', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('information', 'like', "%{$search}%")
+                    ->orWhere('method', 'like', "%{$search}%")
+                    ->orWhere('amount', 'like', "%{$search}%")
+                    ->orWhereHas('spendingType', fn($st) => $st->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('bankOwner', fn($b) => $b->where('name', 'like', "%{$search}%"));
+            });
         }
 
         if ($perPages == 'all') {

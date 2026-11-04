@@ -27,110 +27,94 @@
 
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-56 relative text-slate-500">
-                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter" value="{{ request('search') }}">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
                 </div>
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">JUDUL KOMISI</th>
-                        <th class="text-center whitespace-nowrap">PAKET</th>
-                        {{-- <th class="text-center whitespace-nowrap">TARGET</th> --}}
-                        <th class="text-center whitespace-nowrap">BONUS</th>
-                        <th class="text-center whitespace-nowrap">AKSI</th>
+        <x-table.wrapper>
+            <x-slot:thead>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">JUDUL KOMISI</th>
+                    <th class="text-center whitespace-nowrap">PAKET</th>
+                    <th class="text-center whitespace-nowrap">BONUS</th>
+                    <th class="text-center whitespace-nowrap">AKSI</th>
+                </tr>
+            </x-slot:thead>
+            @if ($commissions->isEmpty())
+                <x-table.empty colspan="5" />
+            @else
+                @foreach ($commissions as $commission)
+                    <tr class="intro-x">
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $commissions instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($commissions->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+                        <td>
+                            <a class="text-slate-500 flex items-center mr-3"
+                                href="{{ route('commissions.show', $commission) }}"> <i data-lucide="external-link"
+                                    class="w-4 h-4 mr-2"></i> {{ $commission->title }}
+                            </a>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 text-center">{{ $commission->package->name }} </p>
+                        </td>
+                        <td>
+                            <p class="text-slate-500 whitespace-nowrap text-center">
+                                {{ $commission->reward }}
+                            </p>
+                        </td>
+                        <td class="table-report__action w-56">
+                            <div class="flex justify-center items-center">
+                                <a class="flex items-center mr-3" href="{{ route('commissions.edit', $commission) }}"> <i
+                                        data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
+                                <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
+                                    data-tw-target="#delete-confirmation-modal{{ $commission->id }}"> <i
+                                        data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @if ($commissions->isEmpty())
-                        <tr>
-                            <td colspan="7" class="font-medium whitespace-nowrap text-center">Belum Ada Data</td>
-                        </tr>
-                    @else
-                        @foreach ($commissions as $commission)
-                            <tr class="intro-x">
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $commissions instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($commissions->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
-                                <td>
-                                    <a class="text-slate-500 flex items-center mr-3"
-                                        href="{{ route('commissions.show', $commission) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $commission->title }}
-                                    </a>
-                                </td>
-                                <td>
-                                    <p class="text-slate-500 text-center">{{ $commission->package->name }} </p>
-                                </td>
-                                {{-- <td>
-                                    <p class="text-slate-500 text-center">{{ $commission->term }}</p>
-                                </td> --}}
-                                <td>
-                                    <p class="text-slate-500 whitespace-nowrap text-center">
-                                        {{ $commission->reward }}
-                                    </p>
-                                </td>
-                                <td class="table-report__action w-56">
-                                    <div class="flex justify-center items-center">
-                                        <a class="flex items-center mr-3" href="{{ route('commissions.edit', $commission) }}"> <i
-                                                data-lucide="edit" class="w-4 h-4 mr-1"></i> Ubah </a>
-                                        <a class="flex items-center text-danger" href="javascript:;" data-tw-toggle="modal"
-                                            data-tw-target="#delete-confirmation-modal{{ $commission->id }}"> <i
-                                                data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Hapus </a>
-                                    </div>
-                                </td>
-                            </tr>
 
-                            <!-- BEGIN: Delete Confirmation Modal -->
-                            <div id="delete-confirmation-modal{{ $commission->id }}" class="modal" tabindex="-1"
-                                aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-body p-0">
-                                            <div class="p-5 text-center">
-                                                <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                                                <div class="text-3xl mt-5">Apakah anda yakin?</div>
-                                                <div class="text-slate-500 mt-2">
-                                                    Apakah anda yakin untuk menghapus data ini?
-                                                    <br>
-                                                    Proses tidak akan bisa diulangi.
-                                                </div>
-                                            </div>
-                                            <div class="px-5 pb-8 text-center">
-                                                <form action="{{ route('commissions.destroy', $commission) }}" method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    @if ($commissions instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                                        <input type="hidden" name="page"
-                                                            value="{{ $commissions->currentPage() }}">
-                                                    @endif
-                                                    <button type="submit" class="btn btn-danger w-24">Hapus</button>
-                                                    <button type="button" data-tw-dismiss="modal"
-                                                        class="btn btn-outline-secondary w-24 ml-1">Batal</button>
-                                                </form>
-                                            </div>
+                    <!-- BEGIN: Delete Confirmation Modal -->
+                    <div id="delete-confirmation-modal{{ $commission->id }}" class="modal" tabindex="-1"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body p-0">
+                                    <div class="p-5 text-center">
+                                        <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                                        <div class="text-3xl mt-5">Apakah anda yakin?</div>
+                                        <div class="text-slate-500 mt-2">
+                                            Apakah anda yakin untuk menghapus data ini?
+                                            <br>
+                                            Proses tidak akan bisa diulangi.
                                         </div>
+                                    </div>
+                                    <div class="px-5 pb-8 text-center">
+                                        <form action="{{ route('commissions.destroy', $commission) }}" method="post">
+                                            @csrf
+                                            @method('delete')
+                                            @if ($commissions instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                                <input type="hidden" name="page"
+                                                    value="{{ $commissions->currentPage() }}">
+                                            @endif
+                                            <button type="submit" class="btn btn-danger w-24">Hapus</button>
+                                            <button type="button" data-tw-dismiss="modal"
+                                                class="btn btn-outline-secondary w-24 ml-1">Batal</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                            <!-- END: Delete Confirmation Modal -->
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </div>
+                    <!-- END: Delete Confirmation Modal -->
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
         <!-- BEGIN: Pagination -->
-        @if ($commissions instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $commissions->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$commissions" />
         <!-- END: Pagination -->
     </div>
 @endsection
-
-
