@@ -11,7 +11,7 @@
         'stop' => ['bg' => 'bg-primary/10 text-primary border-primary/20', 'icon' => 'pause-circle', 'label' => 'Mundur'],
         'reject' => ['bg' => 'bg-danger/10 text-danger border-danger/20', 'icon' => 'alert-circle', 'label' => 'Ditolak'],
         'canceled' => ['bg' => 'bg-slate-100 text-slate-500 border-slate-200', 'icon' => 'x-circle', 'label' => 'Dibatalkan'],
-        'pending' => ['bg' => 'bg-warning/10 text-warning border-warning/20', 'icon' => 'clock', 'label' => 'Pending'],
+        'pending' => ['bg' => 'bg-warning/10 text-warning border-warning/20', 'icon' => 'clock', 'label' => ($type === 'payment' ? 'Dicicil' : 'Pending')],
         'processed' => ['bg' => 'bg-primary/10 text-primary border-primary/20', 'icon' => 'loader', 'label' => 'Diproses'],
         'finished' => ['bg' => 'bg-success/10 text-success border-success/20', 'icon' => 'check-circle', 'label' => 'Selesai'],
 

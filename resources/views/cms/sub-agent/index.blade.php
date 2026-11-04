@@ -44,34 +44,26 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="whitespace-nowrap">NAMA SUB AGEN</th>
-                        @hasrole('super_admin|admin')
-                            <th class="text-center whitespace-nowrap">DARI AGEN</th>
-                        @endhasrole
-                        <th class="whitespace-nowrap">ALAMAT</th>
-                        <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
-                        @hasrole('super_admin|agent')
-                            <th class="text-center whitespace-nowrap">AKSI</th>
-                        @endhasrole
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($subAgents->isEmpty())
-                        <tr>
-                            <td colspan="6" class="text-center py-8 text-slate-500">
-                                <div class="flex flex-col items-center justify-center">
-                                    <i data-lucide="inbox" class="w-10 h-10 text-slate-300 mb-2"></i>
-                                    <span class="font-medium text-base">Belum Ada Data Sub Agen</span>
-                                </div>
-                            </td>
-                        </tr>
-                    @else
-                        @foreach ($subAgents as $subAgent)
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="whitespace-nowrap">NAMA SUB AGEN</th>
+                    @hasrole('super_admin|admin')
+                        <th class="text-center whitespace-nowrap">DARI AGEN</th>
+                    @endhasrole
+                    <th class="whitespace-nowrap">ALAMAT</th>
+                    <th class="text-center whitespace-nowrap">NOMER TELEPON</th>
+                    @hasrole('super_admin|agent')
+                        <th class="text-center whitespace-nowrap">AKSI</th>
+                    @endhasrole
+                </tr>
+            </x-slot:header>
+
+            @if ($subAgents->isEmpty())
+                <x-table.empty colspan="6" message="Belum Ada Data Sub Agen" />
+            @else
+                @foreach ($subAgents as $subAgent)
                             <tr class="intro-x">
                                 <td>
                                     <p class="font-medium whitespace-nowrap text-center">{{ $subAgents instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($subAgents->firstItem() + $loop->index) : $loop->iteration }}</p>
@@ -148,17 +140,11 @@
                             <!-- END: Delete Confirmation Modal -->
                         @endforeach
                     @endif
-                </tbody>
-            </table>
-        </div>
+        </x-table.wrapper>
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        @if ($subAgents instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $subAgents->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$subAgents" />
         <!-- END: Pagination -->
     </div>
 @endsection

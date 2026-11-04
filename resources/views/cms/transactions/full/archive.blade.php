@@ -58,151 +58,78 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        @hasrole('admin|super_admin')
-                            <th class="text-center whitespace-nowrap"><input type="checkbox" id="selectAllOrders"></th>
-                        @endhasrole
-                        <th class="text-center whitespace-nowrap">#</th>
-                        <th class="text-center whitespace-nowrap">NOMOR PESANAN</th>
-                        @hasrole('super_admin|admin')
-                            <th class="text-center whitespace-nowrap">DARI AGEN</th>
-                        @endhasrole
-                        <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
-                        <th class="text-center whitespace-nowrap">STATUS</th>
-                        <th class="text-center whitespace-nowrap">PEMBAYARAN</th>
-                        <th class="text-center whitespace-nowrap">PENGIRIMAN</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($orders->isEmpty())
-                        <tr>
-                            <td colspan="8" class="text-center py-8 text-slate-500">
-                                <div class="flex flex-col items-center justify-center">
-                                    <i data-lucide="inbox" class="w-10 h-10 text-slate-300 mb-2"></i>
-                                    <span class="font-medium text-base">Belum Ada Data Arsip Pesanan</span>
-                                </div>
-                            </td>
-                        </tr>
-                    @else
-                        @foreach ($orders as $order)
-                            @php
-                                $period = $order->detail->first()?->product?->package?->package?->period;
-                                $accessDate = $period?->access_date
-                                    ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
-                                    : null;
-                            @endphp
-                            <tr class="intro-x">
-                                @hasrole('admin|super_admin')
-                                    <td class="text-center">
-                                        <input type="checkbox" class="order-checkbox" value="{{ $order->id }}">
-                                    </td>
-                                @endhasrole
-                                <td>
-                                    <p class="font-medium whitespace-nowrap text-center">{{ $orders instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($orders->firstItem() + $loop->index) : $loop->iteration }}</p>
-                                </td>
-                                <td>
-                                    <a class="text-slate-500 flex items-center mr-3 hover:text-primary transition-colors"
-                                        href="{{ route('order.full.archive.show', $order) }}"> <i data-lucide="external-link"
-                                            class="w-4 h-4 mr-2"></i> {{ $order->order_number }} </a>
-                                </td>
-                                @hasrole('super_admin|admin')
-                                    <td class="text-center capitalize">
-                                        {{ $order->agent->agentProfile->name }}
-                                    </td>
-                                @endhasrole
-                                <td class="text-center font-medium">
-                                    Rp {{ number_format($order->total_price, 0, ',', '.') }}
-                                </td>
-                                <td class="text-center">
-                                    @if ($order->status === 'accepted')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
-                                            <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-1.5"></i> Diterima
-                                        </span>
-                                    @elseif ($order->status === 'stop')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-                                            <i data-lucide="pause-circle" class="w-3.5 h-3.5 mr-1.5"></i> Mundur
-                                        </span>
-                                    @elseif ($order->status === 'reject')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-danger/10 text-danger border border-danger/20">
-                                            <i data-lucide="alert-circle" class="w-3.5 h-3.5 mr-1.5"></i> Ditolak
-                                        </span>
-                                    @elseif ($order->status === 'canceled')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
-                                            <i data-lucide="x-circle" class="w-3.5 h-3.5 mr-1.5"></i> Dibatalkan
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20">
-                                            <i data-lucide="clock" class="w-3.5 h-3.5 mr-1.5"></i> Pending
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if ($order->payment_status === 'paid')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
-                                            <i data-lucide="check-square" class="w-3.5 h-3.5 mr-1.5"></i> Lunas
-                                        </span>
-                                    @elseif ($order->payment_status === 'pending')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20">
-                                            <i data-lucide="clock" class="w-3.5 h-3.5 mr-1.5"></i> Dicicil
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-danger/10 text-danger border border-danger/20">
-                                            <i data-lucide="x-square" class="w-3.5 h-3.5 mr-1.5"></i> Belum Dibayar
-                                        </span>
-                                    @endif
-                                    @if ($order->payment_status !== 'paid' && $accessDate !== null)
-                                        <div class="mt-1">
-                                            @if ($accessDate < 0)
-                                                <span class="text-danger text-xs font-medium">lewat {{ abs($accessDate) }} hari</span>
-                                            @elseif ($accessDate <= 30)
-                                                <span class="text-warning text-xs font-medium">{{ $accessDate }} hari lagi</span>
-                                            @endif
-                                        </div>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if ($order->isAllItemDistributed())
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
-                                            <i data-lucide="truck" class="w-3.5 h-3.5 mr-1.5"></i> Sukses
-                                        </span>
-                                    @elseif ($order->distributions->isNotEmpty())
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20">
-                                            <i data-lucide="clock" class="w-3.5 h-3.5 mr-1.5"></i> Sedang Proses
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
-                                            <i data-lucide="package" class="w-3.5 h-3.5 mr-1.5"></i> Belum Dikirim
-                                        </span>
-                                    @endif
-                                </td>
-                                                lagi</span>
-                                        @endif
-                                    @endif
-                                </td>
-                                <td>
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    @hasrole('admin|super_admin')
+                        <th class="text-center whitespace-nowrap"><input type="checkbox" id="selectAllOrders"></th>
+                    @endhasrole
+                    <th class="text-center whitespace-nowrap">#</th>
+                    <th class="text-center whitespace-nowrap">NOMOR PESANAN</th>
+                    @hasrole('super_admin|admin')
+                        <th class="text-center whitespace-nowrap">DARI AGEN</th>
+                    @endhasrole
+                    <th class="text-center whitespace-nowrap">TOTAL HARGA</th>
+                    <th class="text-center whitespace-nowrap">STATUS</th>
+                    <th class="text-center whitespace-nowrap">PEMBAYARAN</th>
+                    <th class="text-center whitespace-nowrap">PENGIRIMAN</th>
+                </tr>
+            </x-slot:header>
 
-                                    @if ($order->isAllItemDistributed())
-                                        <div class="flex items-center justify-center text-success"> <i
-                                                data-lucide="check-square" class="w-4 h-4 mr-2"></i> Sukses </div>
-                                    @else
-                                        @if ($order->distributions->isNotEmpty())
-                                            <div class="flex items-center justify-center text-warning"> <i
-                                                    data-lucide="clock" class="w-4 h-4 mr-2"></i> Sedang Proses </div>
-                                        @else
-                                            <div class="flex items-center justify-center text-primary"> <i
-                                                    data-lucide="clock" class="w-4 h-4 mr-2"></i> Belum Dikirim </div>
-                                        @endif
+            @if ($orders->isEmpty())
+                <x-table.empty colspan="8" message="Belum Ada Data Arsip Pesanan" />
+            @else
+                @foreach ($orders as $order)
+                    @php
+                        $period = $order->detail->first()?->product?->package?->package?->period;
+                        $accessDate = $period?->access_date
+                            ? now()->diffInDays(\Carbon\Carbon::parse($period->access_date), false)
+                            : null;
+                    @endphp
+                    <tr class="intro-x">
+                        @hasrole('admin|super_admin')
+                            <td class="text-center">
+                                <input type="checkbox" class="order-checkbox" value="{{ $order->id }}">
+                            </td>
+                        @endhasrole
+                        <td>
+                            <p class="font-medium whitespace-nowrap text-center">{{ $orders instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($orders->firstItem() + $loop->index) : $loop->iteration }}</p>
+                        </td>
+                        <td>
+                            <a class="text-slate-500 flex items-center mr-3 hover:text-primary transition-colors"
+                                href="{{ route('order.full.archive.show', $order) }}"> <i data-lucide="external-link"
+                                    class="w-4 h-4 mr-2"></i> {{ $order->order_number }} </a>
+                        </td>
+                        @hasrole('super_admin|admin')
+                            <td class="text-center capitalize">
+                                {{ $order->agent->agentProfile->name }}
+                            </td>
+                        @endhasrole
+                        <td class="text-center font-medium">
+                            Rp {{ number_format($order->total_price, 0, ',', '.') }}
+                        </td>
+                        <td class="text-center">
+                            <x-badge.status :status="$order->status" />
+                        </td>
+                        <td class="text-center">
+                            <x-badge.status type="payment" :status="$order->payment_status" />
+                            @if ($order->payment_status !== 'paid' && $accessDate !== null)
+                                <div class="mt-1">
+                                    @if ($accessDate < 0)
+                                        <span class="text-danger text-xs font-medium">lewat {{ abs($accessDate) }} hari</span>
+                                    @elseif ($accessDate <= 30)
+                                        <span class="text-warning text-xs font-medium">{{ $accessDate }} hari lagi</span>
                                     @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                                </div>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            <x-badge.status :status="$order->isAllItemDistributed() ? 'delivered' : ($order->distributions->isNotEmpty() ? 'shipping' : 'undelivered')" />
+                        </td>
+                    </tr>
+                @endforeach
+            @endif
+        </x-table.wrapper>
         <!-- END: Data List -->
 
         @hasrole('admin|super_admin')
@@ -213,11 +140,7 @@
         @endhasrole
 
         <!-- BEGIN: Pagination -->
-        @if ($orders instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $orders->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$orders" />
         <!-- END: Pagination -->
     </div>
 @endsection

@@ -50,36 +50,28 @@
             </div>
         </div>
         <!-- BEGIN: Data List -->
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-report -mt-2">
-                <thead>
-                    <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">NOMOR PENGEMBALIAN</th>
-                        @hasrole('super_admin|admin')
-                            <th class="text-center">DARI AGEN</th>
-                        @endhasrole
-                        <th class="text-center">TOTAL ITEM</th>
-                        <th class="text-center">STATUS PENGEMBALIAN</th>
-                        <th class="text-center">TANGGAL PENGAJUAN</th>
-                        @hasrole('super_admin|admin')
-                            <th class="text-center">TANGGAL PENGEMBALIAN</th>
-                        @endhasrole
-                        <th class="text-center">KETERANGAN</th>
-                        <th class="text-center">AKSI</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($returns->isEmpty())
-                        <tr>
-                            <td colspan="10" class="text-center py-8 text-slate-500">
-                                <div class="flex flex-col items-center justify-center">
-                                    <i data-lucide="inbox" class="w-10 h-10 text-slate-300 mb-2"></i>
-                                    <span class="font-medium text-base">Belum Ada Data Pengembalian</span>
-                                </div>
-                            </td>
-                        </tr>
-                    @else
+        <x-table.wrapper>
+            <x-slot:header>
+                <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">NOMOR PENGEMBALIAN</th>
+                    @hasrole('super_admin|admin')
+                        <th class="text-center">DARI AGEN</th>
+                    @endhasrole
+                    <th class="text-center">TOTAL ITEM</th>
+                    <th class="text-center">STATUS PENGEMBALIAN</th>
+                    <th class="text-center">TANGGAL PENGAJUAN</th>
+                    @hasrole('super_admin|admin')
+                        <th class="text-center">TANGGAL PENGEMBALIAN</th>
+                    @endhasrole
+                    <th class="text-center">KETERANGAN</th>
+                    <th class="text-center">AKSI</th>
+                </tr>
+            </x-slot:header>
+
+            @if ($returns->isEmpty())
+                <x-table.empty colspan="10" message="Belum Ada Data Pengembalian" />
+            @else
                         @foreach ($returns as $return)
                             <tr class="intro-x">
                                 <td>
@@ -103,23 +95,7 @@
                                     </p>
                                 </td>
                                 <td class="text-center">
-                                    @if ($return->status == 'pending')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20">
-                                            <i data-lucide="clock" class="w-3.5 h-3.5 mr-1.5"></i> Pending
-                                        </span>
-                                    @elseif ($return->status == 'processed')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-                                            <i data-lucide="loader" class="w-3.5 h-3.5 mr-1.5"></i> Diproses
-                                        </span>
-                                    @elseif ($return->status == 'finished')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
-                                            <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-1.5"></i> Selesai
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-danger/10 text-danger border border-danger/20">
-                                            <i data-lucide="x-circle" class="w-3.5 h-3.5 mr-1.5"></i> Ditolak
-                                        </span>
-                                    @endif
+                                    <x-badge.status :status="$return->status" />
                                 </td>
                                 <td>
                                     <p class="text-center">
@@ -169,17 +145,11 @@
                             </tr>
                         @endforeach
                     @endif
-                </tbody>
-            </table>
-        </div>
+        </x-table.wrapper>
         <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        @if ($returns instanceof \Illuminate\Pagination\LengthAwarePaginator)
-            <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center">
-                {{ $returns->links('cms.layouts.paginate') }}
-            </div>
-        @endif
+        <x-table.pagination :collection="$returns" />
         <!-- END: Pagination -->
     </div>
 @endsection
