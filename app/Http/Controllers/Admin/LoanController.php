@@ -28,7 +28,7 @@ class LoanController extends Controller
             $search = trim($request->get('search'));
             $query->where(function ($q) use ($search) {
                 $q->where('borrower_name', 'like', "%{$search}%")
-                    ->orWhere('information', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
