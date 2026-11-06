@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TableFilter;
+use App\Models\Period;
 use App\Models\Spending;
 use App\Models\SubProduct;
-use App\Models\OrderDetail;
 use App\Models\SpendingType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,61 +14,42 @@ use Illuminate\Support\Facades\Validator;
 
 class ProcurementController extends Controller
 {
-    public $spendingType;
-    public $datas;
-
-    public function __construct()
+    /**
+     * Kebutuhan sub produk dari pesanan accepted vs jumlah yang sudah diadakan (pengeluaran jenis "Pengadaan").
+     * Dengan periode: kebutuhan dari pesanan di periode itu, pengadaan dari pengeluaran bertanggal dalam rentang periode.
+     */
+    private function computeDatas(?Period $period): array
     {
-        // Menggunakan firstOrCreate agar lebih tangguh
-        $this->spendingType = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
-        $spendingTypeId = $this->spendingType->id;
+        $spendingTypeId = SpendingType::firstOrCreate(['name' => 'Pengadaan'])->id;
 
-        // =========================================================================
-        // LANGKAH 1: HITUNG TOTAL KEBUTUHAN DARI SEMUA ORDER (SAMA SEPERTI SEBELUMNYA)
-        // =========================================================================
-        $orderDetails = OrderDetail::whereHas('order', function ($query) {
-            $query->where('status', 'accepted');
-        })->with('product.subProduct.subProduct')->get();
+        // Dijumlahkan di database: memuat ribuan detail pesanan sebagai model lalu di-loop di PHP butuh beberapa detik.
+        $neededSubProducts = DB::table('order_details')
+            ->join('orders', 'orders.id', '=', 'order_details.order_id')
+            ->join('product_sub_products as psp', 'psp.product_id', '=', 'order_details.product_id')
+            ->join('sub_products', 'sub_products.id', '=', 'psp.sub_product_id')
+            ->where('orders.status', 'accepted')
+            ->when($period, fn ($q) => $q->whereIn('order_details.order_id', TableFilter::orderIdsInPeriods([$period->id])))
+            ->groupBy('sub_products.id', 'sub_products.name', 'sub_products.unit')
+            ->orderBy('sub_products.name')
+            ->selectRaw('sub_products.id, sub_products.name, sub_products.unit, SUM(order_details.qty * psp.amount) as needed')
+            ->get()
+            ->keyBy('id')
+            ->map(fn ($row) => (array) $row)
+            ->all();
 
-        $neededSubProducts = [];
-        foreach ($orderDetails as $detail) {
-            if (!$detail->product || !$detail->product->subProduct) {
-                continue;
-            }
+        // Total pengadaan per item dicocokkan lewat kolom 'information' ("Pengadaan: <nama>"), satu query untuk semua item.
+        $procuredByInfo = Spending::where('spending_type_id', $spendingTypeId)
+            ->when($period, fn ($q) => TableFilter::byPeriodDates('date')($q, $period->id))
+            ->groupBy('information')
+            ->selectRaw('information, SUM(qty) as total')
+            ->pluck('total', 'information')
+            // Sama seperti perbandingan kolom di MySQL: tanpa beda huruf besar/kecil dan spasi di akhir.
+            ->mapWithKeys(fn ($total, $info) => [mb_strtolower(rtrim($info)) => $total]);
 
-            foreach ($detail->product->subProduct as $sub) {
-                if (!$sub->subProduct) {
-                    continue;
-                }
-                $subProductId = $sub->subProduct->id;
-                $calculatedQty = $detail->qty * $sub->amount;
-
-                if (!isset($neededSubProducts[$subProductId])) {
-                    $neededSubProducts[$subProductId] = [
-                        'id'    => $subProductId,
-                        'name'  => $sub->subProduct->name,
-                        'unit'  => $sub->subProduct->unit,
-                        'needed' => 0,
-                    ];
-                }
-                $neededSubProducts[$subProductId]['needed'] += $calculatedQty;
-            }
-        }
-
-        // =========================================================================
-        // LANGKAH 2: GABUNGKAN DATA & HITUNG SISA BERDASARKAN KOLOM 'information'
-        // =========================================================================
         $finalData = [];
         foreach ($neededSubProducts as $subProductId => $data) {
-            $subProductName = $data['name'];
             $needed = $data['needed'];
-
-            // Cari total pengadaan untuk item ini berdasarkan namanya di kolom 'information'
-            $procured = Spending::where('spending_type_id', $spendingTypeId)
-                                ->where('information', 'Pengadaan: ' . $subProductName)
-                                ->sum('qty'); // Gunakan sum() untuk total yang akurat
-
-            $remaining = $needed - $procured;
+            $procured = (float) ($procuredByInfo[mb_strtolower(rtrim('Pengadaan: ' . $data['name']))] ?? 0);
 
             $finalData[$subProductId] = [
                 'id'          => $data['id'],
@@ -75,20 +57,23 @@ class ProcurementController extends Controller
                 'unit'        => $data['unit'],
                 'needed'      => $needed,
                 'procurement' => $procured,
-                'remaining'   => $procured < $needed ? $remaining : 0,
+                'remaining'   => $procured < $needed ? $needed - $procured : 0,
                 'over' =>   $procured > $needed ? $procured - $needed : 0,
             ];
         }
 
-        $this->datas = $finalData;
+        return $finalData;
     }
 
     public function index(Request $request)
     {
-        $procurements = $this->datas;
+        $filters = TableFilter::apply(Period::query(), $request, [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'apply' => null],
+        ]);
+        $periodId = $filters['period']['value'];
+        $procurements = $this->computeDatas($periodId === 'all' ? null : Period::find($periodId));
 
-
-        return view('cms.admin.finance.procurement.index', compact('procurements'));
+        return view('cms.admin.finance.procurement.index', compact('procurements', 'filters'));
     }
 
     public function show(Spending $spending)
@@ -99,7 +84,8 @@ class ProcurementController extends Controller
 
     public function create()
     {
-        $filteredDatasubs = array_filter($this->datas, function ($item) {
+        $active = Period::where('is_active', 1)->first();
+        $filteredDatasubs = array_filter($this->computeDatas($active), function ($item) {
             return isset($item['remaining']) && $item['remaining'] > 0;
         });
 

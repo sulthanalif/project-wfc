@@ -12,6 +12,7 @@ use App\Models\SpendingType;
 use App\Exports\LoanExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -32,6 +33,18 @@ class LoanController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'apply' => TableFilter::byPeriodDates('date')],
+            'status_payment' => ['label' => 'Status', 'type' => 'select', 'options' => ['unpaid' => 'Belum Dibayar', 'pending' => 'Dicicil', 'paid' => 'Lunas']],
+            'method' => ['label' => 'Metode', 'type' => 'select', 'options' => ['tunai' => 'Tunai', 'transfer' => 'Transfer']],
+            'date' => ['label' => 'Tanggal', 'type' => 'date_range'],
+        ]);
+
+        // Total dari semua pinjaman yang lolos filter, bukan hanya baris di halaman ini.
+        $totalLoans = (clone $query)->sum('amount');
+        $totalPayments = LoanPayment::whereIn('loan_id', (clone $query)->reorder()->select('id'))->sum('pay');
+        $totalRemaining = $totalLoans - $totalPayments;
+
         if ($perPages == 'all') {
             $loans = $query->take(100)->get();
         } else {
@@ -39,15 +52,9 @@ class LoanController extends Controller
             $loans = $query->paginate($perPage)->withQueryString();
         }
 
-        $totalLoans = $loans->sum('amount');
-        $totalPayments = $loans->sum(function ($loan) {
-            return $loan->loanPayments->sum('pay');
-        });
-        $totalRemaining = $totalLoans - $totalPayments;
-
         $banks = BankOwner::all();
 
-        return view('cms.admin.finance.loan.index', compact('loans', 'totalLoans', 'totalPayments', 'totalRemaining', 'banks'));
+        return view('cms.admin.finance.loan.index', compact('loans', 'totalLoans', 'totalPayments', 'totalRemaining', 'banks', 'filters'));
     }
 
     public function export()

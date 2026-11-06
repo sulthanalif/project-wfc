@@ -10,6 +10,8 @@ use App\Models\BankOwner;
 use App\Models\LoanPayment;
 use App\Models\SpendingType;
 use Illuminate\Http\Request;
+use App\Models\Period;
+use App\Helpers\TableFilter;
 use App\Http\Controllers\Controller;
 
 class CashFlowController extends Controller
@@ -17,6 +19,17 @@ class CashFlowController extends Controller
     public function index(Request $request)
     {
         $cashFlows = [];
+
+        // Default semua periode: halaman ini menampilkan saldo. Bila periode dipilih, angka menjadi arus kas selama periode itu.
+        $filters = TableFilter::apply(BankOwner::query(), $request, [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'default' => 'all', 'apply' => null],
+        ]);
+        $period = $filters['period']['value'] === 'all' ? null : Period::find($filters['period']['value']);
+        $inPeriod = function ($q) use ($period) {
+            if ($period) {
+                $q->whereDate('date', '>=', $period->start_date)->whereDate('date', '<=', $period->end_date);
+            }
+        };
 
         // Ambil data bank transfer
         $banksQuery = BankOwner::query();
@@ -28,21 +41,21 @@ class CashFlowController extends Controller
         foreach ($banks as $bank) {
             $income = Income::where('bank_owner_id', $bank->id)
                 ->where('method', 'transfer')
-                ->sum('amount');
+                ->where($inPeriod)->sum('amount');
             // $loanPayment = LoanPayment::where('method', 'transfer')
             //     ->where('bank_owner_id', $bank->id)
-            //     ->sum('pay');
+            //     ->where($inPeriod)->sum('pay');
             $order = $bank->payments()
                     ->where('status', 'accepted')
                     ->where('bank_owner_id', $bank->id)
                     ->where('method', 'transfer')
-                    ->sum('pay');
+                    ->where($inPeriod)->sum('pay');
             $spending = Spending::where('method', 'transfer')
                 ->where('bank_owner_id', $bank->id)
-                ->sum('amount');
+                ->where($inPeriod)->sum('amount');
             $loan = Loan::where('method', 'transfer')
                 ->where('bank_owner_id', $bank->id)
-                ->sum('amount');
+                ->where($inPeriod)->sum('amount');
             $cashFlows[] = [
                 'method' => $bank->name,
                 'incomes' => $income,
@@ -54,13 +67,13 @@ class CashFlowController extends Controller
         }
 
         // Ambil data tunai
-        $incomeCash = Income::where('method', 'Tunai')->sum('amount');
-        // $loanPaymentCash = LoanPayment::where('method', 'Tunai')->sum('pay');
+        $incomeCash = Income::where('method', 'Tunai')->where($inPeriod)->sum('amount');
+        // $loanPaymentCash = LoanPayment::where('method', 'Tunai')->where($inPeriod)->sum('pay');
         $orderCash = Payment::where('status', 'accepted')
             ->where('method', 'Tunai')
-            ->sum('pay');
-        $spendingCash = Spending::where('method', 'Tunai')->sum('amount');
-        $loanCash = Loan::where('method', 'Tunai')->sum('amount');
+            ->where($inPeriod)->sum('pay');
+        $spendingCash = Spending::where('method', 'Tunai')->where($inPeriod)->sum('amount');
+        $loanCash = Loan::where('method', 'Tunai')->where($inPeriod)->sum('amount');
 
         $cashFlows[] = [
             'method' => 'Tunai',
@@ -71,7 +84,7 @@ class CashFlowController extends Controller
             'balance' => ($incomeCash + $orderCash) - ($spendingCash + $loanCash),
         ];
 
-        return view('cms.admin.finance.cash-flow.index', compact('cashFlows'));
+        return view('cms.admin.finance.cash-flow.index', compact('cashFlows', 'filters'));
     }
 
     public function create()

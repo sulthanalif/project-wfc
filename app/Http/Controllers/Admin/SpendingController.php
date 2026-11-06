@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Spending;
 use App\Models\SpendingType;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use App\Exports\SpendingExport;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -31,15 +32,23 @@ class SpendingController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'apply' => TableFilter::byPeriodDates('date')],
+            'spending_type_id' => ['label' => 'Jenis', 'type' => 'select', 'options' => SpendingType::orderBy('name')->pluck('name', 'id')->all()],
+            'method' => ['label' => 'Metode', 'type' => 'select', 'options' => ['tunai' => 'Tunai', 'transfer' => 'Transfer']],
+            'bank_owner_id' => ['label' => 'Rekening', 'type' => 'select', 'options' => BankOwner::orderBy('name')->pluck('name', 'id')->all()],
+            'date' => ['label' => 'Tanggal', 'type' => 'date_range'],
+        ]);
+        $totalSpending = (clone $query)->reorder()->selectRaw('SUM(amount * COALESCE(qty, 1)) as total')->value('total');
+
         if ($perPages == 'all') {
             $spendings = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
             $spendings = $query->paginate($perPage)->withQueryString();
         }
-        $totalSpending = Spending::selectRaw('SUM(amount * COALESCE(qty, 1)) as total')->value('total');
 
-        return view('cms.admin.finance.spending.index', compact('spendings', 'totalSpending'));
+        return view('cms.admin.finance.spending.index', compact('spendings', 'totalSpending', 'filters'));
     }
 
     public function export()

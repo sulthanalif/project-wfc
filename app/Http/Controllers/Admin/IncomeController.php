@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\IncomeExport;
 use App\Models\Income;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\BankOwner;
@@ -29,14 +30,21 @@ class IncomeController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'apply' => TableFilter::byPeriodDates('date')],
+            'method' => ['label' => 'Metode', 'type' => 'select', 'options' => ['tunai' => 'Tunai', 'transfer' => 'Transfer']],
+            'bank_owner_id' => ['label' => 'Rekening', 'type' => 'select', 'options' => BankOwner::orderBy('name')->pluck('name', 'id')->all()],
+            'date' => ['label' => 'Tanggal', 'type' => 'date_range'],
+        ]);
+        $totalIncome = (clone $query)->sum('amount');
+
         if ($perPages == 'all') {
             $incomes = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
             $incomes = $query->paginate($perPage)->withQueryString();
         }
-        $totalIncome = Income::sum('amount');
-        return view('cms.admin.finance.income.index', compact('incomes', 'totalIncome'));
+        return view('cms.admin.finance.income.index', compact('incomes', 'totalIncome', 'filters'));
     }
 
     public function export(Request $request)
