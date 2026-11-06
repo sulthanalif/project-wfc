@@ -8,7 +8,10 @@ Tidak ada isu keamanan yang belum diperbaiki. Seluruh celah keamanan S1 s/d S6 t
 
 ## Bug
 
-Tidak ada bug yang belum diperbaiki. Seluruh bug B1 s/d B12 telah selesai diperbaiki.
+| # | Masalah | Lokasi |
+|---|---|---|
+| B13 | Total pengeluaran dihitung `SUM(amount × qty)`, padahal pengadaan menyimpan `amount = harga × qty`. Baris pengadaan terhitung `harga × qty²`. Arus kas menjumlahkan `amount` saja, jadi kedua halaman tidak sama. Perlu dipastikan dulu arti `amount` di form pengeluaran manual. | `SpendingController@index`, `ProcurementController@store`, `CashFlowController@index` |
+| B14 | Modal pinjaman di-include per baris dan masing-masing memuat `ckeditor-classic.js` serta script dengan `const` yang sama, sehingga muncul error `ckeditor-duplicated-modules` dan redeklarasi. | `cms/admin/finance/loan/modal/*.blade.php` |
 
 ## Pagination
 
@@ -42,6 +45,12 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 
 | Masalah | Commit |
 |---|---|
+| Export pesanan & pembayaran hanya berisi baris halaman aktif karena `paginate()` mengubah query yang dipakai export | `optimalisasi` |
+| Export arsip pesanan mengunduh data periode aktif (link mengarah ke export index) | `optimalisasi` |
+| Tombol export retur tidak berfungsi (controller tidak menangani `export`) | `optimalisasi` |
+| Search di tabel Dashboard admin diabaikan server | `optimalisasi` |
+| Total pinjaman hanya menghitung baris di halaman aktif | `optimalisasi` |
+| Form agen Full/Titik Aman memakai `form.submit()` sehingga lolos dari pengiriman fetch dan error "situs tidak dapat dijangkau" saat koneksi putus | `main` 8da4866 |
 | S1: Pembatasan route dan controller status pesanan/pembayaran (`order.accOrder`, `order.changeOrderStatus`, `order.bulkConvertToSafePoint`, `changePaymentStatus`, `changePaymentVerify`, `return.changeStatus`) hanya untuk role admin/super_admin/finance_admin | `optimalisasi` |
 | S2: Pengecekan otorisasi kepemilikan dan proteksi anti-IDOR di detail pesanan, arsip pesanan, ubah item, tambah item, pembayaran agen, retur produk, faktur invoice, dan sub agen | `optimalisasi` |
 | S3: `Order*Controller@store` memaksa `agent_id` sesuai user login untuk agen, mencegah manipulasi pesanan atas nama agen lain | `optimalisasi` |

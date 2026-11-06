@@ -8,11 +8,11 @@ Semua pesanan ada di tabel `orders`. Menu hanya membedakan isinya:
 
 | Menu | Controller | Filter di `index` |
 |---|---|---|
-| Pesanan (semua) | `Transaction\OrderController` | Produk di periode aktif |
+| Pesanan (semua) | `Transaction\OrderController` | Semua pesanan |
 | Paket Full | `Transaction\OrderFullController` | Punya minimal satu produk `is_safe_point = false` |
 | Titik Aman | `Transaction\OrderAmanController` | Semua produknya `is_safe_point = true` |
 
-Ketiganya juga punya `archive` dan `archiveShow` untuk pesanan dari periode yang tidak aktif. Di sidebar admin, menu Pesanan (semua) dan submenu Full/Titik Aman tampil bersamaan; agen hanya melihat Full dan Titik Aman.
+Index ketiganya punya filter periode (default periode aktif), status, pembayaran, agen, dan tanggal pesanan (`Order::tableFilters()`). `archive` dan `archiveShow` menampilkan pesanan dari periode yang tidak aktif; filter periodenya hanya berisi periode tidak aktif. Di sidebar admin, menu Pesanan (semua) dan submenu Full/Titik Aman tampil bersamaan; agen hanya melihat Full dan Titik Aman.
 
 ## Alur status
 
