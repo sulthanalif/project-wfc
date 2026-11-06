@@ -358,4 +358,5 @@
             $('#orderForm').submit();
         }
     </script>
+    <script src="{{ asset('assets/cms/js/order-draft.js') }}" data-user="{{ auth()->id() }}" data-success="{{ route('order.index') }}"></script>
 @endpush

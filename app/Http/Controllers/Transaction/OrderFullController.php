@@ -277,7 +277,7 @@ class OrderFullController extends Controller
 
     public function create()
     {
-        $orders = Order::all()->count();
+        $orders = Order::count();
         $orderNumber = GenerateRandomString::make(8) . now()->format('dmY') . '-' . ($orders + 1);
 
         $packages = Package::with('product')->whereHas('period', function ($query) {
@@ -296,7 +296,7 @@ class OrderFullController extends Controller
             ]);
         } else {
             return view('cms.transactions.full.create', [
-                'agents' => User::role('agent')->where('active', 1)->get(),
+                'agents' => User::role('agent')->where('active', 1)->with(['agentProfile', 'subAgent'])->get(),
                 'orderNumber' => $orderNumber,
                 'packages' => $packages
             ]);
@@ -319,6 +319,12 @@ class OrderFullController extends Controller
 
         if ($validator->fails()) {
             return back()->with('error', $validator->errors());
+        }
+
+        // Kirim ulang setelah koneksi putus (order-draft.js): pesanan dengan nomor ini sudah tersimpan.
+        // Dua kiriman yang benar-benar bersamaan ditahan unique index, lihat catch di bawah.
+        if (Order::where('order_number', $request->order_number)->exists()) {
+            return redirect()->route('order.full.index')->with('success', 'Pesanan sudah tersimpan');
         }
 
         $periode = Period::where('is_active', 1)->first();
@@ -414,6 +420,8 @@ class OrderFullController extends Controller
             } else {
                 return redirect()->route('order.full.index')->with('error', 'Pesanan Gagal Dibuat');
             }
+        } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+            return redirect()->route('order.full.index')->with('success', 'Pesanan sudah tersimpan');
         } catch (\Throwable $th) {
             $data = [
                 'message' => $th->getMessage(),
