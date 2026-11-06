@@ -10,6 +10,7 @@ use App\Models\Payment;
 use App\Models\BankOwner;
 use App\Exports\ExportDatas;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use App\Helpers\ValidateRole;
 use App\Mail\NotificationPayment;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,76 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
+    /** Daftar agen beserta pesanan accepted/stop, dipakai halaman Pembayaran dan Dashboard admin. */
+    public static function agentPaymentQuery(Request $request): array
+    {
+        $query = User::role('agent');
+
+        // Periode & status membatasi agen yang tampil sekaligus pesanan yang dijumlahkan per agen.
+        $filters = TableFilter::apply($query, $request, [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'apply' => null],
+            'payment' => [
+                'label' => 'Status Pembayaran',
+                'type' => 'select',
+                'options' => ['paid' => 'Lunas', 'pending' => 'Dicicil', 'unpaid' => 'Belum Lunas'],
+                'apply' => null,
+            ],
+        ]);
+        $periodId = $filters['period']['value'];
+        $orderScope = function ($q) use ($periodId) {
+            $q->whereIn('status', ['accepted', 'stop']);
+            if ($periodId !== 'all') {
+                TableFilter::byOrderPeriod()($q, $periodId);
+            }
+        };
+
+        $query->whereHas('order', $orderScope)
+            ->with([
+                'agentProfile',
+                'order' => function ($q) use ($orderScope) {
+                    $orderScope($q);
+                    $q->with('detail.product.package.package.period')
+                        ->withSum(['payment as paid_total' => function ($pq) {
+                            $pq->where('status', 'accepted');
+                        }], 'pay');
+                }
+            ]);
+
+        // Sama dengan label di view: Lunas bila semua pesanan lunas, Dicicil bila ada yang dicicil.
+        $withPaymentStatus = fn ($status, $not = false) => fn ($q) => $q->where(function ($o) use ($orderScope, $status, $not) {
+            $orderScope($o);
+            $o->where('payment_status', $not ? '!=' : '=', $status);
+        });
+        match ($filters['payment']['value']) {
+            'paid' => $query->whereDoesntHave('order', $withPaymentStatus('paid', true)),
+            'pending' => $query->whereHas('order', $withPaymentStatus('pending')),
+            'unpaid' => $query->whereHas('order', $withPaymentStatus('paid', true))->whereDoesntHave('order', $withPaymentStatus('pending')),
+            default => null,
+        };
+
+        if ($request->filled('search')) {
+            $search = trim($request->get('search'));
+            $query->whereHas('agentProfile', function ($ap) use ($search) {
+                $ap->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        return [$query, $filters, $orderScope];
+    }
+
+    private static function orderPaymentFilters(): array
+    {
+        return [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'apply' => TableFilter::byOrderPeriod()],
+            'payment_status' => [
+                'label' => 'Status Pembayaran',
+                'type' => 'select',
+                'options' => ['unpaid' => 'Belum Dibayar', 'pending' => 'Dicicil', 'paid' => 'Lunas'],
+            ],
+            'order_date' => ['label' => 'Tanggal Pesanan', 'type' => 'date_range'],
+        ];
+    }
+
     public function index(Request $request)
     {
         $perPages = $request->get('perPage') ?? 10;
@@ -44,48 +115,31 @@ class PaymentController extends Controller
                 $query->where('order_number', 'like', "%{$search}%");
             }
 
+            $filters = TableFilter::apply($query, $request, self::orderPaymentFilters());
+
             if ($perPages == 'all') {
-                $orders = $query->take(100)->get();
+                $orders = (clone $query)->take(100)->get();
             } else {
                 $perPage = min(max(intval($perPages), 1), 100);
-                $orders = $query->paginate($perPage)->withQueryString();
+                $orders = (clone $query)->paginate($perPage)->withQueryString();
             }
 
-            return view('cms.agen.payment.index', compact('orders', 'user'));
+            return view('cms.agen.payment.index', compact('orders', 'user', 'filters'));
         } else {
             $perPages = $request->get('perPage') ?? 10;
 
-            $query = User::role('agent')
-                ->whereHas('order', function ($q) {
-                    $q->whereIn('status', ['accepted', 'stop']);
-                })
-                ->with([
-                    'agentProfile',
-                    'order' => function ($q) {
-                        $q->whereIn('status', ['accepted', 'stop'])
-                            ->with('detail.product.package.package.period')
-                            ->withSum(['payment as paid_total' => function ($pq) {
-                                $pq->where('status', 'accepted');
-                            }], 'pay');
-                    }
-                ]);
+            [$query, $filters, $orderScope] = self::agentPaymentQuery($request);
 
-            if ($request->filled('search')) {
-                $search = trim($request->get('search'));
-                $query->whereHas('agentProfile', function ($ap) use ($search) {
-                    $ap->where('name', 'like', "%{$search}%");
-                });
-            }
 
             if ($perPages == 'all') {
-                $orders = $query->take(100)->get();
+                $orders = (clone $query)->take(100)->get();
             } else {
                 $perPage = min(max(intval($perPages), 1), 100);
-                $orders = $query->paginate($perPage)->withQueryString();
+                $orders = (clone $query)->paginate($perPage)->withQueryString();
             }
 
             if ($request->get('export') == 'true') {
-                $datas = Order::with('agent.agentProfile')->whereIn('status', ['accepted', 'stop'])->get()->groupBy('agent_id')->map(function ($item) {
+                $datas = Order::with('agent.agentProfile')->whereIn('agent_id', (clone $query)->select('users.id'))->where($orderScope)->get()->groupBy('agent_id')->map(function ($item) {
                     $allPaid = $item->every(function ($o) {
                         return $o->payment_status === 'paid';
                     });
@@ -108,7 +162,7 @@ class PaymentController extends Controller
                 return Excel::download(new ExportDatas($datas, 'Data Pembayaran', $headers), 'Data Pembayaran.xlsx');
             }
 
-            return view('cms.admin.payment.index', compact('orders'));
+            return view('cms.admin.payment.index', compact('orders', 'filters'));
         }
     }
 
@@ -127,15 +181,17 @@ class PaymentController extends Controller
             ->where('agent_id', $user->id)
             ->whereIn('status', ['accepted', 'stop']);
 
+        $filters = TableFilter::apply($query, $request, self::orderPaymentFilters());
+
         if ($perPages == 'all') {
-            $orders = $query->take(100)->get();
+            $orders = (clone $query)->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $orders = $query->paginate($perPage)->withQueryString();
+            $orders = (clone $query)->paginate($perPage)->withQueryString();
         }
 
         if ($request->get('export') == 'true') {
-            $datas = Order::with('agent.agentProfile')->where('agent_id', $user->id)->whereIn('status', ['accepted', 'stop'])->get()->map(function ($item) {
+            $datas = (clone $query)->get()->map(function ($item) {
                 return [
                     'order_number' => $item->order_number,
                     'order_date' => $item->order_date,
@@ -157,7 +213,7 @@ class PaymentController extends Controller
             return Excel::download(new ExportDatas($datas, 'Data Pembayaran Paket #' . $user->agentProfile->name, $headers), 'Data Pembayaran Paket '.$user->agentProfile->name.' .xlsx');
         }
 
-        return view('cms.admin.payment.show', compact('user', 'packages', 'orders'));
+        return view('cms.admin.payment.show', compact('user', 'packages', 'orders', 'filters'));
     }
 
     public function showPaymentAgent(User $user, Order $order)

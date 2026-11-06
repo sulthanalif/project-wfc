@@ -96,6 +96,7 @@
 
                         </div>
                     </div>
+                    <x-table.filter :filters="$filters" class="mt-3" />
                     <!-- BEGIN: Data List -->
                     <div class="intro-y box col-span-12 overflow-auto lg:overflow-visible mt-5">
                         <table class="table table-report -mt-2">

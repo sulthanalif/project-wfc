@@ -10,7 +10,7 @@
             </h2>
             {{-- <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
                 @hasrole('admin|super_admin')
-                    <a href="{{ route('return.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
+                    <a href="{{ request()->fullUrlWithQuery(['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
                             data-lucide="download"></i> Export</a>
                 @endhasrole
             </div> --}}
@@ -22,17 +22,6 @@
                 <a href="{{ route('return.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Pengembalian</a>
             @endhasrole
             @include('cms.layouts.per-page')
-            <div class="w-auto relative text-slate-500 mt-2 lg:mt-0">
-                <select id="records_per_status" class="form-control box">
-                    <option value="pending" {{ request()->get('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="finished" {{ request()->get('status') == 'finished' ? 'selected' : '' }}>Selesai
-                    </option>
-                    <option value="processed" {{ request()->get('status') == 'processed' ? 'selected' : '' }}>Proses
-                    </option>
-                    <option value="rejected" {{ request()->get('status') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
-                    <option value="all" {{ request()->get('status') == 'all' ? 'selected' : '' }}>All</option>
-                </select>
-            </div>
 
             @if ($returns instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $returns->firstItem() }} hingga
@@ -49,6 +38,7 @@
 
             </div>
         </div>
+        <x-table.filter :filters="$filters" />
         <!-- BEGIN: Data List -->
         <x-table.wrapper>
             <x-slot:header>

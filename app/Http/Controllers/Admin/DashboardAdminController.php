@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Transaction\PaymentController;
 use App\Models\Order;
 use App\Models\Product;
 use Maatwebsite\Excel\Facades\Excel;
@@ -44,23 +45,10 @@ class DashboardAdminController extends Controller
 
         $orderPages = $request->get('orderPage') ?? 10;
 
-        $orderQuery = User::role('agent')
-            ->whereHas('order', function ($q) {
-                $q->whereIn('status', ['accepted', 'stop']);
-            })
-            ->with([
-                'agentProfile',
-                'order' => function ($q) {
-                    $q->whereIn('status', ['accepted', 'stop'])
-                        ->with('detail.product.package.package.period')
-                        ->withSum(['payment as paid_total' => function ($pq) {
-                            $pq->where('status', 'accepted');
-                        }], 'pay');
-                }
-            ]);
+        [$orderQuery, $filters] = PaymentController::agentPaymentQuery($request);
 
         if ($orderPages == 'all') {
-            $orders = $orderQuery->get();
+            $orders = $orderQuery->take(100)->get();
         } else {
             $orderPage = min(max(intval($orderPages), 1), 100);
             $orders = $orderQuery->paginate($orderPage, ['*'], 'page')->withQueryString();
@@ -90,6 +78,6 @@ class DashboardAdminController extends Controller
                 return Excel::download(new ExportDatas($datas, 'Data Pembayaran', $headers), 'Data Pembayaran.xlsx');
             }
 
-        return view('cms.admin.index', compact('data', 'orders'));
+        return view('cms.admin.index', compact('data', 'orders', 'filters'));
     }
 }

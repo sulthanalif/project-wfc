@@ -7,9 +7,19 @@ use App\Helpers\UUIDGenerator;
 use App\Helpers\ValidateRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
+    /** Subquery id pesanan yang punya produk dengan is_safe_point = $safe. Lebih cepat dari whereHas pada query ber-ORDER BY. */
+    public static function idsWithSafePoint(bool $safe)
+    {
+        return DB::table('order_details')
+            ->join('products', 'products.id', '=', 'order_details.product_id')
+            ->where('products.is_safe_point', $safe)
+            ->select('order_details.order_id');
+    }
+
     /** Filter tabel pesanan (index & arsip). Arsip hanya memilih periode yang tidak aktif. */
     public static function tableFilters(bool $archive = false): array
     {

@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\Period;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Filter tabel dari query string. Controller mendaftarkan filter, helper ini menerapkannya ke query
@@ -15,7 +16,8 @@ use Illuminate\Http\Request;
  *   'type'    => 'select' | 'date_range' | 'period'
  *   'options' => [value => label]           select (period: otomatis dari tabel periods)
  *   'column'  => 'status'                   kolom untuk where bawaan, default = key
- *   'apply'   => fn ($query, $value) => ... menggantikan where bawaan (wajib untuk period)
+ *   'apply'   => fn ($query, $value) => ... menggantikan where bawaan (wajib untuk period);
+ *                null = hanya membaca nilai, controller menerapkannya sendiri (pakai $filters[key]['value'])
  *   'default' => nilai bila parameter tidak ada (period: periode aktif)
  */
 class TableFilter
@@ -47,7 +49,7 @@ class TableFilter
             }
             $def['value'] = $value;
 
-            if ($value === 'all') continue;
+            if ($value === 'all' || (array_key_exists('apply', $def) && $def['apply'] === null)) continue;
 
             isset($def['apply']) ? $def['apply']($query, $value) : $query->where($column, $value);
         }
@@ -66,12 +68,30 @@ class TableFilter
         };
     }
 
-    /** Periode lewat paket produk pesanan. $orderRelation diisi bila query bukan Order (mis. 'order' untuk Payment). */
-    public static function byOrderPeriod(?string $orderRelation = null): Closure
+    /**
+     * Periode lewat paket produk pesanan: kolom $column (berisi id pesanan) harus ada di daftar pesanan periode itu.
+     * $through diisi bila kolom itu ada di relasi, mis. byOrderPeriod('order_id', 'productReturnDetail').
+     * Pakai subquery join sekali jalan; whereHas 4 tingkat dievaluasi per baris dan lambat di tabel besar.
+     */
+    public static function byOrderPeriod(string $column = 'id', ?string $through = null): Closure
     {
-        $path = ($orderRelation ? $orderRelation . '.' : '') . 'detail.product.package.package';
+        return function ($query, $periodId) use ($column, $through) {
+            $orderIds = self::orderIdsInPeriods([$periodId]);
 
-        return fn ($query, $periodId) => $query->whereHas($path, fn ($q) => $q->where('period_id', $periodId));
+            $through
+                ? $query->whereHas($through, fn ($q) => $q->whereIn($column, $orderIds))
+                : $query->whereIn($query->qualifyColumn($column), $orderIds);
+        };
+    }
+
+    /** Subquery id pesanan yang punya produk dari paket di periode-periode ini. */
+    public static function orderIdsInPeriods($periodIds)
+    {
+        return DB::table('order_details')
+            ->join('product_packages', 'product_packages.product_id', '=', 'order_details.product_id')
+            ->join('packages', 'packages.id', '=', 'product_packages.package_id')
+            ->whereIn('packages.period_id', $periodIds)
+            ->select('order_details.order_id');
     }
 
     /** Hanya opsi periode tertentu (mis. arsip: periode tidak aktif). */

@@ -8,7 +8,7 @@
             Pembayaran Paket #{{ $user->agentProfile->name }}
         </h2>
         @hasrole('admin|super_admin')
-            <a href="{{ route('payment.show', ['user' => $user->id, 'export' => 'true']) }}" class="btn btn-sm btn-primary"><i
+            <a href="{{ request()->fullUrlWithQuery(['export' => 'true']) }}" class="btn btn-sm btn-primary"><i
                     class="w-4 h-4" data-lucide="download"></i> Export</a>
         @endhasrole
         <a href="{{ route('payment.index') }}" class="btn px-2 box"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
@@ -32,6 +32,7 @@
 
             </div>
         </div>
+        <x-table.filter :filters="$filters" />
         <!-- BEGIN: Data List -->
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
             <table class="table table-report -mt-2">

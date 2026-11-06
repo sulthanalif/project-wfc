@@ -8,6 +8,7 @@ use App\Models\Package;
 use App\Models\OrderDetail;
 use App\Models\SubAgent;
 use App\Models\User;
+use App\Helpers\TableFilter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -21,9 +22,14 @@ class CommissionController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
-        $query = Commission::whereHas('package.period', function ($query) {
-            $query->where('is_active', 1);
-        })->latest();
+        $query = Commission::latest();
+        $filters = TableFilter::apply($query, $request, [
+            'period' => [
+                'label' => 'Periode',
+                'type' => 'period',
+                'apply' => fn ($q, $id) => $q->whereHas('package', fn ($p) => $p->where('period_id', $id)),
+            ],
+        ]);
 
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
@@ -37,13 +43,13 @@ class CommissionController extends Controller
         }
 
         if ($perPages == 'all') {
-            $commissions = $query->get();
+            $commissions = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
             $commissions = $query->paginate($perPage)->withQueryString();
         }
 
-        return view('cms.admin.commissions.index', compact('commissions'));
+        return view('cms.admin.commissions.index', compact('commissions', 'filters'));
     }
 
     /**
@@ -254,9 +260,16 @@ class CommissionController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
-        $query = Commission::whereHas('package.period', function ($query) {
-            $query->where('is_active', 0);
-        })->latest();
+        $query = Commission::whereHas('package.period', fn ($q) => $q->where('is_active', 0))->latest();
+        $filters = TableFilter::apply($query, $request, [
+            'period' => [
+                'label' => 'Periode',
+                'type' => 'period',
+                'options' => TableFilter::periods(false),
+                'default' => 'all',
+                'apply' => fn ($q, $id) => $q->whereHas('package', fn ($p) => $p->where('period_id', $id)),
+            ],
+        ]);
 
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
@@ -270,13 +283,13 @@ class CommissionController extends Controller
         }
 
         if ($perPages == 'all') {
-            $commissions = $query->get();
+            $commissions = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
             $commissions = $query->paginate($perPage)->withQueryString();
         }
 
-        return view('cms.admin.commissions.archive', compact('commissions'));
+        return view('cms.admin.commissions.archive', compact('commissions', 'filters'));
     }
 
     public function archiveShow(Commission $commission)

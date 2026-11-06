@@ -1,6 +1,6 @@
 @if ($paginator->hasPages())
     <nav class="w-full sm:w-auto sm:mr-auto">
-        <ul class="pagination">
+        <ul class="pagination flex-wrap">
             {{-- Previous Page Link --}}
             @if ($paginator->onFirstPage())
                 <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.previous')">

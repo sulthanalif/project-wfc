@@ -10,6 +10,10 @@ use App\Models\ProductReturn;
 use App\Models\ProductReturnDetail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ExportDatas;
+use App\Models\AgentProfile;
+use App\Helpers\TableFilter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +25,6 @@ class ProductReturnController extends Controller
     public function index(Request $request)
     {
         $perPages = $request->get('perPage') ?? 10;
-        $status = $request->get('status') ?? 'all';
 
         $query = ProductReturn::with([
             'user.agentProfile',
@@ -32,13 +35,24 @@ class ProductReturnController extends Controller
             ->withCount('productReturnDetail')
             ->orderBy('date_in', 'desc');
 
-        if ($status != 'all') {
-            $query->where('status', $status);
-        }
-
-        if (auth()->user()->hasRole('agent')) {
+        $isAgent = auth()->user()->hasRole('agent');
+        if ($isAgent) {
             $query->where('user_id', auth()->id());
         }
+
+        $filterDefs = [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'apply' => TableFilter::byOrderPeriod('order_id', 'productReturnDetail')],
+            'status' => [
+                'label' => 'Status',
+                'type' => 'select',
+                'options' => ['pending' => 'Pending', 'processed' => 'Diproses', 'finished' => 'Selesai', 'rejected' => 'Ditolak'],
+            ],
+        ];
+        if (!$isAgent) {
+            $filterDefs['user_id'] = ['label' => 'Agen', 'type' => 'select', 'options' => AgentProfile::orderBy('name')->pluck('name', 'user_id')->all()];
+        }
+        $filterDefs['date_in'] = ['label' => 'Tanggal Pengajuan', 'type' => 'date_range'];
+        $filters = TableFilter::apply($query, $request, $filterDefs);
 
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
@@ -48,14 +62,29 @@ class ProductReturnController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $returns = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $returns = $query->paginate($perPage)->withQueryString();
+        if ($request->get('export') == 'true') {
+            $datas = (clone $query)->get()->map(fn ($r) => [
+                'return_number' => $r->return_number,
+                'agent_name' => $r->user?->agentProfile?->name ?? $r->user?->name ?? 'N/A',
+                'total_item' => $r->product_return_detail_count,
+                'status' => $r->status,
+                'date_in' => $r->date_in,
+                'date_out' => $r->date_out,
+                'notes' => $r->notes,
+            ]);
+            $headers = ['return_number', 'agent_name', 'total_item', 'status', 'date_in', 'date_out', 'notes'];
+
+            return Excel::download(new ExportDatas($datas, 'Data Pengembalian', $headers), 'Data Pengembalian.xlsx');
         }
 
-        return view('cms.return.index', compact('returns'));
+        if ($perPages == 'all') {
+            $returns = (clone $query)->take(100)->get();
+        } else {
+            $perPage = min(max(intval($perPages), 1), 100);
+            $returns = (clone $query)->paginate($perPage)->withQueryString();
+        }
+
+        return view('cms.return.index', compact('returns', 'filters'));
     }
 
     /**

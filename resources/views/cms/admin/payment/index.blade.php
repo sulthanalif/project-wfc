@@ -10,7 +10,7 @@
             </h2>
             <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
                 @hasrole('admin|super_admin')
-                    <a href="{{ route('payment.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
+                    <a href="{{ request()->fullUrlWithQuery(['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
                             data-lucide="download"></i> Export</a>
                 @endhasrole
             </div>
@@ -35,6 +35,7 @@
 
             </div>
         </div>
+        <x-table.filter :filters="$filters" />
         <!-- BEGIN: Data List -->
         <x-table.wrapper>
             <x-slot:header>

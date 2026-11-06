@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\OrderDetail;
 use App\Models\Distribution;
 use Illuminate\Http\Request;
+use App\Models\AgentProfile;
+use App\Helpers\TableFilter;
 use App\Models\DistributionDetail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -43,6 +45,23 @@ class DistributionController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'apply' => TableFilter::byOrderPeriod('order_id')],
+            'status' => [
+                'label' => 'Status',
+                'type' => 'select',
+                'options' => ['on_process' => 'Diproses', 'delivered' => 'Selesai', 'cancelled' => 'Dibatalkan'],
+            ],
+            'is_delivery' => ['label' => 'Pengiriman', 'type' => 'select', 'options' => ['1' => 'Diantar', '0' => 'Diambil']],
+            'agent_id' => [
+                'label' => 'Agen',
+                'type' => 'select',
+                'options' => AgentProfile::orderBy('name')->pluck('name', 'user_id')->all(),
+                'apply' => fn ($q, $id) => $q->whereHas('order', fn ($o) => $o->where('agent_id', $id)),
+            ],
+            'date' => ['label' => 'Tanggal', 'type' => 'date_range'],
+        ]);
+
         if ($perPages == 'all') {
             $distributions = $query->take(100)->get();
         } else {
@@ -50,7 +69,7 @@ class DistributionController extends Controller
             $distributions = $query->paginate($perPage)->withQueryString();
         }
 
-        return view('cms.admin.distributions.index', compact('distributions'));
+        return view('cms.admin.distributions.index', compact('distributions', 'filters'));
     }
 
     /**

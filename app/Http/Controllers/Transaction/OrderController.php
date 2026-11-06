@@ -57,10 +57,10 @@ class OrderController extends Controller
         }
 
         if ($perPages == 'all') {
-            $orders = $query->orderByDesc('created_at')->take(100)->get();
+            $orders = (clone $query)->orderByDesc('created_at')->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $orders = $query->orderByDesc('created_at')->paginate($perPage)->withQueryString();
+            $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
         }
 
         if (ValidateRole::check('agent')) {
@@ -105,9 +105,7 @@ class OrderController extends Controller
         $perPages = $request->get('perPage') ?? 10;
 
         $query = Order::query()
-            ->whereHas('detail.product.package.package.period', function ($query) {
-                $query->where('is_active', 0);
-            })
+            ->whereIn('orders.id', TableFilter::orderIdsInPeriods(Period::where('is_active', 0)->pluck('id')))
             ->with(['detail.product.package.package.period', 'agent.agentProfile', 'distributions.detail']);
 
         if (ValidateRole::check('agent')) {
@@ -130,10 +128,10 @@ class OrderController extends Controller
         }
 
         if ($perPages == 'all') {
-            $orders = $query->orderByDesc('created_at')->take(100)->get();
+            $orders = (clone $query)->orderByDesc('created_at')->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
-            $orders = $query->orderByDesc('created_at')->paginate($perPage)->withQueryString();
+            $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
         }
 
         if ($request->get('export') == 'true') {
