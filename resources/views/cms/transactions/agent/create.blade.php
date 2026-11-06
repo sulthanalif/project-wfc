@@ -146,7 +146,8 @@
 
             const itemId = selectedOption.value;
             const itemName = selectedOption.textContent.trim().split(' - ')[0];
-            const itemPrice = parseInt(selectedOption.dataset.harga);
+            // <option> buatan tom-select tidak membawa data-harga; ambil dari data option tom-select
+            const itemPrice = parseInt(productSelect.tomselect.options[itemId].dataset.harga, 10);
             const itemQuantity = 1;
             const newRow = createTableRow(itemId, itemName, itemPrice, itemQuantity);
             $('.transaksiItem').append(newRow);
@@ -314,4 +315,5 @@
             $('#orderForm').submit();
         }
     </script>
+    <script src="{{ asset('assets/cms/js/order-draft.js') }}" data-user="{{ auth()->id() }}" data-success="{{ route('order.index') }}"></script>
 @endpush

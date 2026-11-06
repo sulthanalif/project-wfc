@@ -33,7 +33,7 @@ class ProductReturnController extends Controller
     public function create()
     {
         $user = auth()->user();
-        $returns = ProductReturn::all()->count();
+        $returns = ProductReturn::count();
         $returnNumber = GenerateRandomString::make(8) . now()->format('dmY') . '-' . ($returns + 1);
         $agents = collect();
         if (!$user->hasRole('agent')) {

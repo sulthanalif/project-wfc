@@ -97,7 +97,7 @@ class ReportController extends Controller
 
     public function productDetail(Request $request)
     {
-        $orders = Order::all();
+        $orders = Order::where('status', 'accepted')->with('detail.product')->get();
 
         $datas = [];
 
@@ -123,7 +123,7 @@ class ReportController extends Controller
                         }
                     } else {
                         $datas[] = [
-                            'package' => 'Order dengan nomor ' . $order->order->order_number . ' Paket Tidak Tersedia' . ' (' . $order->product_id . ')',
+                            'package' => 'Order dengan nomor ' . $item->order_number . ' Paket Tidak Tersedia' . ' (' . $order->product_id . ')',
                             'total_product' => $order->qty,
                         ];
                     }

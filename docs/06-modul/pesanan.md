@@ -48,10 +48,30 @@ Form mengirim:
 Di `store()`:
 
 1. Validasi dengan `Validator::make`.
-2. Khusus Full: agen yang sudah punya pesanan Full (selain `reject`) di periode aktif ditolak.
-3. Item dengan `productId` dan `subAgentId` yang sama digabung (qty dijumlah).
-4. `sub_price` setiap detail dihitung di server: `Product::total_price × qty`. Nilai `subTotal` dari browser diabaikan.
-5. `orders.total_price` di-update menjadi jumlah `sub_price`.
+2. Kalau `order_number` sudah ada di `orders`, langsung redirect ke index dengan pesan "Pesanan sudah tersimpan". Ini menahan pesanan dobel saat form dikirim ulang setelah koneksi putus. Dua kiriman yang benar-benar bersamaan ditahan unique index `orders.order_number`; `UniqueConstraintViolationException` dibalas dengan pesan yang sama.
+3. Khusus Full: agen yang sudah punya pesanan Full (selain `reject`) di periode aktif ditolak.
+4. Item dengan `productId` dan `subAgentId` yang sama digabung (qty dijumlah).
+5. `sub_price` setiap detail dihitung di server: `Product::total_price × qty`. Nilai `subTotal` dari browser diabaikan.
+6. `orders.total_price` di-update menjadi jumlah `sub_price`.
+
+### Kirim lewat fetch dan draft lokal
+
+Keenam view create memuat `public/assets/cms/js/order-draft.js` (atribut `data-user` dan `data-success` berisi route index tujuan).
+
+- Form dikirim dengan `fetch`, bukan submit biasa. Kalau koneksi putus, halaman tidak berpindah dan isian tetap ada; muncul pesan di atas form. Error validasi dan halaman `cms.error` juga ditampilkan di atas form.
+- Isian (nomor pesanan, agen, tanggal, item, qty, sub agen) disimpan di `localStorage` dengan kunci `orderDraft:{user_id}:{path}` setiap kali berubah. Saat form dibuka lagi, browser menawarkan untuk memulihkan isian. Draft dihapus setelah berhasil disimpan, saat tawaran pemulihan ditolak, atau kalau umurnya lebih dari 1 hari.
+- Tombol Simpan di semua form harus memanggil `$('#orderForm').submit()`, bukan `form.submit()` bawaan DOM. `form.submit()` tidak memicu event submit, sehingga form terkirim biasa dan halaman berpindah ke error browser saat koneksi putus.
+- Karena `fetch` mengikuti redirect, flash `success` sudah terpakai sebelum halaman index dibuka. Middleware `KeepFlashForFetch` (grup `web`) menyimpannya lagi untuk request GET yang membawa header `X-Order-Fetch`.
+
+### Unique index `order_number`
+
+Migration `2026_11_06_000000_add_unique_index_to_orders_order_number` berhenti dengan `RuntimeException` dan daftar nomornya kalau masih ada `order_number` dobel. Cari dulu:
+
+```sql
+SELECT order_number, COUNT(*) c FROM orders GROUP BY order_number HAVING c > 1;
+```
+
+Periksa tiap nomor (detail, pembayaran, distribusi), hapus atau ganti nomor pesanan yang salah, lalu jalankan `php artisan migrate --force` lagi.
 
 ## Detail pesanan
 
