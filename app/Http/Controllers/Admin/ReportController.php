@@ -13,6 +13,9 @@ use App\Models\OrderDetail;
 use App\Models\Distribution;
 use App\Models\SpendingType;
 use Illuminate\Http\Request;
+use App\Models\Period;
+use App\Models\AgentProfile;
+use App\Helpers\TableFilter;
 use App\Helpers\PaginationHelper;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -47,38 +50,62 @@ class ReportController extends Controller
         );
     }
 
+    /**
+     * Filter periode (default aktif) dan agen untuk laporan. $scope membatasi query pesanan (tabel orders)
+     * ke pesanan accepted yang lolos filter; dipakai di daftar, subquery, dan kartu total supaya angkanya konsisten.
+     */
+    private function reportFilters(Request $request, bool $withAgent = true): array
+    {
+        $defs = ['period' => ['label' => 'Periode', 'type' => 'period', 'apply' => null]];
+        if ($withAgent) {
+            $defs['agent_id'] = [
+                'label' => 'Agen',
+                'type' => 'select',
+                'options' => AgentProfile::orderBy('name')->pluck('name', 'user_id')->all(),
+                'apply' => null,
+            ];
+        }
+        $filters = TableFilter::apply(Order::query(), $request, $defs);
+        $periodId = $filters['period']['value'];
+        $agentId = $filters['agent_id']['value'] ?? 'all';
+
+        // Id pesanan periode diambil sekali; subquery yang sama di dalam agregasi besar dievaluasi lambat oleh MySQL.
+        $orderIds = $periodId === 'all' ? null : TableFilter::orderIdsInPeriods([$periodId])->distinct()->pluck('order_details.order_id')->all();
+
+        $scope = function ($q) use ($orderIds, $agentId) {
+            $q->where('orders.status', 'accepted');
+            if ($orderIds !== null) {
+                $q->whereIn('orders.id', $orderIds);
+            }
+            if ($agentId !== 'all') {
+                $q->where('orders.agent_id', $agentId);
+            }
+        };
+
+        return [$filters, $scope, $periodId === 'all' ? null : Period::find($periodId), $orderIds];
+    }
+
     public function totalDeposit(Request $request)
     {
-        $getAgent = $request->get('agent');
         $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
-
-        $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
-            $q->whereNotNull('name')
-                ->orderBy('name', 'asc');
-        })->where('active', 1)->get();
+        [$filters, $scope] = $this->reportFilters($request);
 
         $agentsQuery = User::role('agent')
-            ->whereHas('order', function ($q) {
-                $q->where('status', 'accepted');
-            })
-            ->whereHas('agentProfile', function ($q) use ($getAgent) {
-                if ($getAgent && $getAgent !== 'all') {
-                    $q->where('name', 'like', '%' . $getAgent . '%');
-                }
-            })
+            ->whereHas('order', $scope)
+            ->whereHas('agentProfile')
             ->with('agentProfile')
             ->select('users.*')
             ->selectSub(
                 Order::selectRaw('coalesce(sum(total_price), 0)')
                     ->whereColumn('orders.agent_id', 'users.id')
-                    ->where('orders.status', 'accepted'),
+                    ->where($scope),
                 'total_price_order'
             )
             ->selectSub(
                 Payment::selectRaw('coalesce(sum(payments.pay), 0)')
                     ->join('orders', 'payments.order_id', '=', 'orders.id')
                     ->whereColumn('orders.agent_id', 'users.id')
-                    ->where('orders.status', 'accepted')
+                    ->where($scope)
                     ->where('payments.status', 'accepted'),
                 'total_deposit'
             );
@@ -88,19 +115,11 @@ class ReportController extends Controller
             $agentsQuery->whereHas('agentProfile', fn($q) => $q->where('name', 'like', "%{$search}%"));
         }
 
-        $orderStatsQuery = Order::where('status', 'accepted');
-        if ($getAgent && $getAgent !== 'all') {
-            $orderStatsQuery->whereHas('agent.agentProfile', fn($q) => $q->where('name', 'like', '%' . $getAgent . '%'));
-        }
-        $totalPriceOrderAll = (float) $orderStatsQuery->sum('total_price');
-
-        $paymentStatsQuery = Payment::where('status', 'accepted')->whereHas('order', function ($q) use ($getAgent) {
-            $q->where('status', 'accepted');
-            if ($getAgent && $getAgent !== 'all') {
-                $q->whereHas('agent.agentProfile', fn($ap) => $ap->where('name', 'like', '%' . $getAgent . '%'));
-            }
-        });
-        $totalDepositAll = (float) $paymentStatsQuery->sum('pay');
+        $totalPriceOrderAll = (float) Order::where($scope)->sum('total_price');
+        $totalDepositAll = (float) Payment::join('orders', 'payments.order_id', '=', 'orders.id')
+            ->where('payments.status', 'accepted')
+            ->where($scope)
+            ->sum('payments.pay');
         $totalRemainingAll = $totalPriceOrderAll - $totalDepositAll;
 
         $stats = [
@@ -130,16 +149,17 @@ class ReportController extends Controller
             ];
         });
 
-        return view('cms.admin.reports.total-deposit', compact('stats', 'datas', 'agentsName'));
+        return view('cms.admin.reports.total-deposit', compact('stats', 'datas', 'filters'));
     }
 
     public function productDetail(Request $request)
     {
         $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        [$filters, $scope] = $this->reportFilters($request);
 
         $productDetailsQuery = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
             ->leftJoin('products', 'order_details.product_id', '=', 'products.id')
-            ->where('orders.status', 'accepted')
+            ->where($scope)
             ->select([
                 'order_details.product_id',
                 'products.name as product_name',
@@ -154,8 +174,8 @@ class ReportController extends Controller
             $productDetailsQuery->where('products.name', 'like', "%{$search}%");
         }
 
-        $totalProductAll = (int) OrderDetail::whereHas('order', fn($q) => $q->where('status', 'accepted'))->sum('qty');
-        $totalPriceAll = (float) Order::where('status', 'accepted')->sum('total_price');
+        $totalProductAll = (int) OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')->where($scope)->sum('order_details.qty');
+        $totalPriceAll = (float) Order::where($scope)->sum('total_price');
 
         $stats = [
             'totalProductAll' => $totalProductAll,
@@ -189,33 +209,35 @@ class ReportController extends Controller
             ];
         });
 
-        return view('cms.admin.reports.product-detail', compact('stats', 'datas'));
+        return view('cms.admin.reports.product-detail', compact('stats', 'datas', 'filters'));
     }
 
     public function agentProductDetail(Request $request, $productId)
     {
         $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        [$filters, $scope] = $this->reportFilters($request);
         $product = Product::where('id', $productId)->with(['order.order'])->get();
 
         $ordersQuery = User::role('agent')
-            ->whereHas('order.detail', function ($q) use ($productId) {
+            ->whereHas('order.detail', function ($q) use ($productId, $scope) {
                 $q->where('product_id', $productId)
-                    ->whereHas('order', fn($oq) => $oq->where('status', 'accepted'));
+                    ->whereHas('order', $scope);
             })
             ->with('agentProfile')
             ->select('users.*')
             ->selectSub(
                 OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
                     ->whereColumn('orders.agent_id', 'users.id')
-                    ->where('orders.status', 'accepted')
+                    ->where($scope)
                     ->where('order_details.product_id', $productId)
                     ->selectRaw('coalesce(sum(order_details.qty), 0)'),
                 'totalProduct'
             );
 
-        $totalProductCount = (int) OrderDetail::whereHas('order', fn($q) => $q->where('status', 'accepted'))
-            ->where('product_id', $productId)
-            ->sum('qty');
+        $totalProductCount = (int) OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
+            ->where($scope)
+            ->where('order_details.product_id', $productId)
+            ->sum('order_details.qty');
 
         $orders = $ordersQuery->paginate($perPage)->withQueryString()->through(function ($user) {
             return (object) [
@@ -224,40 +246,29 @@ class ReportController extends Controller
             ];
         });
 
-        return view('cms.admin.reports.partial.agent-product-detail', compact('product', 'orders', 'totalProductCount'));
+        return view('cms.admin.reports.partial.agent-product-detail', compact('product', 'orders', 'totalProductCount', 'filters'));
     }
 
     public function agentOrder(Request $request)
     {
-        $getAgent = $request->get('agent');
         $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
-
-        $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
-            $q->whereNotNull('name')
-                ->orderBy('name', 'asc');
-        })->where('active', 1)->get();
+        [$filters, $scope] = $this->reportFilters($request);
 
         $agentsQuery = User::role('agent')
-            ->whereHas('order', function ($q) {
-                $q->where('status', 'accepted');
-            })
-            ->whereHas('agentProfile', function ($q) use ($getAgent) {
-                if ($getAgent && $getAgent !== 'all') {
-                    $q->where('name', 'like', '%' . $getAgent . '%');
-                }
-            })
+            ->whereHas('order', $scope)
+            ->whereHas('agentProfile')
             ->with('agentProfile')
             ->select('users.*')
             ->selectSub(
                 Order::selectRaw('coalesce(sum(total_price), 0)')
                     ->whereColumn('orders.agent_id', 'users.id')
-                    ->where('orders.status', 'accepted'),
+                    ->where($scope),
                 'total_price'
             )
             ->selectSub(
                 OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
                     ->whereColumn('orders.agent_id', 'users.id')
-                    ->where('orders.status', 'accepted')
+                    ->where($scope)
                     ->selectRaw('coalesce(sum(order_details.qty), 0)'),
                 'total_product'
             );
@@ -267,19 +278,8 @@ class ReportController extends Controller
             $agentsQuery->whereHas('agentProfile', fn($q) => $q->where('name', 'like', "%{$search}%"));
         }
 
-        $orderStatsQuery = Order::where('status', 'accepted');
-        if ($getAgent && $getAgent !== 'all') {
-            $orderStatsQuery->whereHas('agent.agentProfile', fn($q) => $q->where('name', 'like', '%' . $getAgent . '%'));
-        }
-        $totalPriceAll = (float) $orderStatsQuery->sum('total_price');
-
-        $detailStatsQuery = OrderDetail::whereHas('order', function ($q) use ($getAgent) {
-            $q->where('status', 'accepted');
-            if ($getAgent && $getAgent !== 'all') {
-                $q->whereHas('agent.agentProfile', fn($ap) => $ap->where('name', 'like', '%' . $getAgent . '%'));
-            }
-        });
-        $totalProductAll = (int) $detailStatsQuery->sum('qty');
+        $totalPriceAll = (float) Order::where($scope)->sum('total_price');
+        $totalProductAll = (int) OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')->where($scope)->sum('order_details.qty');
 
         $stats = [
             'totalProductAll' => $totalProductAll,
@@ -305,39 +305,30 @@ class ReportController extends Controller
             ];
         });
 
-        return view('cms.admin.reports.agent-order', compact('stats', 'datas', 'agentsName'));
+        return view('cms.admin.reports.agent-order', compact('stats', 'datas', 'filters'));
     }
 
     public function agentReward(Request $request)
     {
-        $getAgent = $request->get('agent');
         $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        [$filters, $scope, $period] = $this->reportFilters($request);
 
-        // 1. Ambil semua reward yang aktif dan urutkan dari target terbesar
-        $activeRewards = Reward::whereHas('period', function ($query) {
-            $query->where('start_date', '<=', now())->where('end_date', '>=', now());
-        })->orderBy('target_qty', 'desc')->get();
-
-        $agentsName = User::role('agent')->whereHas('agentProfile', function ($q) {
-            $q->whereNotNull('name')
-                ->orderBy('name', 'asc');
-        })->where('active', 1)->get();
+        // 1. Reward periode yang dipilih (tanpa periode: reward yang sedang berlaku), urut dari target terbesar
+        $activeRewards = Reward::when(
+            $period,
+            fn ($q) => $q->where('period_id', $period->id),
+            fn ($q) => $q->whereHas('period', fn ($p) => $p->where('start_date', '<=', now())->where('end_date', '>=', now()))
+        )->orderBy('target_qty', 'desc')->get();
 
         $agentsQuery = User::role('agent')
-            ->whereHas('agentProfile', function ($q) use ($getAgent) {
-                if ($getAgent && $getAgent !== 'all') {
-                    $q->where('name', 'like', '%' . $getAgent . '%');
-                }
-            })
-            ->whereHas('order', function ($q) {
-                $q->where('status', 'accepted');
-            })
+            ->whereHas('agentProfile')
+            ->whereHas('order', $scope)
             ->with('agentProfile')
             ->select('users.*')
             ->selectSub(
                 OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
                     ->whereColumn('orders.agent_id', 'users.id')
-                    ->where('orders.status', 'accepted')
+                    ->where($scope)
                     ->selectRaw('coalesce(sum(order_details.qty), 0)'),
                 'total_product'
             );
@@ -387,42 +378,22 @@ class ReportController extends Controller
 
         $datas = $this->paginateData($datas, $perPage, $request);
 
-        return view('cms.admin.reports.agent-reward', compact('datas'));
+        return view('cms.admin.reports.agent-reward', compact('datas', 'filters'));
     }
 
     public function instalment(Request $request)
     {
-        $filterAgent = $request->get('agent');
-        $filterDate = $request->get('date');
-        $filterVerify = $request->get('verify');
         $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
-
-        $agentsName = User::role('agent')
-            ->whereHas('agentProfile')
-            ->whereHas('order.payment', fn($q) => $q->where('pay', '>', 0))
-            ->with('agentProfile')
-            ->get()
-            ->pluck('agentProfile.name')
-            ->filter()
-            ->unique()
-            ->sort()
-            ->values()
-            ->toArray();
+        [$filters, $scope] = $this->reportFilters($request);
 
         $paymentsQuery = Payment::with(['order.agent.agentProfile', 'order'])
             ->where('status', 'accepted')
             ->orderBy('created_at', 'desc')
-            ->whereHas('order.agent.agentProfile', function ($q) use ($filterAgent) {
-                if ($filterAgent) {
-                    $q->where('name', 'like', '%' . $filterAgent . '%');
-                }
-            })
-            ->when($filterDate, function ($q) use ($filterDate) {
-                $q->whereDate('date', $filterDate);
-            })
-            ->when(isset($filterVerify), function ($query) use ($filterVerify) {
-                $query->where('is_confirmed', (bool)$filterVerify);
-            });
+            ->whereHas('order', $scope);
+        $filters += TableFilter::apply($paymentsQuery, $request, [
+            'is_confirmed' => ['label' => 'Verifikasi', 'type' => 'select', 'options' => ['1' => 'Terverifikasi', '0' => 'Belum']],
+            'date' => ['label' => 'Tanggal Bayar', 'type' => 'date_range'],
+        ]);
 
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
@@ -433,7 +404,7 @@ class ReportController extends Controller
             });
         }
 
-        $totalPrice = (float) Order::where('status', 'accepted')->sum('total_price');
+        $totalPrice = (float) Order::where($scope)->sum('total_price');
         $pay = (float) (clone $paymentsQuery)->sum('pay');
         $remaining_pay = max(0, $totalPrice - $pay);
 
@@ -448,18 +419,19 @@ class ReportController extends Controller
 
         $payments = $paymentsQuery->paginate($perPage)->withQueryString();
 
-        return view('cms.admin.reports.instalment', compact('stats', 'payments', 'agentsName'));
+        return view('cms.admin.reports.instalment', compact('stats', 'payments', 'filters'));
     }
 
     public function requirement(Request $request)
     {
         $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        [$filters, $scope] = $this->reportFilters($request, false);
 
         $datasubsQuery = DB::table('order_details')
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('product_sub_products', 'order_details.product_id', '=', 'product_sub_products.product_id')
             ->join('sub_products', 'product_sub_products.sub_product_id', '=', 'sub_products.id')
-            ->where('orders.status', 'accepted')
+            ->where($scope)
             ->select([
                 'sub_products.id',
                 'sub_products.name',
@@ -503,6 +475,7 @@ class ReportController extends Controller
             'datasubs' => $datasubs,
             'stats' => $stats,
             'datas' => [],
+            'filters' => $filters,
         ]);
     }
 
@@ -697,6 +670,7 @@ class ReportController extends Controller
     public function stockSubProduct(Request $request)
     {
         $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        [$filters, $scope, $period, $orderIds] = $this->reportFilters($request, false);
         $spendingType = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
 
         // 1. Kebutuhan sub-product dari pesanan accepted via SQL aggregation
@@ -704,7 +678,7 @@ class ReportController extends Controller
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('product_sub_products', 'order_details.product_id', '=', 'product_sub_products.product_id')
             ->join('sub_products', 'product_sub_products.sub_product_id', '=', 'sub_products.id')
-            ->where('orders.status', 'accepted')
+            ->where($scope)
             ->select([
                 'sub_products.id',
                 'sub_products.name',
@@ -727,6 +701,7 @@ class ReportController extends Controller
             ->join('order_details', 'distribution_details.order_detail_id', '=', 'order_details.id')
             ->join('product_sub_products', 'order_details.product_id', '=', 'product_sub_products.product_id')
             ->where('distributions.status', 'delivered')
+            ->when($orderIds !== null, fn ($q) => $q->whereIn('order_details.order_id', $orderIds))
             ->groupBy('product_sub_products.sub_product_id')
             ->select('product_sub_products.sub_product_id', DB::raw('sum(distribution_details.qty * product_sub_products.amount) as total_distributed'))
             ->pluck('total_distributed', 'sub_product_id')
@@ -735,6 +710,7 @@ class ReportController extends Controller
         // 3. Pengadaan per sub-product via 1 SQL query
         $procurements = Spending::where('spending_type_id', $spendingType->id)
             ->where('information', 'like', 'Pengadaan: %')
+            ->when($period, fn ($q) => TableFilter::byPeriodDates('date')($q, $period->id))
             ->groupBy('information')
             ->select('information', DB::raw('sum(qty) as total_qty'))
             ->pluck('total_qty', 'information')
@@ -766,6 +742,6 @@ class ReportController extends Controller
 
         $products = $this->paginateData($finalData, $perPage, $request);
 
-        return view('cms.admin.reports.stock-sub', compact('products'));
+        return view('cms.admin.reports.stock-sub', compact('products', 'filters'));
     }
 }

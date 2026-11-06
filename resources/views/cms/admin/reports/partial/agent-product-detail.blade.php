@@ -18,6 +18,7 @@
         @include('cms.layouts.per-page')
     </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
+        <x-table.filter :filters="$filters" />
         <!-- BEGIN: Data List -->
         <x-table.wrapper>
             <x-slot:header>

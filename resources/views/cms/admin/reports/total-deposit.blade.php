@@ -58,16 +58,6 @@
 
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-2">
             @include('cms.layouts.per-page')
-            <div class="w-auto relative text-slate-500 border rounded">
-                <select id="records_select"
-                    onchange="window.location.href = (this.value === 'all' ? '?' + '{{ http_build_query(request()->except('agent', 'page')) }}' : '?agent=' + this.value + '&' + '{{ http_build_query(request()->except('agent', 'page')) }}')"
-                    class="form-control box">
-                    <option value="all">Semua</option>
-                    @foreach ($agentsName as $agent)
-                        <option value="{{ $agent->agentProfile->name }}" {{ request()->get('agent') == $agent->agentProfile->name ? 'selected' : '' }} >{{ $agent->agentProfile->name }}</option>
-                    @endforeach
-                </select>
-            </div>
             <a href="{{ route('totalDeposit', array_merge(request()->except('page'), ['export' => 1])) }}"
                 class="btn btn-primary shadow-md mr-2"> <i data-lucide="file"
                     class="w-4 h-4 mr-3"></i> Export </a>
@@ -78,6 +68,7 @@
                 </div>
             </div>
         </div>
+        <x-table.filter :filters="$filters" />
         <!-- BEGIN: Data List -->
         <x-table.wrapper>
             <x-slot:thead>

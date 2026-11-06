@@ -55,6 +55,7 @@
 
             </div>
         </div>
+        <x-table.filter :filters="$filters" />
         <!-- BEGIN: Data List -->
         <x-table.wrapper>
             <x-slot:thead>
@@ -73,7 +74,7 @@
                             <p class="font-medium whitespace-nowrap text-center">{{ $datas instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($datas->firstItem() + $loop->index) : $loop->iteration }}</p>
                         </td>
                         <td>
-                            <a class="text-slate-500 flex items-center mr-3" href="{{ route('ragentProductDetail', $item['product_id']) }}"> <i
+                            <a class="text-slate-500 flex items-center mr-3" href="{{ route('ragentProductDetail', array_merge(['productId' => $item['product_id']], request()->only('period', 'agent_id'))) }}"> <i
                                     data-lucide="external-link" class="w-4 h-4 mr-2"></i>
                                 {{ $item['package'] }} </a>
                         </td>
