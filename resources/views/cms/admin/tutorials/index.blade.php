@@ -95,6 +95,5 @@
 @endsection
 
 @push('custom-scripts')
-    <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
 
     @endpush

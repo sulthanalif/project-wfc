@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Spending extends Model
 {
+    /** Harga satuan dari total baris. total_amount adalah sumber total; amount di pengadaan berisi total, di input manual berisi harga satuan. */
+    public function getUnitPriceAttribute(): float
+    {
+        return (float) $this->total_amount / max((float) ($this->qty ?: 1), 1);
+    }
+
     use HasFactory, UUIDGenerator;
 
     protected $table = 'spendings';

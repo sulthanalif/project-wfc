@@ -72,7 +72,7 @@ Ambil contoh dari view yang sudah ada, misalnya `cms/admin/products/index.blade.
 | Kartu | `box p-5` |
 | Input | `form-control`, label `form-label` |
 | Select dengan pencarian | `<select class="tom-select">` |
-| Editor teks | CKEditor (`ckeditor-classic.js`) |
+| Editor teks | `<textarea class="editor">` + `@pushOnce('custom-scripts', 'ckeditor-classic')` memuat `ckeditor-classic.js` (sekitar 740 KB) sekali per halaman. Jangan memuatnya di halaman tanpa `.editor`. |
 | Gambar kecil | `w-10 h-10 image-fit zoom-in` |
 | Pagination | `<x-table.pagination :collection="$data" />`, jumlah per halaman lewat `?perPage=` (maks. 100) |
 | Filter tabel | `<x-table.filter :filters="$filters" />`, lihat bagian Filter tabel |

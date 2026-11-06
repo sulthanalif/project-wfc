@@ -139,7 +139,6 @@
 @endsection
 
 @push('custom-scripts')
-    <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
     <script>
         const currentDate = '{{ now()->format('Y-m-d') }}'; // Blade templating to get current date
         const dateInput = document.getElementById('date');

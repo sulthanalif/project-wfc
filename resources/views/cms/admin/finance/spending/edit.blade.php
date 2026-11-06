@@ -50,9 +50,9 @@
                         </div>
                         <div class="col-span-12 lg:col-span-6 intro-y mt-3 lg:mt-0">
                             <div class="">
-                                <label for="amount" class="form-label">Jumlah Pengeluaran <span class="text-danger">*</span></label>
-                                <input id="amount" name="amount" type="number" class="form-control w-full"
-                                    placeholder="Masukkan Jumlah Pengeluaran" value="{{ old('amount', $spending->amount) }}" required>
+                                <label for="amount" class="form-label">Harga Pengeluaran (Satuan) <span class="text-danger">*</span></label>
+                                <input id="amount" name="amount" type="number" step="any" class="form-control w-full"
+                                    placeholder="Masukkan Harga Pengeluaran (Satuan)" value="{{ old('amount', $spending->unit_price) }}" required>
                                 @error('amount')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -60,7 +60,7 @@
                                 @enderror
                             </div>
                             <div class="mt-3">
-                                <label for="qty" class="form-label">Jumlah Yang Dibeli</label>
+                                <label for="qty" class="form-label">Jumlah Yang Dibeli (Qty)</label>
                                 <input id="qty" name="qty" type="number" class="form-control w-full"
                                     placeholder="Masukkan Jumlah Yang Dibeli" value="{{ old('qty', $spending->qty) }}">
                                 @error('qty')
@@ -103,7 +103,6 @@
 @endsection
 
 @push('custom-scripts')
-    <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
     <script>
         const methodSelect = document.getElementById('method');
         const bankField = document.getElementById('bank-field');

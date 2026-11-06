@@ -43,7 +43,19 @@ Pindah dana antar rekening: `POST finance/cash-flow/transfer` (`transferCash`). 
 
 ## Pengadaan
 
-`ProcurementController`, `Route::resource('finance/procurement')`. Constructor menghitung kebutuhan sub produk dari semua `order_details` pesanan `accepted`: untuk setiap produk, `qty × amount` setiap sub produknya. Halaman create menampilkan kebutuhan itu, dan `store` mencatatnya sebagai pengeluaran jenis `Pengadaan`.
+`ProcurementController`, `Route::resource('finance/procurement')` tanpa `edit`/`update`/`destroy`. `computeDatas($period)` menjumlahkan kebutuhan sub produk di SQL dari `order_details` pesanan `accepted` (`order_details.qty × product_sub_products.amount`) dan membandingkannya dengan total `qty` pengeluaran berketerangan `Pengadaan: <nama sub produk>`. Index memakai filter periode (default periode aktif; pengadaan dihitung dari pengeluaran bertanggal dalam rentang periode). Halaman create memakai periode aktif dan hanya menampilkan item yang masih kurang; `store` mencatatnya sebagai pengeluaran jenis `Pengadaan`.
+
+### Total pengeluaran
+
+`spendings.total_amount` adalah total baris dan satu-satunya sumber untuk kartu total, export, dan arus kas.
+
+| Sumber | `amount` | `total_amount` |
+|---|---|---|
+| Form pengeluaran (create/edit) | harga satuan | `amount × qty` |
+| Pengadaan (`ProcurementController@store`) | harga × qty | sama dengan `amount` |
+| Transfer kas, pinjaman | nominal | nominal |
+
+Kolom harga di tabel pengeluaran dan isian form edit memakai `Spending::unit_price` (`total_amount / qty`). Jangan menghitung total dari `amount × qty`: untuk baris pengadaan hasilnya harga × qty². Baris pengadaan lama diisi lewat migration `2026_11_07_000000_backfill_total_amount_for_procurement_spendings`.
 
 ## Komisi
 

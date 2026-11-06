@@ -39,7 +39,7 @@ class SpendingController extends Controller
             'bank_owner_id' => ['label' => 'Rekening', 'type' => 'select', 'options' => BankOwner::orderBy('name')->pluck('name', 'id')->all()],
             'date' => ['label' => 'Tanggal', 'type' => 'date_range'],
         ]);
-        $totalSpending = (clone $query)->reorder()->selectRaw('SUM(amount * COALESCE(qty, 1)) as total')->value('total');
+        $totalSpending = (clone $query)->sum('total_amount');
 
         if ($perPages == 'all') {
             $spendings = $query->take(100)->get();

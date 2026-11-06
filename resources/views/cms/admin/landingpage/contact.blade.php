@@ -295,6 +295,8 @@
     <!-- END: Create Confirmation Modal -->
 @endsection
 
-@push('custom-scripts')
+@pushOnce('custom-scripts', 'ckeditor-classic')
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
+@endPushOnce
+@push('custom-scripts')
 @endpush

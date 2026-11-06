@@ -52,7 +52,7 @@ class CashFlowController extends Controller
                     ->where($inPeriod)->sum('pay');
             $spending = Spending::where('method', 'transfer')
                 ->where('bank_owner_id', $bank->id)
-                ->where($inPeriod)->sum('amount');
+                ->where($inPeriod)->sum('total_amount');
             $loan = Loan::where('method', 'transfer')
                 ->where('bank_owner_id', $bank->id)
                 ->where($inPeriod)->sum('amount');
@@ -72,7 +72,7 @@ class CashFlowController extends Controller
         $orderCash = Payment::where('status', 'accepted')
             ->where('method', 'Tunai')
             ->where($inPeriod)->sum('pay');
-        $spendingCash = Spending::where('method', 'Tunai')->where($inPeriod)->sum('amount');
+        $spendingCash = Spending::where('method', 'Tunai')->where($inPeriod)->sum('total_amount');
         $loanCash = Loan::where('method', 'Tunai')->where($inPeriod)->sum('amount');
 
         $cashFlows[] = [

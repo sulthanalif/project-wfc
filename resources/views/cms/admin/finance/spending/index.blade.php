@@ -90,14 +90,14 @@
                         </td>
                         <td>
                             <p class="text-slate-500 flex items-center justify-center whitespace-nowrap">Rp.
-                                {{ number_format($spending->amount, 0, ',', '.') }} </p>
+                                {{ number_format($spending->unit_price, 0, ',', '.') }} </p>
                         </td>
                         <td>
                             <span class="text-slate-500 flex items-center justify-center">{{ $spending->qty ?? 1 }}</span>
                         </td>
                         <td>
                             <p class="text-slate-500 flex items-center justify-center whitespace-nowrap">Rp.
-                                {{ number_format($spending->amount * ($spending->qty ?? 1), 0, ',', '.') }} </p>
+                                {{ number_format($spending->total_amount, 0, ',', '.') }} </p>
                         </td>
                         <td>
                             <span class="text-slate-500 flex items-center justify-center">

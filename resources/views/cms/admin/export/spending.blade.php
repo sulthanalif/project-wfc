@@ -9,7 +9,7 @@
             <td>
                 <p class="text-slate-500 flex items-center mr-3">Rp.
                     {{ number_format($datas->sum(function($data) {
-                        return $data->amount * ($data->qty ?? 1);
+                        return $data->total_amount;
                     }), 0, ',', '.') }}
                     </p>
             </td>
@@ -46,7 +46,7 @@
                 @foreach ($types as $type)
                 <td>
                     <p class="text-slate-500 flex items-center mr-3">
-                        {{ $data->spendingType->name == $type->name ? ($data->amount * ($data->qty ?? 1)) : '0' }}
+                        {{ $data->spendingType->name == $type->name ? $data->total_amount : '0' }}
                     </p>
                 </td>
                 @endforeach

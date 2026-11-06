@@ -79,7 +79,6 @@
 @endsection
 
 @push('custom-scripts')
-    <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
     <script>
         function loadPreview(link) {
             const videoId = link.split('v=')[1];

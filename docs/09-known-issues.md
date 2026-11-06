@@ -8,10 +8,7 @@ Tidak ada isu keamanan yang belum diperbaiki. Seluruh celah keamanan S1 s/d S6 t
 
 ## Bug
 
-| # | Masalah | Lokasi |
-|---|---|---|
-| B13 | Total pengeluaran dihitung `SUM(amount × qty)`, padahal pengadaan menyimpan `amount = harga × qty`. Baris pengadaan terhitung `harga × qty²`. Arus kas menjumlahkan `amount` saja, jadi kedua halaman tidak sama. Perlu dipastikan dulu arti `amount` di form pengeluaran manual. | `SpendingController@index`, `ProcurementController@store`, `CashFlowController@index` |
-| B14 | Modal pinjaman di-include per baris dan masing-masing memuat `ckeditor-classic.js` serta script dengan `const` yang sama, sehingga muncul error `ckeditor-duplicated-modules` dan redeklarasi. | `cms/admin/finance/loan/modal/*.blade.php` |
+Tidak ada bug yang belum diperbaiki.
 
 ## Pagination
 
@@ -45,6 +42,9 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 
 | Masalah | Commit |
 |---|---|
+| B13: Total pengeluaran menghitung `amount × qty`, padahal pengadaan menyimpan `amount` sebagai total (kartu total sekitar 147 kali lipat). Sekarang semua total memakai `total_amount`, baris pengadaan lama di-backfill | `optimalisasi` |
+| B14: `ckeditor-classic.js` dimuat sekali per modal (error `ckeditor-duplicated-modules` di halaman pinjaman). Sekarang `@pushOnce('custom-scripts', 'ckeditor-classic')`, dan halaman tanpa `.editor` tidak memuatnya | `optimalisasi` |
+| Detail pesanan (6 salinan) membawa sisa script form pembayaran yang error karena `#method` tidak ada | `optimalisasi` |
 | Export pesanan & pembayaran hanya berisi baris halaman aktif karena `paginate()` mengubah query yang dipakai export | `optimalisasi` |
 | Export arsip pesanan mengunduh data periode aktif (link mengarah ke export index) | `optimalisasi` |
 | Tombol export retur tidak berfungsi (controller tidak menangani `export`) | `optimalisasi` |

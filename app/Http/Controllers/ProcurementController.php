@@ -134,6 +134,7 @@ class ProcurementController extends Controller
                     'qty'              => $quantity,
                     'price'            => $subProduct->price,
                     'amount'           => $totalAmountForItem, // DIGANTI dari 'total' menjadi 'amount'
+                    'total_amount'     => $totalAmountForItem,
                     'method'           => $request->method,
                     'bank'             => $request->method === 'transfer' ? $request->bank : null,
                     'user_id'          => auth()->id(),

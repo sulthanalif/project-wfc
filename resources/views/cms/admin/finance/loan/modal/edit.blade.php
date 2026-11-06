@@ -97,8 +97,10 @@
     </div>
 </div>
 
-@push('custom-scripts')
+@pushOnce('custom-scripts', 'ckeditor-classic')
     <script src="{{ asset('assets/cms/js/ckeditor-classic.js') }}"></script>
+@endPushOnce
+@push('custom-scripts')
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
