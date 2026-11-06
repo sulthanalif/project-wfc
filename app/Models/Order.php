@@ -2,12 +2,50 @@
 
 namespace App\Models;
 
+use App\Helpers\TableFilter;
 use App\Helpers\UUIDGenerator;
+use App\Helpers\ValidateRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    /** Filter tabel pesanan (index & arsip). Arsip hanya memilih periode yang tidak aktif. */
+    public static function tableFilters(bool $archive = false): array
+    {
+        $filters = [
+            'period' => [
+                'label' => 'Periode',
+                'type' => 'period',
+                'options' => $archive ? TableFilter::periods(false) : null,
+                'default' => $archive ? 'all' : null,
+                'apply' => TableFilter::byOrderPeriod(),
+            ],
+            'status' => [
+                'label' => 'Status',
+                'type' => 'select',
+                'options' => ['pending' => 'Pending', 'accepted' => 'Diterima', 'stop' => 'Mundur', 'reject' => 'Ditolak', 'canceled' => 'Dibatalkan'],
+            ],
+            'payment_status' => [
+                'label' => 'Pembayaran',
+                'type' => 'select',
+                'options' => ['unpaid' => 'Belum Dibayar', 'pending' => 'Dicicil', 'paid' => 'Lunas'],
+            ],
+        ];
+
+        if (!ValidateRole::check('agent')) {
+            $filters['agent_id'] = [
+                'label' => 'Agen',
+                'type' => 'select',
+                'options' => AgentProfile::orderBy('name')->pluck('name', 'user_id')->all(),
+            ];
+        }
+
+        $filters['order_date'] = ['label' => 'Tanggal Pesanan', 'type' => 'date_range'];
+
+        return $filters;
+    }
+
     use HasFactory, UUIDGenerator;
 
     protected $table = 'orders';

@@ -10,7 +10,7 @@
             </h2>
             <div class="w-full xl:w-auto flex items-center mt-1 lg:mt-0 ml-auto gap-2">
                 @hasrole('admin|super_admin')
-                    <a href="{{ route('order.aman.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
+                    <a href="{{ request()->fullUrlWithQuery(['export' => 'true']) }}" class="btn btn-sm btn-primary"><i class="w-4 h-4"
                             data-lucide="download"></i> Export</a>
                 @endhasrole
                 @hasrole('admin|super_admin')
@@ -25,18 +25,6 @@
                 <a href="{{ route('order.aman.create') }}" class="btn btn-primary shadow-md mr-2">Tambah Pesanan</a>
             @endhasrole
             @include('cms.layouts.per-page')
-            <div class="w-auto relative text-slate-500 mt-2 lg:mt-0">
-                <select id="records_per_status" class="form-control box">
-                    <option value="all" {{ request()->get('status') == 'all' ? 'selected' : '' }}>All</option>
-                    <option value="accepted" {{ request()->get('status') == 'accepted' ? 'selected' : '' }}>Diterima
-                    </option>
-                    <option value="stop" {{ request()->get('status') == 'stop' ? 'selected' : '' }}>Mundur</option>
-                    <option value="pending" {{ request()->get('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="reject" {{ request()->get('status') == 'reject' ? 'selected' : '' }}>Ditolak</option>
-                    <option value="canceled" {{ request()->get('status') == 'canceled' ? 'selected' : '' }}>Dibatalkan
-                    </option>
-                </select>
-            </div>
             <a href="{{ route('order.aman.archive') }}" class="btn btn-primary shadow-md ml-2">
                 <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4" data-lucide="archive"></i>
                 </span>
@@ -57,6 +45,7 @@
 
             </div>
         </div>
+        <x-table.filter :filters="$filters" />
         <!-- BEGIN: Data List -->
         <x-table.wrapper>
             <x-slot:header>

@@ -12,6 +12,7 @@ use App\Helpers\GetProduct;
 use App\Models\OrderDetail;
 use App\Exports\ExportDatas;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use App\Helpers\ValidateRole;
 use App\Exports\InvoiceExport;
 use App\Exports\DetailOrderExport;
@@ -32,21 +33,15 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $perPages = $request->get('perPage') ?? 10;
-        $status = $request->get('status') ?? 'all';
 
         $query = Order::query()
-            ->whereHas('detail.product.package.package.period', function ($query) {
-                $query->where('is_active', 1);
-            })
             ->with(['detail.product.package.package.period', 'agent.agentProfile', 'distributions.detail']);
 
         if (ValidateRole::check('agent')) {
             $query->where('agent_id', Auth::user()->id);
         }
 
-        if ($status != 'all') {
-            $query->where('status', $status);
-        }
+        $filters = TableFilter::apply($query, $request, Order::tableFilters());
 
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
@@ -69,7 +64,7 @@ class OrderController extends Controller
         }
 
         if (ValidateRole::check('agent')) {
-            return view('cms.transactions.index', compact('orders'));
+            return view('cms.transactions.index', compact('orders', 'filters'));
         }
 
         if ($request->get('export') == 'true') {
@@ -102,13 +97,12 @@ class OrderController extends Controller
             return Excel::download(new ExportDatas($datas, 'Data Pesanan', $headers), 'Data Pesanan.xlsx');
         }
 
-        return view('cms.transactions.index', compact('orders'));
+        return view('cms.transactions.index', compact('orders', 'filters'));
     }
 
     public function archive(Request $request)
     {
         $perPages = $request->get('perPage') ?? 10;
-        $status = $request->get('status') ?? 'all';
 
         $query = Order::query()
             ->whereHas('detail.product.package.package.period', function ($query) {
@@ -120,9 +114,7 @@ class OrderController extends Controller
             $query->where('agent_id', Auth::user()->id);
         }
 
-        if ($status != 'all') {
-            $query->where('status', $status);
-        }
+        $filters = TableFilter::apply($query, $request, Order::tableFilters(true));
 
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
@@ -171,7 +163,7 @@ class OrderController extends Controller
             return Excel::download(new ExportDatas($datas, 'Data Pesanan', $headers), 'Data Pesanan.xlsx');
         }
 
-        return view('cms.transactions.archive', compact('orders'));
+        return view('cms.transactions.archive', compact('orders', 'filters'));
     }
 
     public function archiveShow(Request $request, Order $order)

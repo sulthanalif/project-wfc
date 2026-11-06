@@ -14,7 +14,7 @@
                     </span>
                 </a>
                 @hasrole('admin|super_admin')
-                    <a href="{{ route('order.full.index', ['export' => 'true']) }}" class="btn btn-sm btn-primary"><i
+                    <a href="{{ request()->fullUrlWithQuery(['export' => 'true']) }}" class="btn btn-sm btn-primary"><i
                             class="w-4 h-4" data-lucide="download"></i> Export</a>
                 @endhasrole
                 @hasrole('admin|super_admin')
@@ -29,18 +29,6 @@
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @include('cms.layouts.per-page')
-            <div class="w-auto relative text-slate-500 mt-2 lg:mt-0">
-                <select id="records_per_status" class="form-control box">
-                    <option value="all" {{ request()->get('status') == 'all' ? 'selected' : '' }}>All</option>
-                    <option value="accepted" {{ request()->get('status') == 'accepted' ? 'selected' : '' }}>Diterima
-                    </option>
-                    <option value="stop" {{ request()->get('status') == 'stop' ? 'selected' : '' }}>Mundur</option>
-                    <option value="pending" {{ request()->get('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="reject" {{ request()->get('status') == 'reject' ? 'selected' : '' }}>Ditolak</option>
-                    <option value="canceled" {{ request()->get('status') == 'canceled' ? 'selected' : '' }}>Dibatalkan
-                    </option>
-                </select>
-            </div>
 
             @if ($orders instanceof \Illuminate\Pagination\LengthAwarePaginator)
                 <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $orders->firstItem() }} hingga
@@ -57,6 +45,7 @@
 
             </div>
         </div>
+        <x-table.filter :filters="$filters" />
         <!-- BEGIN: Data List -->
         <x-table.wrapper>
             <x-slot:header>
