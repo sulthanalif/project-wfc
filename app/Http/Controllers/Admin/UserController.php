@@ -8,6 +8,7 @@ use App\Exports\AgentExport;
 use App\Imports\AgentImport;
 use App\Models\AdminProfile;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 // use Maatwebsite\Excel\Excel;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -46,6 +47,17 @@ class UserController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'role' => [
+                'label' => 'Jabatan',
+                'type' => 'select',
+                'options' => ['super_admin' => 'Super Admin', 'admin' => 'Admin', 'finance_admin' => 'Admin Keuangan', 'agent' => 'Agen'],
+                'apply' => fn ($q, $role) => $q->role($role),
+            ],
+            'active' => ['label' => 'Status', 'type' => 'select', 'options' => ['1' => 'Aktif', '0' => 'Tidak Aktif']],
+            'is_open_access' => ['label' => 'Akses', 'type' => 'select', 'options' => ['1' => 'Terbuka', '0' => 'Terkunci']],
+        ]);
+
         if ($perPages == 'all') {
             $users = $query->take(100)->get();
         } else {
@@ -54,7 +66,7 @@ class UserController extends Controller
         }
 
         // Tampilkan data ke view.
-        return view('cms.admin.users.index', compact('users'));
+        return view('cms.admin.users.index', compact('users', 'filters'));
     }
 
     public function export()

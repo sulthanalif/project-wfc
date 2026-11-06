@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\SubAgent;
 use Illuminate\Http\Request;
+use App\Models\AgentProfile;
+use App\Helpers\TableFilter;
 // use App\Http\Controllers\Controller;
 use App\Exports\SubAgentExport;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +28,7 @@ class SubAgentController extends Controller
         $roleName = $roleUser->name;
 
         $perPages = $request->get('perPage') ?? 10;
-        $query = SubAgent::query();
+        $query = SubAgent::with('agent.agentProfile');
 
         if ($roleName == 'agent') {
             $query->where('agent_id', $user->id);
@@ -41,13 +43,19 @@ class SubAgentController extends Controller
             });
         }
 
+        $filterDefs = [];
+        if ($roleName != 'agent') {
+            $filterDefs['agent_id'] = ['label' => 'Agen', 'type' => 'select', 'options' => AgentProfile::orderBy('name')->pluck('name', 'user_id')->all()];
+        }
+        $filters = TableFilter::apply($query, $request, $filterDefs);
+
         if ($perPages == 'all') {
             $subAgents = $query->take(100)->get();
         } else {
             $perPage = min(max(intval($perPages), 1), 100);
             $subAgents = $query->paginate($perPage)->withQueryString();
         }
-        return view('cms.sub-agent.index', compact('subAgents'));
+        return view('cms.sub-agent.index', compact('subAgents', 'filters'));
 
     }
 

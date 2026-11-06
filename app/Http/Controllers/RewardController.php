@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Period;
 use App\Models\Reward;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use Illuminate\Support\Facades\Storage;
 
 class RewardController extends Controller
@@ -28,6 +29,10 @@ class RewardController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'period' => ['label' => 'Periode', 'type' => 'period', 'column' => 'period_id', 'default' => 'all'],
+        ]);
+
         if ($perPages == 'all') {
             $rewards = $query->take(100)->get();
         } else {
@@ -36,7 +41,7 @@ class RewardController extends Controller
         }
 
 
-        return view('cms.admin.rewards.index', compact('rewards'));
+        return view('cms.admin.rewards.index', compact('rewards', 'filters'));
     }
 
     public function show(Reward $reward)

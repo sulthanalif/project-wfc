@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Product;
 use App\Models\SubProduct;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use App\Exports\SubProductExport;
 use App\Imports\SubProductImport;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,10 @@ class SubProductController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'unit' => ['label' => 'Satuan', 'type' => 'select', 'options' => SubProduct::query()->distinct()->orderBy('unit')->pluck('unit', 'unit')->all()],
+        ]);
+
         if ($perPages == 'all') {
             $subProducts = $query->take(100)->get();
         } else {
@@ -34,7 +39,7 @@ class SubProductController extends Controller
             $subProducts = $query->paginate($perPage)->withQueryString();
         }
 
-        return view('cms.admin.sub-products.index', compact('subProducts'));
+        return view('cms.admin.sub-products.index', compact('subProducts', 'filters'));
     }
 
     public function export()

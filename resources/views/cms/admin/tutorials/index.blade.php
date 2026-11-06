@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <x-table.wrapper>
+        <x-table.filter :filters="$filters" />        <x-table.wrapper>
             <x-slot:thead>
                 <tr>
                     <th class="text-center whitespace-nowrap">#</th>

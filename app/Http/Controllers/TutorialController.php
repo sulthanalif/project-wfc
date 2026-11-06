@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tutorial;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,11 @@ class TutorialController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'role' => ['label' => 'Role', 'type' => 'select', 'options' => ['admin' => 'Admin', 'finance_admin' => 'Admin Keuangan', 'agent' => 'Agen']],
+            'status' => ['label' => 'Status', 'type' => 'select', 'options' => ['1' => 'Aktif', '0' => 'Nonaktif']],
+        ]);
+
         if ($perPages == 'all') {
             $datas = $query->take(100)->get();
         } else {
@@ -35,7 +41,7 @@ class TutorialController extends Controller
 
         $roles = Role::where('name', '!=', 'super_admin')->get();
 
-        return view('cms.admin.tutorials.index', compact('datas', 'roles'));
+        return view('cms.admin.tutorials.index', compact('datas', 'roles', 'filters'));
     }
 
     public function store(Request $request)

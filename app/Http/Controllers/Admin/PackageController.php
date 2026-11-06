@@ -7,6 +7,7 @@ use App\Models\Catalog;
 use App\Models\Package;
 // use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use Intervention\Image\Image;
 use App\Models\PackageCatalog;
 use Illuminate\Support\Facades\DB;
@@ -33,9 +34,7 @@ class PackageController extends Controller
         // ->paginate(10);
         $perPages = $request->get('perPage') ?? 10;
 
-        $query = Package::with('period')->whereHas('period', function ($query) {
-            $query->where('is_active', 1);
-        })->latest();
+        $query = Package::with('period')->latest();
 
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
@@ -47,6 +46,14 @@ class PackageController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'period' => [
+                'label' => 'Periode',
+                'type' => 'period',
+                'column' => 'period_id',
+            ],
+        ]);
+
         if ($perPages == 'all') {
             $packages = $query->take(100)->get();
         } else {
@@ -54,7 +61,7 @@ class PackageController extends Controller
             $packages = $query->paginate($perPage)->withQueryString();
         }
 
-        return view('cms.admin.pakets.index', compact('packages'));
+        return view('cms.admin.pakets.index', compact('packages', 'filters'));
     }
 
     public function archive(Request $request)
@@ -75,6 +82,16 @@ class PackageController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'period' => [
+                'label' => 'Periode',
+                'type' => 'period',
+                'options' => TableFilter::periods(false),
+                'default' => 'all',
+                'column' => 'period_id',
+            ],
+        ]);
+
         if ($perPages == 'all') {
             $packages = $query->take(100)->get();
         } else {
@@ -82,7 +99,7 @@ class PackageController extends Controller
             $packages = $query->paginate($perPage)->withQueryString();
         }
 
-        return view('cms.admin.pakets.archive', compact('packages'));
+        return view('cms.admin.pakets.archive', compact('packages', 'filters'));
     }
 
     public function archiveShow(Package $package)

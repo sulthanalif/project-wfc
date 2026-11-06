@@ -9,6 +9,7 @@ use App\Models\Supplier;
 use App\Models\SubProduct;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use App\Helpers\TableFilter;
 use App\Models\ProductDetail;
 use App\Exports\ProductExport;
 use App\Imports\ProductImport;
@@ -32,9 +33,7 @@ class ProductController extends Controller
     {
         $perPages = $request->get('perPage') ?? 10;
 
-        $query = Product::with(['detail', 'package.package.period'])->whereHas('package.package.period', function ($query) {
-            $query->where('is_active', 1);
-        })->latest();
+        $query = Product::with(['detail', 'package.package.period'])->latest();
 
         if ($request->filled('search')) {
             $search = trim($request->get('search'));
@@ -47,6 +46,20 @@ class ProductController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'period' => [
+                'label' => 'Periode',
+                'type' => 'period',
+                'apply' => fn ($q, $id) => $q->whereHas('package.package', fn ($p) => $p->where('period_id', $id)),
+            ],
+            'package_id' => [
+                'label' => 'Paket',
+                'type' => 'select',
+                'options' => Package::with('period')->orderBy('name')->get()->mapWithKeys(fn ($p) => [$p->id => $p->name . ' (' . ($p->period?->description ?? '-') . ')'])->all(),
+                'apply' => fn ($q, $id) => $q->whereHas('package', fn ($pp) => $pp->where('package_id', $id)),
+            ],
+        ]);
+
         if ($perPages == 'all') {
             $products = $query->take(100)->get();
         } else {
@@ -54,7 +67,7 @@ class ProductController extends Controller
             $products = $query->paginate($perPage)->withQueryString();
         }
 
-        return view('cms.admin.products.index', compact('products'));
+        return view('cms.admin.products.index', compact('products', 'filters'));
     }
 
     public function archive(Request $request)
@@ -76,6 +89,22 @@ class ProductController extends Controller
             });
         }
 
+        $filters = TableFilter::apply($query, $request, [
+            'period' => [
+                'label' => 'Periode',
+                'type' => 'period',
+                'options' => TableFilter::periods(false),
+                'default' => 'all',
+                'apply' => fn ($q, $id) => $q->whereHas('package.package', fn ($p) => $p->where('period_id', $id)),
+            ],
+            'package_id' => [
+                'label' => 'Paket',
+                'type' => 'select',
+                'options' => Package::with('period')->orderBy('name')->get()->mapWithKeys(fn ($p) => [$p->id => $p->name . ' (' . ($p->period?->description ?? '-') . ')'])->all(),
+                'apply' => fn ($q, $id) => $q->whereHas('package', fn ($pp) => $pp->where('package_id', $id)),
+            ],
+        ]);
+
         if ($perPages == 'all') {
             $products = $query->take(100)->get();
         } else {
@@ -83,7 +112,7 @@ class ProductController extends Controller
             $products = $query->paginate($perPage)->withQueryString();
         }
 
-        return view('cms.admin.products.archive', compact('products'));
+        return view('cms.admin.products.archive', compact('products', 'filters'));
     }
 
     public function archiveShow(Product $product)
