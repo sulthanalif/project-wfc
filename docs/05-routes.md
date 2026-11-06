@@ -9,7 +9,7 @@ python3 docs/tools/gen_routes.py /tmp/routes.json > docs/05-routes.md
 
 `routes/web.php` memuat file per modul dari `routes/admin/`, `routes/agent/`, `routes/transaction/`, dan `routes/landingpage/`. Kolom Akses berisi role Spatie; `a + b` berarti route ada di dua grup role sekaligus dan user harus lolos keduanya.
 
-Total 279 route.
+Total 267 route.
 
 ## `/`
 
@@ -58,9 +58,7 @@ Total 279 route.
 | POST | `distribution/export/{distribution}/printed` | export.printed | `Admin\ExportDeliveryOrderController@printed` | super_admin, admin, finance_admin |
 | DELETE | `distribution/{distribution}` | distribution.destroy | `Admin\DistributionController@destroy` | super_admin, admin, finance_admin |
 | GET | `distribution/{distribution}` | distribution.show | `Admin\DistributionController@show` | super_admin, admin, finance_admin |
-| PUT|PATCH | `distribution/{distribution}` | distribution.update | `Admin\DistributionController@update` | super_admin, admin, finance_admin |
 | PUT | `distribution/{distribution}/approve` | distribution.approve | `Admin\DistributionController@approve` | super_admin, admin, finance_admin |
-| GET | `distribution/{distribution}/edit` | distribution.edit | `Admin\DistributionController@edit` | super_admin, admin, finance_admin |
 
 ## `download`
 
@@ -172,10 +170,7 @@ Total 279 route.
 | GET | `finance/procurement` | procurement.index | `ProcurementController@index` | finance_admin, super_admin |
 | POST | `finance/procurement` | procurement.store | `ProcurementController@store` | finance_admin, super_admin |
 | GET | `finance/procurement/create` | procurement.create | `ProcurementController@create` | finance_admin, super_admin |
-| DELETE | `finance/procurement/{procurement}` | procurement.destroy | `ProcurementController@destroy` | finance_admin, super_admin |
 | GET | `finance/procurement/{procurement}` | procurement.show | `ProcurementController@show` | finance_admin, super_admin |
-| PUT|PATCH | `finance/procurement/{procurement}` | procurement.update | `ProcurementController@update` | finance_admin, super_admin |
-| GET | `finance/procurement/{procurement}/edit` | procurement.edit | `ProcurementController@edit` | finance_admin, super_admin |
 
 ## `finance/spending`
 
@@ -416,11 +411,8 @@ Total 279 route.
 |---|---|---|---|---|
 | GET | `master/tutorial` | tutorial.index | `TutorialController@index` | super_admin |
 | POST | `master/tutorial` | tutorial.store | `TutorialController@store` | super_admin |
-| GET | `master/tutorial/create` | tutorial.create | `TutorialController@create` | super_admin |
 | DELETE | `master/tutorial/{tutorial}` | tutorial.destroy | `TutorialController@destroy` | super_admin |
-| GET | `master/tutorial/{tutorial}` | tutorial.show | `TutorialController@show` | super_admin |
 | PUT|PATCH | `master/tutorial/{tutorial}` | tutorial.update | `TutorialController@update` | super_admin |
-| GET | `master/tutorial/{tutorial}/edit` | tutorial.edit | `TutorialController@edit` | super_admin |
 
 ## `master/user`
 
@@ -539,23 +531,11 @@ Total 279 route.
 | DELETE | `reviews/{review}` | reviews.destroy | `ReviewAgentController@destroy` | agent |
 | PUT|PATCH | `reviews/{review}` | reviews.update | `ReviewAgentController@update` | agent |
 
-## `sendmail`
-
-| Method | URI | Name | Controller@method | Akses |
-|---|---|---|---|---|
-| GET | `sendmail` | sendmail | `Mail\NotificationController@sendEmail` | publik |
-
 ## `storage`
 
 | Method | URI | Name | Controller@method | Akses |
 |---|---|---|---|---|
 | GET | `storage/images/{path}/{imageName}` | getImage | `GetImageController@displayImage` | publik |
-
-## `testview`
-
-| Method | URI | Name | Controller@method | Akses |
-|---|---|---|---|---|
-| GET | `testview` |  | `Closure` | publik |
 
 ## `transaction/.order`
 
@@ -568,37 +548,31 @@ Total 279 route.
 
 | Method | URI | Name | Controller@method | Akses |
 |---|---|---|---|---|
-| POST | `transaction/acc/{order}` | order.accOrder | `Transaction\OrderController@accOrder` | admin, super_admin, finance_admin, agent |
-
-## `transaction/accPayment`
-
-| Method | URI | Name | Controller@method | Akses |
-|---|---|---|---|---|
-| POST | `transaction/accPayment/{payment}/{order}` | accPayment | `Transaction\PaymentController@accPayment` | admin, super_admin, finance_admin, agent |
+| POST | `transaction/acc/{order}` | order.accOrder | `Transaction\OrderController@accOrder` | admin, super_admin, finance_admin |
 
 ## `transaction/bulk-convert-to-safe-point`
 
 | Method | URI | Name | Controller@method | Akses |
 |---|---|---|---|---|
-| POST | `transaction/bulk-convert-to-safe-point` | order.bulkConvertToSafePoint | `Transaction\OrderController@bulkConvertToSafePoint` | admin, super_admin, finance_admin, agent |
+| POST | `transaction/bulk-convert-to-safe-point` | order.bulkConvertToSafePoint | `Transaction\OrderController@bulkConvertToSafePoint` | admin, super_admin, finance_admin |
 
 ## `transaction/changeOrderStatus`
 
 | Method | URI | Name | Controller@method | Akses |
 |---|---|---|---|---|
-| POST | `transaction/changeOrderStatus/{order}` | order.changeOrderStatus | `Transaction\OrderController@changeOrderStatus` | admin, super_admin, finance_admin, agent |
+| POST | `transaction/changeOrderStatus/{order}` | order.changeOrderStatus | `Transaction\OrderController@changeOrderStatus` | admin, super_admin, finance_admin |
 
 ## `transaction/changePaymentStatus`
 
 | Method | URI | Name | Controller@method | Akses |
 |---|---|---|---|---|
-| PUT | `transaction/changePaymentStatus/{payment}` | changePaymentStatus | `Transaction\PaymentController@changePaymentStatus` | admin, super_admin, finance_admin, agent |
+| PUT | `transaction/changePaymentStatus/{payment}` | changePaymentStatus | `Transaction\PaymentController@changePaymentStatus` | admin, super_admin, finance_admin |
 
 ## `transaction/changePaymentVerify`
 
 | Method | URI | Name | Controller@method | Akses |
 |---|---|---|---|---|
-| PUT | `transaction/changePaymentVerify/{payment}` | changePaymentVerify | `Transaction\PaymentController@changePaymentVerify` | admin, super_admin, finance_admin, agent |
+| PUT | `transaction/changePaymentVerify/{payment}` | changePaymentVerify | `Transaction\PaymentController@changePaymentVerify` | admin, super_admin, finance_admin |
 
 ## `transaction/invoice`
 
@@ -635,7 +609,7 @@ Total 279 route.
 
 | Method | URI | Name | Controller@method | Akses |
 |---|---|---|---|---|
-| GET | `transaction/orderStats` | getOrderStats | `Transaction\OrderController@getOrderStats` | admin, super_admin, finance_admin, agent |
+| GET | `transaction/orderStats` | getOrderStats | `Transaction\OrderController@getOrderStats` | admin, super_admin, finance_admin |
 
 ## `transaction/payment`
 
@@ -658,12 +632,6 @@ Total 279 route.
 | PUT | `transaction/payment-agent/{payment}` | updatePaymentAgent | `Transaction\PaymentController@updatePaymentAgent` | admin, super_admin, agent, finance_admin |
 | GET | `transaction/payment-agent/{user}/{order}` | payment-agent.detail | `Transaction\PaymentController@showPaymentAgent` | admin, super_admin, agent, finance_admin |
 
-## `transaction/rejectPayment`
-
-| Method | URI | Name | Controller@method | Akses |
-|---|---|---|---|---|
-| POST | `transaction/rejectPayment/{payment}/{order}` | rejectPayment | `Transaction\PaymentController@rejectPayment` | admin, super_admin, finance_admin, agent |
-
 ## `transaction/return`
 
 | Method | URI | Name | Controller@method | Akses |
@@ -675,7 +643,7 @@ Total 279 route.
 | GET | `transaction/return/{return}` | return.show | `Transaction\ProductReturnController@show` | admin, super_admin, agent, finance_admin |
 | PUT|PATCH | `transaction/return/{return}` | return.update | `Transaction\ProductReturnController@update` | admin, super_admin, agent, finance_admin |
 | POST | `transaction/return/{return}/add-item` | return.item.create | `Transaction\ProductReturnController@addItem` | admin, super_admin, agent, finance_admin |
-| PUT | `transaction/return/{return}/change-status` | return.changeStatus | `Transaction\ProductReturnController@changeStatus` | admin, super_admin, agent, finance_admin |
+| PUT | `transaction/return/{return}/change-status` | return.changeStatus | `Transaction\ProductReturnController@changeStatus` | admin, super_admin, finance_admin |
 | GET | `transaction/return/{return}/edit` | return.edit | `Transaction\ProductReturnController@edit` | admin, super_admin, agent, finance_admin |
 | DELETE | `transaction/return/{return}/{item}/delete` | return.item.destroy | `Transaction\ProductReturnController@destroyItem` | admin, super_admin, agent, finance_admin |
 | PUT | `transaction/return/{return}/{item}/edit-item` | return.item.update | `Transaction\ProductReturnController@editItem` | admin, super_admin, agent, finance_admin |
@@ -684,7 +652,7 @@ Total 279 route.
 
 | Method | URI | Name | Controller@method | Akses |
 |---|---|---|---|---|
-| GET | `tutorial` | tutorial.page | `TutorialController@tutorialPage` | admin, admin_finance, agent |
+| GET | `tutorial` | tutorial.page | `TutorialController@tutorialPage` | admin, finance_admin, agent |
 
 ## `waiting`
 
