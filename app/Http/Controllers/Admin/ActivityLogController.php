@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\TableFilter;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
@@ -10,10 +11,12 @@ class ActivityLogController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ActivityLog::query();
+        $perPages = $request->get('perPage') ?? 10;
+
+        $query = ActivityLog::latest('id');
 
         if ($request->filled('search')) {
-            $search = $request->query('search');
+            $search = trim($request->get('search'));
             $query->where(function ($q) use ($search) {
                 $q->where('user_name', 'like', "%{$search}%")
                     ->orWhere('action', 'like', "%{$search}%")
@@ -23,26 +26,41 @@ class ActivityLogController extends Controller
             });
         }
 
-        if ($request->filled('method')) {
-            $query->where('method', strtoupper($request->query('method')));
+        $filters = TableFilter::apply($query, $request, [
+            'method' => [
+                'label' => 'Metode',
+                'type' => 'select',
+                'options' => [
+                    'POST' => 'POST',
+                    'PUT' => 'PUT',
+                    'PATCH' => 'PATCH',
+                    'DELETE' => 'DELETE',
+                ],
+            ],
+            'user_role' => [
+                'label' => 'Peran (Role)',
+                'type' => 'select',
+                'options' => [
+                    'super_admin' => 'Super Admin',
+                    'admin' => 'Admin',
+                    'finance_admin' => 'Admin Keuangan',
+                    'agent' => 'Agen',
+                    'guest' => 'Guest',
+                ],
+            ],
+            'date' => [
+                'label' => 'Tanggal',
+                'type' => 'date_range',
+                'column' => 'created_at',
+            ],
+        ]);
+
+        if ($perPages == 'all') {
+            $logs = $query->take(100)->get();
+        } else {
+            $perPage = min(max(intval($perPages), 1), 100);
+            $logs = $query->paginate($perPage)->withQueryString();
         }
-
-        if ($request->filled('role')) {
-            $query->where('user_role', $request->query('role'));
-        }
-
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->query('date'));
-        }
-
-        $logs = $query->latest('id')->paginate(20)->withQueryString();
-
-        $filters = [
-            'search' => $request->query('search'),
-            'method' => $request->query('method'),
-            'role' => $request->query('role'),
-            'date' => $request->query('date'),
-        ];
 
         return view('cms.admin.activity_logs.index', compact('logs', 'filters'));
     }

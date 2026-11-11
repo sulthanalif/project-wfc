@@ -4,52 +4,29 @@
 
 @section('content')
     <h2 class="intro-y text-lg font-medium mt-10">
-        Log Aktivitas Sistem
+        Log Aktivitas
     </h2>
 
     <div class="grid grid-cols-12 gap-6 mt-5">
-        <!-- BEGIN: Filter Form -->
-        <div class="intro-y col-span-12">
-            <div class="box p-5">
-                <form method="GET" action="{{ route('admin.activity-logs') }}" class="grid grid-cols-12 gap-4">
-                    <div class="col-span-12 sm:col-span-4 lg:col-span-3">
-                        <label for="search" class="form-label text-xs">Pencarian</label>
-                        <input id="search" name="search" type="text" class="form-control"
-                            placeholder="Cari user, aksi, URL, IP..." value="{{ $filters['search'] ?? '' }}">
-                    </div>
-                    <div class="col-span-12 sm:col-span-4 lg:col-span-2">
-                        <label for="method" class="form-label text-xs">Metode HTTP</label>
-                        <select id="method" name="method" class="form-select">
-                            <option value="">Semua Metode</option>
-                            <option value="POST" {{ ($filters['method'] ?? '') === 'POST' ? 'selected' : '' }}>POST</option>
-                            <option value="PUT" {{ ($filters['method'] ?? '') === 'PUT' ? 'selected' : '' }}>PUT</option>
-                            <option value="PATCH" {{ ($filters['method'] ?? '') === 'PATCH' ? 'selected' : '' }}>PATCH</option>
-                            <option value="DELETE" {{ ($filters['method'] ?? '') === 'DELETE' ? 'selected' : '' }}>DELETE</option>
-                        </select>
-                    </div>
-                    <div class="col-span-12 sm:col-span-4 lg:col-span-2">
-                        <label for="role" class="form-label text-xs">Peran (Role)</label>
-                        <select id="role" name="role" class="form-select">
-                            <option value="">Semua Peran</option>
-                            <option value="super_admin" {{ ($filters['role'] ?? '') === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                            <option value="admin" {{ ($filters['role'] ?? '') === 'admin' ? 'selected' : '' }}>Admin</option>
-                            <option value="finance_admin" {{ ($filters['role'] ?? '') === 'finance_admin' ? 'selected' : '' }}>Admin Keuangan</option>
-                            <option value="agent" {{ ($filters['role'] ?? '') === 'agent' ? 'selected' : '' }}>Agen</option>
-                            <option value="guest" {{ ($filters['role'] ?? '') === 'guest' ? 'selected' : '' }}>Guest</option>
-                        </select>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-3">
-                        <label for="date" class="form-label text-xs">Tanggal</label>
-                        <input id="date" name="date" type="date" class="form-control" value="{{ $filters['date'] ?? '' }}">
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-2 flex items-end gap-2">
-                        <button type="submit" class="btn btn-primary w-full">Filter</button>
-                        <a href="{{ route('admin.activity-logs') }}" class="btn btn-outline-secondary w-full">Reset</a>
-                    </div>
-                </form>
+        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
+            @include('cms.layouts.per-page')
+
+            @if ($logs instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan {{ $logs->firstItem() }} hingga
+                    {{ $logs->lastItem() }} dari {{ $logs->total() }} data</div>
+            @else
+                <div class="hidden md:block mx-auto text-slate-500">Menampilkan semua {{ $logs->count() }} data
+                </div>
+            @endif
+            <div class="w-full xl:w-auto flex items-center mt-3 xl:mt-0">
+                <div class="w-56 relative text-slate-500">
+                    <input type="text" class="form-control w-56 box pr-10" placeholder="Cari di halaman ini..." title="Hanya mencari data pada halaman yang sedang aktif" id="filter">
+                    <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-lucide="search"></i>
+                </div>
             </div>
         </div>
-        <!-- END: Filter Form -->
+
+        <x-table.filter :filters="$filters" />
 
         <!-- BEGIN: Data List -->
         <x-table.wrapper>
@@ -73,7 +50,7 @@
                 @foreach ($logs as $log)
                     <tr class="intro-x">
                         <td class="text-center font-medium">
-                            {{ $logs->firstItem() + $loop->index }}
+                            {{ $logs instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($logs->firstItem() + $loop->index) : $loop->iteration }}
                         </td>
                         <td class="whitespace-nowrap">
                             <div class="font-medium">{{ $log->created_at->format('d/m/Y H:i:s') }}</div>
@@ -123,8 +100,8 @@
                             {{ $log->ip_address ?? '-' }}
                         </td>
                         <td class="table-report__action text-center whitespace-nowrap">
-                            <a href="javascript:;" data-tw-toggle="modal" data-tw-target="#detail-log-modal-{{ $log->id }}"
-                                class="btn btn-sm btn-outline-secondary">
+                            <a class="flex items-center justify-center text-primary" href="javascript:;"
+                                data-tw-toggle="modal" data-tw-target="#detail-log-modal-{{ $log->id }}">
                                 <i data-lucide="eye" class="w-4 h-4 mr-1"></i> Detail
                             </a>
 
@@ -177,11 +154,10 @@
                 @endforeach
             @endif
         </x-table.wrapper>
+        <!-- END: Data List -->
 
         <!-- BEGIN: Pagination -->
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center justify-between">
-            {{ $logs->links() }}
-        </div>
+        <x-table.pagination :collection="$logs" />
         <!-- END: Pagination -->
     </div>
 @endsection
