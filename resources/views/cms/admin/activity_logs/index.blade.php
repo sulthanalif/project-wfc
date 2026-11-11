@@ -36,7 +36,7 @@
                     <th class="whitespace-nowrap w-40">WAKTU</th>
                     <th class="whitespace-nowrap w-44">PENGGUNA</th>
                     <th class="text-center whitespace-nowrap w-20">METODE</th>
-                    <th class="whitespace-nowrap">AKSI / RUTE</th>
+                    <th class="whitespace-nowrap">AKSI</th>
                     <th class="text-center whitespace-nowrap w-20">STATUS</th>
                     <th class="text-center whitespace-nowrap w-28">IP ADDRESS</th>
                     <th class="text-center whitespace-nowrap w-24">DETAIL</th>
@@ -73,13 +73,10 @@
                                 {{ $log->method }}
                             </span>
                         </td>
-                        <td>
-                            <div class="font-medium truncate max-w-xs text-sm" title="{{ $log->action }}">
+                        <td class="whitespace-nowrap">
+                            <span class="font-medium text-sm" title="{{ $log->action }}">
                                 {{ $log->action }}
-                            </div>
-                            <div class="text-slate-500 text-xs truncate max-w-xs font-mono mt-0.5" title="{{ $log->url }}">
-                                {{ parse_url($log->url, PHP_URL_PATH) ?: $log->url }}
-                            </div>
+                            </span>
                         </td>
                         <td class="text-center whitespace-nowrap w-20">
                             @if ($log->status_code)
