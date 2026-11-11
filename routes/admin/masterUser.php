@@ -15,3 +15,6 @@ Route::post('/user/role/{user}', [UserController::class, 'changeRole'])->name('u
 
 //change status access user
 Route::put('/user/access/{user}', [UserController::class, 'changeStatusAccess'])->name('user.status.access');
+
+//direct reset password
+Route::put('/user/{user}/direct-password', [UserController::class, 'updateDirectPassword'])->name('user.direct-password')->middleware('role:super_admin');

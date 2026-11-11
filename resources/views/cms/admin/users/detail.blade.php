@@ -9,8 +9,10 @@
         </h2>
         <a href="{{ route('user.index') }}" class="btn px-2 box mr-2"><i data-lucide="arrow-left" class="w-4 h-4"></i></a>
         @hasrole('super_admin')
-            <a href="{{ route('user.edit', $user) }}" class="btn btn-primary"><i data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah
-                Detail</a>
+            @if (!$user->hasRole('super_admin'))
+                <a href="{{ route('user.edit', $user) }}" class="btn btn-primary"><i data-lucide="edit" class="w-4 h-4 mr-2"></i> Ubah
+                    Detail</a>
+            @endif
         @endhasrole
     </div>
     <!-- BEGIN: Profile Info -->
@@ -79,16 +81,18 @@
                     </a> </li>
             @endif
             @hasrole('super_admin')
-                <li id="cpassword-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
-                        data-tw-target="#cpassword" aria-controls="cpassword" aria-selected="true" role="tab"> Reset
-                        Password
-                    </a> </li>
-                <li id="cemail-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
-                        data-tw-target="#cemail" aria-controls="cemail" aria-selected="true" role="tab"> Ubah Email
-                    </a> </li>
-                <li id="cakses-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
-                        data-tw-target="#cakses" aria-controls="cakses" aria-selected="true" role="tab"> Ubah Hak Akses
-                    </a> </li>
+                @if (!$user->hasRole('super_admin'))
+                    <li id="cpassword-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
+                            data-tw-target="#cpassword" aria-controls="cpassword" aria-selected="true" role="tab"> Reset
+                            Password
+                        </a> </li>
+                    <li id="cemail-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
+                            data-tw-target="#cemail" aria-controls="cemail" aria-selected="true" role="tab"> Ubah Email
+                        </a> </li>
+                    <li id="cakses-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4"
+                            data-tw-target="#cakses" aria-controls="cakses" aria-selected="true" role="tab"> Ubah Hak Akses
+                        </a> </li>
+                @endif
             @endhasrole
         </ul>
     </div>
@@ -329,11 +333,16 @@
             </div>
         @endif
         @hasrole('super_admin')
+            @if (!$user->hasRole('super_admin'))
             <div id="cpassword" class="tab-pane" role="tabpanel" aria-labelledby="cpassword-tab">
                 <div class="grid grid-cols-12 gap-6">
-                    <!-- BEGIN: Change Password -->
+                    <!-- BEGIN: Send Reset Password Link -->
                     <div class="intro-y box col-span-12 lg:col-span-6">
-                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                        <div class="px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                            <h2 class="font-medium text-base">Kirim Link Reset Password</h2>
+                            <p class="text-slate-500 text-xs mt-0.5">Kirim email berisi link setel ulang password ke user.</p>
+                        </div>
+                        <div class="p-5">
                             @if (session('status'))
                                 <div id="success-notification-content" class="toastify-content flex my-3 w-full">
                                     <i class="text-success" data-lucide="check-circle"></i>
@@ -344,10 +353,10 @@
                             @endif
                             <form method="POST" action="{{ route('password.email') }}" class="w-full">
                                 @csrf
-                                <div class="intro-x mt-8">
+                                <div>
                                     <input id="email" type="email"
                                         class="intro-x login__input form-control py-3 px-4 block @error('email') is-invalid @enderror"
-                                        name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
+                                        name="email" value="{{ $user->email }}" required autocomplete="email" autofocus
                                         placeholder="Email">
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
@@ -355,14 +364,48 @@
                                         </span>
                                     @enderror
                                 </div>
-                                <div class="intro-x mt-5 xl:mt-8 text-center xl:text-left">
-                                    <button class="btn btn-primary py-3 px-4 w-full xl:mr-3 align-top"
+                                <div class="mt-4 text-left">
+                                    <button class="btn btn-primary py-3 px-4 w-full"
                                         type="submit">{{ __('Kirim Link Reset Password') }}</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <!-- END: Change Password -->
+                    <!-- END: Send Reset Password Link -->
+
+                    <!-- BEGIN: Direct Reset Password -->
+                    <div class="intro-y box col-span-12 lg:col-span-6">
+                        <div class="px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                            <h2 class="font-medium text-base">Ganti Password Langsung</h2>
+                            <p class="text-slate-500 text-xs mt-0.5">Ubah password user ini secara langsung tanpa perlu kirim email.</p>
+                        </div>
+                        <div class="p-5">
+                            <form method="POST" action="{{ route('user.direct-password', $user) }}" class="w-full">
+                                @csrf
+                                @method('PUT')
+                                <div>
+                                    <label for="direct_password" class="form-label">Password Baru</label>
+                                    <input id="direct_password" type="password"
+                                        class="form-control py-3 px-4 block @error('password') is-invalid @enderror"
+                                        name="password" required minlength="8" placeholder="Minimal 8 karakter">
+                                    @error('password')
+                                        <span class="text-danger text-xs mt-1 block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="mt-4">
+                                    <label for="direct_password_confirmation" class="form-label">Konfirmasi Password Baru</label>
+                                    <input id="direct_password_confirmation" type="password"
+                                        class="form-control py-3 px-4 block"
+                                        name="password_confirmation" required minlength="8" placeholder="Ulangi password baru">
+                                </div>
+                                <div class="mt-5 text-left">
+                                    <button class="btn btn-primary py-3 px-4 w-full"
+                                        type="submit">Simpan Password Baru</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- END: Direct Reset Password -->
                 </div>
             </div>
             <div id="cemail" class="tab-pane" role="tabpanel" aria-labelledby="cemail-tab">
@@ -448,6 +491,7 @@
                     <!-- END: Change Role -->
                 </div>
             </div>
+            @endif
         @endhasrole
     </div>
 @endsection

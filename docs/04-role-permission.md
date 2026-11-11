@@ -35,7 +35,11 @@ Daftar lengkap per route ada di [05-routes.md](05-routes.md).
 | Bayar sebagai agen `transaction/payment-agent` | ✓ | ✓ | ✓ | ✓ |
 | Sub agen `master/sub-agent` | ✓ | ✓ | | ✓ |
 | Kelola tutorial `master/tutorial` | ✓ | | | |
+| Log aktivitas `activity-logs` | ✓ | | | |
+| Profil admin `admin-profile` | ✓ | ✓ | ✓ | |
 | Dashboard, profil, laporan agen, ulasan | | | | ✓ (aktif dan email terverifikasi) |
+
+> **Proteksi Akun Super Admin**: Akun dengan role `super_admin` terproteksi di menu `master/user`. Modifikasi data, hapus, ubah role, ubah status, dan reset password dari menu master user diblokir di controller dan disembunyikan di view. Super admin mengubah email dan password melalui menu Profil miliknya sendiri.
 
 ## Middleware tambahan
 

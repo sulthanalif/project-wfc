@@ -9,7 +9,7 @@ python3 docs/tools/gen_routes.py /tmp/routes.json > docs/05-routes.md
 
 `routes/web.php` memuat file per modul dari `routes/admin/`, `routes/agent/`, `routes/transaction/`, dan `routes/landingpage/`. Kolom Akses berisi role Spatie; `a + b` berarti route ada di dua grup role sekaligus dan user harus lolos keduanya.
 
-Total 267 route.
+Total 272 route.
 
 ## `/`
 
@@ -17,11 +17,25 @@ Total 267 route.
 |---|---|---|---|---|
 | GET | `/` | landing-page | `LandingpageController@index` | publik |
 
+## `activity-logs`
+
+| Method | URI | Name | Controller@method | Akses |
+|---|---|---|---|---|
+| GET | `activity-logs` | admin.activity-logs | `Admin\ActivityLogController@index` | super_admin |
+
 ## `admin`
 
 | Method | URI | Name | Controller@method | Akses |
 |---|---|---|---|---|
 | GET | `admin` | dashboard-admin | `Admin\DashboardAdminController@index` | super_admin, admin, finance_admin |
+
+## `admin-profile`
+
+| Method | URI | Name | Controller@method | Akses |
+|---|---|---|---|---|
+| GET | `admin-profile` | admin.profile | `Admin\AdminProfileController@show` | super_admin, admin, finance_admin |
+| PUT | `admin-profile/email` | admin.profile.email | `Admin\AdminProfileController@updateEmail` | super_admin, admin, finance_admin |
+| PUT | `admin-profile/password` | admin.profile.password | `Admin\AdminProfileController@updatePassword` | super_admin, admin, finance_admin |
 
 ## `agent`
 
@@ -426,6 +440,7 @@ Total 267 route.
 | DELETE | `master/user/{user}` | user.destroy | `Admin\UserController@destroy` | admin, super_admin |
 | GET | `master/user/{user}` | user.show | `Admin\UserController@show` | admin, super_admin |
 | PUT|PATCH | `master/user/{user}` | user.update | `Admin\UserController@update` | admin, super_admin |
+| PUT | `master/user/{user}/direct-password` | user.direct-password | `Admin\UserController@updateDirectPassword` | admin, super_admin + super_admin |
 | GET | `master/user/{user}/edit` | user.edit | `Admin\UserController@edit` | admin, super_admin |
 | PUT | `master/user/{user}/status` | user.status | `Admin\UserController@changeStatus` | admin, super_admin |
 

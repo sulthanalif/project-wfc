@@ -390,6 +390,15 @@
                             </li>
                         </ul>
                     </li>
+                    @hasrole('super_admin')
+                        <li>
+                            <a href="{{ route('admin.activity-logs') }}"
+                                class="menu {{ Route::is('admin.activity-logs*') ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-lucide="file-text"></i> </div>
+                                <div class="menu__title"> Log Aktivitas </div>
+                            </a>
+                        </li>
+                    @endhasrole
                 @endhasrole
             </ul>
         </div>

@@ -123,6 +123,16 @@
                     <li>
                         <hr class="dropdown-divider border-white/[0.08]">
                     </li>
+                    @hasrole('super_admin|admin|finance_admin')
+                        <li>
+                            <a href="{{ route('admin.profile') }}"
+                                class="dropdown-item hover:bg-white/5"> <i data-lucide="user" class="w-4 h-4 mr-2"></i>
+                                Profile </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider border-white/[0.08]">
+                        </li>
+                    @endhasrole
                     @hasrole('agent')
                         @if (auth()->user()->active == 1)
                             <li>

@@ -113,7 +113,9 @@
                                     @endif
                                 </td>
                                 <td class="w-40">
-                                    @if ($user->is_open_access == 1)
+                                    @if ($user->roles->first()?->name == 'super_admin')
+                                        <div class="flex items-center justify-center text-slate-400"> - </div>
+                                    @elseif ($user->is_open_access == 1)
                                         <div class="flex items-center justify-center text-success"> <i
                                                 data-lucide="check-square" class="w-4 h-4 mr-2"></i> <a class="flex items-center mr-3" href="javascript:;" data-tw-toggle="modal"
                                                 data-tw-target="#upstat-access-confirmation-modal{{ $user->id }}"> Terbuka </a> </div>
@@ -123,7 +125,13 @@
                                                 data-tw-target="#upstat-access-confirmation-modal{{ $user->id }}">  Terkunci </a> </div>
                                     @endif
                                 </td>
-                                @if ($user->roles->first()->name == 'agent')
+                                @if ($user->roles->first()?->name == 'super_admin')
+                                    <td class="table-report__action w-56">
+                                        <div class="flex justify-center items-center">
+                                            <span class="text-slate-400 italic text-xs">Terproteksi</span>
+                                        </div>
+                                    </td>
+                                @elseif ($user->roles->first()->name == 'agent')
                                     @hasrole('super_admin|admin')
                                         @if ($user->active == 1)
                                             <td class="table-report__action w-56">

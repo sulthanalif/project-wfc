@@ -68,6 +68,13 @@ Route::group(['middleware' => 'auth',], function () {
     Route::group(['middleware' => ['role:super_admin|admin|finance_admin', 'active']], function () {
         Route::get('/admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
 
+        // Admin Profile
+        Route::group(['prefix' => 'admin-profile'], function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminProfileController::class, 'show'])->name('admin.profile');
+            Route::put('/email', [\App\Http\Controllers\Admin\AdminProfileController::class, 'updateEmail'])->name('admin.profile.email');
+            Route::put('/password', [\App\Http\Controllers\Admin\AdminProfileController::class, 'updatePassword'])->name('admin.profile.password');
+        });
+
         Route::group(['prefix' => 'master'], function () {
             Route::resource('bank-owner', BankOwnerController::class)->except(['create', 'show', 'edit']);
         });
@@ -193,6 +200,10 @@ Route::group(['middleware' => 'auth',], function () {
 
     Route::group(['prefix' => 'master', 'middleware' => 'role:super_admin'], function () {
         Route::resource('tutorial', TutorialController::class)->except(['create', 'show', 'edit']);
+    });
+
+    Route::group(['middleware' => 'role:super_admin'], function () {
+        Route::get('activity-logs', [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('admin.activity-logs');
     });
 
     Route::group(['middleware' => 'role:admin|finance_admin|agent'], function () {

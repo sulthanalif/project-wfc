@@ -218,6 +218,10 @@ class UserController extends Controller
      */
     public function edit(Request $request, User $user)
     {
+        if ($user->hasRole('super_admin')) {
+            return back()->with('error', 'Data Super Admin tidak dapat diubah dari menu ini.');
+        }
+
         return view('cms.admin.users.edit', compact('user'));
     }
 
@@ -230,6 +234,9 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        if ($user->hasRole('super_admin')) {
+            return back()->with('error', 'Data Super Admin tidak dapat diubah dari menu ini.');
+        }
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:225', 'string'],
             // 'email' => ['required', 'max:25', 'unique:users,email'],
@@ -308,6 +315,9 @@ class UserController extends Controller
 
     public function changeStatus(Request $request, User $user)
     {
+        if ($user->hasRole('super_admin')) {
+            return back()->with('error', 'Status Super Admin tidak dapat diubah.');
+        }
 
         $user->active = ($user->active == 1 ? 0 : 1);
         $user->save();
@@ -321,6 +331,10 @@ class UserController extends Controller
 
     public function changeStatusAccess(User $user)
     {
+        if ($user->hasRole('super_admin')) {
+            return back()->with('error', 'Status akses Super Admin tidak dapat diubah.');
+        }
+
         $user->is_open_access = !$user->is_open_access;
         $user->save();
 
@@ -336,6 +350,10 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
+        if ($user->hasRole('super_admin')) {
+            return back()->with('error', 'Data Super Admin tidak dapat dihapus.');
+        }
+
         $roleUser = $user->roles->first();
         $roleName = $roleUser->name;
         $delete = false;
@@ -392,6 +410,10 @@ class UserController extends Controller
 
     public function changeRole(Request $request, User $user)
     {
+        if ($user->hasRole('super_admin')) {
+            return back()->with('error', 'Role Super Admin tidak dapat diubah.');
+        }
+
         $validator = Validator::make($request->all(), [
             'role' => 'required|string'
         ]);
@@ -419,6 +441,33 @@ class UserController extends Controller
                 'status' => 400
             ];
             return view('cms.error', compact('data'));
+        }
+    }
+
+    public function updateDirectPassword(Request $request, User $user)
+    {
+        if ($user->hasRole('super_admin')) {
+            return back()->with('error', 'Password Super Admin tidak dapat diubah dari menu ini.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors()->first());
+        }
+
+        try {
+            DB::transaction(function () use ($request, $user) {
+                $user->update([
+                    'password' => Hash::make($request->password),
+                ]);
+            });
+
+            return back()->with('success', 'Password pengguna berhasil diubah secara langsung!');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Gagal mengubah password: ' . $th->getMessage());
         }
     }
 }
