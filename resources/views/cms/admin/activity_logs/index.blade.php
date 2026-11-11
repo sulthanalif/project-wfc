@@ -29,38 +29,35 @@
         <x-table.filter :filters="$filters" />
 
         <!-- BEGIN: Data List -->
-        <x-table.wrapper>
+        <x-table.wrapper class="!overflow-x-auto">
             <x-slot:header>
                 <tr>
-                    <th class="text-center whitespace-nowrap">#</th>
-                    <th class="whitespace-nowrap">WAKTU</th>
-                    <th class="whitespace-nowrap">PENGGUNA</th>
-                    <th class="text-center whitespace-nowrap">ROLE</th>
-                    <th class="text-center whitespace-nowrap">METODE</th>
-                    <th class="whitespace-nowrap">AKSI / URL</th>
-                    <th class="text-center whitespace-nowrap">STATUS</th>
-                    <th class="text-center whitespace-nowrap">IP ADDRESS</th>
-                    <th class="text-center whitespace-nowrap">DETAIL</th>
+                    <th class="text-center whitespace-nowrap w-12">#</th>
+                    <th class="whitespace-nowrap w-40">WAKTU</th>
+                    <th class="whitespace-nowrap w-44">PENGGUNA</th>
+                    <th class="text-center whitespace-nowrap w-20">METODE</th>
+                    <th class="whitespace-nowrap">AKSI / RUTE</th>
+                    <th class="text-center whitespace-nowrap w-20">STATUS</th>
+                    <th class="text-center whitespace-nowrap w-28">IP ADDRESS</th>
+                    <th class="text-center whitespace-nowrap w-24">DETAIL</th>
                 </tr>
             </x-slot:header>
 
             @if ($logs->isEmpty())
-                <x-table.empty colspan="9" message="Belum Ada Log Aktivitas yang Tercatat" />
+                <x-table.empty colspan="8" message="Belum Ada Log Aktivitas yang Tercatat" />
             @else
                 @foreach ($logs as $log)
                     <tr class="intro-x">
-                        <td class="text-center font-medium">
+                        <td class="text-center font-medium w-12">
                             {{ $logs instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($logs->firstItem() + $loop->index) : $loop->iteration }}
                         </td>
-                        <td class="whitespace-nowrap">
-                            <div class="font-medium">{{ $log->created_at->format('d/m/Y H:i:s') }}</div>
-                            <div class="text-slate-500 text-xs">{{ $log->created_at->diffForHumans() }}</div>
+                        <td class="whitespace-nowrap w-40">
+                            <div class="font-medium text-xs">{{ $log->created_at->format('d/m/Y H:i:s') }}</div>
+                            <div class="text-slate-500 text-xs mt-0.5">{{ $log->created_at->diffForHumans() }}</div>
                         </td>
-                        <td class="whitespace-nowrap font-medium">
-                            {{ $log->user_name ?? 'Guest' }}
-                        </td>
-                        <td class="text-center whitespace-nowrap">
-                            <span class="px-2 py-1 rounded text-xs font-semibold
+                        <td class="whitespace-nowrap w-44">
+                            <div class="font-medium text-sm">{{ $log->user_name ?? 'Guest' }}</div>
+                            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold
                                 {{ $log->user_role === 'super_admin' ? 'bg-danger/20 text-danger' :
                                    ($log->user_role === 'admin' ? 'bg-primary/20 text-primary' :
                                    ($log->user_role === 'finance_admin' ? 'bg-warning/20 text-warning' :
@@ -68,7 +65,7 @@
                                 {{ $log->user_role ?? '-' }}
                             </span>
                         </td>
-                        <td class="text-center whitespace-nowrap">
+                        <td class="text-center whitespace-nowrap w-20">
                             <span class="px-2 py-1 rounded text-xs font-bold
                                 {{ $log->method === 'POST' ? 'bg-primary text-white' :
                                    ($log->method === 'PUT' || $log->method === 'PATCH' ? 'bg-warning text-white' :
@@ -77,16 +74,16 @@
                             </span>
                         </td>
                         <td>
-                            <div class="font-medium truncate max-w-xs" title="{{ $log->action }}">
+                            <div class="font-medium truncate max-w-xs text-sm" title="{{ $log->action }}">
                                 {{ $log->action }}
                             </div>
-                            <div class="text-slate-500 text-xs truncate max-w-xs" title="{{ $log->url }}">
-                                {{ $log->url }}
+                            <div class="text-slate-500 text-xs truncate max-w-xs font-mono mt-0.5" title="{{ $log->url }}">
+                                {{ parse_url($log->url, PHP_URL_PATH) ?: $log->url }}
                             </div>
                         </td>
-                        <td class="text-center whitespace-nowrap">
+                        <td class="text-center whitespace-nowrap w-20">
                             @if ($log->status_code)
-                                <span class="px-2 py-1 rounded text-xs font-semibold
+                                <span class="px-2 py-0.5 rounded text-xs font-semibold
                                     {{ $log->status_code >= 200 && $log->status_code < 300 ? 'text-success bg-success/10' :
                                        ($log->status_code >= 300 && $log->status_code < 400 ? 'text-primary bg-primary/10' :
                                        'text-danger bg-danger/10') }}">
@@ -96,11 +93,11 @@
                                 <span class="text-slate-400">-</span>
                             @endif
                         </td>
-                        <td class="text-center whitespace-nowrap text-xs text-slate-600">
+                        <td class="text-center whitespace-nowrap text-xs text-slate-600 w-28 font-mono">
                             {{ $log->ip_address ?? '-' }}
                         </td>
-                        <td class="table-report__action text-center whitespace-nowrap">
-                            <a class="flex items-center justify-center text-primary" href="javascript:;"
+                        <td class="table-report__action text-center whitespace-nowrap w-24">
+                            <a class="btn btn-sm btn-outline-primary px-2 py-1" href="javascript:;"
                                 data-tw-toggle="modal" data-tw-target="#detail-log-modal-{{ $log->id }}">
                                 <i data-lucide="eye" class="w-4 h-4 mr-1"></i> Detail
                             </a>
