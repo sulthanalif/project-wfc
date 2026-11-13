@@ -11,8 +11,6 @@ class ActivityLogController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = ActivityLog::latest('id');
 
         if ($request->filled('search')) {
@@ -55,12 +53,8 @@ class ActivityLogController extends Controller
             ],
         ]);
 
-        if ($perPages == 'all') {
-            $logs = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $logs = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $logs = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.activity_logs.index', compact('logs', 'filters'));
     }

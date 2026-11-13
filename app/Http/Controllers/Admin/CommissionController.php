@@ -20,8 +20,6 @@ class CommissionController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Commission::latest();
         $filters = TableFilter::apply($query, $request, [
             'period' => [
@@ -42,12 +40,8 @@ class CommissionController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $commissions = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $commissions = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $commissions = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.commissions.index', compact('commissions', 'filters'));
     }
@@ -258,8 +252,6 @@ class CommissionController extends Controller
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Commission::whereHas('package.period', fn ($q) => $q->where('is_active', 0))->latest();
         $filters = TableFilter::apply($query, $request, [
             'period' => [
@@ -282,12 +274,8 @@ class CommissionController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $commissions = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $commissions = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $commissions = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.commissions.archive', compact('commissions', 'filters'));
     }

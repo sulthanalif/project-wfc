@@ -26,7 +26,7 @@ Tidak ada build frontend. CSS/JS CMS dan landing page adalah file jadi di `publi
 - Tulis data di dalam `DB::transaction`, balas dengan `back()->with('success'|'error', ...)`.
 - View pesanan ada dalam tiga salinan (`transactions/`, `full/`, `aman/`). Ubah semuanya.
 - Kolom baru lewat migration baru. Jangan mengedit migration lama.
-- Halaman tabel index CMS wajib mengikuti pola seragam: controller memakai `TableFilter::apply` dan paginasi dengan batas maksimum 100; view menyertakan toolbar atas (`@include('cms.layouts.per-page')`, keterangan jumlah data, input `id="filter"`), `<x-table.filter>`, `<x-table.wrapper>` dengan nomor urut sekuensial berlanjut, dan `<x-table.pagination>`. Lihat blueprint lengkap di `docs/07-frontend-design.md`.
+- Halaman tabel index CMS wajib mengikuti pola seragam: controller memakai `TableFilter::apply` dan paginasi dengan batas maksimum 50; view menyertakan toolbar atas (`@include('cms.layouts.per-page')`, keterangan jumlah data, input `id="filter"`), `<x-table.filter>`, `<x-table.wrapper>` dengan nomor urut sekuensial berlanjut, dan `<x-table.pagination>`. Lihat blueprint lengkap di `docs/07-frontend-design.md`.
 - Hosting mematikan `proc_open`: jangan pakai `$schedule->command()`, `Process`, atau `exec`. Queue diproses cron `queue:work` (lihat `docs/08-deployment.md`).
 - Sebelum memperbaiki bug, cek `docs/09-known-issues.md`. Setelah memperbaiki, pindahkan barisnya ke bagian "Sudah diperbaiki".
 

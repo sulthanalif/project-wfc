@@ -29,8 +29,6 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = User::with(['roles', 'agentProfile', 'adminProfile'])->latest();
 
         if ($request->filled('search')) {
@@ -58,12 +56,8 @@ class UserController extends Controller
             'is_open_access' => ['label' => 'Akses', 'type' => 'select', 'options' => ['1' => 'Terbuka', '0' => 'Terkunci']],
         ]);
 
-        if ($perPages == 'all') {
-            $users = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $users = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $users = $query->paginate($perPage)->withQueryString();
 
         // Tampilkan data ke view.
         return view('cms.admin.users.index', compact('users', 'filters'));

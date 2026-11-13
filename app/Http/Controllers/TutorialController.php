@@ -15,8 +15,6 @@ class TutorialController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Tutorial::latest();
 
         if ($request->filled('search')) {
@@ -32,12 +30,8 @@ class TutorialController extends Controller
             'status' => ['label' => 'Status', 'type' => 'select', 'options' => ['1' => 'Aktif', '0' => 'Nonaktif']],
         ]);
 
-        if ($perPages == 'all') {
-            $datas = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $datas = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $datas = $query->paginate($perPage)->withQueryString();
 
         $roles = Role::where('name', '!=', 'super_admin')->get();
 

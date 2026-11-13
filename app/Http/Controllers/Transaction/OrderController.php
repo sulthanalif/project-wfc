@@ -32,8 +32,6 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Order::query()
             ->with(['detail.product.package.package.period', 'agent.agentProfile', 'distributions.detail']);
 
@@ -56,12 +54,8 @@ class OrderController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $orders = (clone $query)->orderByDesc('created_at')->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
 
         if (ValidateRole::check('agent')) {
             return view('cms.transactions.index', compact('orders', 'filters'));
@@ -102,8 +96,6 @@ class OrderController extends Controller
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Order::query()
             ->whereIn('orders.id', TableFilter::orderIdsInPeriods(Period::where('is_active', 0)->pluck('id')))
             ->with(['detail.product.package.package.period', 'agent.agentProfile', 'distributions.detail']);
@@ -127,12 +119,8 @@ class OrderController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $orders = (clone $query)->orderByDesc('created_at')->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
 
         if ($request->get('export') == 'true') {
             $datas = $query->orderByDesc('created_at')->get()->map(function ($item) {

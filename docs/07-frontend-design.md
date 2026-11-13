@@ -68,7 +68,6 @@ Setiap pembuatan halaman daftar data baru di CMS wajib mengikuti struktur beriku
 ```php
 public function index(Request $request)
 {
-    $perPages = $request->get('perPage') ?? 10;
     $query = ModelName::latest('id');
 
     // 1. Pencarian server-side (terhubung otomatis dengan input id="filter" di layout app.blade.php)
@@ -94,13 +93,9 @@ public function index(Request $request)
         ],
     ]);
 
-    // 3. Paginasi aman dengan batas maksimum 100 baris
-    if ($perPages == 'all') {
-        $items = $query->take(100)->get();
-    } else {
-        $perPage = min(max(intval($perPages), 1), 100);
-        $items = $query->paginate($perPage)->withQueryString();
-    }
+    // 3. Paginasi aman dengan batas maksimum 50 baris
+    $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+    $items = $query->paginate($perPage)->withQueryString();
 
     return view('cms.admin.modul.index', compact('items', 'filters'));
 }

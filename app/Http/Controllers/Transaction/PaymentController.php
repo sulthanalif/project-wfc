@@ -97,8 +97,6 @@ class PaymentController extends Controller
 
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         if (ValidateRole::check('agent')) {
             $user = Auth::user();
 
@@ -117,26 +115,15 @@ class PaymentController extends Controller
 
             $filters = TableFilter::apply($query, $request, self::orderPaymentFilters());
 
-            if ($perPages == 'all') {
-                $orders = (clone $query)->take(100)->get();
-            } else {
-                $perPage = min(max(intval($perPages), 1), 100);
-                $orders = (clone $query)->paginate($perPage)->withQueryString();
-            }
+            $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+            $orders = (clone $query)->paginate($perPage)->withQueryString();
 
             return view('cms.agen.payment.index', compact('orders', 'user', 'filters'));
         } else {
-            $perPages = $request->get('perPage') ?? 10;
-
             [$query, $filters, $orderScope] = self::agentPaymentQuery($request);
 
-
-            if ($perPages == 'all') {
-                $orders = (clone $query)->take(100)->get();
-            } else {
-                $perPage = min(max(intval($perPages), 1), 100);
-                $orders = (clone $query)->paginate($perPage)->withQueryString();
-            }
+            $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+            $orders = (clone $query)->paginate($perPage)->withQueryString();
 
             if ($request->get('export') == 'true') {
                 $datas = Order::with('agent.agentProfile')->whereIn('agent_id', (clone $query)->select('users.id'))->where($orderScope)->get()->groupBy('agent_id')->map(function ($item) {
@@ -168,8 +155,6 @@ class PaymentController extends Controller
 
     public function show(User $user, Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $packages = Package::with('product')->whereHas('period', function ($query) {
             $query->where('is_active', 1);
         })->get();
@@ -183,12 +168,8 @@ class PaymentController extends Controller
 
         $filters = TableFilter::apply($query, $request, self::orderPaymentFilters());
 
-        if ($perPages == 'all') {
-            $orders = (clone $query)->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $orders = (clone $query)->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $orders = (clone $query)->paginate($perPage)->withQueryString();
 
         if ($request->get('export') == 'true') {
             $datas = (clone $query)->get()->map(function ($item) {

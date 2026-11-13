@@ -17,8 +17,6 @@ class RewardController extends Controller
 
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Reward::latest();
 
         if ($request->filled('search')) {
@@ -33,12 +31,8 @@ class RewardController extends Controller
             'period' => ['label' => 'Periode', 'type' => 'period', 'column' => 'period_id', 'default' => 'all'],
         ]);
 
-        if ($perPages == 'all') {
-            $rewards = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $rewards = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $rewards = $query->paginate($perPage)->withQueryString();
 
 
         return view('cms.admin.rewards.index', compact('rewards', 'filters'));

@@ -43,16 +43,10 @@ class DashboardAdminController extends Controller
             'productSales' => ($productSales ? $productSales : '-'),
         ];
 
-        $orderPages = $request->get('orderPage') ?? 10;
-
         [$orderQuery, $filters] = PaymentController::agentPaymentQuery($request);
 
-        if ($orderPages == 'all') {
-            $orders = $orderQuery->take(100)->get();
-        } else {
-            $orderPage = min(max(intval($orderPages), 1), 100);
-            $orders = $orderQuery->paginate($orderPage, ['*'], 'page')->withQueryString();
-        }
+        $orderPage = min(max((int) ($request->get('orderPage') === 'all' ? 50 : $request->get('orderPage', 10)), 1), 50);
+        $orders = $orderQuery->paginate($orderPage, ['*'], 'page')->withQueryString();
 
         if ($request->get('export') == 'true') {
             $datas = Order::with('agent.agentProfile')->whereIn('status', ['accepted', 'stop'])->get()->groupBy('agent_id')->map(function ($item) {

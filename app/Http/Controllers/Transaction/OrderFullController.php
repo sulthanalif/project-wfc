@@ -24,8 +24,6 @@ class OrderFullController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Order::query()
             ->whereIn('orders.id', Order::idsWithSafePoint(false))
             ->with(['detail.product.package.package.period', 'agent.agentProfile', 'distributions.detail']);
@@ -49,12 +47,8 @@ class OrderFullController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $orders = (clone $query)->orderByDesc('created_at')->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
 
         if (ValidateRole::check('agent')) {
             return view('cms.transactions.full.index', compact('orders', 'filters'));
@@ -95,8 +89,6 @@ class OrderFullController extends Controller
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Order::query()
             ->whereIn('orders.id', Order::idsWithSafePoint(false))
             ->whereIn('orders.id', TableFilter::orderIdsInPeriods(Period::where('is_active', 0)->pluck('id')))
@@ -121,12 +113,8 @@ class OrderFullController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $orders = (clone $query)->orderByDesc('created_at')->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
 
         if (ValidateRole::check('agent')) {
             return view('cms.transactions.full.archive', compact('orders', 'filters'));

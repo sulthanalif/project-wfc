@@ -16,8 +16,6 @@ class IncomeController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Income::with('bankOwner')->latest();
 
         if ($request->filled('search')) {
@@ -38,12 +36,8 @@ class IncomeController extends Controller
         ]);
         $totalIncome = (clone $query)->sum('amount');
 
-        if ($perPages == 'all') {
-            $incomes = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $incomes = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $incomes = $query->paginate($perPage)->withQueryString();
         return view('cms.admin.finance.income.index', compact('incomes', 'totalIncome', 'filters'));
     }
 

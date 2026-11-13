@@ -27,7 +27,6 @@ class SubAgentController extends Controller
         $roleUser = $user->roles->first();
         $roleName = $roleUser->name;
 
-        $perPages = $request->get('perPage') ?? 10;
         $query = SubAgent::with('agent.agentProfile');
 
         if ($roleName == 'agent') {
@@ -49,12 +48,8 @@ class SubAgentController extends Controller
         }
         $filters = TableFilter::apply($query, $request, $filterDefs);
 
-        if ($perPages == 'all') {
-            $subAgents = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $subAgents = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $subAgents = $query->paginate($perPage)->withQueryString();
         return view('cms.sub-agent.index', compact('subAgents', 'filters'));
 
     }

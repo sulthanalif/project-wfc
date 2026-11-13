@@ -17,8 +17,6 @@ class SubProductController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = SubProduct::latest();
 
         if ($request->filled('search')) {
@@ -32,12 +30,8 @@ class SubProductController extends Controller
             'unit' => ['label' => 'Satuan', 'type' => 'select', 'options' => SubProduct::query()->distinct()->orderBy('unit')->pluck('unit', 'unit')->all()],
         ]);
 
-        if ($perPages == 'all') {
-            $subProducts = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $subProducts = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $subProducts = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.sub-products.index', compact('subProducts', 'filters'));
     }

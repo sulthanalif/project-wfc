@@ -87,7 +87,7 @@ class ReportController extends Controller
 
     public function totalDeposit(Request $request)
     {
-        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
         [$filters, $scope] = $this->reportFilters($request);
 
         $agentsQuery = User::role('agent')
@@ -154,7 +154,7 @@ class ReportController extends Controller
 
     public function productDetail(Request $request)
     {
-        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
         [$filters, $scope] = $this->reportFilters($request);
 
         $productDetailsQuery = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
@@ -214,7 +214,7 @@ class ReportController extends Controller
 
     public function agentProductDetail(Request $request, $productId)
     {
-        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
         [$filters, $scope] = $this->reportFilters($request);
         $product = Product::where('id', $productId)->with(['order.order'])->get();
 
@@ -251,7 +251,7 @@ class ReportController extends Controller
 
     public function agentOrder(Request $request)
     {
-        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
         [$filters, $scope] = $this->reportFilters($request);
 
         $agentsQuery = User::role('agent')
@@ -310,7 +310,7 @@ class ReportController extends Controller
 
     public function agentReward(Request $request)
     {
-        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
         [$filters, $scope, $period] = $this->reportFilters($request);
 
         // 1. Reward periode yang dipilih (tanpa periode: reward yang sedang berlaku), urut dari target terbesar
@@ -383,7 +383,7 @@ class ReportController extends Controller
 
     public function instalment(Request $request)
     {
-        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
         [$filters, $scope] = $this->reportFilters($request);
 
         $paymentsQuery = Payment::with(['order.agent.agentProfile', 'order'])
@@ -424,7 +424,7 @@ class ReportController extends Controller
 
     public function requirement(Request $request)
     {
-        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
         [$filters, $scope] = $this->reportFilters($request, false);
 
         $datasubsQuery = DB::table('order_details')
@@ -669,7 +669,7 @@ class ReportController extends Controller
 
     public function stockSubProduct(Request $request)
     {
-        $perPage = min(max(intval($request->get('perPage', 10)), 1), 100);
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
         [$filters, $scope, $period, $orderIds] = $this->reportFilters($request, false);
         $spendingType = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
 

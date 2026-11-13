@@ -31,8 +31,6 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Product::with(['detail', 'package.package.period'])->latest();
 
         if ($request->filled('search')) {
@@ -60,20 +58,14 @@ class ProductController extends Controller
             ],
         ]);
 
-        if ($perPages == 'all') {
-            $products = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $products = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $products = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.products.index', compact('products', 'filters'));
     }
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Product::with(['detail', 'package.package.period'])->whereHas('package.package.period', function ($query) {
             $query->where('is_active', 0);
         })->latest();
@@ -105,12 +97,8 @@ class ProductController extends Controller
             ],
         ]);
 
-        if ($perPages == 'all') {
-            $products = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $products = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $products = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.products.archive', compact('products', 'filters'));
     }

@@ -25,8 +25,6 @@ class DistributionController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Distribution::with([
             'detail.orderDetail.order.agent.agentProfile',
             'detail.orderDetail.subAgent',
@@ -62,12 +60,8 @@ class DistributionController extends Controller
             'date' => ['label' => 'Tanggal', 'type' => 'date_range'],
         ]);
 
-        if ($perPages == 'all') {
-            $distributions = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $distributions = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $distributions = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.distributions.index', compact('distributions', 'filters'));
     }

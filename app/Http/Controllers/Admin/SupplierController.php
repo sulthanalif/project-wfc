@@ -17,8 +17,6 @@ class SupplierController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Supplier::latest();
 
         if ($request->filled('search')) {
@@ -30,12 +28,8 @@ class SupplierController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $suppliers = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $suppliers = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $suppliers = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.suppliers.index', compact('suppliers'));
     }

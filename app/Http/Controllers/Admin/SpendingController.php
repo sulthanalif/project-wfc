@@ -17,8 +17,6 @@ class SpendingController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Spending::with(['bankOwner', 'spendingType'])->latest();
 
         if ($request->filled('search')) {
@@ -41,12 +39,8 @@ class SpendingController extends Controller
         ]);
         $totalSpending = (clone $query)->sum('total_amount');
 
-        if ($perPages == 'all') {
-            $spendings = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $spendings = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $spendings = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.finance.spending.index', compact('spendings', 'totalSpending', 'filters'));
     }

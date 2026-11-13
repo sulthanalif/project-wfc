@@ -13,8 +13,6 @@ class SpendingTypeController extends Controller
     //route: spendingType.index
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = SpendingType::latest();
 
         if ($request->filled('search')) {
@@ -22,12 +20,8 @@ class SpendingTypeController extends Controller
             $query->where('name', 'like', "%{$search}%");
         }
 
-        if ($perPages == 'all') {
-            $spendingTypes = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $spendingTypes = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $spendingTypes = $query->paginate($perPage)->withQueryString();
         
         return view('cms.admin.finance.spending.type.index', compact('spendingTypes'));
     }

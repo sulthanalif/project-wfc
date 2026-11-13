@@ -21,8 +21,6 @@ class LoanController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Loan::with('loanPayments')->latest();
 
         if ($request->filled('search')) {
@@ -45,12 +43,8 @@ class LoanController extends Controller
         $totalPayments = LoanPayment::whereIn('loan_id', (clone $query)->reorder()->select('id'))->sum('pay');
         $totalRemaining = $totalLoans - $totalPayments;
 
-        if ($perPages == 'all') {
-            $loans = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $loans = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $loans = $query->paginate($perPage)->withQueryString();
 
         $banks = BankOwner::all();
 

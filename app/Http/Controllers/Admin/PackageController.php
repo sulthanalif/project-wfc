@@ -32,7 +32,6 @@ class PackageController extends Controller
         // ->where('periods.is_active', 1)
         // ->select('packages.*')
         // ->paginate(10);
-        $perPages = $request->get('perPage') ?? 10;
 
         $query = Package::with('period')->latest();
 
@@ -54,20 +53,14 @@ class PackageController extends Controller
             ],
         ]);
 
-        if ($perPages == 'all') {
-            $packages = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $packages = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $packages = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.pakets.index', compact('packages', 'filters'));
     }
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Package::with('period')->whereHas('period', function ($query) {
             $query->where('is_active', 0);
         })->latest();
@@ -92,12 +85,8 @@ class PackageController extends Controller
             ],
         ]);
 
-        if ($perPages == 'all') {
-            $packages = $query->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $packages = $query->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $packages = $query->paginate($perPage)->withQueryString();
 
         return view('cms.admin.pakets.archive', compact('packages', 'filters'));
     }

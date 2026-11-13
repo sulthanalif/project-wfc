@@ -15,14 +15,13 @@ Tidak ada bug yang belum diperbaiki.
 Hampir semua halaman daftar memakai pola yang sama:
 
 ```php
-$perPages = $request->get('perPage') ?? 5;
-if ($perPages == 'all') { $data = Model::...->get(); }
-else { $data = Model::...->paginate(intval($perPages)); }
+$perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+$data = Model::...->paginate($perPage)->withQueryString();
 ```
 
 ```blade
-<select id="records_per_page"> 10 / 25 / 50 / All </select>   {{-- JS mengganti ?perPage= lalu reload --}}
-<input id="filter">                                           {{-- search di browser, layouts/app.blade.php --}}
+<select id="records_per_page"> 10 / 25 / 50 </select>   {{-- JS mengganti ?perPage= lalu reload --}}
+<input id="filter">                                     {{-- search di browser, layouts/app.blade.php --}}
 @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
     {{ $data->links('cms.layouts.paginate') }}
 @endif
@@ -71,6 +70,7 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 | P10: Klarifikasi scope pencarian dengan label/placeholder 'Cari di halaman ini...' di seluruh 43 view dan pesan feedback saat filter kosong di `app.blade.php` | `2db3bd3` |
 | P4: Agregasi SQL (subquery, join, group by) dan LengthAwarePaginator di semua modul laporan admin (`report/*`), mengaktifkan pagination di view dan export dataset lengkap | `1b0f2ff` |
 | P12: Partial dropdown bersama `cms/layouts/per-page.blade.php` dan skrip event listener terpusat di `app.blade.php` (menghapus 35 duplikasi view) | `4abbc4a` |
+| P13: Hapus opsi `all` pada dropdown `per-page` (pilihan dibatasi 10, 25, 50) dan standardisasi paginasi ke batas aman maksimum 50 baris di 22 controller CMS | `optimalisasi` |
 | P1: Opsi `perPage=all` dan input `perPage` dibatasi maksimal 100 di controller | `c939467` |
 | P7: Index database pada kolom pivot `product_packages` (`product_id`, `package_id`), `order_details` (`order_id`, `product_id`), dan `orders` (`agent_id`, `status`) | `c939467` |
 | P9: Default `perPage = 10` disamakan di seluruh 16 controller agar konsisten dengan pilihan pertama dropdown UI | `c939467` |

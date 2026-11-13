@@ -24,8 +24,6 @@ class OrderAmanController extends Controller
 {
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Order::query()
             ->whereIn('orders.id', Order::idsWithSafePoint(true))
             ->whereNotIn('orders.id', Order::idsWithSafePoint(false))
@@ -50,12 +48,8 @@ class OrderAmanController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $orders = (clone $query)->orderByDesc('created_at')->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
 
         if (ValidateRole::check('agent')) {
             return view('cms.transactions.aman.index', compact('orders', 'filters'));
@@ -97,8 +91,6 @@ class OrderAmanController extends Controller
 
     public function archive(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = Order::query()
             ->whereIn('orders.id', Order::idsWithSafePoint(true))
             ->whereNotIn('orders.id', Order::idsWithSafePoint(false))
@@ -124,12 +116,8 @@ class OrderAmanController extends Controller
             });
         }
 
-        if ($perPages == 'all') {
-            $orders = (clone $query)->orderByDesc('created_at')->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $orders = (clone $query)->orderByDesc('created_at')->paginate($perPage)->withQueryString();
 
         if (ValidateRole::check('agent')) {
             return view('cms.transactions.aman.archive', compact('orders', 'filters'));

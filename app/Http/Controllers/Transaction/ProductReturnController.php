@@ -24,8 +24,6 @@ class ProductReturnController extends Controller
      */
     public function index(Request $request)
     {
-        $perPages = $request->get('perPage') ?? 10;
-
         $query = ProductReturn::with([
             'user.agentProfile',
             'productReturnDetail.order',
@@ -77,12 +75,8 @@ class ProductReturnController extends Controller
             return Excel::download(new ExportDatas($datas, 'Data Pengembalian', $headers), 'Data Pengembalian.xlsx');
         }
 
-        if ($perPages == 'all') {
-            $returns = (clone $query)->take(100)->get();
-        } else {
-            $perPage = min(max(intval($perPages), 1), 100);
-            $returns = (clone $query)->paginate($perPage)->withQueryString();
-        }
+        $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
+        $returns = (clone $query)->paginate($perPage)->withQueryString();
 
         return view('cms.return.index', compact('returns', 'filters'));
     }
