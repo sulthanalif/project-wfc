@@ -42,6 +42,7 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 | Masalah | Commit |
 |---|---|
 | B13: Total pengeluaran menghitung `amount × qty`, padahal pengadaan menyimpan `amount` sebagai total (kartu total sekitar 147 kali lipat). Sekarang semua total memakai `total_amount`, baris pengadaan lama di-backfill | `optimalisasi` |
+| B15: Laporan per barang (Perpaket, total produk Pesanan Agen, Sub Produk, Stock Sub Product) dengan filter periode menghitung semua produk dari pesanan yang punya minimal satu produk periode itu, jadi produk periode lain di pesanan yang sama ikut terhitung. Sekarang disaring per produk (`packages.period_id`) | `main` |
 | B14: `ckeditor-classic.js` dimuat sekali per modal (error `ckeditor-duplicated-modules` di halaman pinjaman). Sekarang `@pushOnce('custom-scripts', 'ckeditor-classic')`, dan halaman tanpa `.editor` tidak memuatnya | `optimalisasi` |
 | Detail pesanan (6 salinan) membawa sisa script form pembayaran yang error karena `#method` tidak ada | `optimalisasi` |
 | Export pesanan & pembayaran hanya berisi baris halaman aktif karena `paginate()` mengubah query yang dipakai export | `optimalisasi` |

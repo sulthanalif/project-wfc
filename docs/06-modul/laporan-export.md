@@ -16,6 +16,8 @@ Semua di `Admin\ReportController`, prefix `report`, akses `super_admin`, `admin`
 | Sub Produk (kebutuhan) | `report/requirement` | `requirement` | `ReportRequirementExport` |
 | Stock Sub Product | `report/stock-sub-product` | `stockSubProduct` | `ReportStockSubExport` |
 
+Filter periode di laporan menyaring pesanan yang punya minimal satu produk dari paket periode itu (`TableFilter::orderIdsInPeriods`). Karena satu pesanan bisa berisi produk dari beberapa periode, `reportFilters()` juga mengembalikan `$productScope` yang menyaring baris `order_details` per produk (`product_packages` → `packages.period_id`). Yang memakainya: Perpaket (baris dan kartu total, termasuk total harga dari `sub_price`), kolom total produk di Pesanan Agen, Sub Produk (kebutuhan), dan Stock Sub Product (kebutuhan dan distribusi). Laporan uang (total harga Pesanan Agen, Cicilan, Total Setoran) tetap menghitung pesanan utuh karena cicilan dibayar per pesanan. Akibatnya, untuk pesanan campuran, total produk tidak sama dengan nilai pesanan.
+
 Laporan untuk agen sendiri: `report/agent-instalment` (`Agent\AgentReportController@agentInstallment`).
 
 View laporan: `resources/views/cms/admin/reports/`.

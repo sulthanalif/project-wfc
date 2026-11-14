@@ -82,7 +82,18 @@ class ReportController extends Controller
             }
         };
 
-        return [$filters, $scope, $periodId === 'all' ? null : Period::find($periodId), $orderIds];
+        // Pesanan bisa berisi produk dari beberapa periode. Laporan per barang memakai $productScope
+        // pada order_details supaya hanya produk dari paket periode terpilih yang dihitung.
+        $productScope = function ($q) use ($periodId) {
+            if ($periodId !== 'all') {
+                $q->whereIn('order_details.product_id', DB::table('product_packages')
+                    ->join('packages', 'packages.id', '=', 'product_packages.package_id')
+                    ->where('packages.period_id', $periodId)
+                    ->select('product_packages.product_id'));
+            }
+        };
+
+        return [$filters, $scope, $periodId === 'all' ? null : Period::find($periodId), $orderIds, $productScope];
     }
 
     public function totalDeposit(Request $request)
@@ -155,11 +166,12 @@ class ReportController extends Controller
     public function productDetail(Request $request)
     {
         $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
-        [$filters, $scope] = $this->reportFilters($request);
+        [$filters, $scope, , , $productScope] = $this->reportFilters($request);
+        $detailScope = fn ($q) => $q->where($scope)->where($productScope);
 
         $productDetailsQuery = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
             ->leftJoin('products', 'order_details.product_id', '=', 'products.id')
-            ->where($scope)
+            ->where($detailScope)
             ->select([
                 'order_details.product_id',
                 'products.name as product_name',
@@ -174,12 +186,12 @@ class ReportController extends Controller
             $productDetailsQuery->where('products.name', 'like', "%{$search}%");
         }
 
-        $totalProductAll = (int) OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')->where($scope)->sum('order_details.qty');
-        $totalPriceAll = (float) Order::where($scope)->sum('total_price');
+        $totals = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')->where($detailScope)
+            ->selectRaw('coalesce(sum(order_details.qty), 0) as qty, coalesce(sum(order_details.sub_price), 0) as price')->first();
 
         $stats = [
-            'totalProductAll' => $totalProductAll,
-            'totalPriceAll' => $totalPriceAll,
+            'totalProductAll' => (int) $totals->qty,
+            'totalPriceAll' => (float) $totals->price,
         ];
 
         if ($request->get('export') == 1) {
@@ -252,7 +264,7 @@ class ReportController extends Controller
     public function agentOrder(Request $request)
     {
         $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
-        [$filters, $scope] = $this->reportFilters($request);
+        [$filters, $scope, , , $productScope] = $this->reportFilters($request);
 
         $agentsQuery = User::role('agent')
             ->whereHas('order', $scope)
@@ -269,6 +281,7 @@ class ReportController extends Controller
                 OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
                     ->whereColumn('orders.agent_id', 'users.id')
                     ->where($scope)
+                    ->where($productScope)
                     ->selectRaw('coalesce(sum(order_details.qty), 0)'),
                 'total_product'
             );
@@ -279,7 +292,7 @@ class ReportController extends Controller
         }
 
         $totalPriceAll = (float) Order::where($scope)->sum('total_price');
-        $totalProductAll = (int) OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')->where($scope)->sum('order_details.qty');
+        $totalProductAll = (int) OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')->where($scope)->where($productScope)->sum('order_details.qty');
 
         $stats = [
             'totalProductAll' => $totalProductAll,
@@ -425,13 +438,14 @@ class ReportController extends Controller
     public function requirement(Request $request)
     {
         $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
-        [$filters, $scope] = $this->reportFilters($request, false);
+        [$filters, $scope, , , $productScope] = $this->reportFilters($request, false);
 
         $datasubsQuery = DB::table('order_details')
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('product_sub_products', 'order_details.product_id', '=', 'product_sub_products.product_id')
             ->join('sub_products', 'product_sub_products.sub_product_id', '=', 'sub_products.id')
             ->where($scope)
+            ->where($productScope)
             ->select([
                 'sub_products.id',
                 'sub_products.name',
@@ -670,7 +684,7 @@ class ReportController extends Controller
     public function stockSubProduct(Request $request)
     {
         $perPage = min(max((int) ($request->get('perPage') === 'all' ? 50 : $request->get('perPage', 10)), 1), 50);
-        [$filters, $scope, $period, $orderIds] = $this->reportFilters($request, false);
+        [$filters, $scope, $period, $orderIds, $productScope] = $this->reportFilters($request, false);
         $spendingType = SpendingType::firstOrCreate(['name' => 'Pengadaan']);
 
         // 1. Kebutuhan sub-product dari pesanan accepted via SQL aggregation
@@ -679,6 +693,7 @@ class ReportController extends Controller
             ->join('product_sub_products', 'order_details.product_id', '=', 'product_sub_products.product_id')
             ->join('sub_products', 'product_sub_products.sub_product_id', '=', 'sub_products.id')
             ->where($scope)
+            ->where($productScope)
             ->select([
                 'sub_products.id',
                 'sub_products.name',
@@ -702,6 +717,7 @@ class ReportController extends Controller
             ->join('product_sub_products', 'order_details.product_id', '=', 'product_sub_products.product_id')
             ->where('distributions.status', 'delivered')
             ->when($orderIds !== null, fn ($q) => $q->whereIn('order_details.order_id', $orderIds))
+            ->where($productScope)
             ->groupBy('product_sub_products.sub_product_id')
             ->select('product_sub_products.sub_product_id', DB::raw('sum(distribution_details.qty * product_sub_products.amount) as total_distributed'))
             ->pluck('total_distributed', 'sub_product_id')
