@@ -33,7 +33,7 @@ flowchart LR
 | `payments.is_confirmed` | Tanda dana sudah dicek finance. Di-toggle `PUT transaction/changePaymentVerify/{payment}`. Tidak memengaruhi `payment_status`. |
 | `orders.payment_status` | `unpaid` (belum ada cicilan), `pending` (dicicil), `paid` (lunas) |
 
-`payment_status` dihitung ulang di `storePayment`, `storePaymentAgent`, `changePaymentStatus`, `destroy`, dan juga oleh `DetailOrderController` ketika isi pesanan berubah. Perbandingannya `==`, sehingga kelebihan bayar membuat status tetap `pending`.
+`payment_status` dihitung ulang oleh `Order::recalculatePaymentStatus()`, dipanggil dari `storePayment`, `storePaymentAgent`, `changePaymentStatus`, `destroy`, dan `DetailOrderController` ketika isi pesanan berubah. Status `paid` kalau total bayar `accepted` `>=` total harga dan total lebih dari 0, jadi kelebihan bayar tetap lunas.
 
 ## Halaman
 
@@ -57,5 +57,5 @@ Di halaman daftar admin, status agen dirangkum: `Lunas` kalau semua pesanannya `
 
 ## Aturan saat mengubah
 
-- Setiap perubahan pada `payments` atau `orders.total_price` harus diikuti perhitungan ulang `payment_status`. Logika ini sekarang disalin di beberapa method; kalau mengubah aturannya, ubah di semua tempat.
+- Setiap perubahan pada `payments` atau `orders.total_price` harus diikuti perhitungan ulang `payment_status`. Panggil `$order->recalculatePaymentStatus()`; aturannya hanya ada di model `Order`.
 - Route `changePaymentStatus` dan `changePaymentVerify` saat ini bisa dipanggil role `agent` (lihat [09-known-issues.md](../09-known-issues.md)).

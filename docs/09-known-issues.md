@@ -78,6 +78,7 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 | P2: Paginate pembayaran admin per agen langsung di database (`User::role('agent')->whereHas('order', ...)->paginate()`) | `f62129d` |
 | P3: Paginate pesanan dashboard admin per agen langsung di database, memperbaiki pagination yang hilang akibat `groupBy` di PHP | `f62129d` |
 | Sisa query di view detail pembayaran (admin/agen, termasuk modal bayar) dan detail pinjaman: `payment()->...->sum()` dan `loanPayments()->sum()` diganti penjumlahan dari relasi yang sudah dimuat. `cms/transactions/table/table.blade.php` dihapus karena tidak di-include di mana pun | `main` |
+| Logika `payment_status` disalin: `DetailOrderController@editDetail` mengisi `'unpaid'` sendiri di dua blok duplikat saat item terakhir dihapus. Sekarang satu blok, lalu lewat `Order::recalculatePaymentStatus()` seperti semua jalur lain | `main` |
 | P5: Eliminasi query N+1 per baris view dengan `withSum('payment as paid_total', 'pay')` dan `withCount()` di controller serta optimasi view | `2b1911d` |
 | P6: Eager loading relasi yang dipakai view: produk (`detail`, `package.package.period`), user (`roles`, `agentProfile`, `adminProfile`), distribusi (`detail.orderDetail...`), paket (`period`), dan pesanan (`detail...`, `distributions.detail`) | `2b1911d` |
 | P8: Link pagination tidak membawa query string (`->withQueryString()` di controller) | `b424a88` |
@@ -90,7 +91,6 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 
 - **Halaman tanpa pagination.** Sebagian index memakai `->get()` untuk semua data, terutama di cabang export dan `perPage=all`.
 - **Tiga salinan view pesanan** (biasa, `full/`, `aman/`, masing-masing dengan `detail` dan `archive-detail`). Perubahan harus diterapkan di semua salinan.
-- **Logika `payment_status` disalin** di `PaymentController` (4 method) dan `DetailOrderController`.
 - **Foreign key tidak ada** untuk kolom `uuid(...)->constrained()` (lihat [03-database.md](03-database.md)).
 - **Kode tidak terpakai:** `App\Helpers\ResponseFormatter`, paket `tymon/jwt-auth`, permission Spatie yang tidak pernah dicek, `resources/sass` dan `resources/js` (layout tidak memuatnya), banyak blok kode yang di-comment.
 - **Test hampir tidak ada:** hanya `tests/Feature/OrderRouteTest.php`.

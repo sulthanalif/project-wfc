@@ -87,7 +87,7 @@ Aksi di halaman detail:
 | Invoice PDF pesanan | `GET transaction/invoice/{order}` | `ExportInvoiceController@getInvoiceOrder` |
 | Hitung ulang harga | `GET master/countPrice/{order}` | `CountPriceTransactionController@count` |
 
-`editDetail` dan `addItems` sama-sama menghitung ulang `sub_price` dari harga produk, lalu `total_price` pesanan, lalu `payment_status` (lunas kalau total bayar `accepted` sama dengan total harga).
+`editDetail` dan `addItems` sama-sama menghitung ulang `sub_price` dari harga produk, lalu `total_price` pesanan, lalu `payment_status` lewat `Order::recalculatePaymentStatus()`. Kalau item terakhir dihapus, pesanan menjadi `canceled` dengan total 0, kecuali sudah ada pembayaran (ditolak dengan pesan error).
 
 Item hanya bisa diubah dalam periode aktif. Di luar itu tombol ubah disembunyikan, kecuali user punya `is_open_access` (lihat [04-role-permission.md](../04-role-permission.md)).
 

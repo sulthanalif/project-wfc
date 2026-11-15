@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\Payment;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 
@@ -33,7 +32,6 @@ class DetailOrderController extends Controller
             DB::transaction(function () use ($request, $detail) {
                 $product = Product::find($request->product_id);
                 $order = Order::find($detail->order_id);
-                $payments = Payment::where('order_id', $order->id)->orderBy('created_at', 'asc')->get();
 
                 $product_safe_point = Product::query()
                     ->where('name', 'like', "%{$product->name}%")
@@ -42,22 +40,6 @@ class DetailOrderController extends Controller
 
                 if ($detail->product_id == $request->product_id) {
                     if ($request->qty <= 0) {
-                        $remainingCount = OrderDetail::where('order_id', $order->id)
-                            ->where('id', '!=', $detail->id)
-                            ->count();
-
-                        if ($remainingCount === 0) {
-                            if ($order->payment()->exists()) {
-                                throw new \Exception('Item tidak dapat dihapus karena pesanan sudah memiliki data pembayaran.');
-                            }
-                            $detail->delete();
-                            $order->status = 'canceled';
-                            $order->total_price = 0;
-                            $order->payment_status = 'unpaid';
-                            $order->save();
-                            return;
-                        }
-
                         $detail->delete();
                     } else {
                         $detail->qty = $request->qty;
@@ -101,16 +83,11 @@ class DetailOrderController extends Controller
                     }
                 }
 
-                $remainingCount = $order->detail()->count();
-                if ($remainingCount === 0) {
+                if ($order->detail()->doesntExist()) {
                     if ($order->payment()->exists()) {
                         throw new \Exception('Item tidak dapat dihapus karena pesanan sudah memiliki data pembayaran.');
                     }
                     $order->status = 'canceled';
-                    $order->total_price = 0;
-                    $order->payment_status = 'unpaid';
-                    $order->save();
-                    return;
                 }
 
                 $order->total_price = $order->detail()->sum('sub_price');
