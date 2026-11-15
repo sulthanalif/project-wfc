@@ -40,12 +40,16 @@ Kalau suatu saat butuh jadwal lain, tulis dengan `$schedule->call(fn () => ...)`
 
 ```bash
 git pull
-composer install --no-dev --optimize-autoloader
+composer install --no-dev --optimize-autoloader --no-scripts
+rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
+php artisan package:discover
 php artisan migrate --force
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 ```
+
+`--no-scripts` wajib, karena Composer menjalankan `@php artisan package:discover` lewat `proc_open` dan gagal dengan `The Process class relies on proc_open`. Dua baris berikutnya melakukan hal yang sama langsung lewat artisan. Kalau dilewati, cache daftar paket di `bootstrap/cache` masih menyebut paket yang sudah dihapus dan aplikasi error "class not found".
 
 Setelah mengubah `.env`, jalankan `php artisan config:clear` atau `config:cache` lagi; nilai lama tetap terpakai selama cache config masih ada.
 
