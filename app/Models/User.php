@@ -121,4 +121,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ProductReturn::class, 'user_id');
     }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\QueuedVerifyEmail);
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\QueuedResetPassword($token));
+    }
 }
