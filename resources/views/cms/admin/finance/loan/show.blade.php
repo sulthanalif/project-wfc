@@ -168,7 +168,7 @@
                             <th colspan="2" class="text-center">SISA PEMBAYARAN</th>
                             <th class="text-center">
                                 Rp.
-                                {{ number_format($loan->loanPayments->sortByDesc('created_at')->first() ? $loan->amount - $loan->loanPayments()->sum('pay') : $loan->amount, 0, ',', '.') }}
+                                {{ number_format($loan->loanPayments->sortByDesc('created_at')->first() ? $loan->amount - $loan->loanPayments->sum('pay') : $loan->amount, 0, ',', '.') }}
                             </th>
                         </tr>
                     </tfoot>
