@@ -80,6 +80,7 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 | Sisa query di view detail pembayaran (admin/agen, termasuk modal bayar) dan detail pinjaman: `payment()->...->sum()` dan `loanPayments()->sum()` diganti penjumlahan dari relasi yang sudah dimuat. `cms/transactions/table/table.blade.php` dihapus karena tidak di-include di mana pun | `main` |
 | Logika `payment_status` disalin: `DetailOrderController@editDetail` mengisi `'unpaid'` sendiri di dua blok duplikat saat item terakhir dihapus. Sekarang satu blok, lalu lewat `Order::recalculatePaymentStatus()` seperti semua jalur lain | `main` |
 | Kode tidak terpakai: `App\Helpers\ResponseFormatter`, paket `tymon/jwt-auth` (beserta `lcobucci/jwt`, `lcobucci/clock`, `stella-maris/clock`), `resources/js`, `resources/sass`, `resources/css`, `vite.config.js`, `package.json`, dan blok kode yang di-comment (5 baris atau lebih) di controller dan `routes/web.php` dihapus | `main` |
+| `App\Http\Controllers\TestController` (route-nya sudah di-comment) dihapus. Catatan utang teknis "Halaman tanpa pagination" dan "Test hampir tidak ada" dihapus karena sudah tertangani P4, P13, dan test yang ada sekarang | `main` |
 | P5: Eliminasi query N+1 per baris view dengan `withSum('payment as paid_total', 'pay')` dan `withCount()` di controller serta optimasi view | `2b1911d` |
 | P6: Eager loading relasi yang dipakai view: produk (`detail`, `package.package.period`), user (`roles`, `agentProfile`, `adminProfile`), distribusi (`detail.orderDetail...`), paket (`period`), dan pesanan (`detail...`, `distributions.detail`) | `2b1911d` |
 | P8: Link pagination tidak membawa query string (`->withQueryString()` di controller) | `b424a88` |
@@ -90,8 +91,7 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 
 ## Utang teknis
 
-- **Halaman tanpa pagination.** Sebagian index memakai `->get()` untuk semua data, terutama di cabang export dan `perPage=all`.
 - **Tiga salinan view pesanan** (biasa, `full/`, `aman/`, masing-masing dengan `detail` dan `archive-detail`). Perubahan harus diterapkan di semua salinan.
 - **Foreign key tidak ada** untuk 31 kolom `uuid(...)->constrained()` (lihat [03-database.md](03-database.md)). Diputuskan tidak dipasang (15 November 2026). Alasannya: beberapa tombol hapus akan mulai gagal, misalnya hapus pesanan tidak menghapus `distributions`, hapus agen tidak menghapus `orders`, hapus produk tidak mengecek `order_details`. Selain itu ada data yatim yang harus dibersihkan dulu. Hitungan di database lokal: `distribution_details.order_detail_id` 99, `agent_profiles.user_id` 11, `orders.agent_id` 4, `product_details.product_id` 3, `sub_agents.agent_id` 3, `administrations.user_id` 1, `product_returns.user_id` 1. Kalau mau dipasang, tentukan aturan hapus per relasi dan backup production dulu.
 - **Permission Spatie tidak pernah dicek.** `RoleAndPermissionSeeder` membuat `manage_users`, `add_order`, `approve_order`, tapi kode hanya memeriksa role.
-- **Test hampir tidak ada:** hanya `tests/Feature/OrderRouteTest.php`.
+- **Test baru mencakup sebagian modul.** Ada 17 file di `tests/Feature`, kebanyakan dari perbaikan bug, keamanan, dan pagination. Belum ada test untuk alur pesanan, pembayaran, dan distribusi dari awal sampai akhir. Sebagian test memakai data database lokal (`firstOrFail()`), jadi butuh database berisi data.

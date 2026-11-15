@@ -7,7 +7,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\AgentProfileController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\TestController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\GetImageController;
 use App\Http\Controllers\SubAgentController;
@@ -136,7 +135,6 @@ Route::group(['middleware' => 'auth',], function () {
     //Transaction
     Route::group(['prefix' => 'transaction', 'middleware' => 'role:admin|super_admin|agent|finance_admin'], function () {
         require __DIR__ . '/transaction/order.php';
-        // Route::get('/test', [TestController::class, 'index']);
         //order detail
         Route::post('.order/{detail}/detail', [DetailOrderController::class, 'editDetail'])->name('order.editDetail');
         Route::post('.order/{order}/addItems', [DetailOrderController::class, 'addItems'])->name('order.addItems');

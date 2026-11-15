@@ -67,4 +67,4 @@ File upload disimpan di `storage/app/public/images/<folder>` dan disajikan lewat
 php artisan test
 ```
 
-Hanya ada `tests/Feature/OrderRouteTest.php` dan dua `ExampleTest`. Cakupannya kecil, jadi cek manual di browser tetap perlu.
+Ada 17 file di `tests/Feature`, kebanyakan dari perbaikan bug, keamanan, dan pagination. Sebagian test membaca data yang sudah ada (`firstOrFail()`) dan memakai `DatabaseTransactions`, jadi butuh database lokal berisi data. Alur pesanan, pembayaran, dan distribusi dari awal sampai akhir belum punya test, jadi cek manual di browser tetap perlu.
