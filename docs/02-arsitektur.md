@@ -15,7 +15,7 @@
 | Queue | Driver `database` (tabel `jobs`), dipakai untuk email |
 | Tampilan | Blade. CMS memakai template Tailwind 3 yang sudah jadi di `public/assets/cms`; landing page memakai template Bootstrap di `public/assets/landing`. |
 
-`tymon/jwt-auth` dan `laravel/sanctum` terpasang, tapi API hanya punya satu route (`GET api/user`). Aplikasi ini sepenuhnya server-rendered.
+`laravel/sanctum` terpasang, tapi API hanya punya satu route (`GET api/user`). Aplikasi ini sepenuhnya server-rendered.
 
 ## Struktur folder yang penting
 
@@ -29,8 +29,7 @@ app/
 │   ├── ValidateRole.php      # ValidateRole::check('admin|super_admin') = hasRole
 │   ├── GenerateRandomString.php
 │   ├── GetProduct.php        # Cari produk berdasarkan nama (LIKE)
-│   ├── PaginationHelper.php  # Paginate array biasa
-│   └── ResponseFormatter.php # Tidak dipakai di mana pun
+│   └── PaginationHelper.php  # Paginate array biasa
 ├── Http/
 │   ├── Controllers/
 │   │   ├── Admin/            # Master data, distribusi, keuangan, laporan

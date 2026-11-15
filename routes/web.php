@@ -92,12 +92,6 @@ Route::group(['middleware' => 'auth',], function () {
             // Route::resource('distribution', DistributionController::class);
         });
 
-        // //Options
-        // Route::group(['prefix' => 'options'], function () {
-        //     //Access Date
-        //     Route::get('/access-date', [AccessDateController::class, 'index'])->name('access-date');
-        //     Route::post('/access-date', [AccessDateController::class, 'update'])->name('access-date.update');
-        // });
 
         //distribution
         Route::resource('distribution', DistributionController::class)->except(['edit', 'update']);

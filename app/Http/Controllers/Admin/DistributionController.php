@@ -176,11 +176,6 @@ class DistributionController extends Controller
      */
     public function show(Distribution $distribution)
     {
-        // $total_money = $distribution->order->get()->sum(function($item) {
-        //     return $item->detail->sum(function($detail) {
-        //         return $detail->product->sumRupiah() * $detail->qty;
-        //     });
-        // });
 
         // $total_money = Product::find('9d2705c6-8f0f-401e-bd52-a3a9ff023392')->sumRupiah();
 

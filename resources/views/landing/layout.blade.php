@@ -32,7 +32,6 @@
     <link href="{{ asset('assets/landing/css/colors/default.css') }}" rel="stylesheet" type="text/css" id="color-opt" />
 
     <!-- Styles -->
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="71">

@@ -87,7 +87,6 @@ class OrderController extends Controller
                 // 'updated_at',
             ];
 
-            // return response()->json($datas);
             return Excel::download(new ExportDatas($datas, 'Data Pesanan', $headers), 'Data Pesanan.xlsx');
         }
 
@@ -304,22 +303,6 @@ class OrderController extends Controller
                 }
                 $order->update(['total_price' => $totalCalculated]);
 
-                // foreach ($products as $product) {
-                //     // Mendapatkan detail produk berdasarkan productId
-                //     $productDetail = Product::findOrFail($product['productId']);
-
-                //     // Membuat OrderDetail untuk setiap produk
-                //     OrderDetail::create([
-                //         'order_id' => $order->id,
-                //         // 'sub_agent_id' => $request->sub_agent_item,
-                //         'sub_agent_id' => $product['subAgentId'],
-                //         // 'name' => $productDetail->name,
-                //         'product_id' => $product['productId'],
-                //         // 'price' => $productDetail->price,
-                //         'sub_price' => $product['subTotal'],
-                //         'qty' => $product['qty']
-                //     ]);
-                // }
             });
             if ($order) {
                 return redirect()->route('order.index')->with('success', 'Pesanan Telah Dibuat');
@@ -350,13 +333,6 @@ class OrderController extends Controller
             $query->where('is_active', 1);
         })->get();
 
-        // $selectsProduct = $packages->pluck('product_id')->unique()->map(function ($productId) use ($packages) {
-        //     $product = Product::where('id', $productId)->get();
-        //     return $product->name;
-        // })->toArray();
-
-        // return response()->json($selectsProduct );
-
         $agents = auth()->user();
 
         //select agent name
@@ -374,21 +350,12 @@ class OrderController extends Controller
             ];
         })->toArray();
 
-        // return response()->json($selectProducts);
-        // if ($request->get('select')) {
-        //     $order = $order->detail()->whereHas('subAgent', function ($query) use ($request) {
-        //         $query->where('name', 'like', "%{$request->select}%");
-        //     })->get();
-        // }
-
         if ($request->get('export') == 'true') {
             return Excel::download(new DetailOrderExport($order->id), 'Order Detail ' . $order->order_number . '.xlsx');
         }
 
         return view('cms.transactions.detail', compact(['order', 'packages', 'agents', 'selects', 'selectProducts']));
     }
-
-
 
     public function accOrder(Order $order)
     {
@@ -500,8 +467,6 @@ class OrderController extends Controller
             return response()->json($data, 400);
         }
     }
-
-
 
     public function destroy(Order $order)
     {

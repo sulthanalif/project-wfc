@@ -169,11 +169,6 @@ class PackageController extends Controller
         try {
             DB::transaction(function () use ($request, &$package) {
 
-                // // Manipulasi gambar menggunakan Intervention Image
-                // $image = Image::make($request->file('image'));
-                // $image->resize(800, null, function ($constraint) {
-                //     $constraint->aspectRatio();
-                // });
 
                 // // Extract the filename without the extension
                 // $imageData = pathinfo($request->file('image')->getClientOriginalName(), PATHINFO_FILENAME);

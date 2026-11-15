@@ -2,12 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use App\Helpers\UUIDGenerator;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-// use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -22,16 +19,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public $incrementing = false;
     protected $keyType = 'string';
     protected $primaryKey = 'id';
-
-    // public function getJWTIdentifier()
-    // {
-    //     return $this->getKey();
-    // }
-
-    // public function getJWTCustomClaims()
-    // {
-    //     return [];
-    // }
 
     /**
      * The attributes that are mass assignable.

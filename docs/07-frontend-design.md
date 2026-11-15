@@ -11,7 +11,7 @@
 | Font | Roboto | Poppins dan Roboto |
 | Warna utama | `--color-primary: 182 149 116` (`#B69574`, coklat) di `:root` | `#bc8f6e` di `colors/default.css` |
 
-Kedua tampilan memakai file CSS/JS jadi dari `public/assets`. `vite.config.js` dan `resources/sass`, `resources/js` adalah sisa scaffolding `laravel/ui` dan tidak dimuat oleh layout mana pun. Tidak ada `tailwind.config.js` di repo, jadi kelas Tailwind yang belum ada di `app.css` tidak akan berfungsi. Pakai kelas yang sudah dipakai di view lain.
+Kedua tampilan memakai file CSS/JS jadi dari `public/assets`. Tidak ada Vite, `package.json`, atau `resources/js`/`resources/sass`. Tidak ada `tailwind.config.js` di repo, jadi kelas Tailwind yang belum ada di `app.css` tidak akan berfungsi. Pakai kelas yang sudah dipakai di view lain.
 
 ## Struktur layout CMS
 

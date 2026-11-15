@@ -358,16 +358,6 @@ class UserController extends Controller
                 $user->agentProfile()->delete();
                 $delete = $user->delete();
             }
-            // $user->subAgent()->delete();
-            // $user->agentProfile()->delete();
-            // if ($user->order) {
-            //     $user->order->each(function ($order) {
-            //         $order->detail()->delete();
-            //         $order->payment()->delete();
-            //     });
-            // }
-            // $user->order()->delete();
-            // $delete = $user->delete();
         } else {
             $user->adminProfile()->delete();
             $delete = $user->delete();

@@ -5,7 +5,7 @@
 - PHP 8.1 atau lebih baru (`composer.json`: `"php": "^8.1"`), dengan ekstensi `gd` untuk Intervention Image dan dompdf
 - Composer
 - MySQL atau MariaDB
-- Node.js hanya diperlukan kalau menyentuh `resources/sass` atau `resources/js`. Tampilan CMS dan landing page memakai file CSS/JS jadi di `public/assets`, jadi tidak perlu build (lihat [07-frontend-design.md](07-frontend-design.md)).
+- Node.js tidak diperlukan. Tampilan CMS dan landing page memakai file CSS/JS jadi di `public/assets`, jadi tidak perlu build (lihat [07-frontend-design.md](07-frontend-design.md)).
 
 ## Langkah
 
