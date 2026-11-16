@@ -41,6 +41,10 @@ Seluruh issue pagination (P1 s/d P12) telah selesai diperbaiki.
 
 | Masalah | Commit |
 |---|---|
+| Upload berkas agen (KTP, Surat Perjanjian) bisa tampil "Data Sukses Diunggah!" padahal file gagal ditulis ke disk, karena disk `public` memakai `throw => false` dan hasil `put()` tidak dicek. Sekarang `AdministrationController::saveFile` melempar error dan transaksi dibatalkan | `main` |
+| Admin mengunggah berkas untuk agen yang belum punya baris `administrations`: file tersimpan di disk, tapi `$user->administration()->update()` mengubah 0 baris, jadi toast "Data Sukses Diunggah!" muncul dan halaman tetap "Belum Ada Berkas". Upload satu file saja malah error karena `$user->administration` null. Sekarang memakai `updateOrCreate`, dan agen tanpa berkas wajib diunggah kedua file sekaligus | `main` |
+| Agen bisa mengganti berkas agen lain lewat `PUT master/administration/{user}` karena `update()` tidak mengecek pemilik. Sekarang agen hanya boleh untuk `{user}` miliknya sendiri (403 untuk yang lain) | `main` |
+| Upload berkas agen yang gagal validasi (file lebih dari 10 MB, bukan JPG/PNG/GIF, atau ditolak batas upload PHP) hanya menampilkan JSON error berbahasa Inggris lalu form kosong lagi, jadi agen mengira sudah terkirim. Sekarang pesannya berbahasa Indonesia dan input punya `required` dan `accept` | `main` |
 | B13: Total pengeluaran menghitung `amount × qty`, padahal pengadaan menyimpan `amount` sebagai total (kartu total sekitar 147 kali lipat). Sekarang semua total memakai `total_amount`, baris pengadaan lama di-backfill | `optimalisasi` |
 | B15: Laporan per barang (Perpaket, total produk Pesanan Agen, Sub Produk, Stock Sub Product) dengan filter periode menghitung semua produk dari pesanan yang punya minimal satu produk periode itu, jadi produk periode lain di pesanan yang sama ikut terhitung. Sekarang disaring per produk (`packages.period_id`) | `main` |
 | B14: `ckeditor-classic.js` dimuat sekali per modal (error `ckeditor-duplicated-modules` di halaman pinjaman). Sekarang `@pushOnce('custom-scripts', 'ckeditor-classic')`, dan halaman tanpa `.editor` tidak memuatnya | `optimalisasi` |

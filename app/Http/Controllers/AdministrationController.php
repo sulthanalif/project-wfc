@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Helpers\ValidateRole;
 use Illuminate\Http\Request;
 use App\Models\Administration;
 use Illuminate\Support\Facades\DB;
@@ -36,10 +37,19 @@ class AdministrationController extends Controller
             'ktp' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
             // 'kk' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
             'sPerjanjian' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
+        ], [
+            'required' => ':attribute wajib dipilih.',
+            'uploaded' => ':attribute gagal terkirim, kemungkinan ukuran file terlalu besar.',
+            'image' => ':attribute harus berupa foto JPG, PNG, atau GIF.',
+            'mimes' => ':attribute harus berupa foto JPG, PNG, atau GIF.',
+            'max' => 'Ukuran :attribute maksimal 10 MB.',
+        ], [
+            'ktp' => 'Foto KTP',
+            'sPerjanjian' => 'Foto Surat Perjanjian',
         ]);
 
         if ($validator->fails()) {
-            return back()->with('error', $validator->errors());
+            return back()->with('error', 'Berkas belum terkirim. ' . implode(' ', $validator->errors()->all()));
         }
 
         try {
@@ -48,9 +58,9 @@ class AdministrationController extends Controller
                 // $imageNameKK = 'administration_'.Auth::user()->id. '_kk' . '.' . $request->file('kk')->getClientOriginalExtension();
                 $imageNameSPerjanjian = 'administration_' . Auth::user()->id . '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
 
-                Storage::disk('public')->put('images/administration/' . $imageNameKTP, $request->file('ktp')->getContent());
+                $this->saveFile($imageNameKTP, $request->file('ktp')->getContent());
                 // Storage::disk('public')->put('images/administration/'. $imageNameKK, $request->file('kk')->getContent());
-                Storage::disk('public')->put('images/administration/' . $imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
+                $this->saveFile($imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
 
                 $upload = Administration::create([
                     'user_id' => Auth::user()->id,
@@ -89,6 +99,10 @@ class AdministrationController extends Controller
 
     public function update(Request $request, User $user)
     {
+        if (ValidateRole::check('agent') && $user->id !== Auth::id()) {
+            abort(403);
+        }
+
         $validator = Validator::make($request->all(), [
             'ktp' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
             'sPerjanjian' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
@@ -98,55 +112,34 @@ class AdministrationController extends Controller
             return back()->with('error', $validator->errors());
         }
 
+        $administration = $user->administration;
+        $hasKtp = $request->hasFile('ktp');
+        $hasPerjanjian = $request->hasFile('sPerjanjian');
+
+        if (!$hasKtp && !$hasPerjanjian) {
+            return back()->with('error', 'Pilih minimal satu file untuk diunggah.');
+        }
+        // Kolom ktp dan sPerjanjian wajib terisi, jadi baris baru butuh kedua file.
+        if (!$administration && !($hasKtp && $hasPerjanjian)) {
+            return back()->with('error', 'Agen ini belum punya berkas. Unggah Foto KTP dan Surat Perjanjian sekaligus.');
+        }
+
         try {
-            DB::transaction(function () use ($request, $user) {
-                if ($request->hasFile('ktp') && $request->hasFile('sPerjanjian')) {
-                    if ($user->administration && $user->administration->ktp && file_exists(storage_path('app/public/images/administration/' . $user->administration->ktp))) {
-                        unlink(storage_path('app/public/images/administration/' . $user->administration->ktp));
+            DB::transaction(function () use ($request, $user, $administration) {
+                $data = [];
+                foreach (['ktp', 'sPerjanjian'] as $field) {
+                    if (!$request->hasFile($field)) {
+                        continue;
                     }
-                    if ($user->administration && $user->administration->sPerjanjian && file_exists(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian))) {
-                        unlink(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian));
+                    $name = 'administration_' . $user->id . '_' . $field . '.' . $request->file($field)->getClientOriginalExtension();
+                    $this->saveFile($name, $request->file($field)->getContent());
+                    if ($administration?->$field && $administration->$field !== $name) {
+                        Storage::disk('public')->delete('images/administration/' . $administration->$field);
                     }
-
-                    $imageNameKTP = 'administration_' . $user->id . '_ktp' . '.' . $request->file('ktp')->getClientOriginalExtension();
-                    // $imageNameKK = 'administration_'.$user->id. '_kk' . '.' . $request->file('kk')->getClientOriginalExtension();
-                    $imageNameSPerjanjian = 'administration_' . $user->id . '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
-
-                    Storage::disk('public')->put('images/administration/' . $imageNameKTP, $request->file('ktp')->getContent());
-                    // Storage::disk('public')->put('images/administration/'. $imageNameKK, $request->file('kk')->getContent());
-                    Storage::disk('public')->put('images/administration/' . $imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
-
-                    $user->administration()->update([
-                        'ktp' => $imageNameKTP,
-                        'sPerjanjian' => $imageNameSPerjanjian
-                    ]);
-
-                } elseif ($request->hasFile('ktp')) {
-                    if ($user->administration->ktp && file_exists(storage_path('app/public/images/administration/' . $user->administration->ktp))) {
-                        unlink(storage_path('app/public/images/administration/' . $user->administration->ktp));
-                    }
-
-                    $imageNameKTP = 'administration_' . $user->id . '_ktp' . '.' . $request->file('ktp')->getClientOriginalExtension();
-                    Storage::disk('public')->put('images/administration/' . $imageNameKTP, $request->file('ktp')->getContent());
-
-                    $user->administration()->update([
-                        'ktp' => $imageNameKTP
-                    ]);
-
-                } elseif ($request->hasFile('sPerjanjian')) {
-                    if ($user->administration->sPerjanjian && file_exists(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian))) {
-                        unlink(storage_path('app/public/images/administration/' . $user->administration->sPerjanjian));
-                    }
-
-                    $imageNameSPerjanjian = 'administration_' . $user->id . '_sPerjanjian' . '.' . $request->file('sPerjanjian')->getClientOriginalExtension();
-                    Storage::disk('public')->put('images/administration/' . $imageNameSPerjanjian, $request->file('sPerjanjian')->getContent());
-
-                    $user->administration()->update([
-                        'sPerjanjian' => $imageNameSPerjanjian
-                    ]);
-                } else {
-                    return back()->with('error', 'Data Tidak Ditemukan');
+                    $data[$field] = $name;
                 }
+
+                $user->administration()->updateOrCreate([], $data);
             });
 
             return redirect()->back()->with('success', 'Data Sukses Diunggah!');
@@ -156,6 +149,14 @@ class AdministrationController extends Controller
                 'status' => 400
             ];
             return view('cms.error', compact('data'));
+        }
+    }
+
+    // Disk public memakai throw=false, jadi put() yang gagal hanya mengembalikan false.
+    private function saveFile(string $name, string $content): void
+    {
+        if (!Storage::disk('public')->put('images/administration/' . $name, $content)) {
+            throw new \Exception('Gagal menyimpan file ' . $name . ' ke server.');
         }
     }
 }
